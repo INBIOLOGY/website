@@ -1,16 +1,58 @@
-# React + Vite
+# INBIOLOGY Academy
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Next.js application for selling and delivering online biology courses.
 
-Currently, two official plugins are available:
+## Status
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The original Vite UI prototype is being migrated incrementally to Next.js App Router and strict TypeScript. Public routes are statically rendered. Authentication, orders, and payments use safe API boundaries and intentionally return `503` until their database/provider implementations are connected; the browser can no longer grant admin access or course enrollment by itself.
 
-## React Compiler
+## Requirements
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Node.js 22+
+- npm 11+
+- PostgreSQL (required from the database milestone onward)
 
-## Expanding the Oxlint configuration
+## Local development
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```bash
+npm ci
+copy .env.example .env.local
+npm run dev
+```
+
+Open `http://localhost:3000`.
+
+For local database-backed authentication and orders:
+
+```bash
+npm run db:up
+npm run db:migrate
+```
+
+## Quality gates
+
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
+
+All four commands must pass before merging.
+
+## Structure
+
+- `app/` — Next.js routes, layouts, route handlers, and providers
+- `features/` — feature contracts and client/service boundaries
+- `src/App.jsx` — temporary legacy UI shell being split into typed features
+- `lib/` — shared server/runtime configuration
+- `public/` — static assets pending optimization and storage migration
+
+## Security rules
+
+- Never place secrets in variables prefixed with `NEXT_PUBLIC_`.
+- Prices, coupons, payments, roles, and enrollments must be verified server-side.
+- Enrollment is created only after a verified payment webhook or audited admin action.
+- Course media must use authorization checks and short-lived signed URLs.
+
+The original UI is preserved in the `ui-prototype-v1` Git tag. Migration work lives on `migration/nextjs-typescript`.
