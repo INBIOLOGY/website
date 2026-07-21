@@ -1,12 +1,19 @@
-import { useState, useRef, useEffect } from 'react';
+'use client';
+
+import { useState, useRef, useEffect, useId, useCallback } from 'react';
+import { useLegacyNavigation } from '@/features/navigation/use-legacy-navigation';
+import { authenticate, getCurrentUser, logoutSession } from '@/features/auth/client';
+import { createPendingOrder } from '@/features/checkout/client';
+import { listPublishedCourses } from '@/features/catalog/client';
+import { PUBLIC_PAGES } from '@/features/navigation/routes';
 import {
-  BookOpen, Play, Star, Users, Clock, Download, Send, X, Check, Menu,
-  LogOut, BarChart2, Video, Search, Edit, Trash2, Plus, ChevronDown,
-  ShoppingCart, Heart, PlayCircle, FileText, Shield, MessageCircle,
+  BookOpen, Play, Star, Users, Clock, Download, X, Check,
+  LogOut, BarChart2, Video, Search, Edit, Trash2,
+  ShoppingCart, PlayCircle, FileText, Shield,
   ChevronLeft, ChevronRight, ArrowRight, Sparkles, Eye, EyeOff, Image,
-  GraduationCap, Award, Bell, TrendingUp, Zap, BookMarked, Brain,
-  HelpCircle, FileSpreadsheet, ShieldAlert, Settings, Globe, Moon, Sun,
-  BookText, Layers, ChevronUp, SlidersHorizontal, Info, Maximize, Minimize
+  Award, Bell, TrendingUp, Zap, Brain,
+  HelpCircle, FileSpreadsheet, Settings, Globe, Moon, Sun,
+  BookText, Layers, Info, Maximize, Minimize
 } from 'lucide-react';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -50,7 +57,7 @@ const COURSES = [
       { id: 'l5', title: 'EP 5: เอนไซม์และอัตราการเกิดปฏิกิริยาเคมีในสิ่งมีชีวิต', duration: 45 },
       { id: 'l6', title: 'EP 6: วัฏจักรเซลล์ การแบ่งเซลล์แบบ Mitosis และ Meiosis', duration: 60 },
     ],
-    imageUrl: import.meta.env.BASE_URL + '1_0.png',
+    imageUrl: '/1_0.png',
     rating: 4.9, reviewCount: 450, Level: 'ม.4', Category: '🧬 Bio Intensive'
   },
   {
@@ -70,7 +77,7 @@ const COURSES = [
       { id: 'l5', title: 'EP 5: การกลายพันธุ์ (Mutation) และเทคโนโลยีทางดีเอ็นเอ (Recombinant DNA & PCR)', duration: 55 },
       { id: 'l6', title: 'EP 6: หลักการวิวัฒนาการของสิ่งมีชีวิต และพันธุศาสตร์ประชากร', duration: 50 },
     ],
-    imageUrl: import.meta.env.BASE_URL + '2_0.png',
+    imageUrl: '/2_0.png',
     rating: 5.0, reviewCount: 380, Level: 'ม.5', Category: '🧫 Bio Intensive'
   },
   {
@@ -90,7 +97,7 @@ const COURSES = [
       { id: 'l5', title: 'EP 5: การสืบพันธุ์แบบอาศัยเพศและการปฏิสนธิซ้อนของพืชดอก (Double Fertilization)', duration: 50 },
       { id: 'l6', title: 'EP 6: ฮอร์โมนพืชและการตอบสนองต่อสิ่งแวดล้อม (Plant Hormones & Tropism)', duration: 45 },
     ],
-    imageUrl: import.meta.env.BASE_URL + '3_0.png',
+    imageUrl: '/3_0.png',
     rating: 4.9, reviewCount: 310, Level: 'ม.5', Category: '🌱 Bio Intensive'
   },
   {
@@ -110,7 +117,7 @@ const COURSES = [
       { id: 'l5', title: 'EP 5: ระบบขับถ่าย โครงสร้างไตและการสร้างปัสสาวะ (Excretory System & Kidney)', duration: 55 },
       { id: 'l6', title: 'EP 6: การรักษาดุลยภาพของน้ำ สารเคมี และอุณหภูมิในร่างกาย (Homeostasis)', duration: 40 },
     ],
-    imageUrl: import.meta.env.BASE_URL + '4_0.png',
+    imageUrl: '/4_0.png',
     rating: 4.8, reviewCount: 415, Level: 'ม.6', Category: '🦴 Bio Intensive'
   },
   {
@@ -130,7 +137,7 @@ const COURSES = [
       { id: 'l5', title: 'EP 5: ระบบสืบพันธุ์ การสร้างเซลล์สืบพันธุ์ และการเจริญเติบโตของเอ็มบริโอ (Reproduction & Development)', duration: 60 },
       { id: 'l6', title: 'EP 6: พฤติกรรมของสัตว์ พฤติกรรมที่มีมาแต่กำเนิดและการเรียนรู้ (Animal Behavior)', duration: 45 },
     ],
-    imageUrl: import.meta.env.BASE_URL + '5_0.png',
+    imageUrl: '/5_0.png',
     rating: 4.9, reviewCount: 390, Level: 'ม.6', Category: '🧠 Bio Intensive'
   },
   {
@@ -150,7 +157,7 @@ const COURSES = [
       { id: 'l5', title: 'EP 5: การเปลี่ยนแปลงแทนที่ของชีวบริเวณและไบโอมโลก (Ecological Succession & Biomes)', duration: 45 },
       { id: 'l6', title: 'EP 6: มนุษย์กับความยั่งยืนของทรัพยากรธรรมชาติและสิ่งแวดล้อม (Environmental Issues)', duration: 40 },
     ],
-    imageUrl: import.meta.env.BASE_URL + '6_0.png',
+    imageUrl: '/6_0.png',
     rating: 4.9, reviewCount: 290, Level: 'ม.6', Category: '🌿 Bio Intensive'
   },
 
@@ -172,7 +179,7 @@ const COURSES = [
       { id: 'l5', title: 'EP 5: ติวเข้ม สอวน.: Taxonomy, Evolution & Ecology ระดับแข่งขัน', duration: 60 },
       { id: 'l6', title: 'EP 6: ตะลุยโจทย์แนวสอบคัดเลือก สอวน. ค่าย 1 และ ค่าย 2', duration: 65 },
     ],
-    imageUrl: import.meta.env.BASE_URL + '7_0.png',
+    imageUrl: '/7_0.png',
     rating: 5.0, reviewCount: 620, Level: 'ติวสอบ', Category: '🏅 คอร์สพิเศษ'
   },
   {
@@ -190,7 +197,7 @@ const COURSES = [
       { id: 'l3', title: 'EP 3: ตะลุยโจทย์ สอวน. ข้อ 51-75 (Plant & Animal Systems) + เฉลยละเอียด', duration: 50 },
       { id: 'l4', title: 'EP 4: ตะลุยโจทย์ สอวน. ข้อ 76-100 (Ecology & Taxonomy) + เฉลยละเอียด', duration: 55 },
     ],
-    imageUrl: import.meta.env.BASE_URL + '10_0.png',
+    imageUrl: '/10_0.png',
     rating: 4.9, reviewCount: 890, Level: 'ติวสอบ', Category: '🏅 คอร์สพิเศษ'
   },
   {
@@ -208,7 +215,7 @@ const COURSES = [
       { id: 'l3', title: 'EP 3: ตะลุยข้อสอบจริง A-Level ชุดที่ 1 (ข้อ 26-50) + เฉลยละเอียดชี้จุดลวง', duration: 65 },
       { id: 'l4', title: 'EP 4: จำลองการทำข้อสอบ Mock Test A-Level ชุดที่ 2 + เฉลยวิเคราะห์รายข้อ', duration: 70 },
     ],
-    imageUrl: import.meta.env.BASE_URL + '11.png',
+    imageUrl: '/11.png',
     rating: 5.0, reviewCount: 750, Level: 'ติวสอบ', Category: '📖 คอร์สพิเศษ'
   },
   {
@@ -227,7 +234,7 @@ const COURSES = [
       { id: 'l4', title: 'EP 4: สรุปเข้ม A-Level: Animal Biology & Human Physiology ทุกระบบ', duration: 75 },
       { id: 'l5', title: 'EP 5: สรุปเข้ม A-Level: Ecology, Taxonomy & Biodiversity', duration: 55 },
     ],
-    imageUrl: import.meta.env.BASE_URL + '12.png',
+    imageUrl: '/12.png',
     rating: 4.9, reviewCount: 680, Level: 'ม.6', Category: '📖 คอร์สพิเศษ'
   },
 
@@ -247,22 +254,16 @@ const COURSES = [
       { id: 'l3', title: 'EP 3: สรุปสูตรลัด Plant & Human Biology (คอร์ส 99 บาท)', duration: 45 },
       { id: 'l4', title: 'EP 4: สรุปประเด็นเน้น Ecology & Taxonomy (คอร์ส 99 บาท)', duration: 35 },
     ],
-    imageUrl: import.meta.env.BASE_URL + '11.png',
+    imageUrl: '/11.png',
     rating: 5.0, reviewCount: 1420, Level: 'ติวสอบ', Category: '⚡ คอร์ส 99 บาท'
   }
 ];
 
 const FREE_TRIALS = [
-  { id: 'ft1', title: 'คลิปทดลองเรียน Bio Intensive I: โครงสร้างเซลล์และกลไกการลำเลียงสาร', duration: '45 นาที', course: 'Bio Intensive I', imageUrl: import.meta.env.BASE_URL + '1_0.png' },
-  { id: 'ft2', title: 'คลิปทดลองเรียน Bio Intensive II: เทคนิคคำนวณโจทย์พันธุศาสตร์เมนเดล', duration: '35 นาที', course: 'Bio Intensive II', imageUrl: import.meta.env.BASE_URL + '2_0.png' },
-  { id: 'ft3', title: 'คลิปทดลองเรียน คอร์สพิเศษ สอวน.: เจาะลึกข้อสอบคัดเลือกค่าย 1', duration: '40 นาที', course: 'คอร์ส ติวเข้ม สอวน.', imageUrl: import.meta.env.BASE_URL + '7_0.png' },
-  { id: 'ft4', title: 'คลิปทดลองเรียน คอร์ส 99 บาท: สรุปสกัดเข้ม Quick Review ม.ปลาย', duration: '30 นาที', course: 'คอร์ส 99 บาท', imageUrl: import.meta.env.BASE_URL + '11.png' }
-];
-
-const MOCK_STUDENTS = [
-  { id: 1, name: 'นาย ภูมิพัฒน์ รัตนชัย', email: 'phumiphat.r@gmail.com', school: 'สวนกุหลาบวิทยาลัย', level: 'ม.5', enrolledCount: 2 },
-  { id: 2, name: 'นางสาว ณัฐนิชา สุขใจ', email: 'natnicha.s@hotmail.com', school: 'เตรียมอุดมศึกษา', level: 'ม.6', enrolledCount: 3 },
-  { id: 3, name: 'นาย ปกรณ์ ดีเลิศ', email: 'pakorn.d@yahoo.com', school: 'สามเสนวิทยาลัย', level: 'ม.4', enrolledCount: 1 }
+  { id: 'ft1', title: 'คลิปทดลองเรียน Bio Intensive I: โครงสร้างเซลล์และกลไกการลำเลียงสาร', duration: '45 นาที', course: 'Bio Intensive I', imageUrl: '/1_0.png' },
+  { id: 'ft2', title: 'คลิปทดลองเรียน Bio Intensive II: เทคนิคคำนวณโจทย์พันธุศาสตร์เมนเดล', duration: '35 นาที', course: 'Bio Intensive II', imageUrl: '/2_0.png' },
+  { id: 'ft3', title: 'คลิปทดลองเรียน คอร์สพิเศษ สอวน.: เจาะลึกข้อสอบคัดเลือกค่าย 1', duration: '40 นาที', course: 'คอร์ส ติวเข้ม สอวน.', imageUrl: '/7_0.png' },
+  { id: 'ft4', title: 'คลิปทดลองเรียน คอร์ส 99 บาท: สรุปสกัดเข้ม Quick Review ม.ปลาย', duration: '30 นาที', course: 'คอร์ส 99 บาท', imageUrl: '/11.png' }
 ];
 
 const CATEGORIES = [
@@ -282,7 +283,7 @@ const REVIEWS = [
     name: 'พี่อลีน',
     text: 'พี่ต้นสอนแบบจำได้จริง จำได้ยาวๆ แล้วก็สอนสนุกมากกก เป็นกันเองสุดๆ ทำให้กล้าถามทุกเรื่อง และทำให้การเรียนชีวะไม่น่าเบื่อเลย จากวิชาที่เคยคิดว่ายาก กลายเป็นวิชาที่ชอบไปเลยย พี่ต้นอธิบายละเอียด เข้าใจง่าย เชื่อมโยงเนื้อหาให้เห็นภาพ ไม่ต้องท่องแบบฝืนๆ แล้วก็มีเพลงช่วยจำที่ใช้ได้จริงด้วยย ทำให้ไม่ลืมคอนเซ็ปต์และเข้าใจเนื้อหาแบบเอาไปใช้ได้จริง แนะนำมากก',
     score: 'คณะแพทยศาสตร์ มหาวิทยาลัยนเรศวร',
-    avatar: '/student_aleen.png?v=' + Date.now(),
+    avatar: '/student_aleen.png',
     imagePosition: 'center 33%',
     school: 'โรงเรียนสาธิตมหาวิทยาลัยนเรศวร',
     course: 'Bio Intensive Complete Set'
@@ -362,21 +363,35 @@ function ToastContainer({ toasts, remove }) {
 // MODALS
 // ─────────────────────────────────────────────────────────────────────────────
 function Modal({ isOpen, onClose, title, children, wide }) {
+  const titleId = useId();
+  const dialogRef = useRef(null);
+
   useEffect(() => {
+    if (!isOpen) return undefined;
+    const previouslyFocused = document.activeElement;
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') onClose();
+    };
     document.body.style.overflow = isOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [isOpen]);
+    document.addEventListener('keydown', handleKeyDown);
+    requestAnimationFrame(() => dialogRef.current?.focus());
+    return () => {
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', handleKeyDown);
+      previouslyFocused?.focus?.();
+    };
+  }, [isOpen, onClose]);
   if (!isOpen) return null;
   return (
     <div className="animate-fade-in" style={{ position: 'fixed', inset: 0, zIndex: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }} onClick={onClose}>
       <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }} />
-      <div className="animate-fade-in-up" onClick={e => e.stopPropagation()} style={{
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} className="animate-fade-in-up" onClick={e => e.stopPropagation()} style={{
         position: 'relative', background: 'white', borderRadius: '20px', boxShadow: '0 25px 50px rgba(0,0,0,0.15)',
         width: '100%', maxWidth: wide ? '760px' : '480px', maxHeight: '90vh', overflowY: 'auto'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px', borderBottom: '1px solid #E5E7EB' }}>
-          <h3 style={{ fontWeight: 800, color: C.navy, fontSize: '14px', margin: 0 }}>{title}</h3>
-          <button onClick={onClose} style={{ width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'none', border: 'none' }} onMouseOver={e => e.currentTarget.style.background = '#F3F4F6'} onMouseOut={e => e.currentTarget.style.background = 'none'}>
+          <h3 id={titleId} style={{ fontWeight: 800, color: C.navy, fontSize: '14px', margin: 0 }}>{title}</h3>
+          <button type="button" aria-label="ปิดหน้าต่าง" onClick={onClose} style={{ width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'none', border: 'none' }} onMouseOver={e => e.currentTarget.style.background = '#F3F4F6'} onMouseOut={e => e.currentTarget.style.background = 'none'}>
             <X size={16} color="#6B7280" />
           </button>
         </div>
@@ -448,7 +463,7 @@ function Navbar({ setPage, userRole, onLogout, cartCount, openCart, addToast, da
 
           {/* ── Logo ── */}
           <button onClick={() => setPage('landing')} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', background: 'none', border: 'none', flexShrink: 0 }}>
-            <img src={import.meta.env.BASE_URL + 'logo.png?v=1784605132747'} alt="INBIOLOGY Logo" style={{ height: '48px', width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 2px 6px rgba(185,28,28,0.15))' }} />
+            <img src="/logo.png" alt="INBIOLOGY Logo" style={{ height: '48px', width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 2px 6px rgba(185,28,28,0.15))' }} />
             <div style={{ textAlign: 'left' }}>
               <span style={{ fontWeight: 900, fontSize: '20px', color: C.navy, display: 'block', lineHeight: 1 }}>INBIOLOGY</span>
               <span style={{ fontSize: '10px', fontWeight: 700, color: C.sky, display: 'block', marginTop: '2px' }}>by พี่ต้น</span>
@@ -725,7 +740,11 @@ function Navbar({ setPage, userRole, onLogout, cartCount, openCart, addToast, da
                     คู่มือการใช้งาน
                   </button>
 
-                  <button onClick={() => { userRole === 'guest' ? (addToast('กรุณาเข้าสู่ระบบก่อน', 'error'), setMenuOpen(false)) : (setPage('settings'), setMenuOpen(false)) }} style={menuBtnStyle(false)}
+                  <button onClick={() => {
+                    if (userRole === 'guest') addToast('กรุณาเข้าสู่ระบบก่อน', 'error');
+                    else setPage('settings');
+                    setMenuOpen(false);
+                  }} style={menuBtnStyle(false)}
                     onMouseOver={e => e.currentTarget.style.background = '#F9FAFB'}
                     onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
                     <span style={{ color: '#374151' }}><Settings size={16} /></span>
@@ -776,7 +795,7 @@ function HeroSection({ onStart, onView, courses }) {
       paddingBottom: '80px',
       overflow: 'hidden',
       position: 'relative',
-      background: 'linear-gradient(to bottom, rgba(15, 23, 42, 0.2) 0%, rgba(15, 23, 42, 0.05) 50%, rgba(15, 23, 42, 0.3) 100%), url(' + import.meta.env.BASE_URL + 'hero-bg.jpg) center center / cover no-repeat',
+      background: 'linear-gradient(to bottom, rgba(15, 23, 42, 0.2) 0%, rgba(15, 23, 42, 0.05) 50%, rgba(15, 23, 42, 0.3) 100%), url(/hero-bg.jpg) center center / cover no-repeat',
       minHeight: '700px',
       display: 'flex',
       alignItems: 'center'
@@ -904,7 +923,7 @@ function HeroSection({ onStart, onView, courses }) {
                     boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
                     overflow: 'hidden', background: '#1E3A8A', flexShrink: 0,
                   }}>
-                    <img src={import.meta.env.BASE_URL + 'instructor.jpg'} alt="พี่ต้น — ผู้สอน INBIOLOGY" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
+                    <img src="/instructor.jpg" alt="พี่ต้น — ผู้สอน INBIOLOGY" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
                   </div>
                   {/* Online status indicator */}
                   <span style={{
@@ -1289,13 +1308,18 @@ function CatalogPage({ courses, onAddToCart, enrolledIds, onViewDetails, onTrial
 // ─────────────────────────────────────────────────────────────────────────────
 // CHECKOUT & PAYMENT PAGE
 // ─────────────────────────────────────────────────────────────────────────────
-function CheckoutPage({ cart, coupons, onRemove, onCheckout, setPage, addToast }) {
+function CheckoutPage({ cart, coupons, onCheckout, addToast }) {
   const [method, setMethod] = useState('promptpay');
   const [coupon, setCoupon] = useState('');
   const [discount, setDiscount] = useState(0);
 
   const total = cart.reduce((s, c) => s + c.price, 0);
   const final = Math.max(0, total - discount);
+
+  const handleCheckout = () => onCheckout({
+    couponCode: coupon.trim() || undefined,
+    paymentMethod: method,
+  });
 
   const applyCoupon = () => {
     const found = coupons.find(c => c.code.toUpperCase() === coupon.trim().toUpperCase());
@@ -1343,7 +1367,7 @@ function CheckoutPage({ cart, coupons, onRemove, onCheckout, setPage, addToast }
               {/* QR Mockup */}
               <div style={{ width: '150px', height: '150px', background: 'white', border: '1.5px solid #E5E7EB', borderRadius: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '8px' }}>
                 <div style={{ background: C.navy, color: 'white', fontSize: '10px', fontWeight: 900, padding: '2px 8px', borderRadius: '4px', marginBottom: '8px' }}>Prompt Pay</div>
-                <img src={import.meta.env.BASE_URL + 'logo.png'} style={{ width: '80px', height: '80px', objectFit: 'contain', opacity: 0.8 }} alt="" />
+                <img src="/logo.png" style={{ width: '80px', height: '80px', objectFit: 'contain', opacity: 0.8 }} alt="" />
                 <div style={{ fontSize: '9px', color: '#9CA3AF', marginTop: '6px' }}>Scan to Pay</div>
               </div>
               <p style={{ fontSize: '11px', color: '#6B7280', margin: 0 }}>ชื่อบัญชี: INBIOLOGY Academy (by พี่ต้น)</p>
@@ -1384,7 +1408,7 @@ function CheckoutPage({ cart, coupons, onRemove, onCheckout, setPage, addToast }
               <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 900, fontSize: '18px', color: C.navy, marginTop: '6px' }}><span>ยอดชำระสุทธิ</span><span>฿{formatPrice(final)}</span></div>
             </div>
 
-            <button onClick={onCheckout} disabled={cart.length === 0} style={{
+            <button onClick={handleCheckout} disabled={cart.length === 0} style={{
               width: '100%', background: cart.length === 0 ? '#D1D5DB' : C.red, color: cart.length === 0 ? '#9CA3AF' : 'white',
               fontWeight: 800, fontSize: '14px', padding: '14px', borderRadius: '12px',
               cursor: cart.length === 0 ? 'not-allowed' : 'pointer', border: 'none',
@@ -1624,6 +1648,12 @@ function ClassroomPage({ courses, enrolledCourses, activeCourseId, addToast, set
 // ─────────────────────────────────────────────────────────────────────────────
 // EXAM CENTER & TIMER SIMULATOR
 // ─────────────────────────────────────────────────────────────────────────────
+const EXAM_QUESTIONS = [
+  { id: 1, q: '1. ออร์แกเนลล์ใดทำหน้าที่เป็นโรงไฟฟ้าหลักในการผลิต ATP ให้แก่เซลล์?', a: 'ไมโทคอนเดรีย', opts: ['คลอโรพลาสต์', 'ไมโทคอนเดรีย', 'กอลจิบอดี', 'ไลโซโซม'] },
+  { id: 2, q: '2. กระบวนการใดพบการแบ่งนิวเคลียสแบบลดจำนวนโครโมโซมลงครึ่งหนึ่ง?', a: 'Meiosis', opts: ['Mitosis', 'Meiosis', 'Binary Fission', 'Budding'] },
+  { id: 3, q: '3. ข้อใดคือคู่เบสที่ถูกต้องในโครงสร้างเกลียวคู่ของ DNA?', a: 'A คู่กับ T, G คู่กับ C', opts: ['A คู่กับ U, G คู่กับ C', 'A คู่กับ G, T คู่กับ C', 'A คู่กับ T, G คู่กับ C', 'A คู่กับ C, T คู่กับ G'] },
+];
+
 function ExamCenterPage({ addToast, setPage }) {
   const [started, setStarted] = useState(false);
   const [score, setScore] = useState(null);
@@ -1634,11 +1664,16 @@ function ExamCenterPage({ addToast, setPage }) {
     answersRef.current = answers;
   }, [answers]);
 
-  const questions = [
-    { id: 1, q: '1. ออร์แกเนลล์ใดทำหน้าที่เป็นโรงไฟฟ้าหลักในการผลิต ATP ให้แก่เซลล์?', a: 'ไมโทคอนเดรีย', opts: ['คลอโรพลาสต์', 'ไมโทคอนเดรีย', 'กอลจิบอดี', 'ไลโซโซม'] },
-    { id: 2, q: '2. กระบวนการใดพบการแบ่งนิวเคลียสแบบลดจำนวนโครโมโซมลงครึ่งหนึ่ง?', a: 'Meiosis', opts: ['Mitosis', 'Meiosis', 'Binary Fission', 'Budding'] },
-    { id: 3, q: '3. ข้อใดคือคู่เบสที่ถูกต้องในโครงสร้างเกลียวคู่ของ DNA?', a: 'A คู่กับ T, G คู่กับ C', opts: ['A คู่กับ U, G คู่กับ C', 'A คู่กับ G, T คู่กับ C', 'A คู่กับ T, G คู่กับ C', 'A คู่กับ C, T คู่กับ G'] }
-  ];
+  const questions = EXAM_QUESTIONS;
+
+  const submitExam = useCallback(() => {
+    let pts = 0;
+    EXAM_QUESTIONS.forEach(q => {
+      if (answersRef.current[q.id] === q.a) pts++;
+    });
+    setScore(pts);
+    addToast('🎉 ทำข้อสอบเสร็จเรียบร้อย! ประกาศผลคะแนนแล้ว', 'success');
+  }, [addToast]);
 
   useEffect(() => {
     if (!started || score !== null) return;
@@ -1653,16 +1688,7 @@ function ExamCenterPage({ addToast, setPage }) {
       });
     }, 1000);
     return () => clearInterval(t);
-  }, [started, score]);
-
-  const submitExam = () => {
-    let pts = 0;
-    questions.forEach(q => {
-      if (answersRef.current[q.id] === q.a) pts++;
-    });
-    setScore(pts);
-    addToast('🎉 ทำข้อสอบเสร็จเรียบร้อย! ประกาศผลคะแนนแล้ว', 'success');
-  };
+  }, [started, score, submitExam]);
 
   const minutes = Math.floor(seconds / 60);
   const remSecs = seconds % 60;
@@ -1880,29 +1906,35 @@ function LoginPage({ onLogin, setPage, addToast }) {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handle = (e) => {
+  const handle = async (e) => {
     e.preventDefault();
     if (mode === 'register' && form.password !== form.confirmPassword) {
       addToast('รหัสผ่านไม่ตรงกัน', 'error'); return;
     }
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const user = await authenticate(mode, {
+        email: form.email,
+        password: form.password,
+        ...(mode === 'register' ? { name: form.name } : {}),
+      });
+      onLogin(user.role);
+      addToast('เข้าสู่ระบบสำเร็จ', 'success');
+      setPage(user.role === 'admin' ? 'admin' : 'dashboard');
+    } catch (error) {
+      addToast(error instanceof Error ? error.message : 'ไม่สามารถเข้าสู่ระบบได้', 'error');
+    } finally {
       setLoading(false);
-      if (form.email === 'admin@inbiologylogy.com' && form.password === 'admin2026') {
-        onLogin('admin'); addToast('🛡 เข้าสู่ระบบแอดมินสำเร็จ', 'success'); setPage('admin');
-      } else if (form.email && form.password.length >= 6) {
-        onLogin('student'); addToast('🎓 เข้าสู่ระบบสำเร็จ', 'success'); setPage('dashboard');
-      } else { addToast('อีเมลหรือรหัสผ่านไม่ถูกต้อง', 'error'); }
-    }, 800);
+    }
   };
 
   const inpStyle = { width: '100%', border: '1px solid #E5E7EB', borderRadius: '12px', padding: '10px 14px', fontSize: '13px', outline: 'none', boxSizing: 'border-box', fontFamily: 'inherit' };
   const labelStyle = { display: 'block', fontSize: '12px', fontWeight: 700, color: '#374151', marginBottom: '6px' };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', background: `linear-gradient(135deg, ${C.navy} 0%, ${C.sky} 100%)` }}>
+    <div className="login-layout" style={{ minHeight: '100vh', display: 'flex', background: `linear-gradient(135deg, ${C.navy} 0%, ${C.sky} 100%)` }}>
       {/* Left panel info */}
-      <div style={{
+      <div className="login-art" style={{
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
@@ -1911,14 +1943,14 @@ function LoginPage({ onLogin, setPage, addToast }) {
         padding: '48px',
         position: 'relative',
         overflow: 'hidden',
-        background: 'url(' + import.meta.env.BASE_URL + 'hero-bg.png)',
+        background: 'url(/hero-bg.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}>
       </div>
 
       {/* Right Form panel */}
-      <div style={{ flex: 1, maxWidth: '440px', background: 'white', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '48px' }}>
+      <div className="login-panel" style={{ flex: 1, maxWidth: '440px', background: 'white', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '48px' }}>
         <button onClick={() => setPage('landing')} style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#9CA3AF', fontSize: '13px', cursor: 'pointer', background: 'none', border: 'none', marginBottom: '24px', fontFamily: 'inherit', fontWeight: 700 }}
           onMouseOver={e => e.currentTarget.style.color = '#374151'}
           onMouseOut={e => e.currentTarget.style.color = '#9CA3AF'}>
@@ -1943,17 +1975,17 @@ function LoginPage({ onLogin, setPage, addToast }) {
           {mode === 'register' && (
             <div>
               <label style={labelStyle}>ชื่อ-นามสกุล</label>
-              <input style={inpStyle} type="text" placeholder="ชื่อ นามสกุล" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} />
+              <input style={inpStyle} type="text" autoComplete="name" required minLength={2} placeholder="ชื่อ นามสกุล" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} />
             </div>
           )}
           <div>
             <label style={labelStyle}>อีเมล</label>
-            <input style={inpStyle} type="email" placeholder="example@gmail.com" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} />
+            <input style={inpStyle} type="email" autoComplete="email" required placeholder="example@gmail.com" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} />
           </div>
           <div>
             <label style={labelStyle}>รหัสผ่าน</label>
             <div style={{ position: 'relative' }}>
-              <input style={{ ...inpStyle, paddingRight: '44px' }} type={show ? 'text' : 'password'} placeholder="ระบุรหัสผ่าน 6 ตัวขึ้นไป" value={form.password} onChange={e => setForm(p => ({ ...p, password: e.target.value }))} />
+              <input style={{ ...inpStyle, paddingRight: '44px' }} type={show ? 'text' : 'password'} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} required minLength={8} maxLength={128} placeholder="ระบุรหัสผ่านอย่างน้อย 8 ตัว" value={form.password} onChange={e => setForm(p => ({ ...p, password: e.target.value }))} />
               <button type="button" onClick={() => setShow(!show)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF' }}>
                 {show ? <EyeOff size={15} /> : <Eye size={15} />}
               </button>
@@ -1962,7 +1994,7 @@ function LoginPage({ onLogin, setPage, addToast }) {
           {mode === 'register' && (
             <div>
               <label style={labelStyle}>ยืนยันรหัสผ่าน</label>
-              <input style={inpStyle} type="password" placeholder="พิมพ์รหัสผ่านอีกครั้ง" value={form.confirmPassword} onChange={e => setForm(p => ({ ...p, confirmPassword: e.target.value }))} />
+              <input style={inpStyle} type="password" autoComplete="new-password" required minLength={8} maxLength={128} placeholder="พิมพ์รหัสผ่านอีกครั้ง" value={form.confirmPassword} onChange={e => setForm(p => ({ ...p, confirmPassword: e.target.value }))} />
             </div>
           )}
 
@@ -2175,8 +2207,8 @@ function AdminDashboard({ courses, setCourses, slides, setSlides, coupons, setCo
                         <td style={{ padding: '12px 16px', fontWeight: 800, color: C.red }}>฿{formatPrice(c.price)}</td>
                         <td style={{ padding: '12px 16px' }}>
                           <div style={{ display: 'flex', gap: '6px' }}>
-                            <button onClick={() => openEditCourse(c)} style={{ background: '#EFF6FF', border: 'none', padding: '6px', borderRadius: '6px', color: C.sky, cursor: 'pointer' }}><Edit size={12} /></button>
-                            <button onClick={() => confirmDeleteCourse(c)} style={{ background: '#FEF2F2', border: 'none', padding: '6px', borderRadius: '6px', color: C.red, cursor: 'pointer' }}><Trash2 size={12} /></button>
+                            <button type="button" aria-label={`แก้ไขคอร์ส ${c.title}`} onClick={() => openEditCourse(c)} style={{ background: '#EFF6FF', border: 'none', padding: '6px', borderRadius: '6px', color: C.sky, cursor: 'pointer' }}><Edit size={12} /></button>
+                            <button type="button" aria-label={`ลบคอร์ส ${c.title}`} onClick={() => confirmDeleteCourse(c)} style={{ background: '#FEF2F2', border: 'none', padding: '6px', borderRadius: '6px', color: C.red, cursor: 'pointer' }}><Trash2 size={12} /></button>
                           </div>
                         </td>
                       </tr>
@@ -2375,6 +2407,40 @@ function AdminDashboard({ courses, setCourses, slides, setSlides, coupons, setCo
               ))}
             </div>
           )}
+
+          <Modal isOpen={courseModal} onClose={() => setCourseModal(false)} title={editCourse ? 'แก้ไขคอร์สเรียน' : 'เพิ่มคอร์สใหม่'} wide>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div>
+                <label style={labelStyle} htmlFor="course-title">ชื่อคอร์ส</label>
+                <input id="course-title" type="text" value={courseForm.title} onChange={e => setCF(p => ({ ...p, title: e.target.value }))} style={inpStyle} />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(160px,1fr))', gap: '10px' }}>
+                <div>
+                  <label style={labelStyle} htmlFor="course-price">ราคาขาย</label>
+                  <input id="course-price" type="number" min="0" value={courseForm.price} onChange={e => setCF(p => ({ ...p, price: e.target.value }))} style={inpStyle} />
+                </div>
+                <div>
+                  <label style={labelStyle} htmlFor="course-original-price">ราคาเต็ม</label>
+                  <input id="course-original-price" type="number" min="0" value={courseForm.originalPrice} onChange={e => setCF(p => ({ ...p, originalPrice: e.target.value }))} style={inpStyle} />
+                </div>
+                <div>
+                  <label style={labelStyle} htmlFor="course-level">ระดับชั้น</label>
+                  <input id="course-level" type="text" value={courseForm.Level} onChange={e => setCF(p => ({ ...p, Level: e.target.value }))} style={inpStyle} />
+                </div>
+              </div>
+              <div>
+                <label style={labelStyle} htmlFor="course-image">URL รูปปก</label>
+                <input id="course-image" type="url" value={courseForm.imageUrl} onChange={e => setCF(p => ({ ...p, imageUrl: e.target.value }))} style={inpStyle} />
+              </div>
+              <div>
+                <label style={labelStyle} htmlFor="course-description">รายละเอียด</label>
+                <textarea id="course-description" rows={4} value={courseForm.description} onChange={e => setCF(p => ({ ...p, description: e.target.value }))} style={{ ...inpStyle, resize: 'vertical' }} />
+              </div>
+              <button type="button" onClick={saveCourse} style={{ background: C.sky, color: 'white', fontWeight: 800, fontSize: '13px', padding: '12px', borderRadius: '10px', border: 'none', cursor: 'pointer' }}>
+                บันทึกข้อมูลคอร์ส
+              </button>
+            </div>
+          </Modal>
 
           {/* Modal Slide / Banner Edit */}
           <Modal isOpen={slideModal} onClose={() => setSlideModal(false)} title={editSlide ? 'แก้ไข Banner' : 'เพิ่ม Banner ใหม่'}>
@@ -2829,7 +2895,7 @@ function LandingPage({ courses, slides, addToast, setPage, enrolledIds, onAddToC
               {/* Line Logo */}
               <div style={{ width: '80px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ width: '64px', height: '64px', borderRadius: '16px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <img src={import.meta.env.BASE_URL + 'social_line.png?v=1784606331114'} alt="LINE Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  <img src="/social_line.png" alt="LINE Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
               </div>
               <span style={{ fontSize: '16px', fontWeight: 850, color: '#374151' }}>ติดตามข่าวสาร</span>
@@ -2843,7 +2909,7 @@ function LandingPage({ courses, slides, addToast, setPage, enrolledIds, onAddToC
               {/* TikTok Logo */}
               <div style={{ width: '80px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ width: '64px', height: '64px', borderRadius: '16px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#010101' }}>
-                  <img src={import.meta.env.BASE_URL + 'social_tiktok.png?v=1784606331114'} alt="TikTok Logo" style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.57)' }} />
+                  <img src="/social_tiktok.png" alt="TikTok Logo" style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.57)' }} />
                 </div>
               </div>
               <span style={{ fontSize: '16px', fontWeight: 850, color: '#374151' }}>ติดตามข่าวสาร</span>
@@ -2861,7 +2927,7 @@ function LandingPage({ courses, slides, addToast, setPage, enrolledIds, onAddToC
           <div className="footer-grid" style={{ gap: '32px', marginBottom: '32px' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                <img src={import.meta.env.BASE_URL + 'logo.png?v=1784605132747'} alt="INBIOLOGY Logo" style={{ height: '44px', width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 2px 8px rgba(255,255,255,0.2))' }} />
+                <img src="/logo.png" alt="INBIOLOGY Logo" style={{ height: '44px', width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 2px 8px rgba(255,255,255,0.2))' }} />
                 <span style={{ fontWeight: 900, fontSize: '22px' }}>INBIOLOGY</span>
               </div>
               <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '12px', lineHeight: 1.6, margin: 0, fontFamily: C.fontBody }}>
@@ -2979,24 +3045,31 @@ function GuidePage({ setPage }) {
 // SETTINGS PAGE
 // ─────────────────────────────────────────────────────────────────────────────
 function SettingsPage({ setPage, darkMode, setDarkMode, lang, setLang, addToast, userRole }) {
-  const [fontSize, setFontSize] = useState(() => localStorage.getItem('inbiology_fontsize') || 'medium');
+  const [fontSize, setFontSize] = useState('medium');
   const [toastNotif, setToastNotif] = useState(true);
   const [emailNotif, setEmailNotif] = useState(true);
   const [pushNotif, setPushNotif] = useState(false);
   const [courseReminder, setCourseReminder] = useState(true);
   const [examAlert, setExamAlert] = useState(true);
-  const [videoSpeed, setVideoSpeed] = useState(() => localStorage.getItem('inbiology_videospeed') || '1');
+  const [videoSpeed, setVideoSpeed] = useState('1');
   const [autoPlay, setAutoPlay] = useState(true);
   const [showSidebar, setShowSidebar] = useState(true);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [highContrast, setHighContrast] = useState(false);
+  const [settingsHydrated, setSettingsHydrated] = useState(false);
+
+  useEffect(() => {
+    setFontSize(localStorage.getItem('inbiology_fontsize') || 'medium');
+    setVideoSpeed(localStorage.getItem('inbiology_videospeed') || '1');
+    setSettingsHydrated(true);
+  }, []);
 
   // Apply font size to root
   useEffect(() => {
     const sizes = { small: '13px', medium: '15px', large: '17px' };
     document.documentElement.style.setProperty('--app-font-size', sizes[fontSize] || '15px');
-    localStorage.setItem('inbiology_fontsize', fontSize);
-  }, [fontSize]);
+    if (settingsHydrated) localStorage.setItem('inbiology_fontsize', fontSize);
+  }, [fontSize, settingsHydrated]);
 
   // Apply high contrast
   useEffect(() => {
@@ -3075,7 +3148,7 @@ function SettingsPage({ setPage, darkMode, setDarkMode, lang, setLang, addToast,
 
           <div style={rowStyle}>
             <div><p style={labelStyle}>▶ ความเร็วเล่นวิดีโอ (ค่าเริ่มต้น)</p><p style={subStyle}>กำหนดความเร็วเริ่มต้นสำหรับทุกวิดีโอ</p></div>
-            <select value={videoSpeed} onChange={e => { setVideoSpeed(e.target.value); localStorage.setItem('inbiology_videospeed', e.target.value); addToast(`▶ ตั้งความเร็ววิดีโอเป็น ${e.target.value}x แล้ว`, 'info'); }} style={{ fontSize: '12px', fontWeight: 800, border: '1.5px solid #E5E7EB', borderRadius: '8px', padding: '6px 10px', cursor: 'pointer', fontFamily: 'inherit', background: 'white', color: '#374151' }}>
+            <select value={videoSpeed} onChange={e => { setVideoSpeed(e.target.value); if (settingsHydrated) localStorage.setItem('inbiology_videospeed', e.target.value); addToast(`▶ ตั้งความเร็ววิดีโอเป็น ${e.target.value}x แล้ว`, 'info'); }} style={{ fontSize: '12px', fontWeight: 800, border: '1.5px solid #E5E7EB', borderRadius: '8px', padding: '6px 10px', cursor: 'pointer', fontFamily: 'inherit', background: 'white', color: '#374151' }}>
               {['0.5', '0.75', '1', '1.25', '1.5', '1.75', '2'].map(s => (
                 <option key={s} value={s}>{s}x</option>
               ))}
@@ -3161,7 +3234,7 @@ function SettingsPage({ setPage, darkMode, setDarkMode, lang, setLang, addToast,
                 { label: 'ดาวน์โหลดโน้ตทั้งหมด', icon: '📥', sub: 'บันทึกโน้ตเรียนทุกวิชาเป็นไฟล์ PDF' },
                 { label: 'นโยบายความเป็นส่วนตัว', icon: '🔒', sub: 'ข้อมูลที่เราเก็บรวบรวมและวิธีการใช้งาน' },
                 { label: 'แจ้งปัญหาการใช้งาน', icon: '🐛', sub: 'ส่งรายงานบั๊กหรือข้อเสนอแนะ' },
-              ].map((b, i, arr) => (
+              ].map(b => (
                 <button key={b.label} onClick={() => addToast(`${b.icon} ${b.label} — กำลังพัฒนา`, 'info')} style={{
                   width: '100%', display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 16px',
                   border: '1px solid #E5E7EB', borderRadius: '12px', background: '#FAFAFA', cursor: 'pointer',
@@ -3233,15 +3306,49 @@ function SettingsPage({ setPage, darkMode, setDarkMode, lang, setLang, addToast,
 // ROOT APP
 // ─────────────────────────────────────────────────────────────────────────────
 export default function App() {
-  const [page, setPage] = useState('landing');
+  const { page, setPage } = useLegacyNavigation();
   const [userRole, setUserRole] = useState('guest');
-  const [enrolledCourses, setEnrolledCourses] = useState(['bio-intensive-1']);
+  const [authReady, setAuthReady] = useState(false);
+  const [enrolledCourses] = useState(['bio-intensive-1']);
   const [activeCourseId, setActiveCourseId] = useState('bio-intensive-1');
   const [toasts, setToasts] = useState([]);
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [lang, setLang] = useState('TH');
+
+  useEffect(() => {
+    let cancelled = false;
+    getCurrentUser()
+      .then(user => {
+        if (!cancelled && user) setUserRole(user.role);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setAuthReady(true);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    if (!authReady) return;
+    if (page === 'admin' && userRole !== 'admin') {
+      setPage('login');
+      return;
+    }
+    if (!PUBLIC_PAGES.has(page) && userRole === 'guest') setPage('login');
+  }, [authReady, page, setPage, userRole]);
+
+  const handleLogout = async () => {
+    try {
+      await logoutSession();
+    } catch {
+      addToast('ออกจากระบบเฉพาะอุปกรณ์นี้แล้ว', 'info');
+    } finally {
+      setUserRole('guest');
+      setPage('landing');
+    }
+  };
 
   // Apply dark mode CSS class on body
   useEffect(() => {
@@ -3266,11 +3373,54 @@ export default function App() {
     { id: 1, courseId: 'bio-intensive-1', courseTitle: '🧬 Bio Intensive I: Introbiology & Biochemistry & Cell biology', time: 'โครงสร้างและหน้าที่ของออร์แกเนลล์', text: 'ออร์แกเนลล์เดี่ยวที่มีเยื่อหุ้ม 1 ชั้น เช่น Lysosome ทำหน้าที่ย่อยสารและสิ่งแปลกปลอมในเซลล์, Vacuole เก็บสะสมน้ำและของเสีย' }
   ]);
 
-  const [courses, setCourses] = useState(() => { try { const s = localStorage.getItem('inbiology_courses_v9'); return s ? JSON.parse(s) : COURSES; } catch { return COURSES; } });
-  useEffect(() => { localStorage.setItem('inbiology_courses_v9', JSON.stringify(courses)); }, [courses]);
+  const [courses, setCourses] = useState(COURSES);
+  const [slides, setSlides] = useState(DEFAULT_SLIDES);
+  const [catalogHydrated, setCatalogHydrated] = useState(false);
 
-  const [slides, setSlides] = useState(() => { try { const s = localStorage.getItem('inbiology_slides_v9'); return s ? JSON.parse(s) : DEFAULT_SLIDES; } catch { return DEFAULT_SLIDES; } });
-  useEffect(() => { localStorage.setItem('inbiology_slides_v9', JSON.stringify(slides)); }, [slides]);
+  useEffect(() => {
+    let cancelled = false;
+    try {
+      const storedCourses = localStorage.getItem('inbiology_courses_v9');
+      const storedSlides = localStorage.getItem('inbiology_slides_v9');
+      if (storedCourses) setCourses(JSON.parse(storedCourses));
+      if (storedSlides) setSlides(JSON.parse(storedSlides));
+    } catch {
+      // Ignore malformed prototype data and keep the server-rendered defaults.
+    }
+    listPublishedCourses()
+      .then((publishedCourses) => {
+        if (cancelled || publishedCourses.length === 0) return;
+        setCourses(publishedCourses.map((course) => ({
+          id: course.slug,
+          slug: course.slug,
+          title: course.title,
+          description: course.description || '',
+          price: course.price,
+          originalPrice: course.originalPrice || course.price,
+          Level: course.level || 'ทุกระดับ',
+          imageUrl: course.imageUrl?.startsWith('/') ? course.imageUrl : '/course-biology.jpg',
+          lessons: [],
+          rating: 5,
+          reviewCount: 0,
+          status: course.status,
+        })));
+      })
+      .catch(() => {
+        // Keep local prototype data when the API/database is unavailable.
+      })
+      .finally(() => {
+        if (!cancelled) setCatalogHydrated(true);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    if (catalogHydrated) localStorage.setItem('inbiology_courses_v9', JSON.stringify(courses));
+  }, [courses, catalogHydrated]);
+
+  useEffect(() => {
+    if (catalogHydrated) localStorage.setItem('inbiology_slides_v9', JSON.stringify(slides));
+  }, [slides, catalogHydrated]);
 
   const addToast = (msg, type = 'info') => { const id = ++_tid; setToasts(p => [...p, { id, message: msg, type }]); setTimeout(() => setToasts(p => p.filter(t => t.id !== id)), 4000); };
 
@@ -3281,21 +3431,18 @@ export default function App() {
     addToast(`🛒 เพิ่ม "${course.title}" ลงตะกร้าแล้ว`, 'success');
   };
 
-  const checkout = () => {
-    // Create new order on checkout
-    const newOrders = cart.map((c, i) => ({
-      id: `ORD-${Date.now() + i}`,
-      studentName: userRole === 'admin' ? '🛡 Admin' : '🎓 พี่วิทศรุต',
-      courseTitle: c.title,
-      price: c.price,
-      date: new Date().toLocaleDateString('th-TH'),
-      status: 'approved',
-      paymentMethod: 'PromptPay'
-    }));
-    setOrders(prev => [...prev, ...newOrders]);
-    setEnrolledCourses(p => [...new Set([...p, ...cart.map(c => c.id)])]);
-    addToast(`🎉 ทำรายการสั่งซื้อชำระเงินสำเร็จแล้ว คอร์สถูกเพิ่มลงใน Dashboard`, 'success');
-    setCart([]); setCartOpen(false); setPage('dashboard');
+  const checkout = async ({ couponCode, paymentMethod }) => {
+    try {
+      const order = await createPendingOrder({
+        courseSlugs: cart.map(course => course.id),
+        couponCode: couponCode || undefined,
+        paymentMethod,
+      });
+      addToast(`สร้างคำสั่งซื้อ ${order.orderId} แล้ว กรุณาดำเนินการชำระเงิน`, 'success');
+      if (order.paymentUrl) window.location.assign(order.paymentUrl);
+    } catch (error) {
+      addToast(error instanceof Error ? error.message : 'ไม่สามารถสร้างคำสั่งซื้อได้', 'error');
+    }
   };
   return (
     <div id="app-root" style={{ fontFamily: "'Outfit','Prompt',sans-serif", WebkitFontSmoothing: 'antialiased', background: C.page, minHeight: '100vh', position: 'relative', overflowX: 'hidden' }}>
@@ -3328,7 +3475,7 @@ export default function App() {
       }} />
       {page !== 'login' && (
         <Navbar setPage={setPage} userRole={userRole}
-          onLogout={() => { setUserRole('guest'); setPage('landing'); addToast('ออกจากระบบสำเร็จแล้ว', 'info'); }}
+          onLogout={handleLogout}
           cartCount={cart.length} openCart={() => setCartOpen(true)}
           addToast={addToast}
           darkMode={darkMode} setDarkMode={setDarkMode}
@@ -3341,7 +3488,7 @@ export default function App() {
       {page === 'dashboard' && <StudentDashboard courses={courses} enrolledCourses={enrolledCourses} setPage={setPage} addToast={addToast} setActiveCourseId={setActiveCourseId} notes={notes} />}
       {page === 'classroom' && <ClassroomPage courses={courses} enrolledCourses={enrolledCourses} activeCourseId={activeCourseId} addToast={addToast} setPage={setPage} notes={notes} setNotes={setNotes} />}
       {page === 'quiz' && <ExamCenterPage addToast={addToast} setPage={setPage} />}
-      {page === 'checkout' && <CheckoutPage cart={cart} coupons={coupons} onRemove={id => setCart(p => p.filter(c => c.id !== id))} onCheckout={checkout} setPage={setPage} addToast={addToast} />}
+      {page === 'checkout' && <CheckoutPage cart={cart} coupons={coupons} onCheckout={checkout} addToast={addToast} />}
       {page === 'admin' && <AdminDashboard courses={courses} setCourses={setCourses} slides={slides} setSlides={setSlides} coupons={coupons} setCoupons={setCoupons} orders={orders} setOrders={setOrders} addToast={addToast} />}
 
       {/* Fallback mockup pages to align other options in the navbar */}
