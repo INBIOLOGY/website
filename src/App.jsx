@@ -50,7 +50,7 @@ const COURSES = [
       { id: 'l5', title: 'EP 5: เอนไซม์และอัตราการเกิดปฏิกิริยาเคมีในสิ่งมีชีวิต', duration: 45 },
       { id: 'l6', title: 'EP 6: วัฏจักรเซลล์ การแบ่งเซลล์แบบ Mitosis และ Meiosis', duration: 60 },
     ],
-    imageUrl: './1_0.png',
+    imageUrl: import.meta.env.BASE_URL + '1_0.png',
     rating: 4.9, reviewCount: 450, Level: 'ม.4', Category: '🧬 Bio Intensive'
   },
   {
@@ -70,7 +70,7 @@ const COURSES = [
       { id: 'l5', title: 'EP 5: การกลายพันธุ์ (Mutation) และเทคโนโลยีทางดีเอ็นเอ (Recombinant DNA & PCR)', duration: 55 },
       { id: 'l6', title: 'EP 6: หลักการวิวัฒนาการของสิ่งมีชีวิต และพันธุศาสตร์ประชากร', duration: 50 },
     ],
-    imageUrl: './2_0.png',
+    imageUrl: import.meta.env.BASE_URL + '2_0.png',
     rating: 5.0, reviewCount: 380, Level: 'ม.5', Category: '🧫 Bio Intensive'
   },
   {
@@ -90,7 +90,7 @@ const COURSES = [
       { id: 'l5', title: 'EP 5: การสืบพันธุ์แบบอาศัยเพศและการปฏิสนธิซ้อนของพืชดอก (Double Fertilization)', duration: 50 },
       { id: 'l6', title: 'EP 6: ฮอร์โมนพืชและการตอบสนองต่อสิ่งแวดล้อม (Plant Hormones & Tropism)', duration: 45 },
     ],
-    imageUrl: './3_0.png',
+    imageUrl: import.meta.env.BASE_URL + '3_0.png',
     rating: 4.9, reviewCount: 310, Level: 'ม.5', Category: '🌱 Bio Intensive'
   },
   {
@@ -110,7 +110,7 @@ const COURSES = [
       { id: 'l5', title: 'EP 5: ระบบขับถ่าย โครงสร้างไตและการสร้างปัสสาวะ (Excretory System & Kidney)', duration: 55 },
       { id: 'l6', title: 'EP 6: การรักษาดุลยภาพของน้ำ สารเคมี และอุณหภูมิในร่างกาย (Homeostasis)', duration: 40 },
     ],
-    imageUrl: './4_0.png',
+    imageUrl: import.meta.env.BASE_URL + '4_0.png',
     rating: 4.8, reviewCount: 415, Level: 'ม.6', Category: '🦴 Bio Intensive'
   },
   {
@@ -130,7 +130,7 @@ const COURSES = [
       { id: 'l5', title: 'EP 5: ระบบสืบพันธุ์ การสร้างเซลล์สืบพันธุ์ และการเจริญเติบโตของเอ็มบริโอ (Reproduction & Development)', duration: 60 },
       { id: 'l6', title: 'EP 6: พฤติกรรมของสัตว์ พฤติกรรมที่มีมาแต่กำเนิดและการเรียนรู้ (Animal Behavior)', duration: 45 },
     ],
-    imageUrl: './5_0.png',
+    imageUrl: import.meta.env.BASE_URL + '5_0.png',
     rating: 4.9, reviewCount: 390, Level: 'ม.6', Category: '🧠 Bio Intensive'
   },
   {
@@ -150,7 +150,7 @@ const COURSES = [
       { id: 'l5', title: 'EP 5: การเปลี่ยนแปลงแทนที่ของชีวบริเวณและไบโอมโลก (Ecological Succession & Biomes)', duration: 45 },
       { id: 'l6', title: 'EP 6: มนุษย์กับความยั่งยืนของทรัพยากรธรรมชาติและสิ่งแวดล้อม (Environmental Issues)', duration: 40 },
     ],
-    imageUrl: './6_0.png',
+    imageUrl: import.meta.env.BASE_URL + '6_0.png',
     rating: 4.9, reviewCount: 290, Level: 'ม.6', Category: '🌿 Bio Intensive'
   },
 
@@ -172,7 +172,7 @@ const COURSES = [
       { id: 'l5', title: 'EP 5: ติวเข้ม สอวน.: Taxonomy, Evolution & Ecology ระดับแข่งขัน', duration: 60 },
       { id: 'l6', title: 'EP 6: ตะลุยโจทย์แนวสอบคัดเลือก สอวน. ค่าย 1 และ ค่าย 2', duration: 65 },
     ],
-    imageUrl: './7_0.png',
+    imageUrl: import.meta.env.BASE_URL + '7_0.png',
     rating: 5.0, reviewCount: 620, Level: 'ติวสอบ', Category: '🏅 คอร์สพิเศษ'
   },
   {
@@ -190,7 +190,7 @@ const COURSES = [
       { id: 'l3', title: 'EP 3: ตะลุยโจทย์ สอวน. ข้อ 51-75 (Plant & Animal Systems) + เฉลยละเอียด', duration: 50 },
       { id: 'l4', title: 'EP 4: ตะลุยโจทย์ สอวน. ข้อ 76-100 (Ecology & Taxonomy) + เฉลยละเอียด', duration: 55 },
     ],
-    imageUrl: './10_0.png',
+    imageUrl: import.meta.env.BASE_URL + '10_0.png',
     rating: 4.9, reviewCount: 890, Level: 'ติวสอบ', Category: '🏅 คอร์สพิเศษ'
   },
   {
@@ -208,7 +208,7 @@ const COURSES = [
       { id: 'l3', title: 'EP 3: ตะลุยข้อสอบจริง A-Level ชุดที่ 1 (ข้อ 26-50) + เฉลยละเอียดชี้จุดลวง', duration: 65 },
       { id: 'l4', title: 'EP 4: จำลองการทำข้อสอบ Mock Test A-Level ชุดที่ 2 + เฉลยวิเคราะห์รายข้อ', duration: 70 },
     ],
-    imageUrl: './11.png',
+    imageUrl: import.meta.env.BASE_URL + '11.png',
     rating: 5.0, reviewCount: 750, Level: 'ติวสอบ', Category: '📖 คอร์สพิเศษ'
   },
   {
@@ -227,7 +227,7 @@ const COURSES = [
       { id: 'l4', title: 'EP 4: สรุปเข้ม A-Level: Animal Biology & Human Physiology ทุกระบบ', duration: 75 },
       { id: 'l5', title: 'EP 5: สรุปเข้ม A-Level: Ecology, Taxonomy & Biodiversity', duration: 55 },
     ],
-    imageUrl: './12.png',
+    imageUrl: import.meta.env.BASE_URL + '12.png',
     rating: 4.9, reviewCount: 680, Level: 'ม.6', Category: '📖 คอร์สพิเศษ'
   },
 
@@ -247,16 +247,16 @@ const COURSES = [
       { id: 'l3', title: 'EP 3: สรุปสูตรลัด Plant & Human Biology (คอร์ส 99 บาท)', duration: 45 },
       { id: 'l4', title: 'EP 4: สรุปประเด็นเน้น Ecology & Taxonomy (คอร์ส 99 บาท)', duration: 35 },
     ],
-    imageUrl: './11.png',
+    imageUrl: import.meta.env.BASE_URL + '11.png',
     rating: 5.0, reviewCount: 1420, Level: 'ติวสอบ', Category: '⚡ คอร์ส 99 บาท'
   }
 ];
 
 const FREE_TRIALS = [
-  { id: 'ft1', title: 'คลิปทดลองเรียน Bio Intensive I: โครงสร้างเซลล์และกลไกการลำเลียงสาร', duration: '45 นาที', course: 'Bio Intensive I', imageUrl: './1_0.png' },
-  { id: 'ft2', title: 'คลิปทดลองเรียน Bio Intensive II: เทคนิคคำนวณโจทย์พันธุศาสตร์เมนเดล', duration: '35 นาที', course: 'Bio Intensive II', imageUrl: './2_0.png' },
-  { id: 'ft3', title: 'คลิปทดลองเรียน คอร์สพิเศษ สอวน.: เจาะลึกข้อสอบคัดเลือกค่าย 1', duration: '40 นาที', course: 'คอร์ส ติวเข้ม สอวน.', imageUrl: './7_0.png' },
-  { id: 'ft4', title: 'คลิปทดลองเรียน คอร์ส 99 บาท: สรุปสกัดเข้ม Quick Review ม.ปลาย', duration: '30 นาที', course: 'คอร์ส 99 บาท', imageUrl: './11.png' }
+  { id: 'ft1', title: 'คลิปทดลองเรียน Bio Intensive I: โครงสร้างเซลล์และกลไกการลำเลียงสาร', duration: '45 นาที', course: 'Bio Intensive I', imageUrl: import.meta.env.BASE_URL + '1_0.png' },
+  { id: 'ft2', title: 'คลิปทดลองเรียน Bio Intensive II: เทคนิคคำนวณโจทย์พันธุศาสตร์เมนเดล', duration: '35 นาที', course: 'Bio Intensive II', imageUrl: import.meta.env.BASE_URL + '2_0.png' },
+  { id: 'ft3', title: 'คลิปทดลองเรียน คอร์สพิเศษ สอวน.: เจาะลึกข้อสอบคัดเลือกค่าย 1', duration: '40 นาที', course: 'คอร์ส ติวเข้ม สอวน.', imageUrl: import.meta.env.BASE_URL + '7_0.png' },
+  { id: 'ft4', title: 'คลิปทดลองเรียน คอร์ส 99 บาท: สรุปสกัดเข้ม Quick Review ม.ปลาย', duration: '30 นาที', course: 'คอร์ส 99 บาท', imageUrl: import.meta.env.BASE_URL + '11.png' }
 ];
 
 const MOCK_STUDENTS = [
@@ -448,7 +448,7 @@ function Navbar({ setPage, userRole, onLogout, cartCount, openCart, addToast, da
 
           {/* ── Logo ── */}
           <button onClick={() => setPage('landing')} style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', background: 'none', border: 'none', flexShrink: 0 }}>
-            <img src="./logo.png?v=1784605132747" alt="INBIOLOGY Logo" style={{ height: '48px', width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 2px 6px rgba(185,28,28,0.15))' }} />
+            <img src={import.meta.env.BASE_URL + 'logo.png?v=1784605132747'} alt="INBIOLOGY Logo" style={{ height: '48px', width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 2px 6px rgba(185,28,28,0.15))' }} />
             <div style={{ textAlign: 'left' }}>
               <span style={{ fontWeight: 900, fontSize: '20px', color: C.navy, display: 'block', lineHeight: 1 }}>INBIOLOGY</span>
               <span style={{ fontSize: '10px', fontWeight: 700, color: C.sky, display: 'block', marginTop: '2px' }}>by พี่ต้น</span>
@@ -776,7 +776,7 @@ function HeroSection({ onStart, onView, courses }) {
       paddingBottom: '80px',
       overflow: 'hidden',
       position: 'relative',
-      background: 'linear-gradient(to bottom, rgba(15, 23, 42, 0.2) 0%, rgba(15, 23, 42, 0.05) 50%, rgba(15, 23, 42, 0.3) 100%), url(/hero-bg.jpg) center center / cover no-repeat',
+      background: 'linear-gradient(to bottom, rgba(15, 23, 42, 0.2) 0%, rgba(15, 23, 42, 0.05) 50%, rgba(15, 23, 42, 0.3) 100%), url(' + import.meta.env.BASE_URL + 'hero-bg.jpg) center center / cover no-repeat',
       minHeight: '700px',
       display: 'flex',
       alignItems: 'center'
@@ -904,7 +904,7 @@ function HeroSection({ onStart, onView, courses }) {
                     boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
                     overflow: 'hidden', background: '#1E3A8A', flexShrink: 0,
                   }}>
-                    <img src="./instructor.jpg" alt="พี่ต้น — ผู้สอน INBIOLOGY" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
+                    <img src={import.meta.env.BASE_URL + 'instructor.jpg'} alt="พี่ต้น — ผู้สอน INBIOLOGY" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
                   </div>
                   {/* Online status indicator */}
                   <span style={{
@@ -1343,7 +1343,7 @@ function CheckoutPage({ cart, coupons, onRemove, onCheckout, setPage, addToast }
               {/* QR Mockup */}
               <div style={{ width: '150px', height: '150px', background: 'white', border: '1.5px solid #E5E7EB', borderRadius: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '8px' }}>
                 <div style={{ background: C.navy, color: 'white', fontSize: '10px', fontWeight: 900, padding: '2px 8px', borderRadius: '4px', marginBottom: '8px' }}>Prompt Pay</div>
-                <img src="./logo.png" style={{ width: '80px', height: '80px', objectFit: 'contain', opacity: 0.8 }} alt="" />
+                <img src={import.meta.env.BASE_URL + 'logo.png'} style={{ width: '80px', height: '80px', objectFit: 'contain', opacity: 0.8 }} alt="" />
                 <div style={{ fontSize: '9px', color: '#9CA3AF', marginTop: '6px' }}>Scan to Pay</div>
               </div>
               <p style={{ fontSize: '11px', color: '#6B7280', margin: 0 }}>ชื่อบัญชี: INBIOLOGY Academy (by พี่ต้น)</p>
@@ -1911,7 +1911,7 @@ function LoginPage({ onLogin, setPage, addToast }) {
         padding: '48px',
         position: 'relative',
         overflow: 'hidden',
-        background: 'url(/hero-bg.png)',
+        background: 'url(' + import.meta.env.BASE_URL + 'hero-bg.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}>
@@ -2829,7 +2829,7 @@ function LandingPage({ courses, slides, addToast, setPage, enrolledIds, onAddToC
               {/* Line Logo */}
               <div style={{ width: '80px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ width: '64px', height: '64px', borderRadius: '16px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <img src="./social_line.png?v=1784606331114" alt="LINE Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  <img src={import.meta.env.BASE_URL + 'social_line.png?v=1784606331114'} alt="LINE Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
               </div>
               <span style={{ fontSize: '16px', fontWeight: 850, color: '#374151' }}>ติดตามข่าวสาร</span>
@@ -2843,7 +2843,7 @@ function LandingPage({ courses, slides, addToast, setPage, enrolledIds, onAddToC
               {/* TikTok Logo */}
               <div style={{ width: '80px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div style={{ width: '64px', height: '64px', borderRadius: '16px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#010101' }}>
-                  <img src="./social_tiktok.png?v=1784606331114" alt="TikTok Logo" style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.57)' }} />
+                  <img src={import.meta.env.BASE_URL + 'social_tiktok.png?v=1784606331114'} alt="TikTok Logo" style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.57)' }} />
                 </div>
               </div>
               <span style={{ fontSize: '16px', fontWeight: 850, color: '#374151' }}>ติดตามข่าวสาร</span>
@@ -2861,7 +2861,7 @@ function LandingPage({ courses, slides, addToast, setPage, enrolledIds, onAddToC
           <div className="footer-grid" style={{ gap: '32px', marginBottom: '32px' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                <img src="./logo.png?v=1784605132747" alt="INBIOLOGY Logo" style={{ height: '44px', width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 2px 8px rgba(255,255,255,0.2))' }} />
+                <img src={import.meta.env.BASE_URL + 'logo.png?v=1784605132747'} alt="INBIOLOGY Logo" style={{ height: '44px', width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 2px 8px rgba(255,255,255,0.2))' }} />
                 <span style={{ fontWeight: 900, fontSize: '22px' }}>INBIOLOGY</span>
               </div>
               <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '12px', lineHeight: 1.6, margin: 0, fontFamily: C.fontBody }}>
