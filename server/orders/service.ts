@@ -87,9 +87,9 @@ export async function createOrder(userId: string, input: CheckoutRequest) {
     const totalSatang = Math.max(0, subtotalSatang - discountSatang)
     const [order] = await transaction<{ id: string }[]>`
       INSERT INTO orders (
-        user_id, status, subtotal_satang, discount_satang, total_satang, coupon_id
+        user_id, status, payment_method, subtotal_satang, discount_satang, total_satang, coupon_id
       ) VALUES (
-        ${userId}, 'pending', ${subtotalSatang}, ${discountSatang}, ${totalSatang}, ${couponId}
+        ${userId}, 'pending', ${input.paymentMethod}, ${subtotalSatang}, ${discountSatang}, ${totalSatang}, ${couponId}
       )
       RETURNING id
     `

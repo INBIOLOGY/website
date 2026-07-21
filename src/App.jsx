@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useId, useCallback } from 'react';
 import { useLegacyNavigation } from '@/features/navigation/use-legacy-navigation';
 import { authenticate, getCurrentUser, logoutSession } from '@/features/auth/client';
 import { createPendingOrder } from '@/features/checkout/client';
+import { listPublishedCourses } from '@/features/catalog/client';
 import { PUBLIC_PAGES } from '@/features/navigation/routes';
 import {
   BookOpen, Play, Star, Users, Clock, Download, X, Check,
@@ -1974,17 +1975,17 @@ function LoginPage({ onLogin, setPage, addToast }) {
           {mode === 'register' && (
             <div>
               <label style={labelStyle}>ชื่อ-นามสกุล</label>
-              <input style={inpStyle} type="text" placeholder="ชื่อ นามสกุล" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} />
+              <input style={inpStyle} type="text" autoComplete="name" required minLength={2} placeholder="ชื่อ นามสกุล" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} />
             </div>
           )}
           <div>
             <label style={labelStyle}>อีเมล</label>
-            <input style={inpStyle} type="email" placeholder="example@gmail.com" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} />
+            <input style={inpStyle} type="email" autoComplete="email" required placeholder="example@gmail.com" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} />
           </div>
           <div>
             <label style={labelStyle}>รหัสผ่าน</label>
             <div style={{ position: 'relative' }}>
-              <input style={{ ...inpStyle, paddingRight: '44px' }} type={show ? 'text' : 'password'} placeholder="ระบุรหัสผ่าน 6 ตัวขึ้นไป" value={form.password} onChange={e => setForm(p => ({ ...p, password: e.target.value }))} />
+              <input style={{ ...inpStyle, paddingRight: '44px' }} type={show ? 'text' : 'password'} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} required minLength={8} maxLength={128} placeholder="ระบุรหัสผ่านอย่างน้อย 8 ตัว" value={form.password} onChange={e => setForm(p => ({ ...p, password: e.target.value }))} />
               <button type="button" onClick={() => setShow(!show)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF' }}>
                 {show ? <EyeOff size={15} /> : <Eye size={15} />}
               </button>
@@ -1993,7 +1994,7 @@ function LoginPage({ onLogin, setPage, addToast }) {
           {mode === 'register' && (
             <div>
               <label style={labelStyle}>ยืนยันรหัสผ่าน</label>
-              <input style={inpStyle} type="password" placeholder="พิมพ์รหัสผ่านอีกครั้ง" value={form.confirmPassword} onChange={e => setForm(p => ({ ...p, confirmPassword: e.target.value }))} />
+              <input style={inpStyle} type="password" autoComplete="new-password" required minLength={8} maxLength={128} placeholder="พิมพ์รหัสผ่านอีกครั้ง" value={form.confirmPassword} onChange={e => setForm(p => ({ ...p, confirmPassword: e.target.value }))} />
             </div>
           )}
 
@@ -3377,6 +3378,7 @@ export default function App() {
   const [catalogHydrated, setCatalogHydrated] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
     try {
       const storedCourses = localStorage.getItem('inbiology_courses_v9');
       const storedSlides = localStorage.getItem('inbiology_slides_v9');
@@ -3384,9 +3386,32 @@ export default function App() {
       if (storedSlides) setSlides(JSON.parse(storedSlides));
     } catch {
       // Ignore malformed prototype data and keep the server-rendered defaults.
-    } finally {
-      setCatalogHydrated(true);
     }
+    listPublishedCourses()
+      .then((publishedCourses) => {
+        if (cancelled || publishedCourses.length === 0) return;
+        setCourses(publishedCourses.map((course) => ({
+          id: course.slug,
+          slug: course.slug,
+          title: course.title,
+          description: course.description || '',
+          price: course.price,
+          originalPrice: course.originalPrice || course.price,
+          Level: course.level || 'ทุกระดับ',
+          imageUrl: course.imageUrl?.startsWith('/') ? course.imageUrl : '/course-biology.jpg',
+          lessons: [],
+          rating: 5,
+          reviewCount: 0,
+          status: course.status,
+        })));
+      })
+      .catch(() => {
+        // Keep local prototype data when the API/database is unavailable.
+      })
+      .finally(() => {
+        if (!cancelled) setCatalogHydrated(true);
+      });
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
