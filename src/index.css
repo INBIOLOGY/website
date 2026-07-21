@@ -1,0 +1,655 @@
+/* ── Modern Fonts: Outfit (English) + Prompt (Thai) ── */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Prompt:wght@300;400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+/* ── Typography Base ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --app-font-size: 15px;
+  --font-body:    'Outfit', 'Prompt', sans-serif;
+  --font-heading: 'Outfit', 'Prompt', sans-serif;
+  --line-height-body: 1.65;
+  --line-height-heading: 1.18;
+  --letter-spacing-heading: -0.025em;
+  --letter-spacing-label: -0.01em;
+}
+
+html {
+  font-size: var(--app-font-size);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--app-font-size);
+  line-height: var(--line-height-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  margin: 0;
+  padding: 0;
+}
+
+/* Headings: tight tracking, strong weight */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  line-height: var(--line-height-heading);
+  letter-spacing: var(--letter-spacing-heading);
+  margin-top: 0;
+  font-weight: 800;
+}
+
+h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 900; }
+h2 { font-size: clamp(1.3rem, 3vw, 1.9rem); font-weight: 800; }
+h3 { font-size: clamp(1.1rem, 2.5vw, 1.5rem); font-weight: 800; }
+h4 { font-size: clamp(0.95rem, 2vw, 1.2rem); font-weight: 700; }
+
+/* Body text */
+p {
+  line-height: var(--line-height-body);
+  margin-top: 0;
+}
+
+/* Buttons and inputs inherit font */
+button, input, select, textarea {
+  font-family: var(--font-body);
+  font-size: inherit;
+}
+
+/* Label / badge text */
+.label-sm {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ── Animations ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-14px); }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(185,28,28,0.3); }
+  50%       { box-shadow: 0 0 0 8px rgba(185,28,28,0); }
+}
+
+.animate-fade-in-up  { animation: fadeInUp 0.45s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-fade-in     { animation: fadeIn 0.3s ease both; }
+.animate-slide-down  { animation: slideDown 0.28s cubic-bezier(0.22,1,0.36,1) both; }
+.animate-float       { animation: float 4s ease-in-out infinite; }
+.animate-pulse-glow  { animation: pulse-glow 2.5s ease-in-out infinite; }
+
+/* ── Scrollbar ── */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Custom subtle scrollbar for dropdowns/panels */
+.scrollbar-thin::-webkit-scrollbar { width: 4px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 4px; }
+.scrollbar-thin:hover::-webkit-scrollbar-thumb { background: #D1D5DB; }
+
+/* ── Dark Mode ── */
+body.dark-mode {
+  background-color: #0F172A;
+  color: #E2E8F0;
+  transition: background-color 0.35s, color 0.35s;
+}
+body.dark-mode #app-root {
+  filter: invert(1) hue-rotate(180deg);
+  transition: filter 0.35s ease;
+}
+body.dark-mode #app-root img,
+body.dark-mode #app-root video,
+body.dark-mode #app-root iframe,
+body.dark-mode #app-root canvas,
+body.dark-mode #app-root svg {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* ── High Contrast ── */
+html.high-contrast body {
+  color: #000 !important;
+}
+html.high-contrast h1,
+html.high-contrast h2,
+html.high-contrast h3,
+html.high-contrast h4 {
+  color: #000 !important;
+}
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Responsive Grids and Layouts ── */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+}
+@media (max-width: 991px) {
+  .hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+    text-align: center;
+  }
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.classroom-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+}
+@media (max-width: 768px) {
+  .classroom-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+@media (max-width: 991px) {
+  .reviews-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@media (max-width: 600px) {
+  .reviews-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+}
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+  }
+}
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* TV & Large screen adjustments */
+@media (min-width: 1920px) {
+  :root {
+    --app-font-size: 17px;
+  }
+}
+
+.student-dashboard-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+}
+@media (max-width: 768px) {
+  .student-dashboard-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.enrolled-courses-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+@media (max-width: 600px) {
+  .enrolled-courses-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.admin-dashboard-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+}
+@media (max-width: 768px) {
+  .admin-dashboard-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.desktop-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+@media (max-width: 768px) {
+  .desktop-nav {
+    display: none !important;
+  }
+}
+
+.mobile-only {
+  display: none;
+}
+@media (max-width: 768px) {
+  .mobile-only {
+    display: block !important;
+  }
+}
+
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+}
+@media (max-width: 768px) {
+  .admin-container {
+    flex-direction: column !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-sidebar {
+    position: relative !important;
+    width: 100% !important;
+    top: 0 !important;
+    height: auto !important;
+  }
+  .admin-main {
+    margin-left: 0 !important;
+    max-width: 100% !important;
+  }
+}
+
+.course-detail-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+}
+@media (max-width: 768px) {
+  .course-detail-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Infinite Horizontal Marquee ── */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee-container {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  padding: 10px 0;
+  mask-image: linear-gradient(to right, transparent, white 8%, white 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, white 8%, white 92%, transparent);
+}
+
+.marquee-content {
+  display: flex;
+  gap: 24px;
+  width: max-content;
+  animation: marquee 45s linear infinite;
+}
+
+.marquee-content:hover {
+  animation-play-state: paused;
+}
+
+/* ── Senior Student Card Ribbon Styles ── */
+.review-card-container {
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  width: 320px; /* Base width */
+  flex-shrink: 0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid rgba(0,0,0,0.05);
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.review-card-container:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 45px rgba(185,28,28,0.1);
+}
+
+/* Expanded cards requested by user */
+.review-card-container-wide {
+  width: 460px; /* Extended width because review text is long */
+}
+@media (max-width: 600px) {
+  .review-card-container-wide {
+    width: 310px;
+  }
+}
+
+.student-image-box {
+  width: 100%;
+  height: 250px;
+  background: #DEC8B3; /* Light tan/beige backdrop like image 1 */
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.student-image-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 0.3s ease;
+}
+
+.review-card-container:hover .student-image-box img {
+  transform: scale(1.04);
+}
+
+.ribbon-banner {
+  background: #B91C1C; /* Brand Red */
+  color: white;
+  font-weight: 800;
+  font-size: 15px;
+  padding: 6px 20px;
+  border-radius: 4px;
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 4px 12px rgba(185,28,28,0.3);
+  white-space: nowrap;
+  z-index: 10;
+}
+
+/* Ribbon tails and folds in ribbon design */
+.ribbon-banner::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  border-width: 2px 2px 0 0;
+  border-style: solid;
+  border-color: #7f1d1d transparent transparent transparent;
+}
+.ribbon-banner::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -4px;
+  border-width: 2px 0 0 2px;
+  border-style: solid;
+  border-color: #7f1d1d transparent transparent transparent;
+}
+
+/* ── YouTube Style Comments ── */
+.comment-section-box {
+  background: #0f0f0f;
+  color: #f1f1f1;
+  border-radius: 24px;
+  padding: 28px;
+  margin-top: 40px;
+  border: 1px solid #272727;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .comment-section-box {
+  background: #000;
+  border-color: #1a1a1a;
+}
+
+.youtube-comment-item {
+  display: flex;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid #272727;
+  animation: slideInComment 0.3s ease-out;
+}
+
+@keyframes slideInComment {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.youtube-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #303030;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-weight: 800;
+  color: white;
+  font-size: 15px;
+}
+
+.youtube-username {
+  font-weight: 700;
+  font-size: 13px;
+  color: #f1f1f1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.youtube-username-badge {
+  background: #888888;
+  color: #0f0f0f;
+  border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+}
+
+.youtube-time {
+  color: #aaaaaa;
+  font-size: 11px;
+  font-weight: normal;
+}
+
+.youtube-text {
+  font-size: 13px;
+  color: #e1e1e1;
+  margin: 6px 0;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.youtube-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 11px;
+  color: #aaaaaa;
+  margin-top: 8px;
+}
+
+.youtube-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #aaaaaa;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 12px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.youtube-action-btn:hover {
+  background: rgba(255,255,255,0.1);
+  color: #ffffff;
+}
+
+.youtube-input-area {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.youtube-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #3f3f3f;
+  color: #f1f1f1;
+  padding: 8px 0;
+  font-size: 13.5px;
+  outline: none;
+  transition: border-bottom-color 0.25s;
+}
+
+.youtube-input:focus {
+  border-bottom: 2px solid #ffffff;
+}
+
+.youtube-comment-btn {
+  background: #ffffff;
+  color: #0f0f0f;
+  border: none;
+  border-radius: 18px;
+  padding: 8px 18px;
+  font-weight: 800;
+  font-size: 12px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.youtube-comment-btn:hover {
+  opacity: 0.9;
+}
+
+/* ── Testimonials Senior Student Card responsive classes ── */
+.review-student-name {
+  font-size: 16px;
+  font-weight: 950;
+  color: #B91C1C;
+  margin: 0 0 4px;
+}
+.review-school {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4B5563;
+  margin: 0 0 2px;
+}
+.review-score {
+  font-size: 14px;
+  font-weight: 900;
+  color: #1E3A8A;
+  margin: 0;
+}
+.review-text-quote {
+  color: #4B5563;
+  font-size: 12.5px;
+  line-height: 1.6;
+  margin: 12px 0 16px;
+  text-align: center;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.review-click-btn {
+  background: #B91C1C;
+  color: white;
+  font-weight: 800;
+  font-size: 11px;
+  padding: 8px 24px;
+  border-radius: 20px;
+  cursor: pointer;
+  border: none;
+  margin-top: auto;
+  box-shadow: 0 4px 10px rgba(185,28,28,0.2);
+  transition: background 0.2s, transform 0.2s;
+}
+.review-click-btn:hover {
+  background: #DC2626;
+  transform: scale(1.03);
+}
+
+@media (max-width: 600px) {
+  .review-card-container {
+    width: 250px !important;
+    padding: 12px !important;
+    border-radius: 18px !important;
+  }
+  .review-card-container-wide {
+    width: 250px !important;
+  }
+  .student-image-box {
+    height: 140px !important;
+    border-radius: 12px !important;
+  }
+  .ribbon-banner {
+    font-size: 11px !important;
+    padding: 3px 12px !important;
+    bottom: -8px !important;
+  }
+  .ribbon-banner::before, .ribbon-banner::after {
+    display: none !important;
+  }
+  .review-student-name {
+    font-size: 13.5px !important;
+    margin-bottom: 2px !important;
+  }
+  .review-school {
+    font-size: 11px !important;
+    margin-top: 2px !important;
+  }
+  .review-score {
+    font-size: 12px !important;
+  }
+  .review-text-quote {
+    font-size: 11px !important;
+    margin: 8px 0 12px !important;
+    line-height: 1.4 !important;
+  }
+  .review-click-btn {
+    font-size: 10px !important;
+    padding: 6px 16px !important;
+  }
+}
+
