@@ -190,12 +190,14 @@ function showLoginModal(message = 'กรุณาเข้าสู่ระบ
   if (!modal) {
     modal = document.createElement('div');
     modal.id = 'login-required-modal';
-    modal.className = 'modal-backdrop';
+    modal.className = 'modal-overlay';
+    modal.onclick = () => modal.classList.remove('show');
     document.body.appendChild(modal);
   }
 
   modal.innerHTML = `
-    <div class="modal-card" style="max-width:440px;width:90%;text-align:center;padding:32px 24px;border-radius:24px">
+    <div class="modal-backdrop"></div>
+    <div class="modal-box animate-fade-in-up" onclick="event.stopPropagation()" style="max-width:440px;width:90%;text-align:center;padding:32px 24px;border-radius:24px;background:white;margin:auto">
       <div style="width:64px;height:64px;background:#FEF2F2;color:#DC2626;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 16px;box-shadow:0 6px 16px rgba(220,38,38,0.15)">
         🔒
       </div>
