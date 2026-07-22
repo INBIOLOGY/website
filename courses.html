@@ -131,7 +131,7 @@
                     <button onclick="openCourseModal(COURSES.find(x=>x.id==='${c.id}'))" style="background:none;border:none;color:#1E3A8A;font-weight:800;font-size:11.5px;cursor:pointer;padding:4px 6px">
                       รายละเอียด
                     </button>
-                    <button onclick="${isEnrolled ? "location.href='/classroom.html'" : `AppState.addToCart(COURSES.find(x=>x.id==='${c.id}'))`}" style="padding:8px 14px;border-radius:10px;font-size:11px;font-weight:800;background:${isEnrolled ? '#10B981' : '#EF4444'};color:white;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
+                    <button onclick="${isEnrolled ? "location.href='classroom.html'" : `AppState.addToCart(COURSES.find(x=>x.id==='${c.id}'))`}" style="padding:8px 14px;border-radius:10px;font-size:11px;font-weight:800;background:${isEnrolled ? '#10B981' : '#EF4444'};color:white;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
                       ${isEnrolled ? '✓ เรียนเลย' : '🛒 ชำระเงิน'}
                     </button>
                   </div>

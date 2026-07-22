@@ -47,10 +47,10 @@ const AppState = {
   },
 
   logout() {
-    this.userRole = 'guest';
-    localStorage.setItem('inbiology_role', 'guest');
+    this.userRole = null;
+    localStorage.removeItem('inbiology_role');
     showToast('👋 ออกจากระบบเรียบร้อยแล้ว', 'info');
-    setTimeout(() => { location.href = '/index.html'; }, 500);
+    setTimeout(() => { location.href = 'index.html'; }, 500);
   },
 
   updateCartBadges() {
