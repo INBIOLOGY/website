@@ -16,7 +16,7 @@ function pct(orig, cur) {
 const AppState = {
   cart: JSON.parse(localStorage.getItem('inbiology_cart') || '[]'),
   enrolled: JSON.parse(localStorage.getItem('inbiology_enrolled') || '["bio-intensive-1"]'),
-  userRole: localStorage.getItem('inbiology_role') || 'student',
+  userRole: localStorage.getItem('inbiology_role') || null,
   darkMode: localStorage.getItem('inbiology_darkmode') === 'true',
   lang: localStorage.getItem('inbiology_lang') || 'TH',
   appliedCoupon: null,
@@ -306,7 +306,7 @@ function renderHeader(activePage = 'home') {
   const header = document.querySelector('.site-header');
   if (!header) return;
 
-  const isLoggedIn = AppState.userRole !== 'guest';
+  const isLoggedIn = Boolean(AppState.userRole && AppState.userRole !== 'guest');
   const isAdmin = AppState.userRole === 'admin';
 
   header.innerHTML = `
