@@ -33,7 +33,7 @@ const COURSES = [
       { id: 'l5', title: 'EP 5: เอนไซม์และอัตราการเกิดปฏิกิริยาเคมีในสิ่งมีชีวิต', duration: 45, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l6', title: 'EP 6: วัฏจักรเซลล์ การแบ่งเซลล์แบบ Mitosis และ Meiosis', duration: 60, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
     ],
-    imageUrl: '/course-cover-1.png',
+    imageUrl: './course-cover-1.png',
     rating: 4.9, reviewCount: 450, Level: 'ม.4', Category: '🧬 Bio Intensive'
   },
   {
@@ -51,7 +51,7 @@ const COURSES = [
       { id: 'l3', title: 'EP 3: โครงสร้าง DNA & RNA และการจำลองตัวของ DNA', duration: 55, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l4', title: 'EP 4: กระบวนการถอดรหัสและการแปลรหัสพันธุกรรม', duration: 60, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
     ],
-    imageUrl: '/course-cover-2.png',
+    imageUrl: './course-cover-2.png',
     rating: 5.0, reviewCount: 380, Level: 'ม.5', Category: '🧫 Bio Intensive'
   },
   {
@@ -67,7 +67,7 @@ const COURSES = [
       { id: 'l1', title: 'EP 1: โครงสร้างและเนื้อเยื่อพืชไร้ท่อและพืชมีท่อลำเลียง', duration: 45, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l2', title: 'EP 2: กระบวนการสังเคราะห์ด้วยแสง ปฏิกิริยาแสง และวัฏจักรคัลวิน', duration: 55, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
     ],
-    imageUrl: '/course-cover-3.jpg',
+    imageUrl: './course-cover-3.jpg',
     rating: 4.9, reviewCount: 310, Level: 'ม.5', Category: '🌱 Bio Intensive'
   },
   {
@@ -83,7 +83,7 @@ const COURSES = [
       { id: 'l1', title: 'EP 1: ระบบย่อยอาหารและการดูดซึมสารอาหารในมนุษย์', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l2', title: 'EP 2: โครงสร้างหัวใจและการหมุนเวียนเลือด', duration: 55, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
     ],
-    imageUrl: '/course-cover-4.jpg',
+    imageUrl: './course-cover-4.jpg',
     rating: 4.8, reviewCount: 415, Level: 'ม.6', Category: '🦴 Bio Intensive'
   },
   {
@@ -121,10 +121,10 @@ const COURSES = [
 ];
 
 const FREE_TRIALS = [
-  { id: 'ft1', title: 'คลิปทดลองเรียน Bio Intensive I: โครงสร้างเซลล์และกลไกการลำเลียงสาร', duration: '45 นาที', course: 'Bio Intensive I', imageUrl: '/course-cover-1.png', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-  { id: 'ft2', title: 'คลิปทดลองเรียน Bio Intensive II: เทคนิคคำนวณโจทย์พันธุศาสตร์เมนเดล', duration: '35 นาที', course: 'Bio Intensive II', imageUrl: '/course-cover-2.png', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-  { id: 'ft3', title: 'คลิปทดลองเรียน คอร์สพิเศษ สอวน.: เจาะลึกข้อสอบคัดเลือกค่าย 1', duration: '40 นาที', course: 'คอร์ส ติวเข้ม สอวน.', imageUrl: '/course-cover-5.jpg', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-  { id: 'ft4', title: 'คลิปทดลองเรียน คอร์ส 99 บาท: สรุปสกัดเข้ม Quick Review ม.ปลาย', duration: '30 นาที', course: 'คอร์ส 99 บาท', imageUrl: '/course-cover-6.png', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
+  { id: 'ft1', title: 'คลิปทดลองเรียน Bio Intensive I: โครงสร้างเซลล์และกลไกการลำเลียงสาร', duration: '45 นาที', course: 'Bio Intensive I', imageUrl: './course-cover-1.png', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+  { id: 'ft2', title: 'คลิปทดลองเรียน Bio Intensive II: เทคนิคคำนวณโจทย์พันธุศาสตร์เมนเดล', duration: '35 นาที', course: 'Bio Intensive II', imageUrl: './course-cover-2.png', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+  { id: 'ft3', title: 'คลิปทดลองเรียน คอร์สพิเศษ สอวน.: เจาะลึกข้อสอบคัดเลือกค่าย 1', duration: '40 นาที', course: 'คอร์ส ติวเข้ม สอวน.', imageUrl: './course-cover-5.jpg', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+  { id: 'ft4', title: 'คลิปทดลองเรียน คอร์ส 99 บาท: สรุปสกัดเข้ม Quick Review ม.ปลาย', duration: '30 นาที', course: 'คอร์ส 99 บาท', imageUrl: './course-cover-6.png', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
 ];
 
 const COUPONS = [
@@ -328,7 +328,7 @@ const REVIEWS = [
     name: 'พี่อลีน',
     text: 'พี่ต้นสอนแบบจำได้จริง จำได้ยาวๆ แล้วก็สอนสนุกมากกก เป็นกันเองสุดๆ ทำให้กล้าถามทุกเรื่อง และทำให้การเรียนชีวะไม่น่าเบื่อเลย จากวิชาที่เคยคิดว่ายาก กลายเป็นวิชาที่ชอบไปเลยย พี่ต้นอธิบายละเอียด เข้าใจง่าย เชื่อมโยงเนื้อหาให้เห็นภาพ ไม่ต้องท่องแบบฝืนๆ แล้วก็มีเพลงช่วยจำที่ใช้ได้จริงด้วยย ทำให้ไม่ลืมคอนเซ็ปต์และเข้าใจเนื้อหาแบบเอาไปใช้ได้จริง แนะนำมากก',
     score: 'คณะแพทยศาสตร์ มหาวิทยาลัยนเรศวร',
-    avatar: '/student_aleen.png',
+    avatar: './student_aleen.jpg',
     imagePosition: 'center 33%',
     school: 'โรงเรียนสาธิตมหาวิทยาลัยนเรศวร',
     course: 'Bio Intensive Complete Set'
@@ -337,7 +337,7 @@ const REVIEWS = [
     name: 'พี่โบ๊ท',
     text: 'เรียนกับพี่ต้นสนุกกก มีเพลงปั่นๆมาใช้ช่วยจำ เนื้อหาครบถ้วน มีข้อสอบให้ลองทำ จอยอะ ของดี๊',
     score: 'คณะแพทยศาสตร์ มหาวิทยาลัยเชียงใหม่',
-    avatar: '/student_boat.png',
+    avatar: './student_boat.jpg',
     imagePosition: 'center top',
     school: 'โรงเรียนอุดมดรุณี',
     course: 'Bio Intensive II & A-Level'
@@ -346,7 +346,7 @@ const REVIEWS = [
     name: 'พี่ก๊อต (จิตธนา พูลอ้น)',
     text: 'เรียนกับพี่ต้นเข้าใจง่ายมากๆคับ มีวิธีสอนที่ทำให้เรื่องยากกลายเป็นง่าย',
     score: 'คณะสัตวแพทยศาสตร์ มหาวิทยาลัยเกษตรศาสตร์',
-    avatar: '/student_got.png',
+    avatar: './student_got.jpg',
     imagePosition: 'center top',
     school: 'โรงเรียนสาธิตมหาวิทยาลัยนเรศวร',
     course: 'Bio Intensive Series'
@@ -355,7 +355,7 @@ const REVIEWS = [
     name: 'พี่แตมป์ (จิรัฏฐ์ เดชพงษ์)',
     text: 'เรียนกับพี่ต้นสนุกมากคับบ สอนแบบเข้าใจง่าย เป็นกันเองคับบ เวลาเรียนก็มีมุกแทรกแก้เครียดด้วย มีทริคมีเพลงประกอบเนื้อหาให้จำได้คับบ',
     score: 'คณะแพทยศาสตร์ มหาวิทยาลัยเกษตรศาสตร์',
-    avatar: '/student_stamp.png',
+    avatar: './student_stamp.jpg',
     imagePosition: 'center top',
     school: 'โรงเรียนสาธิตมหาวิทยาลัยนเรศวร',
     course: 'ตะลุยโจทย์ A-Level'

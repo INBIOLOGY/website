@@ -312,7 +312,7 @@ function renderHeader(activePage = 'home') {
   header.innerHTML = `
     <div class="header-container">
       <a href="/index.html" class="logo-btn">
-        <img src="/logo.png" alt="INBIOLOGY Logo" class="logo-img" />
+        <img src="./logo.png" alt="INBIOLOGY Logo" class="logo-img" />
         <div style="text-align:left">
           <span style="font-weight:900;font-size:20px;color:var(--c-navy);display:block;line-height:1">INBIOLOGY</span>
           <span style="font-size:10px;font-weight:700;color:var(--c-sky);display:block;margin-top:2px">by พี่ต้น</span>
