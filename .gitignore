@@ -12,11 +12,18 @@ dist
 dist-ssr
 .next
 out
+coverage
+playwright-report
+test-results
 *.tsbuildinfo
 *.local
 .env
 .env.*
 !.env.example
+
+# Local code intelligence/cache artifacts
+.codegraph/
+.codebase-memory/
 
 # Editor directories and files
 .vscode/*
