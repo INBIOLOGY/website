@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แดชบอร์ดแอดมิน — INBIOLOGY Academy</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header class="site-header"></header>
+
+  <div style="min-height:100vh;background:var(--c-page);padding-top:80px;padding-bottom:60px">
+    <div style="max-width:1100px;margin:0 auto;padding:0 24px">
+      <h2 style="font-size:22px;font-weight:950;color:var(--c-navy);margin-bottom:20px">🛡 แดชบอร์ดผู้ดูแลระบบ (Admin CMS)</h2>
+
+      <!-- Admin Tabs Navigation -->
+      <div style="display:flex;gap:8px;background:white;border:1px solid #E5E7EB;border-radius:16px;padding:8px;margin-bottom:20px;overflow-x:auto">
+        <button onclick="switchAdminTab('overview')" id="atab-overview" style="padding:8px 16px;border-radius:10px;border:none;background:var(--c-navy);color:white;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">📊 ภาพรวม</button>
+        <button onclick="switchAdminTab('courses')" id="atab-courses" style="padding:8px 16px;border-radius:10px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">📚 คอร์สเรียน</button>
+        <button onclick="switchAdminTab('orders')" id="atab-orders" style="padding:8px 16px;border-radius:10px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">💳 ตรวจสลิปออเดอร์</button>
+        <button onclick="switchAdminTab('coupons')" id="atab-coupons" style="padding:8px 16px;border-radius:10px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">🎫 จัดการคูปอง</button>
+        <button onclick="switchAdminTab('students')" id="atab-students" style="padding:8px 16px;border-radius:10px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">👥 รายชื่อนักเรียน</button>
+      </div>
+
+      <!-- Tab: Overview -->
+      <div id="apanel-overview" style="display:flex;flex-direction:column;gap:20px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:16px">
+          <div style="background:#EFF6FF;border-radius:16px;padding:16px;border:1px solid #E5E7EB">
+            <p style="font-size:11px;font-weight:800;color:#9CA3AF;margin:0 0 6px">คอร์สเรียนทั้งหมด</p>
+            <p id="admin-course-count" style="font-size:24px;font-weight:950;color:var(--c-sky);margin:0">0</p>
+          </div>
+          <div style="background:#FEF2F2;border-radius:16px;padding:16px;border:1px solid #E5E7EB">
+            <p style="font-size:11px;font-weight:800;color:#9CA3AF;margin:0 0 6px">นักเรียนสะสม</p>
+            <p style="font-size:24px;font-weight:950;color:var(--c-red);margin:0">12,500 คน</p>
+          </div>
+          <div style="background:#F0FDF4;border-radius:16px;padding:16px;border:1px solid #E5E7EB">
+            <p style="font-size:11px;font-weight:800;color:#9CA3AF;margin:0 0 6px">ยอดขายสะสม</p>
+            <p style="font-size:24px;font-weight:950;color:#10B981;margin:0">฿54,800</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Courses -->
+      <div id="apanel-courses" style="display:none;flex-direction:column;gap:20px">
+        <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:24px">
+          <h3 style="font-size:15px;font-weight:900;color:var(--c-navy);margin:0 0 16px">+ เพิ่มคอร์สเรียนชีววิทยาใหม่</h3>
+          <form id="add-course-form" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <input type="text" id="new-title" placeholder="ชื่อคอร์สเรียน" required style="border:1px solid #E5E7EB;border-radius:10px;padding:10px;font-size:12px;outline:none" />
+            <input type="number" id="new-price" placeholder="ราคาพิเศษ (บาท)" required style="border:1px solid #E5E7EB;border-radius:10px;padding:10px;font-size:12px;outline:none" />
+            <input type="text" id="new-badge" placeholder="Badge (เช่น Bio Intensive I)" required style="border:1px solid #E5E7EB;border-radius:10px;padding:10px;font-size:12px;outline:none" />
+            <select id="new-level" style="border:1px solid #E5E7EB;border-radius:10px;padding:10px;font-size:12px;outline:none;background:white">
+              <option value="ม.4">ม.4</option>
+              <option value="ม.5">ม.5</option>
+              <option value="ม.6">ม.6</option>
+              <option value="ติวสอบ">ติวสอบ</option>
+            </select>
+            <button type="submit" style="grid-column:span 2;background:var(--c-sky);color:white;font-weight:800;font-size:13px;padding:12px;border-radius:10px;border:none;cursor:pointer">
+              + ยืนยันบันทึกคอร์สใหม่
+            </button>
+          </form>
+        </div>
+
+        <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden">
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
+              <tr>
+                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ชื่อวิชา</th>
+                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ระดับชั้น</th>
+                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ราคา</th>
+                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">การจัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="admin-course-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab: Orders Verification -->
+      <div id="apanel-orders" style="display:none;flex-direction:column;gap:20px">
+        <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden">
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
+              <tr>
+                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ออเดอร์</th>
+                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ชื่อนักเรียน</th>
+                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">วิชา</th>
+                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ราคา</th>
+                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">อนุมัติ</th>
+              </tr>
+            </thead>
+            <tbody id="admin-orders-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab: Coupons -->
+      <div id="apanel-coupons" style="display:none;flex-direction:column;gap:20px">
+        <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px">
+          <h3 style="font-size:14px;font-weight:900;color:var(--c-navy);margin:0 0 12px">+ สร้างคูปองส่วนลดใหม่</h3>
+          <form id="add-coupon-form" style="display:flex;gap:10px">
+            <input type="text" id="coupon-code" placeholder="โค้ดส่วนลด" required style="border:1px solid #E5E7EB;border-radius:8px;padding:8px 12px;font-size:12px;outline:none" />
+            <input type="number" id="coupon-discount" placeholder="ส่วนลด (บาท)" required style="border:1px solid #E5E7EB;border-radius:8px;padding:8px 12px;font-size:12px;outline:none" />
+            <button type="submit" style="background:var(--c-sky);color:white;font-weight:800;font-size:12px;padding:8px 16px;border-radius:8px;border:none;cursor:pointer">สร้างคูปอง</button>
+          </form>
+        </div>
+        <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden">
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
+              <tr>
+                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">โค้ด</th>
+                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">มูลค่า</th>
+              </tr>
+            </thead>
+            <tbody id="admin-coupons-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab: Students -->
+      <div id="apanel-students" style="display:none;flex-direction:column;gap:20px">
+        <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden">
+          <table style="width:100%;border-collapse:collapse;font-size:12px">
+            <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
+              <tr>
+                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">นักเรียน</th>
+                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">อีเมล</th>
+                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">โรงเรียน</th>
+              </tr>
+            </thead>
+            <tbody id="admin-students-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/mockData.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderHeader('admin');
+      renderAdminTable();
+      renderOrdersTable();
+      renderCouponsTable();
+      renderStudentsTable();
+
+      document.getElementById('add-course-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = document.getElementById('new-title').value;
+        const price = +document.getElementById('new-price').value;
+        const badge = document.getElementById('new-badge').value;
+        const level = document.getElementById('new-level').value;
+
+        COURSES.push({
+          id: 'c-' + Date.now(), title, price, originalPrice: price * 1.8,
+          badge, badgeBg: BRAND_COLORS.navy, tag: level, tagBg: '#FEF2F2', tagColor: '#991B1B',
+          instructor: 'พี่ต้น (เกียรตินิยมอันดับ 1)', hours: 30, validity: 365,
+          description: title, imageUrl: '/1_0.png', Level: level, lessons: []
+        });
+
+        showToast('✅ เพิ่มคอร์สเรียบร้อยแล้ว', 'success');
+        document.getElementById('add-course-form').reset();
+        renderAdminTable();
+      });
+
+      document.getElementById('add-coupon-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const code = document.getElementById('coupon-code').value.toUpperCase();
+        const discount = +document.getElementById('coupon-discount').value;
+        COUPONS.push({ code, discount, type: 'flat' });
+        showToast('🎫 เพิ่มคูปองแล้ว', 'success');
+        document.getElementById('add-coupon-form').reset();
+        renderCouponsTable();
+      });
+    });
+
+    function switchAdminTab(tName) {
+      ['overview', 'courses', 'orders', 'coupons', 'students'].forEach(t => {
+        const btn = document.getElementById(`atab-${t}`);
+        const panel = document.getElementById(`apanel-${t}`);
+        if (t === tName) {
+          btn.style.background = 'var(--c-navy)';
+          btn.style.color = 'white';
+          panel.style.display = 'flex';
+        } else {
+          btn.style.background = 'white';
+          btn.style.color = '#374151';
+          panel.style.display = 'none';
+        }
+      });
+    }
+
+    function renderAdminTable() {
+      document.getElementById('admin-course-count').textContent = COURSES.length;
+      document.getElementById('admin-course-table').innerHTML = COURSES.map(c => `
+        <tr style="border-bottom:1px solid #F3F4F6">
+          <td style="padding:12px 16px;font-weight:700;color:var(--c-navy)">${c.title}</td>
+          <td style="padding:12px 16px;font-weight:700">${c.Level}</td>
+          <td style="padding:12px 16px;font-weight:800;color:var(--c-red)">฿${formatPrice(c.price)}</td>
+          <td style="padding:12px 16px">
+            <button onclick="deleteCourse('${c.id}')" style="background:#FEF2F2;color:var(--c-red);border:none;padding:6px 10px;border-radius:6px;font-weight:800;cursor:pointer">ลบ</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderOrdersTable() {
+      document.getElementById('admin-orders-table').innerHTML = ORDERS.map(o => `
+        <tr style="border-bottom:1px solid #F3F4F6">
+          <td style="padding:12px 16px;font-family:monospace;font-weight:800">${o.id}</td>
+          <td style="padding:12px 16px;font-weight:700">${o.studentName}</td>
+          <td style="padding:12px 16px">${o.courseTitle}</td>
+          <td style="padding:12px 16px;font-weight:800;color:var(--c-red)">฿${formatPrice(o.price)}</td>
+          <td style="padding:12px 16px">
+            <button onclick="approveOrder('${o.id}')" style="background:${o.status === 'approved' ? '#D1FAE5' : 'var(--c-sky)'};color:${o.status === 'approved' ? '#065F46' : 'white'};border:none;padding:6px 10px;border-radius:6px;font-weight:800;cursor:pointer">
+              ${o.status === 'approved' ? 'อนุมัติแล้ว' : 'อนุมัติ'}
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function approveOrder(id) {
+      const o = ORDERS.find(x => x.id === id);
+      if (o) {
+        o.status = 'approved';
+        showToast(`✅ อนุมัติออเดอร์ ${id} แล้ว`, 'success');
+        renderOrdersTable();
+      }
+    }
+
+    function renderCouponsTable() {
+      document.getElementById('admin-coupons-table').innerHTML = COUPONS.map(c => `
+        <tr style="border-bottom:1px solid #F3F4F6">
+          <td style="padding:12px 16px;font-family:monospace;font-weight:800;color:var(--c-navy)">${c.code}</td>
+          <td style="padding:12px 16px;font-weight:800;color:#10B981">฿${c.discount}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderStudentsTable() {
+      document.getElementById('admin-students-table').innerHTML = MOCK_STUDENTS.map(s => `
+        <tr style="border-bottom:1px solid #F3F4F6">
+          <td style="padding:12px 16px;font-weight:700">${s.name}</td>
+          <td style="padding:12px 16px;color:#6B7280">${s.email}</td>
+          <td style="padding:12px 16px">${s.school}</td>
+        </tr>
+      `).join('');
+    }
+
+    function deleteCourse(id) {
+      if (confirm('ยืนยันลบคอร์สนี้หรือไม่?')) {
+        const idx = COURSES.findIndex(c => c.id === id);
+        if (idx > -1) COURSES.splice(idx, 1);
+        showToast('🗑 ลบคอร์สแล้ว', 'info');
+        renderAdminTable();
+      }
+    }
+  </script>
+</body>
+</html>

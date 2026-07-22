@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>แดชบอร์ดนักเรียน — INBIOLOGY Academy</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header class="site-header"></header>
+
+  <div style="min-height:calc(100vh - 70px);background:var(--c-page);padding-top:100px;padding-bottom:60px">
+    <div class="student-dashboard-layout" style="max-width:1100px;margin:0 auto;padding:0 24px">
+      <!-- Profile Sidebar -->
+      <aside style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px;text-align:center;height:fit-content">
+        <div style="width:80px;height:80px;border-radius:50%;background:var(--c-sky-light);color:var(--c-sky);font-size:32px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">
+          👨‍🎓
+        </div>
+        <h3 style="font-weight:850;font-size:15px;color:var(--c-navy);margin:0 0 2px">พี่วิทศรุต</h3>
+        <p style="font-size:11px;color:#9CA3AF;margin:0">โรงเรียนสตรีวิทยา • ม.5</p>
+      </aside>
+
+      <!-- Main Panel & Sub Tabs -->
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px">
+          <div style="display:flex;gap:8px;border-bottom:1px solid #E5E7EB;padding-bottom:12px;margin-bottom:20px;overflow-x:auto">
+            <button onclick="switchDashTab('courses')" id="dtab-courses" style="padding:8px 16px;border-radius:8px;border:none;background:var(--c-navy);color:white;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
+              📚 คอร์สเรียนของฉัน
+            </button>
+            <button onclick="switchDashTab('notes')" id="dtab-notes" style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
+              📝 สมุดบันทึกโน้ตย่อ
+            </button>
+            <button onclick="switchDashTab('faq')" id="dtab-faq" style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
+              ❓ ศูนย์ช่วยเหลือ FAQ
+            </button>
+          </div>
+
+          <!-- Courses Panel -->
+          <div id="dpanel-courses">
+            <h2 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 16px">📚 คอร์สเรียนของคุณ</h2>
+            <div id="enrolled-list" class="enrolled-courses-grid"></div>
+          </div>
+
+          <!-- Notes Panel -->
+          <div id="dpanel-notes" style="display:none;flex-direction:column;gap:10px">
+            <h2 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 16px">📝 โน้ตย่อสะสมย้อนหลัง</h2>
+            <div id="notes-list" style="display:flex;flex-direction:column;gap:10px"></div>
+          </div>
+
+          <!-- FAQ Panel -->
+          <div id="dpanel-faq" style="display:none;flex-direction:column;gap:12px">
+            <h2 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 12px">❓ คำถามที่พบบ่อย (FAQ)</h2>
+            <div id="faq-accordion-list" style="display:flex;flex-direction:column;gap:10px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/mockData.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderHeader('dashboard');
+      renderEnrolled();
+      renderNotes();
+      renderFAQs();
+    });
+
+    function switchDashTab(tabName) {
+      ['courses', 'notes', 'faq'].forEach(t => {
+        const btn = document.getElementById(`dtab-${t}`);
+        const panel = document.getElementById(`dpanel-${t}`);
+        if (t === tabName) {
+          btn.style.background = 'var(--c-navy)';
+          btn.style.color = 'white';
+          panel.style.display = t === 'courses' ? 'block' : 'flex';
+        } else {
+          btn.style.background = 'white';
+          btn.style.color = '#374151';
+          panel.style.display = 'none';
+        }
+      });
+    }
+
+    function renderEnrolled() {
+      const enrolled = COURSES.filter(c => AppState.enrolled.includes(c.id));
+      const container = document.getElementById('enrolled-list');
+      if (enrolled.length === 0) {
+        container.innerHTML = `<p style="color:#6B7280;font-size:13px">ยังไม่มีคอร์สเรียนสะสม</p>`;
+      } else {
+        container.innerHTML = enrolled.map(c => `
+          <div style="background:white;border:1px solid #E5E7EB;border-radius:16px;overflow:hidden;display:flex;flex-direction:column">
+            <div style="height:120px;background:#F8FAFC;display:flex;align-items:center;justify-content:center;padding:8px">
+              <img src="${c.imageUrl}" style="max-width:100%;max-height:100%;object-fit:contain" alt="" />
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:8px">
+              <h4 style="font-weight:800;color:var(--c-navy);font-size:13px;margin:0">${c.title}</h4>
+              <div style="background:#E5E7EB;height:6px;border-radius:3px;overflow:hidden;margin:4px 0">
+                <div style="width:75%;height:100%;background:var(--c-sky)"></div>
+              </div>
+              <span style="font-size:10px;color:#6B7280;font-weight:700">ความก้าวหน้า 75%</span>
+              <a href="/classroom.html" style="background:var(--c-sky);color:white;font-weight:800;font-size:11px;padding:8px;border-radius:8px;text-align:center;margin-top:8px">▶ เข้าห้องเรียน</a>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function renderNotes() {
+      const notes = JSON.parse(localStorage.getItem('inbiology_notes') || '[]');
+      const notesContainer = document.getElementById('notes-list');
+      if (notes.length === 0) {
+        notesContainer.innerHTML = `<p style="color:#9CA3AF;font-size:12px">ยังไม่มีโน้ตย่อที่บันทึกไว้</p>`;
+      } else {
+        notesContainer.innerHTML = notes.map(n => `
+          <div style="background:#F9FAFB;padding:12px;border-radius:10px;border:1px solid #E5E7EB">
+            <span style="font-weight:800;color:var(--c-sky);font-size:12px">${n.lessonTitle}</span>
+            <p style="margin:4px 0 0;color:#374151;font-size:12px">${n.text}</p>
+          </div>
+        `).join('');
+      }
+    }
+
+    function renderFAQs() {
+      const faqList = document.getElementById('faq-accordion-list');
+      faqList.innerHTML = FAQS.map(f => `
+        <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:12px;padding:14px">
+          <h4 style="font-size:13px;font-weight:850;color:var(--c-navy);margin:0 0 6px">Q: ${f.q}</h4>
+          <p style="font-size:12px;color:#4B5563;margin:0">A: ${f.a}</p>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>

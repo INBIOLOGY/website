@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>คลังคอร์สเรียนชีววิทยา — INBIOLOGY Academy</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header class="site-header"></header>
+
+  <div style="min-height:100vh;background:var(--c-page);padding-top:100px;padding-bottom:60px">
+    <div style="max-width:1280px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:280px 1fr;gap:24px">
+      <!-- Sidebar Filters -->
+      <aside style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:20px;height:fit-content">
+        <div>
+          <h3 style="font-weight:850;font-size:14px;color:var(--c-navy);margin:0 0 12px">🔍 ค้นหาบทเรียน</h3>
+          <input type="text" id="search-input" placeholder="พิมพ์ชื่อคอร์สหรือคีย์เวิร์ด..." style="width:100%;border:1px solid #E5E7EB;border-radius:10px;padding:10px;font-size:12px;outline:none" />
+        </div>
+
+        <div>
+          <h3 style="font-weight:850;font-size:14px;color:var(--c-navy);margin:0 0 12px">ระดับชั้นเรียน</h3>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;cursor:pointer">
+              <input type="radio" name="level" value="all" checked /> ทุกระดับชั้น
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;cursor:pointer">
+              <input type="radio" name="level" value="ม.4" /> ม.4
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;cursor:pointer">
+              <input type="radio" name="level" value="ม.5" /> ม.5
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;cursor:pointer">
+              <input type="radio" name="level" value="ม.6" /> ม.6
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;cursor:pointer">
+              <input type="radio" name="level" value="ติวสอบ" /> ติวสอบ (A-Level / สอวน.)
+            </label>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Course Listing Grid -->
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;background:white;padding:12px 20px;border-radius:16px;border:1px solid #E5E7EB">
+          <p id="course-count" style="font-size:13px;font-weight:800;color:#374151;margin:0">พบคอร์สเรียนชีววิทยา</p>
+        </div>
+
+        <div id="catalog-grid" class="courses-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/mockData.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderHeader('courses');
+      
+      const searchInput = document.getElementById('search-input');
+      const levelRadios = document.querySelectorAll('input[name="level"]');
+
+      function filterAndRender() {
+        const query = searchInput.value.toLowerCase().trim();
+        const selectedLevel = document.querySelector('input[name="level"]:checked').value;
+
+        const filtered = COURSES.filter(c => {
+          const matchSearch = c.title.toLowerCase().includes(query) || c.description.toLowerCase().includes(query);
+          const matchLevel = selectedLevel === 'all' || c.Level === selectedLevel;
+          return matchSearch && matchLevel;
+        });
+
+        document.getElementById('course-count').textContent = `พบคอร์สเรียนชีววิทยา ${filtered.length} คอร์ส`;
+
+        const grid = document.getElementById('catalog-grid');
+        grid.innerHTML = filtered.map(c => {
+          const isEnrolled = AppState.enrolled.includes(c.id);
+          const discountPercent = Math.round((1 - c.price / c.originalPrice) * 100);
+          return `
+            <div class="course-card" style="background:white;border:1px solid #E5E7EB;border-radius:24px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.04);display:flex;flex-direction:column">
+              <!-- Floating Portrait Book Cover Thumbnail Box (Matching User Screenshot) -->
+              <div style="position:relative;height:200px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;padding:14px">
+                <img src="${c.imageUrl}" alt="${c.title}" style="height:155px;max-width:85%;object-fit:contain;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.12)" />
+
+                <!-- Floating Top-Left Badge -->
+                <span style="position:absolute;top:12px;left:12px;background:${c.badgeBg || '#1E3A8A'};color:white;font-size:10px;font-weight:900;padding:4px 12px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,0.1);z-index:2">
+                  ${c.badge}
+                </span>
+
+                <!-- Floating Bottom-Left Trial Button -->
+                <button onclick="openTrialModal(FREE_TRIALS[0])" style="position:absolute;bottom:12px;left:12px;background:#1E3A8A;color:white;font-size:10px;font-weight:800;padding:5px 12px;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px;z-index:2;box-shadow:0 4px 10px rgba(0,0,0,0.15)">
+                  ▶ ทดลองเรียนฟรี
+                </button>
+              </div>
+
+              <!-- Body -->
+              <div style="padding:18px;display:flex;flex-direction:column;gap:10px;flex:1">
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                  <span style="background:${c.tagBg || '#FEF2F2'};color:${c.tagColor || '#991B1B'};font-size:10px;font-weight:800;padding:3px 10px;border-radius:6px">
+                    ${c.tag || 'ติวสอบ'}
+                  </span>
+                  <span style="font-size:11px;color:#9CA3AF;font-weight:700">${c.Level || 'ม.4'}</span>
+                </div>
+
+                <h3 onclick="openCourseModal(COURSES.find(x=>x.id==='${c.id}'))" style="cursor:pointer;font-weight:900;color:#B91C1C;font-size:15px;margin:0;line-height:1.35">
+                  ${c.title}
+                </h3>
+
+                <p style="font-size:11px;color:#6B7280;margin:0">ผู้สอน: ${c.instructor}</p>
+
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px">
+                  <span style="font-weight:700;color:#111827">⭐ ${c.rating || 4.9} <span style="color:#9CA3AF;font-weight:500">(${c.reviewCount || 400})</span></span>
+                  <span style="font-weight:800;color:#0F172A">${c.hours} ชั่วโมงเรียน</span>
+                </div>
+
+                <p style="font-size:11.5px;color:#6B7280;line-height:1.5;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">
+                  ${c.description}
+                </p>
+
+                <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:auto;padding-top:14px;border-top:1px solid #F3F4F6">
+                  <div>
+                    <span style="font-size:11px;color:#9CA3AF;text-decoration:line-through;display:block">฿${formatPrice(c.originalPrice)}</span>
+                    <div style="display:flex;align-items:center;gap:6px">
+                      <span style="font-size:18px;font-weight:950;color:#B91C1C">฿${formatPrice(c.price)}</span>
+                      <span style="background:#EF4444;color:white;font-size:9.5px;font-weight:900;padding:2px 6px;border-radius:4px">-${discountPercent}%</span>
+                    </div>
+                  </div>
+
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <button onclick="openCourseModal(COURSES.find(x=>x.id==='${c.id}'))" style="background:none;border:none;color:#1E3A8A;font-weight:800;font-size:11.5px;cursor:pointer;padding:4px 6px">
+                      รายละเอียด
+                    </button>
+                    <button onclick="${isEnrolled ? "location.href='/classroom.html'" : `AppState.addToCart(COURSES.find(x=>x.id==='${c.id}'))`}" style="padding:8px 14px;border-radius:10px;font-size:11px;font-weight:800;background:${isEnrolled ? '#10B981' : '#EF4444'};color:white;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
+                      ${isEnrolled ? '✓ เรียนเลย' : '🛒 ชำระเงิน'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      searchInput.addEventListener('input', filterAndRender);
+      levelRadios.forEach(r => r.addEventListener('change', filterAndRender));
+
+      filterAndRender();
+    });
+  </script>
+</body>
+</html>

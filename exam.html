@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>คลังข้อสอบจำลอง A-Level — INBIOLOGY Academy</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header class="site-header"></header>
+
+  <div style="min-height:100vh;background:var(--c-page);padding-top:100px;padding-bottom:60px">
+    <div style="max-width:960px;margin:0 auto;padding:0 24px">
+      
+      <!-- STATE 1: TOPIC SELECTION MENU GRID -->
+      <div id="topic-selector-view">
+        <div style="text-align:center;margin-bottom:32px">
+          <span style="background:var(--c-sky);color:white;font-size:11px;font-weight:900;padding:4px 14px;border-radius:20px">EXAM CENTER</span>
+          <h1 style="font-size:28px;font-weight:950;color:var(--c-navy);margin:10px 0 6px">🏆 คลังข้อสอบ A-Level & สอวน. แยกตามเนื้อหาคอร์ส</h1>
+          <p style="font-size:13px;color:#6B7280;margin:0">เลือกชุดข้อสอบคอร์สเรียนที่ต้องการทำโจทย์ (เนื้อหาจะปลดล็อกตามคอร์สที่คุณซื้อ)</p>
+        </div>
+
+        <div id="topics-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px"></div>
+      </div>
+
+      <!-- STATE 2: ACTIVE QUIZ VIEW -->
+      <div id="quiz-active-view" style="display:none;max-width:820px;margin:0 auto">
+        <!-- Back Button & Exam Timer Bar -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <button onclick="showTopicSelector()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;border:1px solid #E5E7EB;background:white;color:var(--c-navy);font-weight:800;font-size:12px;cursor:pointer">
+            ⬅ เลือกชุดข้อสอบอื่น
+          </button>
+          <span style="font-size:11px;font-weight:800;color:#6B7280" id="current-user-badge">ผู้ทำสอบ: 🎓 พี่วิทศรุต</span>
+        </div>
+
+        <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+          <div>
+            <h2 id="quiz-topic-title" style="font-size:18px;font-weight:950;color:var(--c-navy);margin:0">🏆 คลังข้อสอบจำลอง A-Level ชีววิทยา</h2>
+            <p id="quiz-topic-subtitle" style="font-size:11px;color:#6B7280;margin:4px 0 0">ระบบจำลองสอบจับเวลาจริง พร้อมเฉลยละเอียด</p>
+          </div>
+          <div style="text-align:right">
+            <span style="font-size:10px;font-weight:800;color:#9CA3AF;display:block">เวลาคงเหลือ</span>
+            <span id="timer-display" style="font-size:22px;font-weight:950;color:var(--c-red);font-family:monospace">02:00</span>
+          </div>
+        </div>
+
+        <!-- Question Card Container -->
+        <div id="quiz-card" style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:20px"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/js/mockData.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    let activeTopic = null;
+    let activeQuestions = [];
+    let qIndex = 0;
+    let selectedAnswers = {};
+    let timeLeft = 120;
+    let timerId = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderHeader('exam');
+      renderTopicsMenu();
+    });
+
+    function renderTopicsMenu() {
+      const container = document.getElementById('topics-grid');
+      const enrolledIds = AppState.enrolled || [];
+
+      container.innerHTML = EXAM_TOPICS.map(topic => {
+        const isUnlocked = topic.isFree || enrolledIds.includes(topic.courseId);
+        const questionsCount = topic.category === 'all' 
+          ? EXAM_QUESTIONS.length 
+          : EXAM_QUESTIONS.filter(q => q.category === topic.category).length;
+
+        return `
+          <div style="background:white;border:1.5px solid ${isUnlocked ? '#E5E7EB' : '#FED7AA'};border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 4px 12px rgba(0,0,0,0.02);position:relative">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="background:${topic.badgeBg};color:white;font-size:10px;font-weight:900;padding:4px 10px;border-radius:20px">
+                ${topic.badge}
+              </span>
+              <span style="font-size:10px;font-weight:800;padding:4px 10px;border-radius:12px;background:${isUnlocked ? '#D1FAE5' : '#FFEDD5'};color:${isUnlocked ? '#065F46' : '#C2410C'}">
+                ${isUnlocked ? '🔓 ปลดล็อกแล้ว' : '🔒 ต้องซื้อคอร์สก่อน'}
+              </span>
+            </div>
+
+            <div>
+              <h3 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 6px">${topic.title}</h3>
+              <p style="font-size:12px;color:#6B7280;line-height:1.5;margin:0">${topic.description}</p>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid #F3F4F6;padding-top:12px;margin-top:auto">
+              <span style="font-size:11px;font-weight:800;color:var(--c-sky)">📝 จำนวน ${questionsCount} ข้อ</span>
+              ${isUnlocked
+                ? `<button onclick="startExam('${topic.id}')" style="background:var(--c-sky);color:white;font-weight:850;font-size:12px;padding:8px 16px;border-radius:10px;border:none;cursor:pointer">▶ เริ่มทำข้อสอบ</button>`
+                : `<a href="/courses.html" style="background:var(--c-red);color:white;font-weight:850;font-size:11px;padding:8px 14px;border-radius:10px;text-decoration:none">🛒 ซื้อคอร์สเพื่อปลดล็อก</a>`
+              }
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function showTopicSelector() {
+      if (timerId) clearInterval(timerId);
+      document.getElementById('topic-selector-view').style.display = 'block';
+      document.getElementById('quiz-active-view').style.display = 'none';
+    }
+
+    function startExam(topicId) {
+      activeTopic = EXAM_TOPICS.find(t => t.id === topicId);
+      if (!activeTopic) return;
+
+      if (activeTopic.category === 'all') {
+        activeQuestions = [...EXAM_QUESTIONS];
+      } else {
+        activeQuestions = EXAM_QUESTIONS.filter(q => q.category === activeTopic.category);
+      }
+
+      if (activeQuestions.length === 0) {
+        showToast('ยังไม่มีข้อสอบในบทเรียนนี้', 'info');
+        return;
+      }
+
+      document.getElementById('topic-selector-view').style.display = 'none';
+      document.getElementById('quiz-active-view').style.display = 'block';
+
+      qIndex = 0;
+      selectedAnswers = {};
+      
+      document.getElementById('quiz-topic-title').textContent = activeTopic.title;
+      document.getElementById('quiz-topic-subtitle').textContent = `คลังข้อสอบเฉพาะบทเรียนจำนวน ${activeQuestions.length} ข้อ (ระบบจับเวลาจริง)`;
+
+      resetTimer();
+      renderQuestion();
+    }
+
+    function resetTimer() {
+      if (timerId) clearInterval(timerId);
+      timeLeft = activeQuestions.length * 50; // 50 seconds per question
+      updateTimerDisplay();
+
+      timerId = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        if (timeLeft <= 0) {
+          clearInterval(timerId);
+          submitExam();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const m = String(Math.floor(Math.max(0, timeLeft) / 60)).padStart(2, '0');
+      const s = String(Math.max(0, timeLeft) % 60).padStart(2, '0');
+      document.getElementById('timer-display').textContent = `${m}:${s}`;
+    }
+
+    function renderQuestion() {
+      const q = activeQuestions[qIndex];
+      const card = document.getElementById('quiz-card');
+
+      card.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #F3F4F6;padding-bottom:12px">
+          <span style="background:var(--c-sky);color:white;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px">ข้อที่ ${qIndex + 1} / ${activeQuestions.length}</span>
+          <span style="background:#F3F4F6;color:#4B5563;font-size:10px;font-weight:800;padding:3px 10px;border-radius:8px">${q.categoryName || 'ชีววิทยา'}</span>
+        </div>
+        <h3 style="font-size:15px;font-weight:850;color:#111827;line-height:1.6;margin:0">${q.question}</h3>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          ${q.options.map((opt, i) => `
+            <button onclick="selectOption(${i})" style="width:100%;text-align:left;padding:14px;border-radius:12px;border:1.5px solid ${selectedAnswers[qIndex] === i ? 'var(--c-sky)' : '#E5E7EB'};background:${selectedAnswers[qIndex] === i ? '#EFF6FF' : 'white'};font-size:13px;font-weight:700;cursor:pointer">
+              ${opt}
+            </button>
+          `).join('')}
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:10px">
+          <button onclick="prevQ()" ${qIndex === 0 ? 'disabled style="opacity:0.4;cursor:not-allowed"' : ''} style="padding:10px 20px;border-radius:10px;border:1px solid #E5E7EB;background:white;font-weight:800;font-size:12px;cursor:pointer">ข้อก่อนหน้า</button>
+          ${qIndex === activeQuestions.length - 1 
+            ? `<button onclick="submitExam()" style="padding:10px 24px;border-radius:10px;border:none;background:var(--c-red);color:white;font-weight:800;font-size:12px;cursor:pointer">ส่งข้อสอบ</button>`
+            : `<button onclick="nextQ()" style="padding:10px 24px;border-radius:10px;border:none;background:var(--c-sky);color:white;font-weight:800;font-size:12px;cursor:pointer">ข้อถัดไป</button>`
+          }
+        </div>
+      `;
+    }
+
+    function selectOption(idx) {
+      selectedAnswers[qIndex] = idx;
+      renderQuestion();
+    }
+
+    function nextQ() {
+      if (qIndex < activeQuestions.length - 1) {
+        qIndex++;
+        renderQuestion();
+      }
+    }
+
+    function prevQ() {
+      if (qIndex > 0) {
+        qIndex--;
+        renderQuestion();
+      }
+    }
+
+    function submitExam() {
+      if (timerId) clearInterval(timerId);
+      let score = 0;
+      activeQuestions.forEach((q, i) => {
+        if (selectedAnswers[i] === q.correct) score++;
+      });
+
+      const card = document.getElementById('quiz-card');
+      card.innerHTML = `
+        <div style="text-align:center;padding:20px 0">
+          <h2 style="font-size:24px;font-weight:950;color:var(--c-navy);margin:0 0 8px">🎉 ผลการทำข้อสอบจำลอง</h2>
+          <div style="font-size:48px;font-weight:950;color:var(--c-sky);margin:12px 0">${score} / ${activeQuestions.length}</div>
+          <p style="font-size:13px;color:#6B7280;margin:0 0 24px">ทำคะแนนได้ ${Math.round((score/activeQuestions.length)*100)}%</p>
+          <div style="display:flex;flex-direction:column;gap:12px;text-align:left">
+            <h4 style="font-weight:900;color:var(--c-navy);font-size:14px;margin:0">เฉลยและคำอธิบายอย่างละเอียด:</h4>
+            ${activeQuestions.map((q, i) => `
+              <div style="background:#F9FAFB;padding:12px 16px;border-radius:12px;border:1px solid #E5E7EB">
+                <p style="font-weight:800;font-size:12px;color:#374151;margin:0 0 4px">ข้อ ${i+1}: ${q.question}</p>
+                <p style="font-size:11px;color:${selectedAnswers[i] === q.correct ? '#10B981' : '#EF4444'};font-weight:800;margin:0">
+                  คำตอบที่ถูกต้อง: ${q.options[q.correct]} ${selectedAnswers[i] === q.correct ? '✓ (ตอบถูกต้อง)' : '✕ (ตอบผิด)'}
+                </p>
+                <p style="font-size:11px;color:#6B7280;margin:4px 0 0">💡 ${q.explanation}</p>
+              </div>
+            `).join('')}
+          </div>
+          <div style="display:flex;gap:12px;justify-content:center;margin-top:24px">
+            <button onclick="showTopicSelector()" style="background:#EFF6FF;color:var(--c-sky);font-weight:800;font-size:12px;padding:12px 20px;border-radius:10px;border:none;cursor:pointer">
+              ⬅ เลือกบทเรียนอื่น
+            </button>
+            <button onclick="startExam('${activeTopic.id}')" style="background:var(--c-navy);color:white;font-weight:800;font-size:12px;padding:12px 24px;border-radius:10px;border:none;cursor:pointer">
+              🔄 ลองทำใหม่อีกครั้ง
+            </button>
+          </div>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>         คำตอบที่ถูกต้อง: ${q.options[q.correct]} ${selectedAnswers[i] === q.correct ? '✓ (ตอบถูกต้อง)' : '✕ (ตอบผิด)'}
+                </p>
+                <p style="font-size:11px;color:#6B7280;margin:4px 0 0">💡 ${q.explanation}</p>
+              </div>
+            `).join('')}
+          </div>
+          <button onclick="selectCategory('${activeCat}')" style="margin-top:24px;background:var(--c-navy);color:white;font-weight:800;font-size:13px;padding:12px 28px;border-radius:12px;border:none;cursor:pointer">
+            🔄 ลองทำข้อสอบหมวดนี้ใหม่อีกครั้ง
+          </button>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>x;color:#6B7280;margin:4px 0 0">💡 ${q.explanation}</p>
+              </div>
+            `).join('')}
+          </div>
+          <button onclick="location.reload()" style="margin-top:24px;background:var(--c-navy);color:white;font-weight:800;font-size:13px;padding:12px 28px;border-radius:12px;border:none;cursor:pointer">
+            🔄 ลองทำข้อสอบใหม่อีกครั้ง
+          </button>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>

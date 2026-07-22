@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>เข้าสู่ระบบ & สมัครสมาชิก — INBIOLOGY Academy</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: var(--font-body);
+      background: #FAFAFA;
+    }
+    .auth-container {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+    }
+    .auth-banner-col {
+      flex: 1.3;
+      background: #1E5BB5 url('/hero-bg.jpg') center/cover no-repeat;
+      position: relative;
+    }
+    .auth-form-col {
+      width: 480px;
+      max-width: 100%;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 40px 36px;
+      box-sizing: border-box;
+      box-shadow: -10px 0 30px rgba(0,0,0,0.03);
+      overflow-y: auto;
+    }
+    @media (max-width: 860px) {
+      .auth-banner-col {
+        display: none;
+      }
+      .auth-form-col {
+        width: 100%;
+        min-height: 100vh;
+        padding: 32px 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-container">
+    <!-- Left Side: Hero Artwork Banner -->
+    <div class="auth-banner-col"></div>
+
+    <!-- Right Side: Comprehensive Form Container -->
+    <div class="auth-form-col">
+      <a href="/index.html" style="color:#6B7280;font-size:13px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px;margin-bottom:24px;width:fit-content" onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#6B7280'">
+        ‹ กลับหน้าหลัก
+      </a>
+
+      <div style="margin-bottom:20px">
+        <h1 id="auth-title" style="font-size:24px;font-weight:950;color:#111827;margin:0 0 4px">เข้าสู่ระบบ</h1>
+        <p id="auth-subtitle" style="font-size:12.5px;color:#6B7280;margin:0">เข้าสู่ห้องเรียนจำลองของคุณ</p>
+      </div>
+
+      <!-- Toggle Switch Pills -->
+      <div style="background:#F1F5F9;border-radius:12px;padding:4px;display:flex;margin-bottom:20px">
+        <button type="button" id="tab-login" onclick="switchAuthTab('login')" style="flex:1;padding:9px;border-radius:9px;border:none;background:white;color:#111827;font-weight:850;font-size:13px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.06)">
+          เข้าสู่ระบบ
+        </button>
+        <button type="button" id="tab-register" onclick="switchAuthTab('register')" style="flex:1;padding:9px;border-radius:9px;border:none;background:transparent;color:#6B7280;font-weight:700;font-size:13px;cursor:pointer">
+          สมัครสมาชิก
+        </button>
+      </div>
+
+      <form id="auth-form" style="display:flex;flex-direction:column;gap:14px">
+        <!-- Name (Register mode) -->
+        <div id="field-name" style="display:none;flex-direction:column;gap:5px">
+          <label style="font-size:12px;font-weight:800;color:#111827">ชื่อ-นามสกุล</label>
+          <input type="text" id="input-name" placeholder="นายวิทศรุต สุขสำราญ" style="width:100%;border:1.5px solid #E2E8F0;border-radius:10px;padding:10px 14px;font-size:12.5px;background:#F8FAFC;outline:none;box-sizing:border-box" />
+        </div>
+
+        <!-- Phone (Register mode) -->
+        <div id="field-phone" style="display:none;flex-direction:column;gap:5px">
+          <label style="font-size:12px;font-weight:800;color:#111827">เบอร์โทรศัพท์ (สำหรับจัดส่งหนังสือและรับข่าวสาร)</label>
+          <input type="tel" id="input-phone" placeholder="081-234-5678" style="width:100%;border:1.5px solid #E2E8F0;border-radius:10px;padding:10px 14px;font-size:12.5px;background:#F8FAFC;outline:none;box-sizing:border-box" />
+        </div>
+
+        <!-- Grade & School (Register mode) -->
+        <div id="field-education" style="display:none;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <label style="font-size:12px;font-weight:800;color:#111827">ระดับชั้น</label>
+            <select id="input-grade" style="width:100%;border:1.5px solid #E2E8F0;border-radius:10px;padding:10px 12px;font-size:12px;background:#F8FAFC;outline:none;box-sizing:border-box">
+              <option value="ม.4">มัธยมศึกษาปีที่ 4</option>
+              <option value="ม.5" selected>มัธยมศึกษาปีที่ 5</option>
+              <option value="ม.6">มัธยมศึกษาปีที่ 6</option>
+              <option value="เด็กซิ่ว">เด็กซิ่ว / เตรียม A-Level</option>
+              <option value="สอวน.">สอวน. ชีววิทยา</option>
+            </select>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <label style="font-size:12px;font-weight:800;color:#111827">โรงเรียน</label>
+            <input type="text" id="input-school" placeholder="เช่น สตรีวิทยา" style="width:100%;border:1.5px solid #E2E8F0;border-radius:10px;padding:10px 12px;font-size:12px;background:#F8FAFC;outline:none;box-sizing:border-box" />
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <label style="font-size:12px;font-weight:800;color:#111827">อีเมล</label>
+          <input type="email" id="input-email" required placeholder="example@gmail.com" style="width:100%;border:1.5px solid #E2E8F0;border-radius:10px;padding:10px 14px;font-size:12.5px;background:#F8FAFC;outline:none;box-sizing:border-box" />
+        </div>
+
+        <!-- Password -->
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <label style="font-size:12px;font-weight:800;color:#111827">รหัสผ่าน</label>
+          <div style="position:relative">
+            <input type="password" id="input-password" required placeholder="ระบุรหัสผ่าน 6 ตัวขึ้นไป" style="width:100%;border:1.5px solid #E2E8F0;border-radius:10px;padding:10px 40px 10px 14px;font-size:12.5px;background:#F8FAFC;outline:none;box-sizing:border-box" />
+            <button type="button" onclick="togglePasswordVisibility('input-password')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#9CA3AF;cursor:pointer;font-size:15px">
+              👁
+            </button>
+          </div>
+        </div>
+
+        <!-- Confirm Password (Register mode) -->
+        <div id="field-confirm-password" style="display:none;flex-direction:column;gap:5px">
+          <label style="font-size:12px;font-weight:800;color:#111827">ยืนยันรหัสผ่าน</label>
+          <div style="position:relative">
+            <input type="password" id="input-confirm-password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง" style="width:100%;border:1.5px solid #E2E8F0;border-radius:10px;padding:10px 40px 10px 14px;font-size:12.5px;background:#F8FAFC;outline:none;box-sizing:border-box" />
+            <button type="button" onclick="togglePasswordVisibility('input-confirm-password')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#9CA3AF;cursor:pointer;font-size:15px">
+              👁
+            </button>
+          </div>
+        </div>
+
+        <!-- Remember Me & Forgot Password (Login Mode) -->
+        <div id="login-meta-row" style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px">
+          <label style="display:flex;align-items:center;gap:6px;color:#4B5563;cursor:pointer">
+            <input type="checkbox" checked style="accent-color:var(--c-navy)" /> จำฉันไว้ในระบบ
+          </label>
+          <a href="#" onclick="showToast('🔑 กรุณาติดต่อทีมงานพี่ต้นทาง LINE @inbiology เพื่อรีเซ็ตรหัสผ่าน', 'info'); return false;" style="color:var(--c-navy);font-weight:700;text-decoration:none">ลืมรหัสผ่าน?</a>
+        </div>
+
+        <!-- Terms Agreement (Register Mode) -->
+        <div id="register-terms-row" style="display:none;font-size:11px;color:#6B7280;line-height:1.4">
+          <label style="display:flex;align-items:flex-start;gap:6px;cursor:pointer">
+            <input type="checkbox" required checked style="accent-color:var(--c-navy);margin-top:2px" />
+            <span>ฉันยินยอมรับ <a href="#" style="color:var(--c-navy);font-weight:700">เงื่อนไขการใช้งาน</a> และ <a href="#" style="color:var(--c-navy);font-weight:700">นโยบายความเป็นส่วนตัว</a> ของ INBIOLOGY Academy</span>
+          </label>
+        </div>
+
+        <button type="submit" id="btn-submit" style="width:100%;background:#1E3A8A;color:white;font-weight:900;font-size:13.5px;padding:12px;border-radius:10px;border:none;cursor:pointer;margin-top:4px;box-shadow:0 4px 14px rgba(30,58,138,0.25)">
+          เข้าสู่ระบบ
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/mockData.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    let currentAuthTab = 'login';
+
+    function switchAuthTab(tab) {
+      currentAuthTab = tab;
+      const btnLogin = document.getElementById('tab-login');
+      const btnReg = document.getElementById('tab-register');
+      const title = document.getElementById('auth-title');
+      const subtitle = document.getElementById('auth-subtitle');
+      
+      const fieldName = document.getElementById('field-name');
+      const fieldPhone = document.getElementById('field-phone');
+      const fieldEdu = document.getElementById('field-education');
+      const fieldConfirmPwd = document.getElementById('field-confirm-password');
+
+      const loginMeta = document.getElementById('login-meta-row');
+      const regTerms = document.getElementById('register-terms-row');
+      const btnSubmit = document.getElementById('btn-submit');
+
+      if (tab === 'login') {
+        btnLogin.style.background = 'white';
+        btnLogin.style.color = '#111827';
+        btnLogin.style.boxShadow = '0 2px 6px rgba(0,0,0,0.06)';
+        btnReg.style.background = 'transparent';
+        btnReg.style.color = '#6B7280';
+        btnReg.style.boxShadow = 'none';
+
+        title.textContent = 'เข้าสู่ระบบ';
+        subtitle.textContent = 'เข้าสู่ห้องเรียนจำลองของคุณ';
+
+        fieldName.style.display = 'none';
+        fieldPhone.style.display = 'none';
+        fieldEdu.style.display = 'none';
+        fieldConfirmPwd.style.display = 'none';
+
+        loginMeta.style.display = 'flex';
+        regTerms.style.display = 'none';
+        btnSubmit.textContent = 'เข้าสู่ระบบ';
+      } else {
+        btnReg.style.background = 'white';
+        btnReg.style.color = '#111827';
+        btnReg.style.boxShadow = '0 2px 6px rgba(0,0,0,0.06)';
+        btnLogin.style.background = 'transparent';
+        btnLogin.style.color = '#6B7280';
+        btnLogin.style.boxShadow = 'none';
+
+        title.textContent = 'สมัครสมาชิกใหม่';
+        subtitle.textContent = 'กรอกข้อมูลเพื่อสร้างบัญชีผู้ใช้งานใหม่สำหรับเรียนชีววิทยา';
+
+        fieldName.style.display = 'flex';
+        fieldPhone.style.display = 'flex';
+        fieldEdu.style.display = 'grid';
+        fieldConfirmPwd.style.display = 'flex';
+
+        loginMeta.style.display = 'none';
+        regTerms.style.display = 'block';
+        btnSubmit.textContent = 'สมัครสมาชิกใหม่';
+      }
+    }
+
+    function togglePasswordVisibility(inputId) {
+      const pwdInput = document.getElementById(inputId);
+      if (pwdInput.type === 'password') {
+        pwdInput.type = 'text';
+      } else {
+        pwdInput.type = 'password';
+      }
+    }
+
+    document.getElementById('auth-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('input-email').value;
+
+      if (currentAuthTab === 'register') {
+        const pwd = document.getElementById('input-password').value;
+        const confirmPwd = document.getElementById('input-confirm-password').value;
+        if (pwd !== confirmPwd) {
+          showToast('❌ รหัสผ่านทั้งสองช่องไม่ตรงกัน กรุณาตรวจสอบอีกครั้ง', 'error');
+          return;
+        }
+      }
+
+      if (email.includes('admin')) {
+        AppState.userRole = 'admin';
+        localStorage.setItem('inbiology_role', 'admin');
+        showToast('🛡️ เข้าสู่ระบบในฐานะแอดมินผู้ดูแลระบบ', 'success');
+        setTimeout(() => location.href = '/admin.html', 600);
+      } else {
+        AppState.userRole = 'student';
+        localStorage.setItem('inbiology_role', 'student');
+        showToast(currentAuthTab === 'login' ? '🎓 เข้าสู่ระบบสำเร็จ ยินดีต้อนรับครับ!' : '🎉 สมัครสมาชิกสำเร็จ ยินดีต้อนรับสู่ INBIOLOGY!', 'success');
+        setTimeout(() => location.href = '/classroom.html', 600);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,15 +1,12 @@
-'use client'
+import { Brain, Sparkles, Award, BookOpen, Play, ChevronRight } from 'lucide-react';
+import { C } from '../constants/theme.js';
 
-import { BookOpen, Play, ChevronRight, Sparkles, Award, Brain } from 'lucide-react'
-import { C } from '@/src/app-data'
-
-
-// ───────────────────────────────────────────────────────────
-export function HeroSection({ onStart, onView, courses }) {
+export default function HeroSection({ onStart, onView, courses }) {
   const stats = [
     { value: '50,000+', label: 'เรียนแล้วกว่า (คน)' },
-    { value: '11+', label: 'คอร์สคุณภาพ' },
-    { value: '100%', label: 'ตรงตามเกณฑ์การสอบ' },
+    { value: `${courses?.length || 4}+`, label: 'คอร์สคุณภาพ' },
+    { value: '30+', label: 'ครูผู้สอน' },
+    { value: 'Certificate', label: 'รับใบรับรองฟรี' },
   ];
 
   return (
@@ -18,7 +15,7 @@ export function HeroSection({ onStart, onView, courses }) {
       paddingBottom: '80px',
       overflow: 'hidden',
       position: 'relative',
-      background: 'linear-gradient(to bottom, rgba(15, 23, 42, 0.6) 0%, rgba(15, 23, 42, 0.45) 50%, rgba(15, 23, 42, 0.7) 100%), url(/hero-bg.jpg) center center / cover no-repeat',
+      background: 'linear-gradient(to bottom, rgba(15, 23, 42, 0.2) 0%, rgba(15, 23, 42, 0.05) 50%, rgba(15, 23, 42, 0.3) 100%), url(/hero-bg.jpg) center center / cover no-repeat',
       minHeight: '700px',
       display: 'flex',
       alignItems: 'center'
@@ -44,18 +41,18 @@ export function HeroSection({ onStart, onView, courses }) {
               fontSize: 'clamp(40px,5.2vw,64px)',
               fontWeight: 950,
               color: '#FFFFFF',
-              textShadow: '0 4px 20px rgba(0, 0, 0, 0.9), 0 2px 4px rgba(0, 0, 0, 0.7)',
+              textShadow: '0 4px 16px rgba(15, 23, 42, 0.75), 0 2px 4px rgba(15, 23, 42, 0.5)',
               lineHeight: 1.15,
               margin: 0
             }}>
               เรียนชีวะให้เข้าใจ
               <span style={{
                 display: 'block',
-                color: '#FDE047', // Beautiful golden yellow accent
+                color: '#FDE047',
                 fontSize: 'clamp(36px,4.6vw,56px)',
                 fontWeight: 950,
                 marginTop: '8px',
-                textShadow: '0 4px 20px rgba(0, 0, 0, 0.95), 0 0 30px rgba(253, 224, 71, 0.35)'
+                textShadow: '0 4px 16px rgba(15, 23, 42, 0.8), 0 2px 4px rgba(15, 23, 42, 0.6)'
               }}>ไม่ใช่แค่จำ</span>
               <span style={{
                 display: 'block',
@@ -63,19 +60,19 @@ export function HeroSection({ onStart, onView, courses }) {
                 fontSize: 'clamp(18px,2.5vw,26px)',
                 fontWeight: 700,
                 marginTop: '12px',
-                textShadow: '0 2px 10px rgba(0, 0, 0, 0.85)'
+                textShadow: '0 2px 8px rgba(15, 23, 42, 0.6)'
               }}>ติวเข้มออนไลน์แบบครบวงจรกับ พี่ต้น</span>
             </h1>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-              <button onClick={onView} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: C.red, color: 'white', fontWeight: 800, fontSize: '15px', padding: '14px 28px', borderRadius: '12px', cursor: 'pointer', border: 'none', boxShadow: `0 8px 24px rgba(239,68,68,0.35)`, transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)' }}
-                onMouseOver={e => { e.currentTarget.style.background = C.redDark; e.currentTarget.style.transform = 'translateY(-2px) scale(1.03)'; }}
-                onMouseOut={e => { e.currentTarget.style.background = C.red; e.currentTarget.style.transform = 'none'; }}>
-                ดูคอร์สทั้งหมด <ChevronRight size={18} />
+              <button onClick={onStart} style={{ display: 'flex', alignItems: 'center', gap: '8px', background: C.red, color: 'white', fontWeight: 800, fontSize: '15px', padding: '14px 28px', borderRadius: '12px', cursor: 'pointer', border: 'none', boxShadow: `0 8px 24px rgba(239,68,68,0.35)` }}
+                onMouseOver={e => e.currentTarget.style.background = C.redDark}
+                onMouseOut={e => e.currentTarget.style.background = C.red}>
+                <Play size={18} fill="white" /> เริ่มเรียนฟรี
               </button>
-              <button onClick={onStart} style={{
+              <button onClick={onView} style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
@@ -88,33 +85,30 @@ export function HeroSection({ onStart, onView, courses }) {
                 borderRadius: '12px',
                 cursor: 'pointer',
                 backdropFilter: 'blur(8px)',
-                WebkitBackdropFilter: 'blur(8px)',
-                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+                WebkitBackdropFilter: 'blur(8px)'
               }}
                 onMouseOver={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'; e.currentTarget.style.borderColor = '#FFFFFF'; }}
-                onMouseOut={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'; e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.6)'; e.currentTarget.style.transform = 'none'; }}>
-                <Play size={18} fill="white" /> เริ่มเรียนฟรี
+                onMouseOut={e => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)'; e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.6)'; }}>
+                ดูคอร์สทั้งหมด <ChevronRight size={18} />
               </button>
             </div>
 
-            {/* Stats list - Transparent glassmorphic style */}
+            {/* Stats list */}
             <div className="stats-grid" style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
               gap: '12px',
-              background: 'rgba(15, 23, 42, 0.55)',
+              background: 'rgba(255, 255, 255, 0.12)',
               border: '1px solid rgba(255, 255, 255, 0.25)',
               borderRadius: '20px',
               padding: '18px 16px',
-              boxShadow: '0 12px 32px rgba(0,0,0,0.3)',
-              backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)',
+              boxShadow: '0 12px 32px rgba(0,0,0,0.05)',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
               marginTop: '12px'
             }}>
               {stats.map((s, i) => (
-                  <div key={i} style={{ textAlign: 'center' }}>
-                  <div style={{ fontWeight: 950, color: '#FFFFFF', fontSize: '22px', lineHeight: 1, textShadow: '0 2px 6px rgba(0,0,0,0.5)' }}>{s.value}</div>
-                  <div style={{ color: '#F3F4F6', fontSize: '10px', fontWeight: 800, marginTop: '6px', textTransform: 'uppercase', letterSpacing: '0.05em', textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>{s.label}</div>
+                <div key={i} style={{ textAlign: 'center' }}>
+                  <div style={{ fontWeight: 950, color: '#FFFFFF', fontSize: '22px', lineHeight: 1, textShadow: '0 2px 4px rgba(0,0,0,0.15)' }}>{s.value}</div>
+                  <div style={{ color: '#F3F4F6', fontSize: '10px', fontWeight: 700, marginTop: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{s.label}</div>
                 </div>
               ))}
             </div>
@@ -125,7 +119,6 @@ export function HeroSection({ onStart, onView, courses }) {
         <div className="animate-fade-in" style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <div className="animate-float" style={{ position: 'relative' }}>
 
-            {/* Main Glass Card */}
             <div style={{
               width: '320px',
               borderRadius: '28px',
@@ -137,10 +130,8 @@ export function HeroSection({ onStart, onView, courses }) {
               overflow: 'hidden',
               padding: '28px 24px 24px',
             }}>
-              {/* Ambient glow behind photo */}
               <div style={{ position: 'absolute', top: '-30px', left: '50%', transform: 'translateX(-50%)', width: '220px', height: '220px', background: 'radial-gradient(circle,rgba(185,28,28,0.1) 0%,transparent 70%)', pointerEvents: 'none' }} />
 
-              {/* Photo */}
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', position: 'relative', zIndex: 1 }}>
                 <div style={{ position: 'relative' }}>
                   <div style={{
@@ -151,7 +142,6 @@ export function HeroSection({ onStart, onView, courses }) {
                   }}>
                     <img src="/instructor.jpg" alt="พี่ต้น — ผู้สอน INBIOLOGY" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }} />
                   </div>
-                  {/* Online status indicator */}
                   <span style={{
                     position: 'absolute', bottom: '6px', right: '6px',
                     width: '18px', height: '18px', background: '#10B981',
@@ -160,7 +150,6 @@ export function HeroSection({ onStart, onView, courses }) {
                   }} />
                 </div>
 
-                {/* Name & Title */}
                 <div style={{ textAlign: 'center' }}>
                   <p style={{ color: C.textDark, fontWeight: 900, fontSize: '18px', letterSpacing: '-0.01em', margin: '0 0 4px' }}>พี่ต้น</p>
                   <p style={{ color: C.textMuted, fontSize: '11px', fontWeight: 600, margin: '0 0 8px' }}>นายพิสิษฐ์ สายตา</p>
@@ -170,7 +159,6 @@ export function HeroSection({ onStart, onView, courses }) {
                   </div>
                 </div>
 
-                {/* Credentials */}
                 <div style={{ width: '100%', background: '#F9FAFB', borderRadius: '14px', padding: '12px 14px', border: '1px solid #E5E7EB' }}>
                   {[
                     { icon: '🎓', text: 'ป.ตรี คณะศึกษาศาสตร์ มหาวิทยาลัยนเรศวร' },
@@ -185,7 +173,6 @@ export function HeroSection({ onStart, onView, courses }) {
                   ))}
                 </div>
 
-                {/* Rating */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <div style={{ display: 'flex', gap: '2px' }}>
                     {[1, 2, 3, 4, 5].map(s => <span key={s} style={{ fontSize: '13px' }}>⭐</span>)}
@@ -200,7 +187,6 @@ export function HeroSection({ onStart, onView, courses }) {
         </div>
       </div>
 
-      {/* Wave transition aligned securely to bottom */}
       <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, width: '100%', lineHeight: 0, zIndex: 10 }}>
         <svg viewBox="0 0 1440 60" style={{ width: '100%', display: 'block' }}>
           <path fill={C.page} d="M0,40 C360,80 1080,0 1440,40 L1440,60 L0,60 Z" />

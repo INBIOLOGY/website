@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ชำระเงิน — INBIOLOGY Academy</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header class="site-header"></header>
+
+  <div style="min-height:100vh;background:var(--c-page);padding-top:100px;padding-bottom:60px">
+    <div style="max-width:900px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1.5fr 1fr;gap:24px">
+      <!-- Payment Method & Slip Upload -->
+      <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:20px">
+        <h2 style="font-size:18px;font-weight:900;color:var(--c-navy);margin:0">💳 เลือกช่องทางชำระเงิน</h2>
+        <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:16px;padding:20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px">
+          <p style="font-size:12px;font-weight:800;color:var(--c-navy);margin:0">สแกน QR Code เพื่อชำระเงินผ่าน Mobile Banking</p>
+          <div style="width:150px;height:150px;background:white;border:1.5px solid #E5E7EB;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px">
+            <div style="background:var(--c-navy);color:white;font-size:10px;font-weight:900;padding:2px 8px;border-radius:4px;margin-bottom:8px">Prompt Pay</div>
+            <img src="/logo.png" style="width:80px;height:80px;object-fit:contain;opacity:0.8" alt="" />
+          </div>
+          <p style="font-size:11px;color:#6B7280;margin:0">ชื่อบัญชี: INBIOLOGY Academy by พี่ต้น</p>
+        </div>
+      </div>
+
+      <!-- Order Summary & Coupon Input -->
+      <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:14px">
+        <h3 style="font-size:14px;font-weight:850;color:var(--c-navy);margin:0;border-bottom:1px solid #F3F4F6;padding-bottom:10px">🛒 สรุปรายการคำสั่งซื้อ</h3>
+        <div id="checkout-items" style="display:flex;flex-direction:column;gap:8px"></div>
+
+        <!-- Coupon Input Box -->
+        <div style="border-top:1px solid #F3F4F6;padding-top:12px">
+          <label style="display:block;font-size:11px;font-weight:700;color:#374151;margin-bottom:6px">🎫 โค้ดคูปองส่วนลด</label>
+          <div style="display:flex;gap:8px">
+            <input type="text" id="coupon-input" placeholder="เช่น NEWBIO200" style="flex:1;border:1px solid #E5E7EB;border-radius:8px;padding:8px;font-size:12px;outline:none" />
+            <button onclick="handleCouponSubmit()" style="background:var(--c-sky);color:white;font-weight:800;font-size:12px;padding:8px 14px;border-radius:8px;border:none;cursor:pointer">
+              ใช้โค้ด
+            </button>
+          </div>
+          <p style="font-size:10px;color:#9CA3AF;margin-top:4px">โค้ดส่วนลดทดสอบ: INBIOLOGY100 หรือ NEWBIO200</p>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:#6B7280">
+          <span>ส่วนลดคูปอง</span>
+          <span id="discount-amount" style="color:#10B981;font-weight:800">- ฿0</span>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;font-weight:900;font-size:18px;color:var(--c-navy);border-top:1px solid #F3F4F6;padding-top:12px">
+          <span>ยอดชำระสุทธิ</span>
+          <span id="checkout-total">฿0</span>
+        </div>
+
+        <button onclick="confirmPayment()" style="width:100%;background:var(--c-red);color:white;font-weight:800;font-size:14px;padding:14px;border-radius:12px;border:none;cursor:pointer">
+          ยืนยันการชำระเงิน
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/mockData.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    let discount = 0;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderHeader('checkout');
+      renderSummary();
+    });
+
+    function renderSummary() {
+      const itemsContainer = document.getElementById('checkout-items');
+      const totalContainer = document.getElementById('checkout-total');
+      const discountContainer = document.getElementById('discount-amount');
+
+      if (AppState.cart.length === 0) {
+        itemsContainer.innerHTML = `<p style="font-size:12px;color:#9CA3AF">ไม่มีสินค้าในตะกร้า</p>`;
+      } else {
+        itemsContainer.innerHTML = AppState.cart.map(c => `
+          <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#374151">
+            <span style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.title}</span>
+            <span>฿${formatPrice(c.price)}</span>
+          </div>
+        `).join('');
+      }
+
+      const subtotal = AppState.cart.reduce((s, c) => s + c.price, 0);
+      const finalTotal = Math.max(0, subtotal - discount);
+
+      discountContainer.textContent = `- ฿${formatPrice(discount)}`;
+      totalContainer.textContent = `฿${formatPrice(finalTotal)}`;
+    }
+
+    function handleCouponSubmit() {
+      const code = document.getElementById('coupon-input').value;
+      const res = applyCouponCode(code);
+      if (res) {
+        const subtotal = AppState.cart.reduce((s, c) => s + c.price, 0);
+        if (res.type === 'percent') {
+          discount = Math.round((subtotal * res.discount) / 100);
+        } else {
+          discount = res.discount;
+        }
+        renderSummary();
+      }
+    }
+
+    function confirmPayment() {
+      if (AppState.cart.length === 0) {
+        showToast('กรุณาเลือกคอร์สลงตะกร้าก่อนชำระเงิน', 'error');
+        return;
+      }
+      AppState.cart.forEach(c => AppState.enrolled.push(c.id));
+      localStorage.setItem('inbiology_enrolled', JSON.stringify(AppState.enrolled));
+      AppState.cart = [];
+      AppState.saveCart();
+      showToast('🎉 ทำรายการสั่งซื้อชำระเงินสำเร็จแล้ว!', 'success');
+      setTimeout(() => location.href = '/dashboard.html', 1000);
+    }
+  </script>
+</body>
+</html>

@@ -1,17 +1,12 @@
-'use client'
+import { useState } from 'react';
+import { PlayCircle, Star, ShoppingCart, Check } from 'lucide-react';
+import { C } from '../constants/theme.js';
+import { formatPrice, pct } from '../utils/formatters.js';
 
-import { useState } from 'react'
-import { Star, Check, ShoppingCart, PlayCircle } from 'lucide-react'
-import { C, formatPrice, pct } from '@/src/app-data'
-
-
-
-// ─────────────────────────────────────────────────────────────────────────────
-// COURSE CARD
-// ─────────────────────────────────────────────────────────────────────────────
-export function CourseCard({ course, onAddToCart, enrolled, onViewDetails, onTrial }) {
+export default function CourseCard({ course, onAddToCart, enrolled, onViewDetails, onTrial }) {
   const [hover, setHover] = useState(false);
   const disc = pct(course.originalPrice, course.price);
+
   return (
     <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} style={{
       background: 'white', borderRadius: '20px', border: '1px solid', borderColor: hover ? C.navy : '#E5E7EB', overflow: 'hidden',
@@ -19,8 +14,8 @@ export function CourseCard({ course, onAddToCart, enrolled, onViewDetails, onTri
       transform: hover ? 'translateY(-6px)' : 'none', transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', display: 'flex', flexDirection: 'column'
     }}>
       {/* Header Image */}
-      <div style={{ position: 'relative', overflow: 'hidden', height: '200px', background: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '14px' }}>
-        <img src={course.imageUrl} alt={course.title} loading="lazy" style={{ height: '155px', maxWidth: '85%', objectFit: 'contain', borderRadius: '8px', boxShadow: '0 8px 20px rgba(0,0,0,0.12)', transition: 'transform 0.5s', transform: hover ? 'scale(1.04)' : 'scale(1)' }} />
+      <div style={{ position: 'relative', overflow: 'hidden', height: '240px', background: 'linear-gradient(to bottom, #F8FAFC, #E2E8F0)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px 12px' }}>
+        <img src={course.imageUrl} alt={course.title} loading="lazy" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: '6px', boxShadow: '0 8px 20px rgba(15, 23, 42, 0.12)', transition: 'transform 0.5s', transform: hover ? 'scale(1.04)' : 'scale(1)' }} />
         <span style={{ position: 'absolute', top: '12px', left: '12px', background: course.badgeBg, color: 'white', fontSize: '10px', fontWeight: 800, padding: '4px 10px', borderRadius: '999px', zIndex: 2 }}>
           {course.badge}
         </span>

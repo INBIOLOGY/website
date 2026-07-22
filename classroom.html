@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>คอร์สเรียนของฉัน — INBIOLOGY Academy</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header class="site-header"></header>
+
+  <div style="min-height:100vh;background:var(--c-page);padding-top:100px;padding-bottom:60px">
+    <div style="max-width:1280px;margin:0 auto;padding:0 24px">
+      
+      <!-- STATE 1: MY COURSES CATALOG GRID VIEW (เหมือนหน้าคอร์สทั้งหมด 100%) -->
+      <div id="my-courses-grid-view">
+        <div style="margin-bottom:32px">
+          <span style="background:var(--c-navy);color:white;font-size:11px;font-weight:900;padding:4px 14px;border-radius:20px">MY ENROLLED COURSES</span>
+          <h1 style="font-size:28px;font-weight:950;color:var(--c-navy);margin:10px 0 6px">🎓 คอร์สเรียนของฉัน</h1>
+          <p style="font-size:13px;color:#6B7280;margin:0">คอร์สเรียนชีววิทยาที่คุณลงทะเบียนไว้แล้ว สามารถกดเข้าสู่ห้องเรียนได้ทันที</p>
+        </div>
+
+        <div id="my-enrolled-courses-grid" class="courses-grid"></div>
+      </div>
+
+      <!-- STATE 2: ONLINE VIDEO CLASSROOM ROOM -->
+      <div id="video-classroom-view" style="display:none">
+        <div style="margin-bottom:20px">
+          <button onclick="showMyCoursesCatalog()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;border:1px solid #E5E7EB;background:white;color:var(--c-navy);font-weight:800;font-size:12px;cursor:pointer">
+            ⬅ กลับไปหน้าคอร์สเรียนของฉัน
+          </button>
+        </div>
+
+        <div class="classroom-grid" style="padding-bottom:48px">
+          <!-- Chapter List Sidebar -->
+          <aside style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden;height:fit-content">
+            <div style="padding:16px;background:var(--c-navy);color:white">
+              <h3 style="font-weight:900;font-size:14px;margin:0">📚 บทเรียนทั้งหมด</h3>
+              <p id="course-title" style="font-size:10px;color:rgba(255,255,255,0.7);margin:4px 0 0">Bio Intensive I</p>
+            </div>
+            <div id="lesson-list" style="display:flex;flex-direction:column"></div>
+          </aside>
+
+          <!-- Video & Study Tools -->
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <!-- Video Room -->
+            <div style="background:black;border-radius:24px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
+              <video id="main-video-player" src="https://www.w3schools.com/html/mov_bbb.mp4" controls style="width:100%;height:100%;object-fit:contain"></video>
+            </div>
+
+            <!-- Interactive Study Tools Tabs -->
+            <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px">
+              <div style="display:flex;gap:8px;border-bottom:1px solid #E5E7EB;padding-bottom:12px;margin-bottom:16px">
+                <button onclick="switchTab('notes')" id="tab-notes" style="padding:8px 16px;border-radius:8px;border:none;background:var(--c-navy);color:white;font-weight:800;font-size:12px;cursor:pointer">
+                  📝 โน้ตย่อส่วนตัว
+                </button>
+                <button onclick="switchTab('ask')" id="tab-ask" style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer">
+                  💬 ถามผู้สอน (พี่ต้น)
+                </button>
+              </div>
+
+              <!-- Tab Content: Notes -->
+              <div id="panel-notes" style="display:flex;flex-direction:column;gap:12px">
+                <textarea id="note-input" placeholder="จดบันทึกประเด็นสำคัญระหว่างเรียนที่นี่..." rows="3" style="width:100%;border:1px solid #E5E7EB;border-radius:12px;padding:12px;font-size:12px;outline:none"></textarea>
+                <button onclick="saveNote()" style="background:var(--c-navy);color:white;font-weight:800;font-size:12px;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;align-self:flex-end">
+                  บันทึกโน้ตย่อ
+                </button>
+                <div id="saved-notes-list" style="display:flex;flex-direction:column;gap:8px;margin-top:8px"></div>
+              </div>
+
+              <!-- Tab Content: Ask Instructor -->
+              <div id="panel-ask" style="display:none;flex-direction:column;gap:12px">
+                <p style="font-size:12px;color:#6B7280">ส่งคำถามข้อสงสัยในบทเรียนนี้ตรงถึงพี่ต้น:</p>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <textarea id="ask-query" placeholder="พิมพ์คำถามข้อสงสัยที่ต้องการถามพี่ต้น..." rows="3" style="width:100%;border:1px solid #E5E7EB;border-radius:10px;padding:10px;font-size:12px;outline:none;resize:none"></textarea>
+                  <button onclick="handleAskQuestion()" style="background:var(--c-sky);color:white;font-weight:800;font-size:12px;padding:10px 18px;border-radius:10px;border:none;cursor:pointer;align-self:flex-end">
+                    ส่งคำถามถึงผู้สอน
+                  </button>
+                </div>
+                <div id="ask-response-box" style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:14px;font-size:12px;color:#166534;display:none"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/js/mockData.js"></script>
+  <script src="/js/app.js"></script>
+  <script>
+    let currentCourse = COURSES[0];
+    let currentLesson = currentCourse.lessons[0];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderHeader('classroom');
+      renderMyCoursesCatalog();
+      renderNotes();
+    });
+
+    function renderMyCoursesCatalog() {
+      const enrolled = COURSES.filter(c => AppState.enrolled.includes(c.id));
+      const container = document.getElementById('my-enrolled-courses-grid');
+
+      if (enrolled.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column:1/-1;background:white;border:1px solid #E5E7EB;border-radius:24px;padding:48px;text-align:center">
+            <h3 style="font-size:18px;font-weight:900;color:var(--c-navy);margin:0 0 8px">คุณยังไม่มีคอร์สเรียนที่ลงทะเบียน</h3>
+            <p style="font-size:13px;color:#6B7280;margin:0 0 20px">เลือกซื้อคอร์สเรียนชีววิทยาพรีเมียมโดยพี่ต้นเพื่อเริ่มต้นเรียนทันที</p>
+            <a href="/courses.html" style="background:var(--c-navy);color:white;font-weight:850;font-size:13px;padding:12px 24px;border-radius:12px;text-decoration:none;display:inline-block">🛒 เลือกซื้อคอร์สเรียนเลย</a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = enrolled.map(c => `
+        <div class="course-card" style="background:white;border-radius:20px;border:1px solid #E5E7EB;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.02);display:flex;flex-direction:column">
+          <!-- Thumbnail Container matching standard approved UI pattern -->
+          <div style="position:relative;overflow:hidden;height:200px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;padding:14px">
+            <img src="${c.imageUrl}" alt="${c.title}" style="height:155px;max-width:85%;object-fit:contain;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.12)" />
+            <span style="position:absolute;top:12px;left:12px;background:${c.badgeBg};color:white;font-size:10px;font-weight:800;padding:4px 10px;border-radius:999px;z-index:2">
+              ${c.badge}
+            </span>
+            <span style="position:absolute;bottom:10px;right:12px;background:#18181B;color:white;font-size:11px;font-weight:900;padding:4px 10px;border-radius:6px;z-index:2">
+              ${c.hours} ชั่วโมงเรียน
+            </span>
+          </div>
+
+          <!-- Body details -->
+          <div style="padding:18px;display:flex;flex-direction:column;gap:10px;flex:1">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="display:inline-block;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;background:${c.tagBg};color:${c.tagColor}">
+                ${c.tag}
+              </span>
+              <span style="font-size:10px;font-weight:700;color:#9CA3AF">${c.Level}</span>
+            </div>
+
+            <h3 style="font-weight:850;color:var(--c-navy);font-size:15px;line-height:1.3;margin:0">${c.title}</h3>
+            <p style="font-size:11px;color:#9CA3AF;font-weight:600;margin:0">ผู้สอน: ${c.instructor}</p>
+
+            <div style="margin-top:auto;padding-top:12px;border-top:1px solid #F3F4F6">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                <span style="font-size:11px;font-weight:800;color:var(--c-sky)">ความก้าวหน้าการเรียน</span>
+                <span style="font-size:11px;font-weight:900;color:var(--c-navy)">75%</span>
+              </div>
+              <div style="background:#E5E7EB;height:6px;border-radius:3px;overflow:hidden;margin-bottom:12px">
+                <div style="width:75%;height:100%;background:var(--c-sky)"></div>
+              </div>
+              <button onclick="openClassroomRoom('${c.id}')" style="width:100%;background:var(--c-sky);color:white;font-weight:850;font-size:13px;padding:12px;border-radius:12px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
+                ▶ เข้าสู่ห้องเรียน
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function showMyCoursesCatalog() {
+      document.getElementById('my-courses-grid-view').style.display = 'block';
+      document.getElementById('video-classroom-view').style.display = 'none';
+    }
+
+    function openClassroomRoom(courseId) {
+      const found = COURSES.find(c => c.id === courseId);
+      if (found) currentCourse = found;
+      currentLesson = currentCourse.lessons[0];
+
+      document.getElementById('my-courses-grid-view').style.display = 'none';
+      document.getElementById('video-classroom-view').style.display = 'block';
+
+      renderLessonList();
+    }
+
+    function switchTab(tabName) {
+      ['notes', 'ask'].forEach(t => {
+        const btn = document.getElementById(`tab-${t}`);
+        const panel = document.getElementById(`panel-${t}`);
+        if (t === tabName) {
+          btn.style.background = 'var(--c-navy)';
+          btn.style.color = 'white';
+          panel.style.display = 'flex';
+        } else {
+          btn.style.background = 'white';
+          btn.style.color = '#374151';
+          panel.style.display = 'none';
+        }
+      });
+    }
+
+    function handleAskQuestion() {
+      const q = document.getElementById('ask-query').value.trim();
+      if (!q) return;
+      document.getElementById('ask-query').value = '';
+      showToast('📩 ส่งคำถามถึงพี่ต้นเรียบร้อยแล้ว!', 'success');
+      const box = document.getElementById('ask-response-box');
+      box.style.display = 'block';
+      box.innerHTML = `💬 **ตอบกลับจากพี่ต้น**: ได้รับคำถามเรื่อง "${q}" เรียบร้อยแล้วครับ! เดี๋ยวพี่ต้นจะมาตอบคลายข้อสงสัยให้น้องทางกล่องข้อความอย่างละเอียดแน่นอนครับ ✌️`;
+    }
+
+    function renderLessonList() {
+      document.getElementById('course-title').textContent = currentCourse.title;
+      const list = document.getElementById('lesson-list');
+      list.innerHTML = currentCourse.lessons.map((l, idx) => `
+        <button onclick="selectLesson('${l.id}')" style="width:100%;display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;border:none;border-bottom:1px solid #F3F4F6;background:${l.id === currentLesson.id ? '#EFF6FF' : 'white'};text-align:left">
+          <span style="width:22px;height:22px;border-radius:50%;background:${l.id === currentLesson.id ? 'var(--c-sky)' : '#F3F4F6'};color:${l.id === currentLesson.id ? 'white' : '#4B5563'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800">${idx + 1}</span>
+          <div>
+            <p style="font-size:12px;font-weight:700;color:#374151;margin:0">${l.title}</p>
+            <span style="font-size:10px;color:#9CA3AF">${l.duration} นาที</span>
+          </div>
+        </button>
+      `).join('');
+    }
+
+    function selectLesson(id) {
+      currentLesson = currentCourse.lessons.find(l => l.id === id);
+      document.getElementById('main-video-player').src = currentLesson.videoUrl || 'https://www.w3schools.com/html/mov_bbb.mp4';
+      renderLessonList();
+    }
+
+    function saveNote() {
+      const text = document.getElementById('note-input').value.trim();
+      if (!text) return;
+      const notes = JSON.parse(localStorage.getItem('inbiology_notes') || '[]');
+      notes.push({ id: Date.now(), courseTitle: currentCourse.title, lessonTitle: currentLesson.title, text });
+      localStorage.setItem('inbiology_notes', JSON.stringify(notes));
+      document.getElementById('note-input').value = '';
+      showToast('📝 บันทึกโน้ตย่อสำเร็จ', 'success');
+      renderNotes();
+    }
+
+    function renderNotes() {
+      const notes = JSON.parse(localStorage.getItem('inbiology_notes') || '[]');
+      const container = document.getElementById('saved-notes-list');
+      container.innerHTML = notes.map(n => `
+        <div style="background:#F9FAFB;padding:10px 14px;border-radius:10px;border:1px solid #E5E7EB;font-size:12px">
+          <span style="font-weight:800;color:var(--c-sky);display:block">${n.lessonTitle}</span>
+          <p style="margin:4px 0 0;color:#374151">${n.text}</p>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>
