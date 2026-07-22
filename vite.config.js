@@ -21,6 +21,7 @@ export default defineConfig({
         checkout: resolve(__dirname, 'checkout.html'),
         dashboard: resolve(__dirname, 'dashboard.html'),
         guide: resolve(__dirname, 'guide.html'),
+        fallback404: resolve(__dirname, '404.html'),
       },
     },
   },

@@ -311,7 +311,7 @@ function renderHeader(activePage = 'home') {
 
   header.innerHTML = `
     <div class="header-container">
-      <a href="/index.html" class="logo-btn">
+      <a href="index.html" class="logo-btn">
         <img src="./logo.png" alt="INBIOLOGY Logo" class="logo-img" />
         <div style="text-align:left">
           <span style="font-weight:900;font-size:20px;color:var(--c-navy);display:block;line-height:1">INBIOLOGY</span>
@@ -320,12 +320,12 @@ function renderHeader(activePage = 'home') {
       </a>
 
       <nav class="desktop-nav">
-        <a href="/index.html" class="nav-link ${activePage === 'home' ? 'active' : ''}">หน้าแรก</a>
-        <a href="/courses.html" class="nav-link ${activePage === 'courses' ? 'active' : ''}">คอร์สเรียน</a>
-        <a href="/classroom.html" class="nav-link ${activePage === 'classroom' ? 'active' : ''}">คอร์สเรียนของฉัน</a>
-        <a href="/exam.html" class="nav-link ${activePage === 'exam' ? 'active' : ''}">คลังข้อสอบ</a>
-        <a href="/dashboard.html" class="nav-link ${activePage === 'dashboard' ? 'active' : ''}">Dashboard</a>
-        ${isAdmin ? `<a href="/admin.html" class="nav-link ${activePage === 'admin' ? 'active' : ''}">แอดมิน</a>` : ''}
+        <a href="index.html" class="nav-link ${activePage === 'home' ? 'active' : ''}">หน้าแรก</a>
+        <a href="courses.html" class="nav-link ${activePage === 'courses' ? 'active' : ''}">คอร์สเรียน</a>
+        <a href="classroom.html" class="nav-link ${activePage === 'classroom' ? 'active' : ''}">คอร์สเรียนของฉัน</a>
+        <a href="exam.html" class="nav-link ${activePage === 'exam' ? 'active' : ''}">คลังข้อสอบ</a>
+        <a href="dashboard.html" class="nav-link ${activePage === 'dashboard' ? 'active' : ''}">Dashboard</a>
+        ${isAdmin ? `<a href="admin.html" class="nav-link ${activePage === 'admin' ? 'active' : ''}">แอดมิน</a>` : ''}
       </nav>
 
       <div style="display:flex;align-items:center;gap:12px">
@@ -335,9 +335,9 @@ function renderHeader(activePage = 'home') {
         </button>
 
         ${!isLoggedIn
-          ? `<a href="/login.html" class="btn-login">เข้าสู่ระบบ</a>`
+          ? `<a href="login.html" class="btn-login">เข้าสู่ระบบ</a>`
           : `<div style="display:flex;align-items:center;gap:8px">
-              <a href="/dashboard.html" style="font-weight:800;font-size:12px;color:var(--c-navy);background:#FEF2F2;padding:6px 12px;border-radius:10px;border:1px solid rgba(185,28,28,0.15)">
+              <a href="dashboard.html" style="font-weight:800;font-size:12px;color:var(--c-navy);background:#FEF2F2;padding:6px 12px;border-radius:10px;border:1px solid rgba(185,28,28,0.15)">
                 ${isAdmin ? '🛡️ แอดมินผู้ดูแล' : '🎓 พี่วิทศรุต'}
               </a>
               <button onclick="AppState.logout()" title="ออกจากระบบ" style="padding:6px 12px;background:#FEE2E2;color:#DC2626;border-radius:10px;font-size:11px;font-weight:800;border:none;cursor:pointer;display:flex;align-items:center;gap:4px">
@@ -353,12 +353,12 @@ function renderHeader(activePage = 'home') {
         </button>
 
         <div id="nav-dropdown" class="dropdown-panel">
-          <a href="/index.html" class="dropdown-item">👉 หน้าแรก</a>
-          <a href="/courses.html" class="dropdown-item">📚 คอร์สเรียนทั้งหมด</a>
-          <a href="/classroom.html" class="dropdown-item">🎓 คอร์สเรียนของฉัน</a>
-          <a href="/exam.html" class="dropdown-item">🏆 คลังข้อสอบ A-Level</a>
-          <a href="/guide.html" class="dropdown-item">📖 คู่มือการใช้งาน</a>
-          ${isAdmin ? `<a href="/admin.html" class="dropdown-item">🛡 แดชบอร์ดแอดมิน</a>` : ''}
+          <a href="index.html" class="dropdown-item">👉 หน้าแรก</a>
+          <a href="courses.html" class="dropdown-item">📚 คอร์สเรียนทั้งหมด</a>
+          <a href="classroom.html" class="dropdown-item">🎓 คอร์สเรียนของฉัน</a>
+          <a href="exam.html" class="dropdown-item">🏆 คลังข้อสอบ A-Level</a>
+          <a href="guide.html" class="dropdown-item">📖 คู่มือการใช้งาน</a>
+          ${isAdmin ? `<a href="admin.html" class="dropdown-item">🛡 แดชบอร์ดแอดมิน</a>` : ''}
           <button onclick="applyDarkMode(!AppState.darkMode)" class="dropdown-item">
             ${AppState.darkMode ? '☀️ โหมดสว่าง' : '🌙 โหมดมืด'}
           </button>

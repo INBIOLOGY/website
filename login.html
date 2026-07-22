@@ -55,7 +55,7 @@
 
     <!-- Right Side: Comprehensive Form Container -->
     <div class="auth-form-col">
-      <a href="/index.html" style="color:#6B7280;font-size:13px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px;margin-bottom:24px;width:fit-content" onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#6B7280'">
+      <a href="index.html" style="color:#6B7280;font-size:13px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px;margin-bottom:24px;width:fit-content" onmouseover="this.style.color='#111827'" onmouseout="this.style.color='#6B7280'">
         ‹ กลับหน้าหลัก
       </a>
 
@@ -244,12 +244,12 @@
         AppState.userRole = 'admin';
         localStorage.setItem('inbiology_role', 'admin');
         showToast('🛡️ เข้าสู่ระบบในฐานะแอดมินผู้ดูแลระบบ', 'success');
-        setTimeout(() => location.href = '/admin.html', 600);
+        setTimeout(() => location.href = 'admin.html', 600);
       } else {
         AppState.userRole = 'student';
         localStorage.setItem('inbiology_role', 'student');
         showToast(currentAuthTab === 'login' ? '🎓 เข้าสู่ระบบสำเร็จ ยินดีต้อนรับครับ!' : '🎉 สมัครสมาชิกสำเร็จ ยินดีต้อนรับสู่ INBIOLOGY!', 'success');
-        setTimeout(() => location.href = '/classroom.html', 600);
+        setTimeout(() => location.href = 'classroom.html', 600);
       }
     });
   </script>
