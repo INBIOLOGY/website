@@ -171,7 +171,7 @@ function renderCartDrawer() {
             <span style="font-weight:800;color:#374151;font-size:14px">ยอดรวม</span>
             <span style="font-weight:900;font-size:22px;color:var(--c-navy)">฿${formatPrice(total)}</span>
           </div>
-          <a href="/checkout.html" style="width:100%;background:var(--c-red);color:white;font-weight:850;font-size:14px;padding:14px;border-radius:12px;cursor:pointer;border:none;text-align:center">
+          <a href="checkout.html" style="width:100%;background:var(--c-red);color:white;font-weight:850;font-size:14px;padding:14px;border-radius:12px;cursor:pointer;border:none;text-align:center">
             ดำเนินการชำระเงิน
           </a>
         </div>
