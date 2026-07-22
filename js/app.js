@@ -27,6 +27,10 @@ const AppState = {
   },
   
   addToCart(course) {
+    if (!this.userRole || this.userRole === 'guest') {
+      showLoginModal('กรุณาเข้าสู่ระบบก่อนเลือกซื้อคอร์สเรียนลงในตะกร้าสินค้า');
+      return;
+    }
     if (this.enrolled.includes(course.id)) {
       showToast('คุณได้ลงทะเบียนในห้องเรียนของคอร์สนี้แล้ว', 'info');
       return;
@@ -178,6 +182,38 @@ function renderCartDrawer() {
       ` : ''}
     </div>
   `;
+}
+
+// Login Requirement Prompt Modal
+function showLoginModal(message = 'กรุณาเข้าสู่ระบบก่อนเลือกซื้อคอร์สเรียนหรือเข้าดูบทเรียนของคุณ') {
+  let modal = document.getElementById('login-required-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'login-required-modal';
+    modal.className = 'modal-backdrop';
+    document.body.appendChild(modal);
+  }
+
+  modal.innerHTML = `
+    <div class="modal-card" style="max-width:440px;width:90%;text-align:center;padding:32px 24px;border-radius:24px">
+      <div style="width:64px;height:64px;background:#FEF2F2;color:#DC2626;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 16px;box-shadow:0 6px 16px rgba(220,38,38,0.15)">
+        🔒
+      </div>
+      <h3 style="font-size:20px;font-weight:950;color:var(--c-navy);margin:0 0 8px">ต้องเข้าสู่ระบบก่อน</h3>
+      <p style="font-size:13.5px;color:#6B7280;line-height:1.5;margin:0 0 24px">${message}</p>
+      
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a href="login.html" style="background:#1E3A8A;color:white;font-weight:900;font-size:14px;padding:12px;border-radius:12px;text-decoration:none;display:block;box-shadow:0 4px 14px rgba(30,58,138,0.25)">
+          🔑 เข้าสู่ระบบ / สมัครสมาชิก ➔
+        </a>
+        <button onclick="document.getElementById('login-required-modal').classList.remove('show')" style="background:none;border:1px solid #E5E7EB;color:#6B7280;font-weight:800;font-size:13px;padding:10px;border-radius:12px;cursor:pointer">
+          ยกเลิก
+        </button>
+      </div>
+    </div>
+  `;
+
+  modal.classList.add('show');
 }
 
 // Video Trial Modal Popup Player

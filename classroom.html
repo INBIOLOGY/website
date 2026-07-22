@@ -101,8 +101,26 @@
     });
 
     function renderMyCoursesCatalog() {
-      const enrolled = COURSES.filter(c => AppState.enrolled.includes(c.id));
       const container = document.getElementById('my-enrolled-courses-grid');
+      const isLoggedIn = Boolean(AppState.userRole && AppState.userRole !== 'guest');
+
+      if (!isLoggedIn) {
+        container.innerHTML = `
+          <div style="grid-column:1/-1;background:white;border:1.5px solid #FCA5A5;border-radius:24px;padding:48px 24px;text-align:center;box-shadow:0 10px 30px rgba(185,28,28,0.08)">
+            <div style="width:64px;height:64px;background:#FEF2F2;color:#DC2626;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;box-shadow:0 6px 16px rgba(220,38,38,0.15)">
+              🔒
+            </div>
+            <h3 style="font-size:20px;font-weight:950;color:var(--c-navy);margin:0 0 8px">กรุณาเข้าสู่ระบบเพื่อเข้าชมคอร์สเรียนของคุณ</h3>
+            <p style="font-size:13.5px;color:#6B7280;max-width:480px;margin:0 auto 24px">เข้าสู่ระบบบัญชีนักเรียนเพื่อรับชมวิดีโอบทเรียน สรุปเนื้อหา e-Book และบันทึกโน้ตย่อส่วนตัว</p>
+            <a href="login.html" style="background:#1E3A8A;color:white;font-weight:900;font-size:14px;padding:12px 28px;border-radius:12px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(30,58,138,0.3)">
+              🔑 เข้าสู่ระบบ / สมัครสมาชิก ➔
+            </a>
+          </div>
+        `;
+        return;
+      }
+
+      const enrolled = COURSES.filter(c => AppState.enrolled.includes(c.id));
 
       if (enrolled.length === 0) {
         container.innerHTML = `
