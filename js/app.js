@@ -16,8 +16,6 @@ function pct(orig, cur) {
 const AppState = {
   cart: JSON.parse(localStorage.getItem('inbiology_cart') || '[]'),
   enrolled: JSON.parse(localStorage.getItem('inbiology_enrolled') || '["bio-intensive-1"]'),
-  userRole: localStorage.getItem('inbiology_role') || null,
-  darkMode: localStorage.getItem('inbiology_darkmode') === 'true',
   lang: localStorage.getItem('inbiology_lang') || 'TH',
   appliedCoupon: null,
   
@@ -128,13 +126,6 @@ function showToast(message, type = 'info') {
   }, 4000);
 }
 
-// Dark Mode Handler
-function applyDarkMode(enable) {
-  AppState.darkMode = enable;
-  localStorage.setItem('inbiology_darkmode', enable);
-  if (enable) document.body.classList.add('dark-mode');
-  else document.body.classList.remove('dark-mode');
-}
 
 // Global Modal Drawer Handlers
 function openCartDrawer() {
@@ -372,10 +363,10 @@ function renderHeader(activePage = 'home') {
   header.innerHTML = `
     <div class="header-container">
       <a href="index.html" class="logo-btn">
-        <img src="./logo.png" alt="INBIOLOGY Logo" class="logo-img" style="height:46px;width:auto;object-fit:contain" />
+        <img src="./logo.png" alt="INBIOLOGY Logo" class="logo-img" style="height:44px;width:auto;object-fit:contain" />
         <div style="text-align:left">
-          <span style="font-weight:900;font-size:20px;color:var(--c-navy);display:block;line-height:1">INBIOLOGY</span>
-          <span style="font-size:10px;font-weight:700;color:var(--c-sky);display:block;margin-top:2px">by พี่ต้น</span>
+          <span style="font-weight:700;font-size:18px;color:var(--c-navy);display:block;line-height:1;letter-spacing:-0.3px">INBIOLOGY</span>
+          <span style="font-size:10px;font-weight:600;color:var(--c-sky);display:block;margin-top:2px">by พี่ต้น</span>
         </div>
       </a>
 
@@ -419,9 +410,6 @@ function renderHeader(activePage = 'home') {
           <a href="exam.html" class="dropdown-item">🏆 คลังข้อสอบ A-Level</a>
           <a href="guide.html" class="dropdown-item">📖 คู่มือการใช้งาน</a>
           ${isAdmin ? `<a href="admin.html" class="dropdown-item">🛡 แดชบอร์ดแอดมิน</a>` : ''}
-          <button onclick="applyDarkMode(!AppState.darkMode)" class="dropdown-item">
-            ${AppState.darkMode ? '☀️ โหมดสว่าง' : '🌙 โหมดมืด'}
-          </button>
           ${isLoggedIn 
             ? `<button onclick="AppState.logout()" class="dropdown-item" style="color:#DC2626;font-weight:800">🚪 ออกจากระบบ</button>`
             : `<a href="login.html" class="dropdown-item" style="color:var(--c-sky);font-weight:800">🔑 เข้าสู่ระบบ</a>`
@@ -485,5 +473,6 @@ document.addEventListener('click', (e) => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-  applyDarkMode(AppState.darkMode);
+  localStorage.removeItem('inbiology_darkmode');
+  document.body.classList.remove('dark-mode');
 });
