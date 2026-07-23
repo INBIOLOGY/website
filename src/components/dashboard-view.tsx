@@ -1,0 +1,12 @@
+"use client";
+import Image from "next/image";
+import Link from "next/link";
+import { courses } from "@/data/mock";
+import type { Course } from "@/types/domain";
+import { useState } from "react";
+
+export function DashboardView() {
+  const [tab, setTab] = useState("courses");
+  const enrolled: Course[] = courses.slice(0, 2) as Course[];
+  return <main className="student-page"><div className="student-layout"><aside className="profile-sidebar"><div className="profile-avatar">พต</div><h2>พี่ต้น</h2><p>นายพีรวิชญ์ สายตา</p><small>โรงเรียนเตรียมอุดมฯ · ม.5</small><button onClick={() => setTab("profile")}>⚙ แก้ไขโปรไฟล์</button></aside><section className="dashboard-panel"><nav className="dashboard-tabs">{[["courses", "คอร์สของฉัน"], ["profile", "โปรไฟล์"], ["notes", "โน้ตของฉัน"], ["faq", "คำถามที่พบบ่อย"]].map(([key, label]) => <button key={key} className={tab === key ? "active" : ""} onClick={() => setTab(key)}>{label}</button>)}</nav>{tab === "courses" && <div><h1>คอร์สเรียนของฉัน</h1><div className="enrolled-grid">{enrolled.map((course, index) => <article className="enrolled-card" key={course.id}><div className="enrolled-cover"><Image src={course.imageUrl} alt={course.title} width={180} height={140} /></div><div className="enrolled-body"><h2>{course.title}</h2><p>ผู้สอน: {course.instructor}</p><div className="progress-label"><span>ความคืบหน้า</span><strong>{index ? 35 : 68}%</strong></div><div className="progress-track"><span style={{ width: `${index ? 35 : 68}%` }} /></div><Link href="/classroom" className="course-action">▶ เรียนต่อ</Link></div></article>)}</div></div>}{tab === "profile" && <div className="dashboard-form"><h1>แก้ไขข้อมูลส่วนตัว</h1><div className="form-grid"><label>ชื่อเล่น<input defaultValue="พี่ต้น" /></label><label>ชื่อ-นามสกุล<input defaultValue="นายพีรวิชญ์ สายตา" /></label><label>โรงเรียน<input defaultValue="โรงเรียนเตรียมอุดมฯ" /></label><label>ระดับชั้น<select defaultValue="ม.5"><option>ม.4</option><option>ม.5</option><option>ม.6</option></select></label></div><button className="primary-button">บันทึกข้อมูล</button></div>}{tab === "notes" && <div className="empty-dashboard"><h1>โน้ตของฉัน</h1><p>โน้ตจากบทเรียนจะแสดงที่นี่</p></div>}{tab === "faq" && <div className="faq-list"><h1>คำถามที่พบบ่อย</h1>{["ดูคอร์สเรียนของฉันได้ที่ไหน?", "สามารถเรียนซ้ำได้หรือไม่?", "ติดต่อทีมงานได้อย่างไร?"].map((q) => <details key={q}><summary>{q}</summary><p>สามารถติดต่อทีมงาน INBIOLOGY ได้ผ่านช่องทางที่ระบุในหน้าเว็บไซต์</p></details>)}</div>}</section></div></main>;
+}
