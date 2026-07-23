@@ -19,6 +19,33 @@
       justify-content: center;
       position: relative;
     }
+
+    /* Ambient Glow Background Blobs */
+    .bg-glow-red {
+      position: fixed;
+      top: -10%;
+      left: -5%;
+      width: 500px;
+      height: 500px;
+      background: rgba(239, 68, 68, 0.09);
+      border-radius: 50%;
+      filter: blur(130px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-glow-blue {
+      position: fixed;
+      bottom: -10%;
+      right: -5%;
+      width: 550px;
+      height: 550px;
+      background: rgba(37, 99, 235, 0.09);
+      border-radius: 50%;
+      filter: blur(130px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
     .auth-wrapper {
       width: 100%;
       max-width: 440px;
@@ -27,30 +54,46 @@
       position: relative;
       z-index: 2;
     }
+
     .auth-card {
       background: #FFFFFF;
       border-radius: 24px;
       border: 1px solid #E2E8F0;
-      box-shadow: 0 20px 50px -12px rgba(15, 23, 42, 0.06);
+      box-shadow: 0 20px 60px -15px rgba(30, 58, 138, 0.1);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .auth-card-top-bar {
+      height: 5px;
+      background: linear-gradient(90deg, #B91C1C 0%, #EF4444 45%, #1E3A8A 100%);
+    }
+
+    .auth-card-body {
       padding: 36px 32px;
       box-sizing: border-box;
     }
+
     .auth-header {
       text-align: center;
       margin-bottom: 24px;
     }
     .auth-logo {
-      height: 58px;
+      height: 60px;
       width: auto;
       object-fit: contain;
       margin-bottom: 12px;
-      filter: drop-shadow(0 4px 12px rgba(185, 28, 28, 0.15));
+      filter: drop-shadow(0 4px 12px rgba(185, 28, 28, 0.18));
+      transition: transform 0.2s ease;
+    }
+    .auth-logo:hover {
+      transform: scale(1.04);
     }
     .auth-title {
       font-size: 22px;
       font-weight: 700;
       color: #0F172A;
-      margin: 0 0 6px;
+      margin: 0 0 4px;
       letter-spacing: -0.3px;
     }
     .auth-subtitle {
@@ -59,6 +102,20 @@
       margin: 0;
       font-weight: 400;
     }
+    .auth-tagline-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #FEF2F2;
+      color: #B91C1C;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-top: 8px;
+      border: 1px solid rgba(185, 28, 28, 0.12);
+    }
+
     .tab-switch {
       background: #F1F5F9;
       border-radius: 12px;
@@ -77,15 +134,16 @@
     }
     .tab-btn.active {
       background: #FFFFFF;
-      color: #0F172A;
+      color: #1E3A8A;
       font-weight: 600;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
     .tab-btn.inactive {
       background: transparent;
       color: #64748B;
       font-weight: 500;
     }
+
     .form-group {
       display: flex;
       flex-direction: column;
@@ -95,6 +153,9 @@
       font-size: 12.5px;
       font-weight: 500;
       color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
     .form-input {
       width: 100%;
@@ -110,12 +171,13 @@
     }
     .form-input:focus {
       background: #FFFFFF;
-      border-color: #1E3A8A;
-      box-shadow: 0 0 0 3.5px rgba(30, 58, 138, 0.08);
+      border-color: #2563EB;
+      box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.1);
     }
+
     .btn-submit {
       width: 100%;
-      background: #1E3A8A;
+      background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%);
       color: #FFFFFF;
       font-weight: 600;
       font-size: 14px;
@@ -124,14 +186,14 @@
       border: none;
       cursor: pointer;
       margin-top: 6px;
-      box-shadow: 0 4px 14px rgba(30, 58, 138, 0.18);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.25);
       transition: all 0.2s ease;
     }
     .btn-submit:hover {
-      background: #1E40AF;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(30, 58, 138, 0.24);
+      transform: translateY(-1.5px);
+      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35);
     }
+
     .back-home-link {
       display: inline-flex;
       align-items: center;
@@ -141,118 +203,133 @@
       font-weight: 500;
       text-decoration: none;
       margin-top: 20px;
-      transition: color 0.2s ease;
+      padding: 6px 14px;
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      transition: all 0.2s ease;
     }
     .back-home-link:hover {
-      color: #0F172A;
+      color: #1E3A8A;
+      border-color: #CBD5E1;
+      transform: translateY(-1px);
     }
   </style>
 </head>
 <body>
 
-  <!-- Ambient Glow Blobs -->
-  <div class="ambient-glow-1"></div>
-  <div class="ambient-glow-2"></div>
+  <!-- Colorful Ambient Glow Blobs -->
+  <div class="bg-glow-red"></div>
+  <div class="bg-glow-blue"></div>
 
   <div class="auth-wrapper animate-fade-in-up">
     <div class="auth-card">
-      <div class="auth-header">
-        <a href="index.html">
-          <img src="./logo.png" alt="INBIOLOGY Logo" class="auth-logo" />
-        </a>
-        <h1 id="auth-title" class="auth-title">เข้าสู่ระบบ</h1>
-        <p id="auth-subtitle" class="auth-subtitle">เข้าสู่ห้องเรียนออนไลน์ INBIOLOGY Academy</p>
-      </div>
+      <!-- Colorful Top Brand Bar -->
+      <div class="auth-card-top-bar"></div>
 
-      <!-- Modern Segmented Tab Switch -->
-      <div class="tab-switch">
-        <button type="button" id="tab-login" onclick="switchAuthTab('login')" class="tab-btn active">
-          เข้าสู่ระบบ
-        </button>
-        <button type="button" id="tab-register" onclick="switchAuthTab('register')" class="tab-btn inactive">
-          สมัครสมาชิก
-        </button>
-      </div>
-
-      <form id="auth-form" style="display:flex;flex-direction:column;gap:15px">
-        <!-- Name (Register mode) -->
-        <div id="field-name" class="form-group" style="display:none">
-          <label class="form-label">ชื่อ-นามสกุล</label>
-          <input type="text" id="input-name" placeholder="นายวิทศรุต สุขสำราญ" class="form-input" />
+      <div class="auth-card-body">
+        <div class="auth-header">
+          <a href="index.html">
+            <img src="./logo.png" alt="INBIOLOGY Logo" class="auth-logo" />
+          </a>
+          <h1 id="auth-title" class="auth-title">เข้าสู่ระบบ</h1>
+          <p id="auth-subtitle" class="auth-subtitle">เข้าสู่ห้องเรียนออนไลน์ INBIOLOGY Academy</p>
+          <div class="auth-tagline-badge">
+            <span>🍅</span> เรียนชีวะให้เข้าใจ ไม่ใช่แค่จำ
+          </div>
         </div>
 
-        <!-- Phone (Register mode) -->
-        <div id="field-phone" class="form-group" style="display:none">
-          <label class="form-label">เบอร์โทรศัพท์ (สำหรับรับข่าวสาร)</label>
-          <input type="tel" id="input-phone" placeholder="081-234-5678" class="form-input" />
+        <!-- Modern Segmented Tab Switch -->
+        <div class="tab-switch">
+          <button type="button" id="tab-login" onclick="switchAuthTab('login')" class="tab-btn active">
+            เข้าสู่ระบบ
+          </button>
+          <button type="button" id="tab-register" onclick="switchAuthTab('register')" class="tab-btn inactive">
+            สมัครสมาชิก
+          </button>
         </div>
 
-        <!-- Grade & School (Register mode) -->
-        <div id="field-education" style="display:none;grid-template-columns:1fr 1fr;gap:10px">
+        <form id="auth-form" style="display:flex;flex-direction:column;gap:15px">
+          <!-- Name (Register mode) -->
+          <div id="field-name" class="form-group" style="display:none">
+            <label class="form-label"><span>👤</span> ชื่อ-นามสกุล</label>
+            <input type="text" id="input-name" placeholder="นายวิทศรุต สุขสำราญ" class="form-input" />
+          </div>
+
+          <!-- Phone (Register mode) -->
+          <div id="field-phone" class="form-group" style="display:none">
+            <label class="form-label"><span>📱</span> เบอร์โทรศัพท์ (สำหรับรับข่าวสาร)</label>
+            <input type="tel" id="input-phone" placeholder="081-234-5678" class="form-input" />
+          </div>
+
+          <!-- Grade & School (Register mode) -->
+          <div id="field-education" style="display:none;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="form-group">
+              <label class="form-label"><span>🎓</span> ระดับชั้น</label>
+              <select id="input-grade" class="form-input" style="background:white">
+                <option value="ม.4">มัธยมศึกษาปีที่ 4</option>
+                <option value="ม.5" selected>มัธยมศึกษาปีที่ 5</option>
+                <option value="ม.6">มัธยมศึกษาปีที่ 6</option>
+                <option value="เด็กซิ่ว">เด็กซิ่ว / เตรียม A-Level</option>
+                <option value="สอวน.">สอวน. ชีววิทยา</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label"><span>🏫</span> โรงเรียน</label>
+              <input type="text" id="input-school" placeholder="เช่น สตรีวิทยา" class="form-input" />
+            </div>
+          </div>
+
+          <!-- Email -->
           <div class="form-group">
-            <label class="form-label">ระดับชั้น</label>
-            <select id="input-grade" class="form-input" style="background:white">
-              <option value="ม.4">มัธยมศึกษาปีที่ 4</option>
-              <option value="ม.5" selected>มัธยมศึกษาปีที่ 5</option>
-              <option value="ม.6">มัธยมศึกษาปีที่ 6</option>
-              <option value="เด็กซิ่ว">เด็กซิ่ว / เตรียม A-Level</option>
-              <option value="สอวน.">สอวน. ชีววิทยา</option>
-            </select>
+            <label class="form-label"><span style="color:#1E3A8A">✉️</span> อีเมล</label>
+            <input type="email" id="input-email" required placeholder="example@gmail.com" class="form-input" />
           </div>
+
+          <!-- Password -->
           <div class="form-group">
-            <label class="form-label">โรงเรียน</label>
-            <input type="text" id="input-school" placeholder="เช่น สตรีวิทยา" class="form-input" />
+            <label class="form-label"><span style="color:#B91C1C">🔒</span> รหัสผ่าน</label>
+            <div style="position:relative">
+              <input type="password" id="input-password" required placeholder="ระบุรหัสผ่าน 6 ตัวขึ้นไป" class="form-input" style="padding-right:40px" />
+              <button type="button" onclick="togglePasswordVisibility('input-password')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#94A3B8;cursor:pointer;font-size:15px">
+                👁
+              </button>
+            </div>
           </div>
-        </div>
 
-        <!-- Email -->
-        <div class="form-group">
-          <label class="form-label">อีเมล</label>
-          <input type="email" id="input-email" required placeholder="example@gmail.com" class="form-input" />
-        </div>
-
-        <!-- Password -->
-        <div class="form-group">
-          <label class="form-label">รหัสผ่าน</label>
-          <div style="position:relative">
-            <input type="password" id="input-password" required placeholder="ระบุรหัสผ่าน 6 ตัวขึ้นไป" class="form-input" style="padding-right:40px" />
-            <button type="button" onclick="togglePasswordVisibility('input-password')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#94A3B8;cursor:pointer;font-size:15px">
-              👁
-            </button>
+          <!-- Confirm Password (Register mode) -->
+          <div id="field-confirm-password" class="form-group" style="display:none">
+            <label class="form-label"><span style="color:#B91C1C">🔑</span> ยืนยันรหัสผ่าน</label>
+            <div style="position:relative">
+              <input type="password" id="input-confirm-password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง" class="form-input" style="padding-right:40px" />
+              <button type="button" onclick="togglePasswordVisibility('input-confirm-password')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#94A3B8;cursor:pointer;font-size:15px">
+                👁
+              </button>
+            </div>
           </div>
-        </div>
 
-        <!-- Confirm Password (Register mode) -->
-        <div id="field-confirm-password" class="form-group" style="display:none">
-          <label class="form-label">ยืนยันรหัสผ่าน</label>
-          <div style="position:relative">
-            <input type="password" id="input-confirm-password" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง" class="form-input" style="padding-right:40px" />
-            <button type="button" onclick="togglePasswordVisibility('input-confirm-password')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#94A3B8;cursor:pointer;font-size:15px">
-              👁
-            </button>
+          <!-- Remember Me & Forgot Password (Login Mode) -->
+          <div id="login-meta-row" style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-top:2px">
+            <label style="display:flex;align-items:center;gap:6px;color:#475569;cursor:pointer;font-weight:400">
+              <input type="checkbox" checked style="accent-color:#1E3A8A;width:14px;height:14px" /> จำฉันไว้ในระบบ
+            </label>
+            <a href="#" onclick="showToast('🔑 กรุณาติดต่อทีมงานพี่ต้นทาง LINE @inbiology เพื่อรีเซ็ตรหัสผ่าน', 'info'); return false;" style="color:#1E3A8A;font-weight:600;text-decoration:none">ลืมรหัสผ่าน?</a>
           </div>
-        </div>
 
-        <!-- Remember Me & Forgot Password (Login Mode) -->
-        <div id="login-meta-row" style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-top:2px">
-          <label style="display:flex;align-items:center;gap:6px;color:#475569;cursor:pointer;font-weight:400">
-            <input type="checkbox" checked style="accent-color:#1E3A8A;width:14px;height:14px" /> จำฉันไว้ในระบบ
-          </label>
-          <a href="#" onclick="showToast('🔑 กรุณาติดต่อทีมงานพี่ต้นทาง LINE @inbiology เพื่อรีเซ็ตรหัสผ่าน', 'info'); return false;" style="color:#1E3A8A;font-weight:600;text-decoration:none">ลืมรหัสผ่าน?</a>
-        </div>
+          <!-- Terms Agreement (Register Mode) -->
+          <div id="register-terms-row" style="display:none;font-size:11.5px;color:#64748B;line-height:1.4">
+            <label style="display:flex;align-items:flex-start;gap:6px;cursor:pointer">
+              <input type="checkbox" required checked style="accent-color:#1E3A8A;margin-top:2px" />
+              <span>ฉันยินยอมรับ <a href="#" style="color:#1E3A8A;font-weight:600">เงื่อนไขการใช้งาน</a> และ <a href="#" style="color:#1E3A8A;font-weight:600">นโยบายความเป็นส่วนตัว</a></span>
+            </label>
+          </div>
 
-        <!-- Terms Agreement (Register Mode) -->
-        <div id="register-terms-row" style="display:none;font-size:11.5px;color:#64748B;line-height:1.4">
-          <label style="display:flex;align-items:flex-start;gap:6px;cursor:pointer">
-            <input type="checkbox" required checked style="accent-color:#1E3A8A;margin-top:2px" />
-            <span>ฉันยินยอมรับ <a href="#" style="color:#1E3A8A;font-weight:600">เงื่อนไขการใช้งาน</a> และ <a href="#" style="color:#1E3A8A;font-weight:600">นโยบายความเป็นส่วนตัว</a></span>
-          </label>
-        </div>
-
-        <button type="submit" id="btn-submit" class="btn-submit">
-          เข้าสู่ระบบ
-        </button>
-      </form>
+          <button type="submit" id="btn-submit" class="btn-submit">
+            เข้าสู่ระบบ
+          </button>
+        </form>
+      </div>
     </div>
 
     <!-- Back to home -->
