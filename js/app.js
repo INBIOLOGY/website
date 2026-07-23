@@ -21,6 +21,25 @@ const AppState = {
   lang: localStorage.getItem('inbiology_lang') || 'TH',
   appliedCoupon: null,
   
+  getStudentProfile() {
+    const saved = localStorage.getItem('inbiology_student_profile');
+    if (saved) {
+      try { return JSON.parse(saved); } catch(e){}
+    }
+    return {
+      nickname: 'วิทศรุต',
+      fullName: 'นาย วิทศรุต สายตา',
+      school: 'โรงเรียนสตรีวิทยา',
+      level: 'ม.5',
+      email: 'witsarut@inbiology.com',
+      password: '••••••••'
+    };
+  },
+
+  saveStudentProfile(profile) {
+    localStorage.setItem('inbiology_student_profile', JSON.stringify(profile));
+  },
+  
   saveCart() {
     localStorage.setItem('inbiology_cart', JSON.stringify(this.cart));
     this.updateCartBadges();
@@ -347,10 +366,13 @@ function renderHeader(activePage = 'home') {
   const isLoggedIn = Boolean(AppState.userRole && AppState.userRole !== 'guest');
   const isAdmin = AppState.userRole === 'admin';
 
+  const studentProfile = AppState.getStudentProfile();
+  const studentDisplayName = `🎓 น้อง${studentProfile.nickname || 'วิทศรุต'}`;
+
   header.innerHTML = `
     <div class="header-container">
       <a href="index.html" class="logo-btn">
-        <img src="./logo.png" alt="INBIOLOGY Logo" class="logo-img" />
+        <img src="./logo.png" alt="INBIOLOGY Logo" class="logo-img" style="height:46px;width:auto;object-fit:contain" />
         <div style="text-align:left">
           <span style="font-weight:900;font-size:20px;color:var(--c-navy);display:block;line-height:1">INBIOLOGY</span>
           <span style="font-size:10px;font-weight:700;color:var(--c-sky);display:block;margin-top:2px">by พี่ต้น</span>
@@ -376,7 +398,7 @@ function renderHeader(activePage = 'home') {
           ? `<a href="login.html" class="btn-login">เข้าสู่ระบบ</a>`
           : `<div style="display:flex;align-items:center;gap:8px">
               <a href="dashboard.html" style="font-weight:800;font-size:12px;color:var(--c-navy);background:#FEF2F2;padding:6px 12px;border-radius:10px;border:1px solid rgba(185,28,28,0.15)">
-                ${isAdmin ? '🛡️ แอดมินผู้ดูแล' : '🎓 พี่วิทศรุต'}
+                ${isAdmin ? '🛡️ แอดมินผู้ดูแล' : studentDisplayName}
               </a>
               <button onclick="AppState.logout()" title="ออกจากระบบ" style="padding:6px 12px;background:#FEE2E2;color:#DC2626;border-radius:10px;font-size:11px;font-weight:800;border:none;cursor:pointer;display:flex;align-items:center;gap:4px">
                 🚪 ออกจากระบบ
@@ -402,7 +424,7 @@ function renderHeader(activePage = 'home') {
           </button>
           ${isLoggedIn 
             ? `<button onclick="AppState.logout()" class="dropdown-item" style="color:#DC2626;font-weight:800">🚪 ออกจากระบบ</button>`
-            : `<a href="/login.html" class="dropdown-item" style="color:var(--c-sky);font-weight:800">🔑 เข้าสู่ระบบ</a>`
+            : `<a href="login.html" class="dropdown-item" style="color:var(--c-sky);font-weight:800">🔑 เข้าสู่ระบบ</a>`
           }
         </div>
       </div>
@@ -432,7 +454,7 @@ function toggleMyCoursesMenu(e) {
     menu.innerHTML = `
       <div style="padding:12px;text-align:center">
         <p style="font-size:11px;color:#6B7280;margin:0 0 8px">ยังไม่มีคอร์สเรียนที่ลงทะเบียน</p>
-        <a href="/courses.html" style="background:var(--c-navy);color:white;font-weight:800;font-size:11px;padding:6px 12px;border-radius:8px;text-decoration:none;display:inline-block">🛒 เลือกซื้อคอร์สเรียน</a>
+        <a href="courses.html" style="background:var(--c-navy);color:white;font-weight:800;font-size:11px;padding:6px 12px;border-radius:8px;text-decoration:none;display:inline-block">🛒 เลือกซื้อคอร์สเรียน</a>
       </div>
     `;
   } else {
@@ -441,7 +463,7 @@ function toggleMyCoursesMenu(e) {
         <span style="font-size:10px;font-weight:900;color:#9CA3AF">🎓 คอร์สของคุณที่พร้อมเรียน (${enrolledCourses.length})</span>
       </div>
       ${enrolledCourses.map(c => `
-        <a href="/classroom.html" style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px;text-decoration:none;transition:background 0.2s" onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='transparent'">
+        <a href="classroom.html" style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px;text-decoration:none;transition:background 0.2s" onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='transparent'">
           <img src="${c.imageUrl}" style="width:36px;height:36px;object-fit:contain;border-radius:6px;background:#F1F5F9;padding:2px" alt="" />
           <div style="overflow:hidden">
             <h5 style="font-size:12px;font-weight:850;color:var(--c-navy);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.title}</h5>

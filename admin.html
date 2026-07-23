@@ -119,19 +119,80 @@
 
       <!-- Tab: Students -->
       <div id="apanel-students" style="display:none;flex-direction:column;gap:20px">
+        <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <h3 style="font-size:15px;font-weight:900;color:var(--c-navy);margin:0 0 4px">👥 การจัดการข้อมูลและสิทธิ์นักเรียน</h3>
+            <p style="font-size:12px;color:#6B7280;margin:0">เฉพาะแอดมินเท่านั้นที่มีสิทธิ์แก้ไขอีเมลและรหัสผ่านของนักเรียน</p>
+          </div>
+        </div>
         <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden">
           <table style="width:100%;border-collapse:collapse;font-size:12px">
             <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
               <tr>
-                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">นักเรียน</th>
+                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ชื่อจริง - นามสกุล</th>
+                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ชื่อเล่น</th>
                 <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">อีเมล</th>
-                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">โรงเรียน</th>
+                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">โรงเรียน / ชั้น</th>
+                <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280">สิทธิ์แอดมิน</th>
               </tr>
             </thead>
             <tbody id="admin-students-table"></tbody>
           </table>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Admin Edit Student Modal -->
+  <div id="admin-student-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;padding:20px">
+    <div style="background:white;border-radius:24px;width:100%;max-width:520px;padding:28px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);position:relative">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border-bottom:1px solid #F3F4F6;padding-bottom:12px">
+        <h3 style="font-size:18px;font-weight:900;color:var(--c-navy);margin:0">🛡️ แอดมินแก้ไขข้อมูลนักเรียน</h3>
+        <button onclick="closeAdminStudentModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#9CA3AF">✕</button>
+      </div>
+
+      <form onsubmit="saveAdminStudentEdit(event)" style="display:flex;flex-direction:column;gap:14px">
+        <input type="hidden" id="admin-edit-student-id" />
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">ชื่อเล่น</label>
+            <input type="text" id="admin-edit-nickname" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:8px 12px;font-size:12px;outline:none" />
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">ชื่อจริง - นามสกุล</label>
+            <input type="text" id="admin-edit-fullname" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:8px 12px;font-size:12px;outline:none" />
+          </div>
+        </div>
+
+        <div style="background:#FEF2F2;border:1px solid #FEE2E2;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px">
+          <span style="font-size:11px;font-weight:900;color:#DC2626">🔑 สิทธิ์เฉพาะแอดมิน (เปลี่ยนอีเมล & รหัสผ่าน)</span>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">อีเมลนักเรียน</label>
+            <input type="email" id="admin-edit-email" required style="width:100%;border:1px solid #FCA5A5;border-radius:8px;padding:8px 12px;font-size:12px;outline:none;background:white" />
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">รหัสผ่านใหม่</label>
+            <input type="text" id="admin-edit-password" placeholder="กรอกรหัสผ่านใหม่" required style="width:100%;border:1px solid #FCA5A5;border-radius:8px;padding:8px 12px;font-size:12px;outline:none;background:white" />
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">โรงเรียน</label>
+            <input type="text" id="admin-edit-school" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:8px 12px;font-size:12px;outline:none" />
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">ระดับชั้น</label>
+            <input type="text" id="admin-edit-level" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:8px 12px;font-size:12px;outline:none" />
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:10px">
+          <button type="button" onclick="closeAdminStudentModal()" style="background:#F3F4F6;color:#374151;font-weight:800;font-size:12px;padding:8px 16px;border-radius:8px;border:none;cursor:pointer">ยกเลิก</button>
+          <button type="submit" style="background:var(--c-navy);color:white;font-weight:800;font-size:12px;padding:8px 20px;border-radius:8px;border:none;cursor:pointer">💾 บันทึกข้อมูลนักเรียน</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -156,7 +217,7 @@
           id: 'c-' + Date.now(), title, price, originalPrice: price * 1.8,
           badge, badgeBg: BRAND_COLORS.navy, tag: level, tagBg: '#FEF2F2', tagColor: '#991B1B',
           instructor: 'พี่ต้น (เกียรตินิยมอันดับ 1)', hours: 30, validity: 365,
-          description: title, imageUrl: '/1_0.png', Level: level, lessons: []
+          description: title, imageUrl: './course-cover-1.png', Level: level, lessons: []
         });
 
         showToast('✅ เพิ่มคอร์สเรียบร้อยแล้ว', 'success');
@@ -239,14 +300,68 @@
       `).join('');
     }
 
+    let studentListCache = [
+      { id: 99, ...AppState.getStudentProfile() },
+      ...MOCK_STUDENTS.map(s => ({ id: s.id, nickname: s.name.split(' ')[1] || 'นักเรียน', fullName: s.name, school: s.school, level: s.level || 'ม.5', email: s.email, password: '••••••••' }))
+    ];
+
     function renderStudentsTable() {
-      document.getElementById('admin-students-table').innerHTML = MOCK_STUDENTS.map(s => `
+      const currentP = AppState.getStudentProfile();
+      studentListCache[0] = { id: 99, ...currentP };
+
+      document.getElementById('admin-students-table').innerHTML = studentListCache.map(s => `
         <tr style="border-bottom:1px solid #F3F4F6">
-          <td style="padding:12px 16px;font-weight:700">${s.name}</td>
+          <td style="padding:12px 16px;font-weight:700;color:var(--c-navy)">${s.fullName}</td>
+          <td style="padding:12px 16px;font-weight:800;color:var(--c-sky)">น้อง${s.nickname}</td>
           <td style="padding:12px 16px;color:#6B7280">${s.email}</td>
-          <td style="padding:12px 16px">${s.school}</td>
+          <td style="padding:12px 16px">${s.school} • ${s.level}</td>
+          <td style="padding:12px 16px;text-align:center">
+            <button onclick="openAdminEditStudentModal(${s.id})" style="background:#FEF2F2;color:#DC2626;border:1px solid #FCA5A5;padding:6px 12px;border-radius:8px;font-weight:800;font-size:11px;cursor:pointer">
+              ✏️ แก้ไข (แอดมิน)
+            </button>
+          </td>
         </tr>
       `).join('');
+    }
+
+    function openAdminEditStudentModal(id) {
+      const s = studentListCache.find(x => x.id === id);
+      if (!s) return;
+      document.getElementById('admin-edit-student-id').value = s.id;
+      document.getElementById('admin-edit-nickname').value = s.nickname;
+      document.getElementById('admin-edit-fullname').value = s.fullName;
+      document.getElementById('admin-edit-email').value = s.email;
+      document.getElementById('admin-edit-password').value = s.password || '••••••••';
+      document.getElementById('admin-edit-school').value = s.school;
+      document.getElementById('admin-edit-level').value = s.level || 'ม.5';
+
+      document.getElementById('admin-student-modal').style.display = 'flex';
+    }
+
+    function closeAdminStudentModal() {
+      document.getElementById('admin-student-modal').style.display = 'none';
+    }
+
+    function saveAdminStudentEdit(e) {
+      e.preventDefault();
+      const id = +document.getElementById('admin-edit-student-id').value;
+      const s = studentListCache.find(x => x.id === id);
+      if (!s) return;
+
+      s.nickname = document.getElementById('admin-edit-nickname').value.trim();
+      s.fullName = document.getElementById('admin-edit-fullname').value.trim();
+      s.email = document.getElementById('admin-edit-email').value.trim();
+      s.password = document.getElementById('admin-edit-password').value.trim();
+      s.school = document.getElementById('admin-edit-school').value.trim();
+      s.level = document.getElementById('admin-edit-level').value.trim();
+
+      if (id === 99) {
+        AppState.saveStudentProfile(s);
+      }
+
+      closeAdminStudentModal();
+      renderStudentsTable();
+      showToast('✅ แอดมินแก้ไขข้อมูลนักเรียนเรียบร้อยแล้ว (อัปเดตอีเมล/รหัสผ่านสำเร็จ)', 'success');
     }
 
     function deleteCourse(id) {

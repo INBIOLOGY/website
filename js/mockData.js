@@ -99,7 +99,7 @@ const COURSES = [
       { id: 'l1', title: 'EP 1: ตะลุยโจทย์ สอวน. ข้อ 1-25 + เฉลยรายละเอียด', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l2', title: 'EP 2: ตะลุยโจทย์ สอวน. ข้อ 26-50 + เฉลยรายละเอียด', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
     ],
-    imageUrl: '/course-cover-5.jpg',
+    imageUrl: './course-cover-5.jpg',
     rating: 4.9, reviewCount: 890, Level: 'ติวสอบ', Category: '🏅 คอร์สพิเศษ'
   },
   {
@@ -115,7 +115,7 @@ const COURSES = [
       { id: 'l1', title: 'EP 1: สรุปจุดออกสอบบ่อย Cell & Biochemistry', duration: 40, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l2', title: 'EP 2: สรุปเทคนิคทำโจทย์ Genetics & DNA', duration: 45, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
     ],
-    imageUrl: '/course-cover-6.png',
+    imageUrl: './course-cover-6.png',
     rating: 5.0, reviewCount: 1420, Level: 'ติวสอบ', Category: '⚡ คอร์ส 99 บาท'
   }
 ];

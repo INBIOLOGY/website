@@ -13,12 +13,19 @@
   <div style="min-height:calc(100vh - 70px);background:var(--c-page);padding-top:100px;padding-bottom:60px">
     <div class="student-dashboard-layout" style="max-width:1100px;margin:0 auto;padding:0 24px">
       <!-- Profile Sidebar -->
-      <aside style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px;text-align:center;height:fit-content">
-        <div style="width:80px;height:80px;border-radius:50%;background:var(--c-sky-light);color:var(--c-sky);font-size:32px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">
+      <aside style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:24px 20px;text-align:center;height:fit-content;display:flex;flex-direction:column;align-items:center">
+        <div style="width:84px;height:84px;border-radius:50%;background:var(--c-sky-light);color:var(--c-sky);font-size:36px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 4px 12px rgba(30,58,138,0.1)">
           👨‍🎓
         </div>
-        <h3 style="font-weight:850;font-size:15px;color:var(--c-navy);margin:0 0 2px">พี่วิทศรุต</h3>
-        <p style="font-size:11px;color:#9CA3AF;margin:0">โรงเรียนสตรีวิทยา • ม.5</p>
+        <!-- Line 1: น้อง(ชื่อเล่น) -->
+        <h3 id="sidebar-nickname" style="font-weight:900;font-size:18px;color:var(--c-navy);margin:0 0 4px">น้องวิทศรุต</h3>
+        <!-- Line 2: ชื่อจริง - นามสกุล -->
+        <p id="sidebar-fullname" style="font-weight:700;font-size:13px;color:#4B5563;margin:0 0 6px">นาย วิทศรุต สายตา</p>
+        <!-- Line 3: โรงเรียน • ระดับชั้น -->
+        <p id="sidebar-school-level" style="font-size:11px;color:#9CA3AF;margin:0 0 16px">โรงเรียนสตรีวิทยา • ม.5</p>
+        <button onclick="switchDashTab('profile')" style="width:100%;background:#F8FAFC;border:1px solid #E5E7EB;color:var(--c-navy);font-weight:800;font-size:11px;padding:8px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
+          ⚙️ แก้ไขข้อมูลส่วนตัว
+        </button>
       </aside>
 
       <!-- Main Panel & Sub Tabs -->
@@ -27,6 +34,9 @@
           <div style="display:flex;gap:8px;border-bottom:1px solid #E5E7EB;padding-bottom:12px;margin-bottom:20px;overflow-x:auto">
             <button onclick="switchDashTab('courses')" id="dtab-courses" style="padding:8px 16px;border-radius:8px;border:none;background:var(--c-navy);color:white;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
               📚 คอร์สเรียนของฉัน
+            </button>
+            <button onclick="switchDashTab('profile')" id="dtab-profile" style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
+              ⚙️ แก้ไขข้อมูลส่วนตัว
             </button>
             <button onclick="switchDashTab('notes')" id="dtab-notes" style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
               📝 สมุดบันทึกโน้ตย่อ
@@ -40,6 +50,63 @@
           <div id="dpanel-courses">
             <h2 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 16px">📚 คอร์สเรียนของคุณ</h2>
             <div id="enrolled-list" class="enrolled-courses-grid"></div>
+          </div>
+
+          <!-- Profile Edit Panel -->
+          <div id="dpanel-profile" style="display:none;flex-direction:column;gap:16px">
+            <h2 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 4px">👤 แก้ไขข้อมูลส่วนตัวนักเรียน</h2>
+            <p style="font-size:12px;color:#6B7280;margin:0 0 8px">คุณสามารถแก้ไขชื่อเล่น ชื่อจริง และชื่อโรงเรียนได้ที่นี่ (สำหรับอีเมลและรหัสผ่าน หากต้องการเปลี่ยนแปลงต้องติดต่อแอดมินเท่านั้น)</p>
+            
+            <form id="student-profile-form" onsubmit="handleSaveProfile(event)" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:16px;padding:20px">
+              <div>
+                <label style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">ชื่อเล่น (Nickname)</label>
+                <input type="text" id="edit-nickname" required style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none" placeholder="เช่น วิทศรุต, ภูมิ" />
+              </div>
+
+              <div>
+                <label style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">ชื่อจริง - นามสกุล (Full Name)</label>
+                <input type="text" id="edit-fullname" required style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none" placeholder="เช่น นาย วิทศรุต สายตา" />
+              </div>
+
+              <div>
+                <label style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">โรงเรียน (School)</label>
+                <input type="text" id="edit-school" required style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none" placeholder="เช่น โรงเรียนสตรีวิทยา" />
+              </div>
+
+              <div>
+                <label style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">ระดับชั้น (Level)</label>
+                <select id="edit-level" style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white">
+                  <option value="ม.4">ม.4</option>
+                  <option value="ม.5">ม.5</option>
+                  <option value="ม.6">ม.6</option>
+                  <option value="ติวสอบ A-Level / สอวน.">ติวสอบ A-Level / สอวน.</option>
+                </select>
+              </div>
+
+              <!-- Disabled Email Field -->
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+                  <label style="font-size:12px;font-weight:800;color:#6B7280">อีเมล (Email)</label>
+                  <span style="font-size:10px;font-weight:800;color:#DC2626;background:#FEE2E2;padding:2px 8px;border-radius:6px">🔒 เฉพาะแอดมินเปลี่ยนได้</span>
+                </div>
+                <input type="email" id="edit-email" disabled style="width:100%;border:1px solid #E5E7EB;border-radius:10px;padding:10px 12px;font-size:13px;background:#F3F4F6;color:#6B7280;cursor:not-allowed" />
+              </div>
+
+              <!-- Disabled Password Field -->
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+                  <label style="font-size:12px;font-weight:800;color:#6B7280">รหัสผ่าน (Password)</label>
+                  <span style="font-size:10px;font-weight:800;color:#DC2626;background:#FEE2E2;padding:2px 8px;border-radius:6px">🔒 เฉพาะแอดมินเปลี่ยนได้</span>
+                </div>
+                <input type="password" id="edit-password" value="••••••••" disabled style="width:100%;border:1px solid #E5E7EB;border-radius:10px;padding:10px 12px;font-size:13px;background:#F3F4F6;color:#6B7280;cursor:not-allowed" />
+              </div>
+
+              <div style="grid-column:span 2;display:flex;justify-content:flex-end;margin-top:8px">
+                <button type="submit" style="background:var(--c-navy);color:white;font-weight:850;font-size:13px;padding:12px 24px;border-radius:10px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(185,28,28,0.2)">
+                  💾 บันทึกการเปลี่ยนแปลงข้อมูล
+                </button>
+              </div>
+            </form>
           </div>
 
           <!-- Notes Panel -->
@@ -63,13 +130,50 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       renderHeader('dashboard');
+      loadStudentProfileToUI();
       renderEnrolled();
       renderNotes();
       renderFAQs();
     });
 
+    function loadStudentProfileToUI() {
+      const p = AppState.getStudentProfile();
+      document.getElementById('sidebar-nickname').textContent = `น้อง${p.nickname}`;
+      document.getElementById('sidebar-fullname').textContent = p.fullName;
+      document.getElementById('sidebar-school-level').textContent = `${p.school} • ${p.level}`;
+
+      document.getElementById('edit-nickname').value = p.nickname;
+      document.getElementById('edit-fullname').value = p.fullName;
+      document.getElementById('edit-school').value = p.school;
+      document.getElementById('edit-level').value = p.level;
+      document.getElementById('edit-email').value = p.email;
+    }
+
+    function handleSaveProfile(e) {
+      e.preventDefault();
+      const nickname = document.getElementById('edit-nickname').value.trim();
+      const fullName = document.getElementById('edit-fullname').value.trim();
+      const school = document.getElementById('edit-school').value.trim();
+      const level = document.getElementById('edit-level').value;
+      const email = document.getElementById('edit-email').value;
+
+      const updated = {
+        nickname,
+        fullName,
+        school,
+        level,
+        email,
+        password: '••••••••'
+      };
+
+      AppState.saveStudentProfile(updated);
+      loadStudentProfileToUI();
+      renderHeader('dashboard');
+      showToast('🎉 บันทึกข้อมูลส่วนตัวเรียบร้อยแล้ว', 'success');
+    }
+
     function switchDashTab(tabName) {
-      ['courses', 'notes', 'faq'].forEach(t => {
+      ['courses', 'profile', 'notes', 'faq'].forEach(t => {
         const btn = document.getElementById(`dtab-${t}`);
         const panel = document.getElementById(`dpanel-${t}`);
         if (t === tabName) {

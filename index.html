@@ -238,8 +238,8 @@
   <section style="padding:60px 24px 80px;background:#0F0F0F;position:relative">
     <div style="max-width:800px;margin:0 auto">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;border-bottom:1px solid #272727;padding-bottom:12px">
-        <h3 style="font-size:20px;font-weight:800;color:#FFFFFF;margin:0;display:flex;align-items:center;gap:10px">
-          💬 การพูดคุยเรียลไทม์ (4 ความคิดเห็น)
+        <h3 id="comments-header-title" style="font-size:20px;font-weight:800;color:#FFFFFF;margin:0;display:flex;align-items:center;gap:10px">
+          💬 การพูดคุยเรียลไทม์ (3 ความคิดเห็น)
         </h3>
         <span style="font-size:11px;color:#10B981;font-weight:800;background:rgba(16,185,129,0.15);padding:4px 10px;border-radius:12px;display:flex;align-items:center;gap:6px">
           <span style="width:8px;height:8px;background:#10B981;border-radius:50%;display:inline-block"></span> Live Chatting
@@ -256,29 +256,7 @@
         </div>
       </form>
 
-      <div id="comments-list" style="display:flex;flex-direction:column;gap:4px">
-        <div class="youtube-comment-item">
-          <div class="youtube-avatar" style="background:#ff5722">B</div>
-          <div style="flex:1">
-            <div class="youtube-username">@blvckharrt <span class="youtube-username-badge">✓</span> <span class="youtube-time">2 เดือนที่แล้ว</span></div>
-            <p class="youtube-text">ลง IG เรียบร้อย</p>
-          </div>
-        </div>
-        <div class="youtube-comment-item">
-          <div class="youtube-avatar" style="background:#e91e63">C</div>
-          <div style="flex:1">
-            <div class="youtube-username">@chertamp_st <span class="youtube-time">1 สัปดาห์ที่แล้ว</span></div>
-            <p class="youtube-text">เพลงช่วยจำของพี่ต้นปั่นจริงครับ แต่ช่วยชีวิตตอนเข้าห้องสอบสุดๆ 😂</p>
-          </div>
-        </div>
-        <div class="youtube-comment-item">
-          <div class="youtube-avatar" style="background:#9c27b0">P</div>
-          <div style="flex:1">
-            <div class="youtube-username">@pp_patty <span class="youtube-time">3 วันที่แล้ว</span></div>
-            <p class="youtube-text">ชีวะที่เคยคิดว่ายาก พอลงเรียนกับพี่ต้นแล้วเข้าใจขึ้นเยอะเลยค่ะ ไม่ต้องท่องฝืนๆ อีกต่อไป</p>
-          </div>
-        </div>
-      </div>
+      <div id="comments-list"></div>
     </div>
     <!-- Organic Wave Divider to White Section -->
     <div style="position:absolute;bottom:-4px;left:-2px;right:-2px;width:calc(100% + 4px);line-height:0;z-index:10;pointer-events:none">
@@ -456,7 +434,9 @@
         `).join('');
       }
 
-      // Comment form listener
+      // Live Comments Logic with Compact View & Toggle Button
+      renderCommentsList();
+
       const commentForm = document.getElementById('comment-form');
       if (commentForm) {
         commentForm.addEventListener('submit', (e) => {
@@ -464,22 +444,54 @@
           const input = document.getElementById('comment-input');
           const val = input.value.trim();
           if (!val) return;
-          const list = document.getElementById('comments-list');
-          const div = document.createElement('div');
-          div.className = 'youtube-comment-item';
-          div.innerHTML = `
-            <div class="youtube-avatar" style="background:#b91c1c">W</div>
-            <div style="flex:1">
-              <div class="youtube-username">@witsarut.st <span class="youtube-time">เมื่อครู่</span></div>
-              <p class="youtube-text">${val}</p>
-            </div>
-          `;
-          list.prepend(div);
+          
+          const profile = AppState.getStudentProfile();
+          const username = profile.email ? `@${profile.email.split('@')[0]}` : '@witsarut.st';
+
+          commentsData.unshift({
+            id: Date.now(),
+            avatar: profile.nickname ? profile.nickname.charAt(0).toUpperCase() : 'W',
+            bg: '#b91c1c',
+            username: username,
+            badge: false,
+            time: 'เมื่อครู่',
+            text: val
+          });
+
           input.value = '';
+          renderCommentsList();
+          const listContainer = document.getElementById('comments-list');
+          if (listContainer) listContainer.scrollTop = 0;
           showToast('💬 แสดงความคิดเห็นเรียบร้อยแล้ว', 'success');
         });
       }
     });
+
+    let commentsData = [
+      { id: 1, avatar: 'B', bg: '#ff5722', username: '@blvckharrt', badge: true, time: '2 เดือนที่แล้ว', text: 'ลง IG เรียบร้อย' },
+      { id: 2, avatar: 'C', bg: '#e91e63', username: '@chertamp_st', badge: false, time: '1 สัปดาห์ที่แล้ว', text: 'เพลงช่วยจำของพี่ต้นปั่นจริงครับ แต่ช่วยชีวิตตอนเข้าห้องสอบสุดๆ 😂' },
+      { id: 3, avatar: 'P', bg: '#9c27b0', username: '@pp_patty', badge: false, time: '3 วันที่แล้ว', text: 'ชีวะที่เคยคิดว่ายาก พอลงเรียนกับพี่ต้นแล้วเข้าใจขึ้นเยอะเลยค่ะ ไม่ต้องท่องฝืนๆ อีกต่อไป' }
+    ];
+
+    function renderCommentsList() {
+      const headerTitle = document.getElementById('comments-header-title');
+      if (headerTitle) {
+        headerTitle.textContent = `💬 การพูดคุยเรียลไทม์ (${commentsData.length} ความคิดเห็น)`;
+      }
+
+      const listContainer = document.getElementById('comments-list');
+      if (!listContainer) return;
+
+      listContainer.innerHTML = commentsData.map(c => `
+        <div class="youtube-comment-item">
+          <div class="youtube-avatar" style="background:${c.bg}">${c.avatar}</div>
+          <div style="flex:1">
+            <div class="youtube-username">${c.username} ${c.badge ? '<span class="youtube-username-badge">✓</span>' : ''} <span class="youtube-time">${c.time}</span></div>
+            <p class="youtube-text">${c.text}</p>
+          </div>
+        </div>
+      `).join('');
+    }
   </script>
 </body>
 </html>
