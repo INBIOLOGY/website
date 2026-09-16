@@ -19,7 +19,7 @@
 //    (ตัวอย่างรูปแบบ: 123456789-abc...xyz.apps.googleusercontent.com)
 
 window.GOOGLE_CONFIG = {
-  googleClientId: '',   // ← วาง Client ID ของคุณที่นี่
+  googleClientId: '492836070208-qqpcoku47kervrv4sp4nvii24pmfac7v.apps.googleusercontent.com',
   googleOneTap: true    // true = แสดง One Tap popup อัตโนมัติ, false = ปุ่มอย่างเดียว
 };
 
