@@ -11,7 +11,7 @@
   <header class="site-header"></header>
 
   <div style="min-height:100vh;background:var(--c-page);padding-top:100px;padding-bottom:60px">
-    <div style="max-width:1280px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:280px 1fr;gap:24px">
+    <div class="courses-page-layout" style="max-width:1280px;margin:0 auto;padding:0 24px">
       <!-- Sidebar Filters -->
       <aside style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:20px;height:fit-content">
         <div>
@@ -74,13 +74,13 @@
         document.getElementById('course-count').textContent = `พบคอร์สเรียนชีววิทยา ${filtered.length} คอร์ส`;
 
         const grid = document.getElementById('catalog-grid');
-        grid.innerHTML = filtered.map(c => {
+        grid.innerHTML = filtered.map((c, idx) => {
           const isEnrolled = AppState.enrolled.includes(c.id);
           const discountPercent = Math.round((1 - c.price / c.originalPrice) * 100);
           return `
-            <div class="course-card" style="background:white;border:1px solid #E5E7EB;border-radius:24px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.04);display:flex;flex-direction:column">
-              <!-- Floating Portrait Book Cover Thumbnail Box (Matching User Screenshot) -->
-              <div style="position:relative;height:200px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;padding:14px">
+            <div class="course-card" data-reveal data-delay="${(idx % 4) * 0.08}s" style="background:white;border:1px solid #E5E7EB;border-radius:24px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.04);display:flex;flex-direction:column">
+              <!-- Floating Portrait Book Cover Thumbnail Box (Matching Approved UI pattern) -->
+              <div style="position:relative;height:200px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;padding:14px;overflow:hidden">
                 <img src="${c.imageUrl}" alt="${c.title}" loading="lazy" decoding="async" style="height:155px;max-width:85%;object-fit:contain;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.12)" />
 
                 <!-- Floating Top-Left Badge -->
@@ -89,9 +89,14 @@
                 </span>
 
                 <!-- Floating Bottom-Left Trial Button -->
-                <button onclick="openTrialModal(FREE_TRIALS[0])" style="position:absolute;bottom:12px;left:12px;background:#1E3A8A;color:white;font-size:10px;font-weight:800;padding:5px 12px;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px;z-index:2;box-shadow:0 4px 10px rgba(0,0,0,0.15)">
+                <button onclick="openTrialModal(FREE_TRIALS[0])" style="position:absolute;bottom:10px;left:12px;background:#1E3A8A;color:white;font-size:10px;font-weight:800;padding:5px 12px;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px;z-index:2;box-shadow:0 4px 10px rgba(0,0,0,0.15)">
                   ▶ ทดลองเรียนฟรี
                 </button>
+
+                <!-- Floating Bottom-Right Duration Badge (Rule 2) -->
+                <span class="card-duration-badge">
+                  ${c.hours} ชั่วโมงเรียน
+                </span>
               </div>
 
               <!-- Body -->
@@ -140,6 +145,8 @@
             </div>
           `;
         }).join('');
+
+        initScrollReveal();
       }
 
       searchInput.addEventListener('input', filterAndRender);

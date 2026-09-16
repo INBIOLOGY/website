@@ -2,11 +2,11 @@
    INBIOLOGY ACADEMY - ORIGINAL COMPLETE VANILLA STYLESHEET
    ───────────────────────────────────────────────────────────────────────────── */
 
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&family=Mitr:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --font-body: 'IBM Plex Sans Thai', 'Prompt', 'Inter', sans-serif;
-  --font-heading: 'IBM Plex Sans Thai', 'Prompt', 'Inter', sans-serif;
+  --font-body: 'IBM Plex Sans Thai', sans-serif;
+  --font-heading: 'Mitr', 'IBM Plex Sans Thai', sans-serif;
 
   /* Brand Palette */
   --c-navy: #B91C1C;       /* Primary Red */
@@ -53,6 +53,11 @@ a {
 
 button, input, select, textarea {
   font-family: inherit;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.01em;
 }
 
 /* Ambient Background Glows */
@@ -236,6 +241,35 @@ button, input, select, textarea {
   background: #1E40AF;
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(30, 58, 138, 0.25);
+}
+
+/* Header & Nav Responsiveness Breakpoints */
+@media (min-width: 941px) {
+  .hamburger-btn {
+    display: none !important;
+  }
+}
+
+@media (max-width: 940px) {
+  .desktop-nav {
+    display: none !important;
+  }
+  .hamburger-btn {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .header-container {
+    padding: 0 14px;
+    height: 60px;
+  }
+  .logo-img {
+    height: 36px;
+  }
+  .cart-icon-btn {
+    padding: 6px 8px;
+  }
 }
 
 /* Dropdown Menu */
@@ -750,3 +784,142 @@ button, input, select, textarea {
 #comments-list::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.4);
 }
+
+/* ── RESPONSIVE LAYOUT CLASSES (940px, 860px, 780px, 640px) ── */
+
+/* Courses Page Layout */
+.courses-page-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 860px) {
+  .courses-page-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+/* Checkout Page Layout */
+.checkout-grid-layout {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 780px) {
+  .checkout-grid-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+/* Promo Flash Sale Banner Layout */
+.promo-banner-grid {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 32px;
+  align-items: center;
+}
+
+@media (max-width: 860px) {
+  .promo-banner-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 28px 24px !important;
+  }
+}
+
+/* Hero Stats Bar Layout */
+.hero-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .hero-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .hero-stats-grid > div {
+    border-left: none !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+    padding-left: 0 !important;
+    padding-top: 10px;
+  }
+  .hero-stats-grid > div:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+}
+
+/* Student Dashboard Tabs & Profile Form */
+.dash-tabs-scroll {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid #E5E7EB;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.dash-tabs-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.profile-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 640px) {
+  .profile-form-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .profile-form-grid .full-span {
+    grid-column: span 1 !important;
+  }
+}
+
+/* Standardized Course Thumbnail Duration Badge (Rule 2) */
+.card-duration-badge {
+  position: absolute;
+  bottom: 10px;
+  right: 12px;
+  background: #18181B;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 4px 10px;
+  border-radius: 6px;
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* ── SCROLL REVEAL (INTERSECTION OBSERVER) ── */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+[data-reveal].revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+

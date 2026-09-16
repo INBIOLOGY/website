@@ -133,15 +133,15 @@
         return;
       }
 
-      container.innerHTML = enrolled.map(c => `
-        <div class="course-card" style="background:white;border-radius:20px;border:1px solid #E5E7EB;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.02);display:flex;flex-direction:column">
+      container.innerHTML = enrolled.map((c, idx) => `
+        <div class="course-card" data-reveal data-delay="${(idx % 4) * 0.08}s" style="background:white;border-radius:20px;border:1px solid #E5E7EB;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.02);display:flex;flex-direction:column">
           <!-- Thumbnail Container matching standard approved UI pattern -->
           <div style="position:relative;overflow:hidden;height:200px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;padding:14px">
             <img src="${c.imageUrl}" alt="${c.title}" style="height:155px;max-width:85%;object-fit:contain;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.12)" />
             <span style="position:absolute;top:12px;left:12px;background:${c.badgeBg};color:white;font-size:10px;font-weight:800;padding:4px 10px;border-radius:999px;z-index:2">
               ${c.badge}
             </span>
-            <span style="position:absolute;bottom:10px;right:12px;background:#18181B;color:white;font-size:11px;font-weight:900;padding:4px 10px;border-radius:6px;z-index:2">
+            <span class="card-duration-badge">
               ${c.hours} ชั่วโมงเรียน
             </span>
           </div>
@@ -173,6 +173,8 @@
           </div>
         </div>
       `).join('');
+
+      initScrollReveal();
     }
 
     function showMyCoursesCatalog() {

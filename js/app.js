@@ -18,6 +18,7 @@ const AppState = {
   enrolled: JSON.parse(localStorage.getItem('inbiology_enrolled') || '["bio-intensive-1"]'),
   lang: localStorage.getItem('inbiology_lang') || 'TH',
   appliedCoupon: null,
+  userRole: localStorage.getItem('inbiology_role') || null,
   
   getStudentProfile() {
     const saved = localStorage.getItem('inbiology_student_profile');
@@ -358,7 +359,7 @@ function renderHeader(activePage = 'home') {
   const isAdmin = AppState.userRole === 'admin';
 
   const studentProfile = AppState.getStudentProfile();
-  const studentDisplayName = `🎓 น้อง${studentProfile.nickname || 'วิทศรุต'}`;
+  const studentDisplayName = `🎓 พี่${studentProfile.nickname || 'วิทศรุต'}`;
 
   header.innerHTML = `
     <div class="header-container">
@@ -470,9 +471,48 @@ document.addEventListener('click', (e) => {
   if (menu && !menu.contains(e.target)) {
     menu.style.display = 'none';
   }
+
+  const dropdown = document.getElementById('nav-dropdown');
+  const hamburger = document.querySelector('.hamburger-btn');
+  if (dropdown && dropdown.classList.contains('show')) {
+    if (!dropdown.contains(e.target) && (!hamburger || !hamburger.contains(e.target))) {
+      dropdown.classList.remove('show');
+    }
+  }
 });
+
+// Scroll Reveal Observer Engine (supports prefers-reduced-motion)
+function initScrollReveal() {
+  const elements = document.querySelectorAll('[data-reveal]');
+  if (!elements.length) return;
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    elements.forEach(el => {
+      const delay = el.getAttribute('data-delay');
+      if (delay) {
+        el.style.transitionDelay = delay;
+      }
+      observer.observe(el);
+    });
+  } else {
+    elements.forEach(el => el.classList.add('revealed'));
+  }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   localStorage.removeItem('inbiology_darkmode');
   document.body.classList.remove('dark-mode');
+  initScrollReveal();
 });

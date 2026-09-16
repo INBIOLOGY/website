@@ -64,6 +64,9 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       renderHeader('exam');
+      const p = AppState.getStudentProfile();
+      const userBadge = document.getElementById('current-user-badge');
+      if (userBadge) userBadge.textContent = `ผู้ทำสอบ: 🎓 พี่${p.nickname || 'วิทศรุต'}`;
       renderTopicsMenu();
     });
 
@@ -71,14 +74,14 @@
       const container = document.getElementById('topics-grid');
       const enrolledIds = AppState.enrolled || [];
 
-      container.innerHTML = EXAM_TOPICS.map(topic => {
+      container.innerHTML = EXAM_TOPICS.map((topic, idx) => {
         const isUnlocked = topic.isFree || enrolledIds.includes(topic.courseId);
         const questionsCount = topic.category === 'all' 
           ? EXAM_QUESTIONS.length 
           : EXAM_QUESTIONS.filter(q => q.category === topic.category).length;
 
         return `
-          <div style="background:white;border:1.5px solid ${isUnlocked ? '#E5E7EB' : '#FED7AA'};border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 4px 12px rgba(0,0,0,0.02);position:relative">
+          <div data-reveal data-delay="${(idx % 3) * 0.08}s" style="background:white;border:1.5px solid ${isUnlocked ? '#E5E7EB' : '#FED7AA'};border-radius:20px;padding:22px;display:flex;flex-direction:column;gap:14px;box-shadow:0 4px 12px rgba(0,0,0,0.02);position:relative">
             <div style="display:flex;justify-content:space-between;align-items:center">
               <span style="background:${topic.badgeBg};color:white;font-size:10px;font-weight:900;padding:4px 10px;border-radius:20px">
                 ${topic.badge}
@@ -103,6 +106,8 @@
           </div>
         `;
       }).join('');
+
+      initScrollReveal();
     }
 
     function showTopicSelector() {

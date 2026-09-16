@@ -11,9 +11,9 @@
   <header class="site-header"></header>
 
   <div style="min-height:100vh;background:var(--c-page);padding-top:100px;padding-bottom:60px">
-    <div style="max-width:900px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:1.5fr 1fr;gap:24px">
+    <div class="checkout-grid-layout" style="max-width:900px;margin:0 auto;padding:0 24px">
       <!-- Payment Method & Slip Upload -->
-      <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:20px">
+      <div data-reveal style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:20px">
         <h2 style="font-size:18px;font-weight:900;color:var(--c-navy);margin:0">💳 เลือกช่องทางชำระเงิน</h2>
         <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:16px;padding:20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px">
           <p style="font-size:12px;font-weight:800;color:var(--c-navy);margin:0">สแกน QR Code เพื่อชำระเงินผ่าน Mobile Banking</p>
@@ -26,7 +26,7 @@
       </div>
 
       <!-- Order Summary & Coupon Input -->
-      <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:14px">
+      <div data-reveal data-delay="0.1s" style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:14px;height:fit-content">
         <h3 style="font-size:14px;font-weight:850;color:var(--c-navy);margin:0;border-bottom:1px solid #F3F4F6;padding-bottom:10px">🛒 สรุปรายการคำสั่งซื้อ</h3>
         <div id="checkout-items" style="display:flex;flex-direction:column;gap:8px"></div>
 

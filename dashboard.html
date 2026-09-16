@@ -29,9 +29,9 @@
       </aside>
 
       <!-- Main Panel & Sub Tabs -->
-      <div style="display:flex;flex-direction:column;gap:20px">
+      <div data-reveal data-delay="0.1s" style="display:flex;flex-direction:column;gap:20px">
         <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px">
-          <div style="display:flex;gap:8px;border-bottom:1px solid #E5E7EB;padding-bottom:12px;margin-bottom:20px;overflow-x:auto">
+          <div class="dash-tabs-scroll">
             <button onclick="switchDashTab('courses')" id="dtab-courses" style="padding:8px 16px;border-radius:8px;border:none;background:var(--c-navy);color:white;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
               📚 คอร์สเรียนของฉัน
             </button>
@@ -57,7 +57,7 @@
             <h2 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 4px">👤 แก้ไขข้อมูลส่วนตัวนักเรียน</h2>
             <p style="font-size:12px;color:#6B7280;margin:0 0 8px">คุณสามารถแก้ไขชื่อเล่น ชื่อจริง และชื่อโรงเรียนได้ที่นี่ (สำหรับอีเมลและรหัสผ่าน หากต้องการเปลี่ยนแปลงต้องติดต่อแอดมินเท่านั้น)</p>
             
-            <form id="student-profile-form" onsubmit="handleSaveProfile(event)" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;background:#F9FAFB;border:1px solid #E5E7EB;border-radius:16px;padding:20px">
+            <form id="student-profile-form" onsubmit="handleSaveProfile(event)" class="profile-form-grid" style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:16px;padding:20px">
               <div>
                 <label style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">ชื่อเล่น (Nickname)</label>
                 <input type="text" id="edit-nickname" required style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none" placeholder="เช่น วิทศรุต, ภูมิ" />
@@ -101,7 +101,7 @@
                 <input type="password" id="edit-password" value="••••••••" disabled style="width:100%;border:1px solid #E5E7EB;border-radius:10px;padding:10px 12px;font-size:13px;background:#F3F4F6;color:#6B7280;cursor:not-allowed" />
               </div>
 
-              <div style="grid-column:span 2;display:flex;justify-content:flex-end;margin-top:8px">
+              <div class="full-span" style="grid-column:span 2;display:flex;justify-content:flex-end;margin-top:8px">
                 <button type="submit" style="background:var(--c-navy);color:white;font-weight:850;font-size:13px;padding:12px 24px;border-radius:10px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(185,28,28,0.2)">
                   💾 บันทึกการเปลี่ยนแปลงข้อมูล
                 </button>
@@ -194,8 +194,8 @@
       if (enrolled.length === 0) {
         container.innerHTML = `<p style="color:#6B7280;font-size:13px">ยังไม่มีคอร์สเรียนสะสม</p>`;
       } else {
-        container.innerHTML = enrolled.map(c => `
-          <div style="background:white;border:1px solid #E5E7EB;border-radius:16px;overflow:hidden;display:flex;flex-direction:column">
+        container.innerHTML = enrolled.map((c, idx) => `
+          <div data-reveal data-delay="${idx * 0.08}s" style="background:white;border:1px solid #E5E7EB;border-radius:16px;overflow:hidden;display:flex;flex-direction:column">
             <div style="height:120px;background:#F8FAFC;display:flex;align-items:center;justify-content:center;padding:8px">
               <img src="${c.imageUrl}" style="max-width:100%;max-height:100%;object-fit:contain" alt="" />
             </div>
@@ -209,6 +209,7 @@
             </div>
           </div>
         `).join('');
+        initScrollReveal();
       }
     }
 
