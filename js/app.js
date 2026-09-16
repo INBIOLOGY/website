@@ -363,7 +363,7 @@ function renderHeader(activePage = 'home') {
 
   header.innerHTML = `
     <div class="header-container">
-      <a href="index.html" class="logo-btn">
+      <a href="index.html" class="logo-btn" aria-label="INBIOLOGY หน้าแรก">
         <img src="./logo.png" alt="INBIOLOGY Logo" class="logo-img" style="height:44px;width:auto;object-fit:contain" />
         <div style="text-align:left">
           <span style="font-weight:700;font-size:18px;color:var(--c-navy);display:block;line-height:1;letter-spacing:-0.3px">INBIOLOGY</span>
@@ -371,17 +371,19 @@ function renderHeader(activePage = 'home') {
         </div>
       </a>
 
-      <nav class="desktop-nav">
+      <nav class="desktop-nav" aria-label="เมนูหลัก">
         <a href="index.html" class="nav-link ${activePage === 'home' ? 'active' : ''}">หน้าแรก</a>
         <a href="courses.html" class="nav-link ${activePage === 'courses' ? 'active' : ''}">คอร์สเรียน</a>
         <a href="classroom.html" class="nav-link ${activePage === 'classroom' ? 'active' : ''}">คอร์สเรียนของฉัน</a>
         <a href="exam.html" class="nav-link ${activePage === 'exam' ? 'active' : ''}">คลังข้อสอบ</a>
+        <a href="about.html" class="nav-link ${activePage === 'about' ? 'active' : ''}">เกี่ยวกับเรา</a>
+        <a href="faq.html" class="nav-link ${activePage === 'faq' ? 'active' : ''}">คำถามพบบ่อย</a>
         <a href="dashboard.html" class="nav-link ${activePage === 'dashboard' ? 'active' : ''}">Dashboard</a>
         ${isAdmin ? `<a href="admin.html" class="nav-link ${activePage === 'admin' ? 'active' : ''}">แอดมิน</a>` : ''}
       </nav>
 
       <div style="display:flex;align-items:center;gap:12px">
-        <button onclick="openCartDrawer()" class="cart-icon-btn" title="ตะกร้าสินค้า">
+        <button onclick="openCartDrawer()" class="cart-icon-btn" title="ตะกร้าสินค้า" aria-label="เปิดตะกร้าสินค้า">
           <span style="font-size:20px">🛒</span>
           <span class="cart-badge" style="display:${AppState.cart.length > 0 ? 'flex' : 'none'}">${AppState.cart.length}</span>
         </button>
@@ -398,7 +400,7 @@ function renderHeader(activePage = 'home') {
             </div>`
         }
 
-        <button onclick="document.getElementById('nav-dropdown').classList.toggle('show')" class="hamburger-btn">
+        <button onclick="document.getElementById('nav-dropdown').classList.toggle('show')" class="hamburger-btn" aria-label="เปิดเมนูบนมือถือ">
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
@@ -409,6 +411,9 @@ function renderHeader(activePage = 'home') {
           <a href="courses.html" class="dropdown-item">📚 คอร์สเรียนทั้งหมด</a>
           <a href="classroom.html" class="dropdown-item">🎓 คอร์สเรียนของฉัน</a>
           <a href="exam.html" class="dropdown-item">🏆 คลังข้อสอบ A-Level</a>
+          <a href="about.html" class="dropdown-item">🔬 เกี่ยวกับเรา (พี่ต้น)</a>
+          <a href="faq.html" class="dropdown-item">❓ คำถามพบบ่อย (FAQ)</a>
+          <a href="dashboard.html" class="dropdown-item">👤 บัญชีของฉัน</a>
           <a href="guide.html" class="dropdown-item">📖 คู่มือการใช้งาน</a>
           ${isAdmin ? `<a href="admin.html" class="dropdown-item">🛡 แดชบอร์ดแอดมิน</a>` : ''}
           ${isLoggedIn 
@@ -423,6 +428,149 @@ function renderHeader(activePage = 'home') {
   window.addEventListener('scroll', () => {
     if (window.scrollY > 20) header.classList.add('scrolled');
     else header.classList.remove('scrolled');
+  });
+
+  renderFooter();
+  initBackToTop();
+}
+
+// Universal Rich Multi-Column Footer (Audit 2.1, 2.2)
+function renderFooter() {
+  let footer = document.querySelector('.site-footer') || document.getElementById('footer-container');
+  if (!footer) {
+    footer = document.createElement('footer');
+    footer.className = 'site-footer';
+    document.body.appendChild(footer);
+  } else {
+    footer.className = 'site-footer';
+  }
+
+  footer.innerHTML = `
+    <div class="footer-inner">
+      <div class="footer-top-grid">
+        <!-- Col 1: Brand & Bio -->
+        <div class="footer-col">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <img src="./logo.png" alt="INBIOLOGY Logo" style="height:42px;width:auto;object-fit:contain" />
+            <div>
+              <span style="font-weight:800;font-size:18px;color:#F8FAFC;display:block;line-height:1">INBIOLOGY</span>
+              <span style="font-size:11px;font-weight:600;color:#93C5FD;display:block;margin-top:2px">สถาบันกวดวิชาชีววิทยาออนไลน์</span>
+            </div>
+          </div>
+          <p>
+            ติวเข้มชีววิทยา ม.ปลาย กับ <strong>พี่ต้น</strong> (เกียรตินิยมอันดับ 1 มหาวิทยาลัยนเรศวร & มหาวิทยาลัยขอนแก่น) ประสบการณ์สอนกว่า 9 ปี เน้นความเข้าใจ ไม่ใช่แค่ท่องจำ ดูแลนักเรียนกว่า 50,000+ คน สู่คณะในฝัน
+          </p>
+          <div class="footer-social-row">
+            <a href="https://line.me" target="_blank" rel="noopener" class="footer-social-btn" title="LINE Official @inbiology" aria-label="LINE Official">
+              <img src="./social_line.png" alt="LINE" style="width:20px;height:20px;object-fit:contain" />
+            </a>
+            <a href="https://tiktok.com" target="_blank" rel="noopener" class="footer-social-btn" title="TikTok @inbiology" aria-label="TikTok">
+              <img src="./social_tiktok.png" alt="TikTok" style="width:20px;height:20px;object-fit:contain" />
+            </a>
+            <a href="about.html" class="footer-social-btn" title="Facebook / สตูดิโอ" aria-label="Facebook">
+              <span style="font-size:16px">📘</span>
+            </a>
+            <a href="about.html" class="footer-social-btn" title="Instagram" aria-label="Instagram">
+              <span style="font-size:16px">📸</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Col 2: Courses -->
+        <div class="footer-col">
+          <h4>หลักสูตรยอดนิยม</h4>
+          <ul class="footer-links">
+            <li><a href="courses.html?search=Bio+Intensive">🧬 Bio Intensive I - VI</a></li>
+            <li><a href="courses.html?search=Complete">📦 Bio Intensive Complete</a></li>
+            <li><a href="courses.html?search=A-Level">🎯 ตะลุยโจทย์ A-Level</a></li>
+            <li><a href="courses.html?search=สอวน">🏅 สอวน. ชีววิทยา ค่าย 1</a></li>
+            <li><a href="courses.html?search=99">⚡ คอร์ส 99.- Quick Review</a></li>
+            <li><a href="exam.html">🏆 คลังข้อสอบจับเวลาฟรี</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Quick Links & Support -->
+        <div class="footer-col">
+          <h4>ข้อมูล & ช่วยเหลือ</h4>
+          <ul class="footer-links">
+            <li><a href="about.html">🔬 เกี่ยวกับพี่ต้น & สถาบัน</a></li>
+            <li><a href="faq.html">❓ คำถามที่พบบ่อย (FAQ)</a></li>
+            <li><a href="guide.html">📖 คู่มือการเรียน & ใช้งาน</a></li>
+            <li><a href="dashboard.html">👤 โปรไฟล์และประวัติการเรียน</a></li>
+            <li><a href="privacy.html">🔒 นโยบายความเป็นส่วนตัว</a></li>
+            <li><a href="terms.html">📜 ข้อตกลงและเงื่อนไข</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Contact & Verification -->
+        <div class="footer-col">
+          <h4>ติดต่อ & บริการนักเรียน</h4>
+          <div class="footer-contact-item">
+            <span>💬</span>
+            <div>
+              <strong style="color:#F1F5F9">LINE Official:</strong>
+              <div>@inbiology (บริการ 24 ชม.)</div>
+            </div>
+          </div>
+          <div class="footer-contact-item">
+            <span>📧</span>
+            <div>
+              <strong style="color:#F1F5F9">อีเมลติดต่อ:</strong>
+              <div>contact@inbiology.com</div>
+            </div>
+          </div>
+          <div class="footer-contact-item">
+            <span>📞</span>
+            <div>
+              <strong style="color:#F1F5F9">โทรศัพท์ฝ่ายบริการ:</strong>
+              <div>098-765-4321</div>
+            </div>
+          </div>
+          <div style="margin-top:14px;background:#1E293B;padding:12px 14px;border-radius:12px;border:1px solid #334155;font-size:12px;line-height:1.5;color:#CBD5E1">
+            🛡️ <strong>ความปลอดภัยการชำระเงิน:</strong><br>
+            ชำระผ่าน PromptPay บัญชีทางการสถาบัน ตรวจสอบสลิปและรับใบเสร็จผ่าน LINE Official
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          © 2026 <strong>INBIOLOGY Academy by พี่ต้น</strong>. สงวนลิขสิทธิ์ทุกประการ.
+        </div>
+        <div class="footer-legal-links">
+          <a href="privacy.html">นโยบายความเป็นส่วนตัว (PDPA)</a>
+          <span>•</span>
+          <a href="terms.html">ข้อกำหนดการใช้งาน</a>
+          <span>•</span>
+          <a href="terms.html#refund">นโยบายการคืนเงินและเปลี่ยนคอร์ส</a>
+          <span>•</span>
+          <a href="terms.html#lifetime">เงื่อนไขสิทธิ์ตลอดชีพ</a>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Floating Back-to-Top Button (Audit 2.2)
+function initBackToTop() {
+  let btn = document.getElementById('back-to-top');
+  if (!btn) {
+    btn = document.createElement('button');
+    btn.id = 'back-to-top';
+    btn.className = 'back-to-top';
+    btn.setAttribute('aria-label', 'กลับสู่ด้านบนสุดของหน้า');
+    btn.title = 'กลับสู่ด้านบนสุด';
+    btn.innerHTML = '↑';
+    btn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.body.appendChild(btn);
+  }
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 320) {
+      btn.classList.add('visible');
+    } else {
+      btn.classList.remove('visible');
+    }
   });
 }
 
@@ -511,8 +659,52 @@ function initScrollReveal() {
   }
 }
 
+// FAQ Accordion & Category Filter Helper (Audit 1.2)
+function initFaqPage() {
+  const container = document.getElementById('faq-list-container');
+  if (!container) return;
+
+  function renderFaqItems(filterCat = 'all') {
+    const items = filterCat === 'all' 
+      ? FAQS 
+      : FAQS.filter(f => f.category === filterCat);
+    
+    container.innerHTML = items.map((f, idx) => `
+      <div class="faq-item-card ${idx === 0 ? 'open' : ''}" data-category="${f.category}">
+        <button class="faq-header-btn" onclick="this.parentElement.classList.toggle('open')" aria-expanded="${idx === 0}">
+          <span style="font-weight:700">❓ ${f.q}</span>
+          <span class="faq-icon-arrow">▼</span>
+        </button>
+        <div class="faq-answer-body">
+          <p>${f.a}</p>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  const pills = document.querySelectorAll('.faq-cat-pill');
+  pills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      pills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      const cat = pill.getAttribute('data-cat') || 'all';
+      renderFaqItems(cat);
+    });
+  });
+
+  renderFaqItems('all');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   localStorage.removeItem('inbiology_darkmode');
   document.body.classList.remove('dark-mode');
   initScrollReveal();
+  initBackToTop();
+  if (!document.querySelector('.site-footer')) {
+    renderFooter();
+  }
+  if (document.getElementById('faq-list-container')) {
+    initFaqPage();
+  }
 });
+

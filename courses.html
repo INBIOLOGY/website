@@ -3,14 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>คลังคอร์สเรียนชีววิทยา — INBIOLOGY Academy</title>
+  <title>คลังคอร์สเรียนชีววิทยา ม.ปลาย — INBIOLOGY Academy by พี่ต้น</title>
+  <meta name="description" content="รวมคอร์สเรียนชีววิทยาออนไลน์ ม.4 ม.5 ม.6 ติวสอบ A-Level สอวน. และ Bio Intensive Complete Set สอนโดยพี่ต้น เกียรตินิยมอันดับ 1 เข้าใจลึก ไม่ต้องท่องจำ">
+  <meta name="keywords" content="คอร์สชีววิทยา ม.ปลาย, Bio Intensive, A-Level ชีวะ, สอวน. ชีวะ, กวดวิชาชีววิทยา, พี่ต้น INBIOLOGY">
+  <meta name="author" content="INBIOLOGY Academy by พี่ต้น">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://inbiology.github.io/courses.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://inbiology.github.io/courses.html">
+  <meta property="og:title" content="คลังคอร์สเรียนชีววิทยา ม.ปลาย — INBIOLOGY Academy">
+  <meta property="og:description" content="ติวเข้มออนไลน์แบบครบวงจรกับ พี่ต้น เกียรตินิยมอันดับ 1">
+  <meta property="og:image" content="https://inbiology.github.io/course-cover-1.png">
+
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="stylesheet" href="./css/style.css">
 </head>
-<body>
+<body id="top">
 
   <header class="site-header"></header>
 
-  <div style="min-height:100vh;background:var(--c-page);padding-top:100px;padding-bottom:60px">
+  <div style="min-height:100vh;background:var(--c-page);padding-top:40px;padding-bottom:60px">
     <div class="courses-page-layout" style="max-width:1280px;margin:0 auto;padding:0 24px">
       <!-- Sidebar Filters -->
       <aside style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:20px;height:fit-content">
@@ -52,6 +66,9 @@
     </div>
   </div>
 
+  <!-- Universal Rich Multi-Column Footer -->
+  <footer id="footer-container"></footer>
+
   <script src="./js/mockData.js"></script>
   <script src="./js/app.js"></script>
   <script>
@@ -60,6 +77,13 @@
       
       const searchInput = document.getElementById('search-input');
       const levelRadios = document.querySelectorAll('input[name="level"]');
+
+      // Check URL query parameters (e.g. ?search=A-Level from footer links)
+      const urlParams = new URLSearchParams(window.location.search);
+      const searchParam = urlParams.get('search');
+      if (searchParam) {
+        searchInput.value = searchParam;
+      }
 
       function filterAndRender() {
         const query = searchInput.value.toLowerCase().trim();
@@ -157,3 +181,4 @@
   </script>
 </body>
 </html>
+

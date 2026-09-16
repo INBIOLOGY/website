@@ -1,63 +1,123 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ชำระเงิน — INBIOLOGY Academy</title>
-  <link rel="stylesheet" href="./css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ชำระเงินและยืนยันสิทธิ์ | INBIOLOGY Academy by พี่ต้น</title>
+  <meta name="description" content="ชำระเงินค่าคอร์สเรียนชีววิทยาผ่าน PromptPay QR Code มาตรฐานความปลอดภัยสูง ตรวจสอบสลิปรวดเร็ว พร้อมรับประกันเปลี่ยนคอร์สใน 7 วัน" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <link rel="stylesheet" href="./css/style.css" />
 </head>
-<body>
+<body id="top">
 
+  <!-- Universal Header -->
   <header class="site-header"></header>
 
-  <div style="min-height:100vh;background:var(--c-page);padding-top:100px;padding-bottom:60px">
-    <div class="checkout-grid-layout" style="max-width:900px;margin:0 auto;padding:0 24px">
-      <!-- Payment Method & Slip Upload -->
-      <div data-reveal style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:20px">
-        <h2 style="font-size:18px;font-weight:900;color:var(--c-navy);margin:0">💳 เลือกช่องทางชำระเงิน</h2>
-        <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:16px;padding:20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px">
-          <p style="font-size:12px;font-weight:800;color:var(--c-navy);margin:0">สแกน QR Code เพื่อชำระเงินผ่าน Mobile Banking</p>
-          <div style="width:150px;height:150px;background:white;border:1.5px solid #E5E7EB;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px">
-            <div style="background:var(--c-navy);color:white;font-size:10px;font-weight:900;padding:2px 8px;border-radius:4px;margin-bottom:8px">Prompt Pay</div>
-            <img src="./logo.png" style="width:80px;height:80px;object-fit:contain;opacity:0.8" alt="" />
+  <main style="min-height: 80vh; background: var(--c-page); padding-top: 40px; padding-bottom: 60px;">
+    <div class="checkout-grid-layout" style="max-width: 960px; margin: 0 auto; padding: 0 20px;">
+      
+      <!-- Payment Method & Safety Information (Audit 4.1, 5.2) -->
+      <div data-reveal style="background: white; border: 1px solid #E2E8F0; border-radius: 24px; padding: 28px; display: flex; flex-direction: column; gap: 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.02);">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <h2 style="font-size: 18px; font-weight: 900; color: var(--c-navy); margin: 0;">
+            💳 ชำระเงินผ่าน PromptPay QR Code
+          </h2>
+          <span style="background: #D1FAE5; color: #065F46; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 999px;">
+            🔒 ความปลอดภัย 100%
+          </span>
+        </div>
+
+        <!-- PromptPay QR Card -->
+        <div style="background: #F8FAFC; border: 1.5px solid #E2E8F0; border-radius: 20px; padding: 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px;">
+          <p style="font-size: 13px; font-weight: 700; color: #334155; margin: 0;">
+            สแกน QR Code ด้วยโมบายแบงก์กิ้งได้ทุกธนาคารในประเทศไทย
+          </p>
+
+          <div style="width: 170px; height: 170px; background: white; border: 2px solid #CBD5E1; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+            <div style="background: #1E3A8A; color: white; font-size: 10px; font-weight: 900; padding: 3px 10px; border-radius: 6px; margin-bottom: 8px;">
+              PROMPTPAY
+            </div>
+            <img src="./logo.png" style="width: 80px; height: 80px; object-fit: contain;" alt="INBIOLOGY QR" />
+            <span style="font-size: 9px; color: #64748B; font-weight: 700; margin-top: 4px;">Official Account QR</span>
           </div>
-          <p style="font-size:11px;color:#6B7280;margin:0">ชื่อบัญชี: INBIOLOGY Academy by พี่ต้น</p>
+
+          <div style="text-align: center; font-size: 12.5px; color: #475569; line-height: 1.6;">
+            <div><strong>ชื่อบัญชี:</strong> สถาบัน INBIOLOGY Academy โดย นายวิทศรุต สายตา</div>
+            <div><strong>เลขบัญชี / พร้อมเพย์:</strong> <code>098-765-4321</code></div>
+            <div><strong>ธนาคาร:</strong> ธนาคารกสิกรไทย (KBank)</div>
+          </div>
+        </div>
+
+        <!-- Slip Upload Area (Simulated & Line Verification) -->
+        <div style="border-top: 1px solid #F1F5F9; padding-top: 16px;">
+          <label style="display: block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 8px;">
+            📎 แนบหลักฐานการโอนเงิน (สลิป) หรือส่งทาง LINE
+          </label>
+          <div style="border: 2px dashed #CBD5E1; border-radius: 14px; padding: 20px; text-align: center; background: #FAFAFA; cursor: pointer;" onclick="document.getElementById('slip-file').click()">
+            <input type="file" id="slip-file" accept="image/*" style="display: none;" onchange="handleSlipSelect(this)" />
+            <span style="font-size: 24px; display: block; margin-bottom: 4px;">📤</span>
+            <span id="slip-label" style="font-size: 12.5px; font-weight: 600; color: #64748B;">คลิกเพื่ออัปโหลดรูปสลิปโอนเงิน (JPG, PNG)</span>
+          </div>
+        </div>
+
+        <!-- Safety Notice Box (Audit 4.1, 5.2) -->
+        <div class="notice-box-blue" style="margin: 0;">
+          <span style="font-size: 20px;">🛡️</span>
+          <div style="font-size: 12px; line-height: 1.6;">
+            <strong>ความโปร่งใสและสิทธิ์ของผู้เรียน:</strong><br>
+            • เงินค่าคอร์สเข้าสู่บัญชีทางการสถาบันโดยตรง สามารถขอรับใบเสร็จรับเงินอิเล็กทรอนิกส์ได้ทันทีที่ LINE: <a href="https://line.me" target="_blank" rel="noopener" style="color: #1E3A8A; font-weight: 700;">@inbiology</a><br>
+            • การันตีสิทธิ์ขอเปลี่ยนคอร์สเรียนได้ภายใน <strong>7 วัน</strong> ตามเงื่อนไข <a href="terms.html#refund" target="_blank" style="color: #1E3A8A; text-decoration: underline;">นโยบายการเปลี่ยนคอร์ส</a>
+          </div>
         </div>
       </div>
 
-      <!-- Order Summary & Coupon Input -->
-      <div data-reveal data-delay="0.1s" style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:14px;height:fit-content">
-        <h3 style="font-size:14px;font-weight:850;color:var(--c-navy);margin:0;border-bottom:1px solid #F3F4F6;padding-bottom:10px">🛒 สรุปรายการคำสั่งซื้อ</h3>
-        <div id="checkout-items" style="display:flex;flex-direction:column;gap:8px"></div>
+      <!-- Order Summary & Action -->
+      <div data-reveal data-delay="0.1s" style="background: white; border: 1px solid #E2E8F0; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; gap: 16px; height: fit-content; box-shadow: 0 4px 16px rgba(0,0,0,0.02);">
+        <h3 style="font-size: 15px; font-weight: 850; color: var(--c-navy); margin: 0; border-bottom: 1px solid #F1F5F9; padding-bottom: 12px;">
+          🛒 สรุปรายการคำสั่งซื้อ
+        </h3>
+        
+        <div id="checkout-items" style="display: flex; flex-direction: column; gap: 10px;"></div>
 
         <!-- Coupon Input Box -->
-        <div style="border-top:1px solid #F3F4F6;padding-top:12px">
-          <label style="display:block;font-size:11px;font-weight:700;color:#374151;margin-bottom:6px">🎫 โค้ดคูปองส่วนลด</label>
-          <div style="display:flex;gap:8px">
-            <input type="text" id="coupon-input" placeholder="เช่น NEWBIO200" style="flex:1;border:1px solid #E5E7EB;border-radius:8px;padding:8px;font-size:12px;outline:none" />
-            <button onclick="handleCouponSubmit()" style="background:var(--c-sky);color:white;font-weight:800;font-size:12px;padding:8px 14px;border-radius:8px;border:none;cursor:pointer">
+        <div style="border-top: 1px solid #F1F5F9; padding-top: 14px;">
+          <label for="coupon-input" style="display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 6px;">
+            🎫 โค้ดคูปองส่วนลด
+          </label>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="coupon-input" placeholder="เช่น INBIOLOGY100 หรือ NEWBIO200" style="flex: 1; border: 1px solid #E2E8F0; border-radius: 10px; padding: 8px 12px; font-size: 12.5px; outline: none;" />
+            <button onclick="handleCouponSubmit()" class="btn btn-secondary" style="background: var(--c-sky); color: white; font-weight: 800; font-size: 12px; padding: 8px 16px; border-radius: 10px; border: none; cursor: pointer;">
               ใช้โค้ด
             </button>
           </div>
-          <p style="font-size:10px;color:#9CA3AF;margin-top:4px">โค้ดส่วนลดทดสอบ: INBIOLOGY100 หรือ NEWBIO200</p>
+          <p style="font-size: 11px; color: #9CA3AF; margin-top: 4px;">โค้ดทดสอบ: <code>INBIOLOGY100</code> (ลด 100.-) หรือ <code>NEWBIO200</code> (ลด 200.-)</p>
         </div>
 
-        <div style="display:flex;justify-content:space-between;font-size:12px;color:#6B7280">
+        <div style="display: flex; justify-content: space-between; font-size: 13px; color: #64748B;">
           <span>ส่วนลดคูปอง</span>
-          <span id="discount-amount" style="color:#10B981;font-weight:800">- ฿0</span>
+          <span id="discount-amount" style="color: #10B981; font-weight: 800;">- ฿0</span>
         </div>
 
-        <div style="display:flex;justify-content:space-between;font-weight:900;font-size:18px;color:var(--c-navy);border-top:1px solid #F3F4F6;padding-top:12px">
+        <div style="display: flex; justify-content: space-between; font-weight: 900; font-size: 20px; color: var(--c-navy); border-top: 1px solid #F1F5F9; padding-top: 14px;">
           <span>ยอดชำระสุทธิ</span>
-          <span id="checkout-total">฿0</span>
+          <span id="checkout-total" style="color: #B91C1C;">฿0</span>
         </div>
 
-        <button onclick="confirmPayment()" style="width:100%;background:var(--c-red);color:white;font-weight:800;font-size:14px;padding:14px;border-radius:12px;border:none;cursor:pointer">
-          ยืนยันการชำระเงิน
+        <button onclick="confirmPayment()" class="btn btn-primary" style="width: 100%; background: #B91C1C; color: white; font-weight: 850; font-size: 15px; padding: 14px; border-radius: 14px; border: none; cursor: pointer; box-shadow: 0 4px 14px rgba(185,28,28,0.25);">
+          ✓ ยืนยันการชำระเงินและเปิดคอร์ส
         </button>
+
+        <p style="font-size: 11px; color: #94A3B8; text-align: center; margin: 0; line-height: 1.5;">
+          เมื่อคลิกยืนยัน ถือว่าท่านยอมรับ <a href="terms.html" style="color: #1E3A8A; text-decoration: underline;">ข้อตกลงและเงื่อนไข</a> และ <a href="privacy.html" style="color: #1E3A8A; text-decoration: underline;">นโยบายความเป็นส่วนตัว</a>
+        </p>
       </div>
+
     </div>
-  </div>
+  </main>
+
+  <!-- Universal Footer Container -->
+  <footer id="footer-container"></footer>
 
   <script src="./js/mockData.js"></script>
   <script src="./js/app.js"></script>
@@ -78,9 +138,9 @@
         itemsContainer.innerHTML = `<p style="font-size:12px;color:#9CA3AF">ไม่มีสินค้าในตะกร้า</p>`;
       } else {
         itemsContainer.innerHTML = AppState.cart.map(c => `
-          <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#374151">
-            <span style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.title}</span>
-            <span>฿${formatPrice(c.price)}</span>
+          <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;color:#374151">
+            <span style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.title}</span>
+            <span style="color:#B91C1C">฿${formatPrice(c.price)}</span>
           </div>
         `).join('');
       }
@@ -106,17 +166,29 @@
       }
     }
 
+    function handleSlipSelect(input) {
+      if (input.files && input.files[0]) {
+        const fileName = input.files[0].name;
+        document.getElementById('slip-label').innerHTML = `✅ เลือกไฟล์แล้ว: <strong>${fileName}</strong>`;
+        showToast('แนบไฟล์สลิปเรียบร้อยแล้ว', 'success');
+      }
+    }
+
     function confirmPayment() {
       if (AppState.cart.length === 0) {
         showToast('กรุณาเลือกคอร์สลงตะกร้าก่อนชำระเงิน', 'error');
         return;
       }
-      AppState.cart.forEach(c => AppState.enrolled.push(c.id));
+      AppState.cart.forEach(c => {
+        if (!AppState.enrolled.includes(c.id)) {
+          AppState.enrolled.push(c.id);
+        }
+      });
       localStorage.setItem('inbiology_enrolled', JSON.stringify(AppState.enrolled));
       AppState.cart = [];
       AppState.saveCart();
-      showToast('🎉 ทำรายการสั่งซื้อชำระเงินสำเร็จแล้ว!', 'success');
-      setTimeout(() => location.href = 'dashboard.html', 1000);
+      showToast('🎉 ทำรายการสั่งซื้อชำระเงินสำเร็จแล้ว! เปิดคอร์สในห้องเรียนเรียบร้อย', 'success');
+      setTimeout(() => location.href = 'classroom.html', 1200);
     }
   </script>
 </body>
