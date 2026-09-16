@@ -213,6 +213,8 @@
       }
     }
   </style>
+  <!-- Google Identity Services library (loads async, non-blocking) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
@@ -246,8 +248,13 @@
 
         <!-- Social Login Buttons Row -->
         <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
-          <!-- Google Sign-in Button -->
-          <button type="button" id="btn-google-login" onclick="handleGoogleLogin()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#FFFFFF;border:1.5px solid #E2E8F0;border-radius:12px;padding:11px 16px;font-size:13.5px;font-weight:700;color:#1E293B;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 6px rgba(0,0,0,0.04)">
+          <!-- Google Sign-in: Official GSI Rendered Button (shown when configured) + Fallback -->
+          <div id="google-btn-container" style="width:100%;display:none">
+            <!-- GSI renders the official Google button here -->
+            <div id="gsi-button-div" style="display:flex;justify-content:center;width:100%"></div>
+          </div>
+          <!-- Fallback custom button (always shown, hidden when GSI renders) -->
+          <button type="button" id="btn-google-login" onclick="handleGoogleLoginFallback()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#FFFFFF;border:1.5px solid #E2E8F0;border-radius:12px;padding:11px 16px;font-size:13.5px;font-weight:700;color:#1E293B;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 6px rgba(0,0,0,0.04)">
             <svg width="18" height="18" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
               <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -365,6 +372,7 @@
 
   <script src="./js/mockData.js"></script>
   <script src="./js/firebaseConfig.js"></script>
+  <script src="./js/googleConfig.js"></script>
   <script src="./js/lineConfig.js"></script>
   <script src="./js/cloudService.js"></script>
   <script src="./js/app.js"></script>
@@ -429,22 +437,130 @@
       }
     }
 
-    async function handleGoogleLogin() {
+    // ─── Google Identity Services (GSI) Integration ────────────────────────────
+    // Decodes a JWT credential from Google and extracts user info (no server needed)
+    function decodeGoogleJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const json = decodeURIComponent(
+          atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
+        );
+        return JSON.parse(json);
+      } catch(e) { return null; }
+    }
+
+    // Called by Google when user selects their account (One Tap or button flow)
+    async function handleGsiCredentialResponse(response) {
       const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || 'classroom.html';
       try {
-        showToast('🔄 กำลังเชื่อมต่อเข้าสู่ระบบด้วย Google...', 'info');
-        if (window.CloudService) {
-          const profile = await window.CloudService.loginWithGoogle();
-          showToast(`🎉 ยินดีต้อนรับ ${profile.fullName || profile.email}`, 'success');
-          setTimeout(() => location.href = redirectUrl, 800);
-        } else {
-          showToast('⚠️ Firebase ยังไม่ได้ตั้งค่า กรุณาใส่ Firebase Config ก่อน', 'error');
+        const payload = decodeGoogleJwt(response.credential);
+        if (!payload) throw new Error('ถอดรหัส Google ID Token ไม่สำเร็จ');
+
+        const profile = {
+          googleId: payload.sub,
+          fullName: payload.name || '',
+          nickname: (payload.given_name || payload.name || '').split(' ')[0],
+          email: payload.email || '',
+          avatar: payload.picture || '',
+          school: 'ยังไม่ได้ระบุ',
+          level: 'ม.5',
+          role: 'student',
+          authProvider: 'google'
+        };
+
+        AppState.userRole = 'student';
+        localStorage.setItem('inbiology_role', 'student');
+        AppState.saveStudentProfile(profile);
+
+        // Try Firebase sync if configured
+        if (window.CloudService && window.isFirebaseConfigured && window.isFirebaseConfigured()) {
+          try { await window.CloudService.saveUserProfile(null, profile); } catch(e) {}
         }
-      } catch (err) {
-        console.error('Google login error:', err);
-        showToast(`❌ ไม่สามารถเข้าสู่ระบบด้วย Google ได้: ${err.message || 'กรุณาลองใหม่อีกครั้ง'}`, 'error');
+
+        showToast(`🎉 ยินดีต้อนรับ ${payload.name}! เข้าสู่ระบบด้วย Google สำเร็จ`, 'success');
+        setTimeout(() => location.href = redirectUrl, 900);
+      } catch(err) {
+        console.error('GSI credential error:', err);
+        showToast(`❌ ไม่สามารถเข้าสู่ระบบด้วย Google: ${err.message}`, 'error');
       }
     }
+
+    // Initialize Google Sign-In after DOM is ready
+    function initGoogleSignIn() {
+      const cfg = window.GOOGLE_CONFIG;
+      if (!cfg || !cfg.googleClientId || !cfg.googleClientId.trim()) {
+        // No Client ID — keep fallback button, hide GSI container
+        return;
+      }
+      if (typeof google === 'undefined' || !google.accounts) {
+        // GSI library not loaded yet, retry after short delay
+        setTimeout(initGoogleSignIn, 500);
+        return;
+      }
+
+      // Initialize One Tap
+      google.accounts.id.initialize({
+        client_id: cfg.googleClientId,
+        callback: handleGsiCredentialResponse,
+        auto_select: false,
+        cancel_on_tap_outside: true,
+        ux_mode: 'popup'
+      });
+
+      // Render official Google Sign-In button
+      const btnContainer = document.getElementById('google-btn-container');
+      const gsiDiv = document.getElementById('gsi-button-div');
+      const fallbackBtn = document.getElementById('btn-google-login');
+
+      btnContainer.style.display = 'block';
+      fallbackBtn.style.display = 'none';
+
+      google.accounts.id.renderButton(gsiDiv, {
+        type: 'standard',
+        theme: 'outline',
+        size: 'large',
+        text: 'signin_with',
+        shape: 'rectangular',
+        logo_alignment: 'left',
+        width: gsiDiv.offsetWidth || 440
+      });
+
+      // Show One Tap popup if enabled
+      if (cfg.googleOneTap !== false) {
+        google.accounts.id.prompt();
+      }
+    }
+
+    // Fallback: used when GSI Client ID is not yet set (demo mode)
+    async function handleGoogleLoginFallback() {
+      const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || 'classroom.html';
+      if (window.isGoogleConfigured && window.isGoogleConfigured()) {
+        // Should not happen — GSI button should be showing instead
+        showToast('🔄 กำลังเชื่อมต่อ Google...', 'info');
+        return;
+      }
+      // Demo mode — no Client ID configured yet
+      showToast('⚠️ ยังไม่ได้ตั้งค่า Google Client ID\n📌 ดูขั้นตอนที่ js/googleConfig.js', 'error');
+      // Optional: auto-fill demo login
+      const demoProfile = {
+        fullName: 'นาย Google Demo User',
+        nickname: 'Google',
+        email: 'google.demo@inbiology.com',
+        school: 'โรงเรียนทดสอบ',
+        level: 'ม.6',
+        role: 'student',
+        authProvider: 'google_demo'
+      };
+      AppState.userRole = 'student';
+      localStorage.setItem('inbiology_role', 'student');
+      AppState.saveStudentProfile(demoProfile);
+      showToast('🎉 ทดลองเข้าสู่ระบบด้วย Google (Demo Mode)', 'success');
+      setTimeout(() => location.href = redirectUrl, 900);
+    }
+
+    async function handleGoogleLogin() { handleGoogleLoginFallback(); }
+
 
     function handleLineLogin() {
       const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || 'classroom.html';
@@ -544,6 +660,10 @@
           showToast(`❌ ${err.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง'}`, 'error');
         }
       }
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize Google Sign-In after page loads
+      initGoogleSignIn();
     });
   </script>
 </body>
