@@ -120,6 +120,8 @@
   <footer id="footer-container"></footer>
 
   <script src="./js/mockData.js"></script>
+  <script src="./js/firebaseConfig.js"></script>
+  <script src="./js/cloudService.js"></script>
   <script src="./js/app.js"></script>
   <script>
     let discount = 0;
@@ -174,16 +176,19 @@
       }
     }
 
-    function confirmPayment() {
+    async function confirmPayment() {
       if (AppState.cart.length === 0) {
         showToast('กรุณาเลือกคอร์สลงตะกร้าก่อนชำระเงิน', 'error');
         return;
       }
-      AppState.cart.forEach(c => {
+      for (const c of AppState.cart) {
         if (!AppState.enrolled.includes(c.id)) {
           AppState.enrolled.push(c.id);
         }
-      });
+        if (window.CloudService && typeof window.CloudService.enrollCourse === 'function') {
+          await window.CloudService.enrollCourse(c.id);
+        }
+      }
       localStorage.setItem('inbiology_enrolled', JSON.stringify(AppState.enrolled));
       AppState.cart = [];
       AppState.saveCart();

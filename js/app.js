@@ -69,6 +69,9 @@ const AppState = {
   },
 
   logout() {
+    if (window.CloudService && typeof window.CloudService.logout === 'function') {
+      window.CloudService.logout();
+    }
     this.userRole = null;
     localStorage.removeItem('inbiology_role');
     showToast('👋 ออกจากระบบเรียบร้อยแล้ว', 'info');
