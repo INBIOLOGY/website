@@ -244,16 +244,28 @@
           </button>
         </div>
 
-        <!-- Google Sign-in Button -->
-        <button type="button" onclick="handleGoogleLogin()" class="btn-google-login" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#FFFFFF;border:1.5px solid #E2E8F0;border-radius:12px;padding:12px 16px;font-size:13.5px;font-weight:700;color:#1E293B;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 6px rgba(0,0,0,0.04);margin-bottom:16px">
-          <svg width="18" height="18" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-          </svg>
-          เข้าสู่ระบบด้วย Google
-        </button>
+        <!-- Social Login Buttons Row -->
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+          <!-- Google Sign-in Button -->
+          <button type="button" id="btn-google-login" onclick="handleGoogleLogin()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#FFFFFF;border:1.5px solid #E2E8F0;border-radius:12px;padding:11px 16px;font-size:13.5px;font-weight:700;color:#1E293B;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 6px rgba(0,0,0,0.04)">
+            <svg width="18" height="18" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+            </svg>
+            เข้าสู่ระบบด้วย Google
+          </button>
+
+          <!-- LINE Login Button -->
+          <button type="button" id="btn-line-login" onclick="handleLineLogin()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#06C755;border:none;border-radius:12px;padding:11px 16px;font-size:13.5px;font-weight:700;color:#FFFFFF;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 14px rgba(6,199,85,0.3)">
+            <!-- LINE Icon SVG -->
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+              <path d="M19.365 9.89c.50 0 .866.37.866.82 0 .45-.366.82-.866.82h-2.132v1.39h2.132c.5 0 .866.37.866.82 0 .45-.366.82-.866.82h-2.998c-.5 0-.866-.37-.866-.82V9.07c0-.45.366-.82.866-.82h2.998zm-5.498 4.87c0 .45-.366.82-.866.82-.3 0-.567-.15-.718-.38l-2.74-3.73v3.29c0 .45-.366.82-.866.82-.5 0-.866-.37-.866-.82V9.07c0-.45.366-.82.866-.82.3 0 .567.15.718.38l2.74 3.73V9.07c0-.45.366-.82.866-.82.5 0 .866.37.866.82v4.69zM8.08 9.07v4.69c0 .45-.366.82-.866.82-.5 0-.866-.37-.866-.82V9.07c0-.45.366-.82.866-.82.5 0 .866.37.866.82zm-2.998 0v4.69c0 .45-.366.82-.866.82H1.218c-.5 0-.866-.37-.866-.82 0-.45.366-.82.866-.82h2.132v-3.87H1.218c-.5 0-.866-.37-.866-.82 0-.45.366-.82.866-.82h2.998c.5 0 .866.37.866.82z" fill-rule="evenodd"/>
+            </svg>
+            เข้าสู่ระบบด้วย LINE
+          </button>
+        </div>
 
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
           <div style="flex:1;height:1px;background:#E2E8F0"></div>
@@ -353,6 +365,7 @@
 
   <script src="./js/mockData.js"></script>
   <script src="./js/firebaseConfig.js"></script>
+  <script src="./js/lineConfig.js"></script>
   <script src="./js/cloudService.js"></script>
   <script src="./js/app.js"></script>
   <script>
@@ -417,17 +430,51 @@
     }
 
     async function handleGoogleLogin() {
+      const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || 'classroom.html';
       try {
         showToast('🔄 กำลังเชื่อมต่อเข้าสู่ระบบด้วย Google...', 'info');
         if (window.CloudService) {
           const profile = await window.CloudService.loginWithGoogle();
           showToast(`🎉 ยินดีต้อนรับ ${profile.fullName || profile.email}`, 'success');
-          setTimeout(() => location.href = 'classroom.html', 800);
+          setTimeout(() => location.href = redirectUrl, 800);
+        } else {
+          showToast('⚠️ Firebase ยังไม่ได้ตั้งค่า กรุณาใส่ Firebase Config ก่อน', 'error');
         }
       } catch (err) {
         console.error('Google login error:', err);
         showToast(`❌ ไม่สามารถเข้าสู่ระบบด้วย Google ได้: ${err.message || 'กรุณาลองใหม่อีกครั้ง'}`, 'error');
       }
+    }
+
+    function handleLineLogin() {
+      const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || 'classroom.html';
+
+      // Check if LINE is configured
+      if (!window.LINE_CONFIG || !window.isLineConfigured || !window.isLineConfigured()) {
+        showToast('⚠️ LINE Login ยังไม่ได้ตั้งค่า Channel ID\n📌 ดูขั้นตอนที่ js/lineConfig.js', 'error');
+        return;
+      }
+
+      // Save redirect destination
+      sessionStorage.setItem('line_redirect', redirectUrl);
+
+      // Generate CSRF state
+      const state = Math.random().toString(36).substring(2) + Date.now().toString(36);
+      sessionStorage.setItem('line_oauth_state', state);
+
+      // Build LINE OAuth 2.0 authorization URL
+      const params = new URLSearchParams({
+        response_type: 'code',
+        client_id: window.LINE_CONFIG.lineChannelId,
+        redirect_uri: window.LINE_CONFIG.lineCallbackUrl,
+        state: state,
+        scope: window.LINE_CONFIG.lineScope || 'profile openid email',
+        nonce: Math.random().toString(36).substring(2)
+      });
+
+      const lineAuthUrl = 'https://access.line.me/oauth2/v2.1/authorize?' + params.toString();
+      showToast('🔄 กำลังเชื่อมต่อไปยัง LINE...', 'info');
+      setTimeout(() => { window.location.href = lineAuthUrl; }, 500);
     }
 
     async function handleForgotPassword() {
