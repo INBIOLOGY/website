@@ -25,6 +25,12 @@ const COURSES = [
     tag: 'ม.4 & ติวสอบ', tagBg: '#FEF2F2', tagColor: '#991B1B',
     description: 'ปูพื้นฐานบทนำชีววิทยา เคมีที่เป็นพื้นฐานของสิ่งมีชีวิต (Biochemistry) โครงสร้างและหน้าที่ของเซลล์ ออร์แกเนลล์ เยื่อหุ้มเซลล์ การลำเลียงสาร และการแบ่งเซลล์อย่างลึกซึ้ง',
     hours: 30, validity: 365, ebook: true,
+    ebookInfo: {
+      title: 'e-Book สรุปเข้ม Bio Intensive I (ฉบับพิมพ์ 4 สี 140 หน้า)',
+      pages: 140,
+      fileSize: '24.5 MB',
+      filename: 'INBIOLOGY_Bio_Intensive_I_Handout.pdf'
+    },
     lessons: [
       { id: 'l1', title: 'EP 1: บทนำชีววิทยา ทักษะการสืบเสาะ และเคมีพื้นฐานของสิ่งมีชีวิต', duration: 45, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l2', title: 'EP 2: เจาะลึกชีวโมเลกุล: คาร์โบไฮเดรต โปรตีน ลิพิด และกรดนิวคลีอิก', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
@@ -45,11 +51,19 @@ const COURSES = [
     tag: 'ม.4-ม.5 & ติวสอบ', tagBg: '#EDE9FE', tagColor: '#5B21B6',
     description: 'พันธุศาสตร์ของเมนเดล การถ่ายทอดลักษณะทางพันธุกรรม ดีเอ็นเอ สารพันธุกรรม รหัสพันธุกรรม เทคโนโลยีชีวภาพ และหลักการวิวัฒนาการของสิ่งมีชีวิต',
     hours: 32, validity: 365, ebook: true,
+    ebookInfo: {
+      title: 'e-Book เจาะลึกพันธุศาสตร์ & DNA Technology (135 หน้า)',
+      pages: 135,
+      fileSize: '22.8 MB',
+      filename: 'INBIOLOGY_Bio_Intensive_II_Handout.pdf'
+    },
     lessons: [
       { id: 'l1', title: 'EP 1: พันธุศาสตร์ของเมนเดล กฎแห่งการแยกตัวและรวมกลุ่มอย่างอิสระ', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l2', title: 'EP 2: ส่วนขยายพันธุศาสตร์เมนเดล (Incomplete Dominance, Codominance)', duration: 45, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l3', title: 'EP 3: โครงสร้าง DNA & RNA และการจำลองตัวของ DNA', duration: 55, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l4', title: 'EP 4: กระบวนการถอดรหัสและการแปลรหัสพันธุกรรม', duration: 60, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l5', title: 'EP 5: เทคโนโลยีทางดีเอ็นเอ (Recombinant DNA, PCR, Gel Electrophoresis)', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l6', title: 'EP 6: หลักฐานและกลไกการเกิดวิวัฒนาการของสิ่งมีชีวิต', duration: 45, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
     ],
     imageUrl: './course-cover-2.png',
     rating: 5.0, reviewCount: 380, Level: 'ม.5', Category: '🧫 Bio Intensive'
@@ -63,9 +77,17 @@ const COURSES = [
     tag: 'ม.5 & ติวสอบ', tagBg: '#D1FAE5', tagColor: '#065F46',
     description: 'เจาะลึกชีววิทยาของพืช โครงสร้างและเนื้อเยื่อพืช กระบวนการสังเคราะห์ด้วยแสง (Photosynthesis) การลำเลียงของพืช และฮอร์โมนพืช',
     hours: 28, validity: 365, ebook: true,
+    ebookInfo: {
+      title: 'e-Book สรุปพฤกษศาสตร์ & การสังเคราะห์ด้วยแสง (120 หน้า)',
+      pages: 120,
+      fileSize: '19.4 MB',
+      filename: 'INBIOLOGY_Bio_Intensive_III_Handout.pdf'
+    },
     lessons: [
       { id: 'l1', title: 'EP 1: โครงสร้างและเนื้อเยื่อพืชไร้ท่อและพืชมีท่อลำเลียง', duration: 45, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l2', title: 'EP 2: กระบวนการสังเคราะห์ด้วยแสง ปฏิกิริยาแสง และวัฏจักรคัลวิน', duration: 55, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l3', title: 'EP 3: การลำเลียงน้ำและแร่ธาตุในพืช (Xylem & Phloem Transport)', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l4', title: 'EP 4: ฮอร์โมนพืชและการตอบสนองต่อสิ่งแวดล้อม (Auxin, Gibberellin, Cytokinin)', duration: 45, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
     ],
     imageUrl: './course-cover-3.jpg',
     rating: 4.9, reviewCount: 310, Level: 'ม.5', Category: '🌱 Bio Intensive'
@@ -79,9 +101,17 @@ const COURSES = [
     tag: 'ม.5-ม.6 & ติวสอบ', tagBg: '#FEF3C7', tagColor: '#92400E',
     description: 'กายวิภาคศาสตร์และสรีรวิทยาของสัตว์และมนุษย์ พาร์ต 1: ระบบย่อยอาหาร การหมุนเวียนเลือด ระบบหายใจ และระบบขับถ่าย',
     hours: 35, validity: 365, ebook: true,
+    ebookInfo: {
+      title: 'e-Book สรีรวิทยาสัตว์ พาร์ต 1 ระบบร่างกายมนุษย์ (150 หน้า)',
+      pages: 150,
+      fileSize: '26.1 MB',
+      filename: 'INBIOLOGY_Bio_Intensive_IV_Handout.pdf'
+    },
     lessons: [
       { id: 'l1', title: 'EP 1: ระบบย่อยอาหารและการดูดซึมสารอาหารในมนุษย์', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-      { id: 'l2', title: 'EP 2: โครงสร้างหัวใจและการหมุนเวียนเลือด', duration: 55, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l2', title: 'EP 2: โครงสร้างหัวใจ การหมุนเวียนเลือด และระบบน้ำเหลือง', duration: 55, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l3', title: 'EP 3: ระบบการแลกเปลี่ยนแก๊สและการหายใจของสัตว์และมนุษย์', duration: 45, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l4', title: 'EP 4: โครงสร้างไตและการรักษาสมดุลน้ำในร่างกาย (Nephron & Osmoregulation)', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
     ],
     imageUrl: './course-cover-4.jpg',
     rating: 4.8, reviewCount: 415, Level: 'ม.6', Category: '🦴 Bio Intensive'
@@ -95,11 +125,18 @@ const COURSES = [
     tag: 'ม.6 & ติวสอบ', tagBg: '#F3E8FF', tagColor: '#6B21A8',
     description: 'กายวิภาคศาสตร์และสรีรวิทยาของสัตว์และมนุษย์ พาร์ต 2: ระบบประสาทและอวัยวะรับความรู้สึก ระบบต่อมไร้ท่อและฮอร์โมน ระบบภูมิคุ้มกัน ระบบสืบพันธุ์ และการเจริญเติบโต',
     hours: 36, validity: 365, ebook: true,
+    ebookInfo: {
+      title: 'e-Book สรีรวิทยาสัตว์ พาร์ต 2 ระบบประสาทและฮอร์โมน (160 หน้า)',
+      pages: 160,
+      fileSize: '31.2 MB',
+      filename: 'INBIOLOGY_Bio_Intensive_V_Handout.pdf'
+    },
     lessons: [
       { id: 'l1', title: 'EP 1: การทำงานของเซลล์ประสาทและไซแนปส์ (Action Potential)', duration: 55, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l2', title: 'EP 2: ระบบสมอง ไขสันหลัง และระบบประสาทอัตโนมัติ', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l3', title: 'EP 3: ระบบต่อมไร้ท่อและการควบคุมสมดุลฮอร์โมน', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-      { id: 'l4', title: 'EP 4: ระบบภูมิคุ้มกันร่างกายและการตอบสนองต่อเชื้อโรค', duration: 45, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
+      { id: 'l4', title: 'EP 4: ระบบภูมิคุ้มกันร่างกายและการตอบสนองต่อเชื้อโรค', duration: 45, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l5', title: 'EP 5: ระบบสืบพันธุ์และการเจริญเติบโตของเอ็มบริโอ', duration: 55, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
     ],
     imageUrl: './course-cover-1.png',
     rating: 4.95, reviewCount: 390, Level: 'ม.6', Category: '🦴 Bio Intensive'
@@ -113,10 +150,17 @@ const COURSES = [
     tag: 'ม.6 & ติวสอบ', tagBg: '#ECFDF5', tagColor: '#047857',
     description: 'นิเวศวิทยา ระบบนิเวศ การถ่ายทอดพลังงาน ประชากรศาสตร์ พฤติกรรมของสัตว์ ความหลากหลายทางชีวภาพ (Biodiversity) อาณาจักรสิ่งมีชีวิต และปัญหาสิ่งแวดล้อมโลก',
     hours: 32, validity: 365, ebook: true,
+    ebookInfo: {
+      title: 'e-Book นิเวศวิทยา & ความหลากหลายทางชีวภาพ (130 หน้า)',
+      pages: 130,
+      fileSize: '21.0 MB',
+      filename: 'INBIOLOGY_Bio_Intensive_VI_Handout.pdf'
+    },
     lessons: [
       { id: 'l1', title: 'EP 1: พฤติกรรมของสัตว์ (Innate & Learned Behavior)', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l2', title: 'EP 2: ระบบนิเวศ การหมุนเวียนสาร และวัฏจักรชีวิต', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-      { id: 'l3', title: 'EP 3: ความหลากหลายทางชีวภาพและ 5 อาณาจักรสิ่งมีชีวิต', duration: 60, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
+      { id: 'l3', title: 'EP 3: ความหลากหลายทางชีวภาพและ 5 อาณาจักรสิ่งมีชีวิต', duration: 60, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l4', title: 'EP 4: ประชากรศาสตร์และวิกฤตสิ่งแวดล้อมโลก', duration: 45, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
     ],
     imageUrl: './course-cover-3.jpg',
     rating: 4.9, reviewCount: 360, Level: 'ม.6', Category: '🌱 Bio Intensive'
@@ -130,9 +174,17 @@ const COURSES = [
     tag: 'ราคาโปรโมชั่น 390.-', tagBg: '#FEE2E2', tagColor: '#B91C1C',
     description: 'คอร์สตะลุยโจทย์ สอวน. ชีววิทยา คัดสรรโจทย์เข้มข้น 100 ข้อ พร้อมเฉลยรายละเอียดทุกข้อ ชี้จุดหลอก พิชิตคะแนนค่าย 1 (ราคาถูกพิเศษ)',
     hours: 18, validity: 365, ebook: true,
+    ebookInfo: {
+      title: 'e-Book รวมโจทย์คัดเลือก สอวน. 100 ข้อ พร้อมเฉลยละเอียด',
+      pages: 110,
+      fileSize: '18.2 MB',
+      filename: 'INBIOLOGY_POSN_100_Exam.pdf'
+    },
     lessons: [
-      { id: 'l1', title: 'EP 1: ตะลุยโจทย์ สอวน. ข้อ 1-25 + เฉลยรายละเอียด', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-      { id: 'l2', title: 'EP 2: ตะลุยโจทย์ สอวน. ข้อ 26-50 + เฉลยรายละเอียด', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l1', title: 'EP 1: ตะลุยโจทย์ สอวน. ข้อ 1-25 (Cell & Biochemistry)', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l2', title: 'EP 2: ตะลุยโจทย์ สอวน. ข้อ 26-50 (Genetics & Plant)', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l3', title: 'EP 3: ตะลุยโจทย์ สอวน. ข้อ 51-75 (Animal Physiology)', duration: 55, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l4', title: 'EP 4: ตะลุยโจทย์ สอวน. ข้อ 76-100 (Ecology & Lab Skills)', duration: 55, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
     ],
     imageUrl: './course-cover-5.jpg',
     rating: 4.9, reviewCount: 890, Level: 'ติวสอบ', Category: '🏅 คอร์สพิเศษ'
@@ -146,9 +198,16 @@ const COURSES = [
     tag: 'โปรสุดคุ้ม 99.-', tagBg: '#FEE2E2', tagColor: '#991B1B',
     description: 'คอร์สราคาสุดประหยัดเพียง 99 บาท! รวมเทคนิคสกัดเข้มจุดออกสอบบ่อยชีววิทยา ม.ปลาย สรุปสูตรลัดและแผนภาพ Mind Map พร้อมลุยทุกสนามสอบ',
     hours: 10, validity: 365, ebook: true,
+    ebookInfo: {
+      title: 'e-Book Quick Review ชีวะสกัดเข้ม Mind Map 50 หน้า',
+      pages: 50,
+      fileSize: '12.0 MB',
+      filename: 'INBIOLOGY_Quick_Review_99.pdf'
+    },
     lessons: [
       { id: 'l1', title: 'EP 1: สรุปจุดออกสอบบ่อย Cell & Biochemistry', duration: 40, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l2', title: 'EP 2: สรุปเทคนิคทำโจทย์ Genetics & DNA', duration: 45, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l3', title: 'EP 3: จุดหลอกยอดฮิต Plant & Human Physiology', duration: 45, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
     ],
     imageUrl: './course-cover-6.png',
     rating: 5.0, reviewCount: 1420, Level: 'ติวสอบ', Category: '⚡ คอร์ส 99 บาท'
@@ -162,12 +221,19 @@ const COURSES = [
     tag: 'ม.6 & ติวสอบ กสพท', tagBg: '#EFF6FF', tagColor: '#1E3A8A',
     description: 'คอร์สเตรียมสอบเข้ามหาวิทยาลัย กสพท / โควตา / Admission ครบทุกบทเรียน เจาะลึกแนวข้อสอบเสมือนจริง 500 ข้อตาม Test Blueprint ล่าสุด พร้อมเทคนิคตัดช้อยส์และจับเวลาสอบเสมือนจริง',
     hours: 42, validity: 365, ebook: true,
+    ebookInfo: {
+      title: 'e-Book คลังข้อสอบ A-Level ชีววิทยาเสมือนจริง 500 ข้อ (220 หน้า)',
+      pages: 220,
+      fileSize: '45.0 MB',
+      filename: 'INBIOLOGY_A_Level_500_Mastery.pdf'
+    },
     lessons: [
       { id: 'l1', title: 'EP 1: วิเคราะห์ Blueprint A-Level ชีววิทยา + กลยุทธ์การทำข้อสอบ 500 ข้อ', duration: 55, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l2', title: 'EP 2: ตะลุยข้อสอบเสมือนจริง พาร์ตเซลล์และชีวเคมีขั้นสูง', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l3', title: 'EP 3: ตะลุยข้อสอบพันธุศาสตร์โมเลกุล เทคโนโลยีดีเอ็นเอ และวิวัฒนาการ', duration: 60, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l4', title: 'EP 4: ตะลุยข้อสอบสรีรวิทยาพืชและระบบร่างกายสัตว์', duration: 55, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l5', title: 'EP 5: ตะลุยข้อสอบนิเวศวิทยาและความหลากหลายทางชีวภาพ', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l6', title: 'EP 6: จับเวลาทำ Mock Exam ชุดเก็งข้อสอบปีล่าสุด + เฉลยละเอียด', duration: 65, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
     ],
     imageUrl: './course-cover-2.png',
     rating: 4.98, reviewCount: 840, Level: 'ติวสอบ', Category: '📖 คอร์ส A-Level'
@@ -181,10 +247,17 @@ const COURSES = [
     tag: 'ม.3-ม.5 & โอลิมปิกวิชาการ', tagBg: '#FEF2F2', tagColor: '#B91C1C',
     description: 'หลักสูตรเข้มข้นเจาะลึกเนื้อหาชีววิทยาเชิงลึกระดับมหาวิทยาลัย (Campbell Biology) ครอบคลุมทั้งภาคทฤษฎีและข้อสอบแล็บกริ๊ง สำหรับน้องๆ ม.ต้น-ม.ปลาย ที่มุ่งมั่นสอบติดค่าย 1 และค่าย 2',
     hours: 45, validity: 365, ebook: true,
+    ebookInfo: {
+      title: 'e-Book ตำราและโจทย์เตรียมสอบ สอวน. ค่าย 1 (Campbell Edition 250 หน้า)',
+      pages: 250,
+      fileSize: '52.3 MB',
+      filename: 'INBIOLOGY_POSN_Camp1_Campbell.pdf'
+    },
     lessons: [
       { id: 'l1', title: 'EP 1: ปูพื้นฐานชีววิทยาโอลิมปิกสากลและโครงสร้าง Campbell Biology', duration: 55, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l2', title: 'EP 2: เจาะลึก Biochemistry & Cell Metabolism ระดับแข่งขัน', duration: 60, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
       { id: 'l3', title: 'EP 3: ตะลุยโจทย์ สอวน. คัดเลือกค่าย 1 ย้อนหลัง 10 ปี + เคล็ดลับแล็บกริ๊ง', duration: 65, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l4', title: 'EP 4: เทคนิควิเคราะห์ผลการทดลองแล็บชีววิทยาและการอ่านสถิติ', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
     ],
     imageUrl: './course-cover-5.jpg',
     rating: 4.95, reviewCount: 620, Level: 'ติวสอบ', Category: '🏅 คอร์ส สอวน.'

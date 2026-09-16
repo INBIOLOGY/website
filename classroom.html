@@ -84,24 +84,67 @@
         </div>
 
         <div class="classroom-grid" style="padding-bottom:48px">
-          <!-- Chapter List Sidebar -->
-          <aside style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden;height:fit-content">
-            <div style="padding:16px;background:var(--c-navy);color:white">
-              <h3 style="font-weight:900;font-size:14px;margin:0">📚 บทเรียนทั้งหมด</h3>
-              <p id="course-title" style="font-size:10px;color:rgba(255,255,255,0.7);margin:4px 0 0">Bio Intensive I</p>
+          <!-- Chapter List Sidebar with Dynamic Progress -->
+          <aside style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden;height:fit-content;box-shadow:0 4px 14px rgba(0,0,0,0.03)">
+            <div style="padding:16px 18px;background:var(--c-navy);color:white">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                <h3 style="font-weight:900;font-size:14px;margin:0">📚 บทเรียนทั้งหมด</h3>
+                <span id="course-progress-badge" style="background:rgba(255,255,255,0.2);font-size:11px;font-weight:900;padding:2px 8px;border-radius:6px">0%</span>
+              </div>
+              <p id="course-title" style="font-size:11.5px;color:rgba(255,255,255,0.85);margin:0 0 10px;font-weight:700">Bio Intensive I</p>
+              <div style="background:rgba(255,255,255,0.2);height:6px;border-radius:3px;overflow:hidden">
+                <div id="course-progress-bar-fill" style="width:0%;height:100%;background:#38BDF8;transition:width 0.35s ease"></div>
+              </div>
             </div>
             <div id="lesson-list" style="display:flex;flex-direction:column"></div>
           </aside>
 
-          <!-- Video & Study Tools -->
-          <div style="display:flex;flex-direction:column;gap:20px">
+          <!-- Video & Study Tools Column -->
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <!-- Official e-Book & Handout PDF Banner -->
+            <div id="ebook-handout-banner" style="background:linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);border:1.5px solid #86EFAC;border-radius:20px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;box-shadow:0 4px 14px rgba(22,101,52,0.06)">
+              <div style="display:flex;align-items:center;gap:14px">
+                <div style="width:46px;height:46px;border-radius:12px;background:#15803D;color:white;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 10px rgba(21,128,61,0.25);flex-shrink:0">
+                  📖
+                </div>
+                <div>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                    <span id="ebook-title-display" style="font-weight:900;font-size:14px;color:#14532D">ชีทสรุปบทเรียนและโจทย์ข้อสอบ (e-Book PDF)</span>
+                    <span id="ebook-badge-display" style="background:#15803D;color:white;font-size:10px;font-weight:800;padding:2px 8px;border-radius:6px">Official PDF</span>
+                  </div>
+                  <p id="ebook-desc-display" style="font-size:11.5px;color:#166534;margin:3px 0 0;font-weight:600">
+                    เอกสารประกอบการเรียนฉบับสมบูรณ์ • สรุปสาระสำคัญ แผนภาพสี และแบบฝึกหัดท้ายบท
+                  </p>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <button type="button" onclick="openEbookPreviewModal()" style="display:inline-flex;align-items:center;gap:6px;background:white;color:#15803D;border:1.5px solid #86EFAC;font-weight:850;font-size:12px;padding:9px 16px;border-radius:10px;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 6px rgba(0,0,0,0.04)">
+                  👁️ เปิดอ่านชีทออนไลน์
+                </button>
+                <button type="button" onclick="downloadEbookPdf()" style="display:inline-flex;align-items:center;gap:6px;background:#15803D;color:white;border:none;font-weight:850;font-size:12px;padding:9px 18px;border-radius:10px;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 12px rgba(21,128,61,0.3)">
+                  ⬇️ ดาวน์โหลด PDF
+                </button>
+              </div>
+            </div>
+
             <!-- Video Room -->
-            <div style="background:black;border-radius:24px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">
+            <div style="background:black;border-radius:24px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;box-shadow:0 12px 36px rgba(0,0,0,0.18)">
               <video id="main-video-player" src="https://www.w3schools.com/html/mov_bbb.mp4" controls style="width:100%;height:100%;object-fit:contain"></video>
             </div>
 
-            <!-- Interactive Study Tools Tabs -->
-            <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px">
+            <!-- Active Lesson Info Bar & Mark as Complete -->
+            <div style="background:white;border:1px solid #E5E7EB;border-radius:16px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,0.02)">
+              <div>
+                <span id="active-lesson-badge" style="font-size:10.5px;font-weight:800;color:var(--c-sky);background:#EFF6FF;padding:3px 8px;border-radius:6px">EP. 1</span>
+                <h2 id="active-lesson-title" style="font-size:15px;font-weight:900;color:var(--c-navy);margin:4px 0 0">บทเรียน</h2>
+              </div>
+              <button id="btn-toggle-current-completion" onclick="toggleCurrentLessonCompletion()" style="display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:10px;font-weight:850;font-size:12px;cursor:pointer;border:1.5px solid #10B981;background:#ECFDF5;color:#047857;transition:all 0.2s">
+                <span id="completion-status-icon">✓</span> <span id="completion-status-text">ทำเครื่องหมายว่าเรียนจบแล้ว</span>
+              </button>
+            </div>
+
+            <!-- Interactive Study Tools Tabs (Strictly 2 tabs per AGENTS.md rule 6) -->
+            <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.02)">
               <div style="display:flex;gap:8px;border-bottom:1px solid #E5E7EB;padding-bottom:12px;margin-bottom:16px">
                 <button onclick="switchTab('notes')" id="tab-notes" style="padding:8px 16px;border-radius:8px;border:none;background:var(--c-navy);color:white;font-weight:800;font-size:12px;cursor:pointer">
                   📝 โน้ตย่อส่วนตัว
@@ -139,6 +182,48 @@
     </div>
   </div>
 
+  <!-- e-Book PDF Reader Preview Modal -->
+  <div id="ebook-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.7);backdrop-filter:blur(8px);z-index:9999;align-items:center;justify-content:center;padding:16px">
+    <div style="background:white;width:100%;max-width:820px;max-height:90vh;border-radius:24px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 25px 60px rgba(0,0,0,0.3)">
+      <div style="padding:16px 24px;background:var(--c-navy);color:white;display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:22px">📖</span>
+          <div>
+            <h3 id="modal-ebook-title" style="font-size:15px;font-weight:900;margin:0">ชีทสรุปบทเรียน e-Book</h3>
+            <span id="modal-ebook-meta" style="font-size:11px;color:rgba(255,255,255,0.75)">INBIOLOGY Academy Official Handout</span>
+          </div>
+        </div>
+        <button onclick="closeEbookPreviewModal()" style="background:rgba(255,255,255,0.15);border:none;color:white;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+      </div>
+      <div style="padding:24px;overflow-y:auto;flex:1;background:#F8FAFC">
+        <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;margin-bottom:20px;background:white;border:1px solid #E2E8F0;border-radius:16px;padding:18px">
+          <img id="modal-ebook-cover" src="" alt="Cover" style="height:140px;width:auto;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);object-fit:contain" />
+          <div style="flex:1;min-width:240px">
+            <span style="background:#DCFCE7;color:#15803D;font-size:10px;font-weight:900;padding:3px 8px;border-radius:6px;display:inline-block;margin-bottom:6px">OFFICIAL HANDOUT</span>
+            <h4 id="modal-ebook-heading" style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 6px">ชื่อหนังสือ</h4>
+            <p id="modal-ebook-summary" style="font-size:12.5px;color:#4B5563;margin:0 0 10px;line-height:1.5">สรุปสาระสำคัญ แผนภาพสีช่วยจำ พร้อมแบบฝึกหัดโจทย์ท้ายบทและเฉลยละเอียด</p>
+            <div style="display:flex;gap:12px;font-size:11.5px;color:#64748B;font-weight:700">
+              <span id="modal-ebook-pages">📄 150+ หน้า</span>
+              <span id="modal-ebook-size">💾 12.4 MB</span>
+              <span>🔒 ลิขสิทธิ์เฉพาะผู้เรียน</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table of Contents -->
+        <h4 style="font-size:13.5px;font-weight:900;color:var(--c-navy);margin:0 0 10px">📑 สารบัญเนื้อหาในชีทสรุป (Table of Contents):</h4>
+        <div id="modal-ebook-toc" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+      <div style="padding:14px 24px;background:white;border-top:1px solid #E5E7EB;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <span style="font-size:11.5px;color:#6B7280">🔒 เอกสารสำหรับนักเรียน INBIOLOGY Academy ห้ามคัดลอกหรือจำหน่ายต่อ</span>
+        <div style="display:flex;gap:10px">
+          <button onclick="window.print()" style="padding:8px 14px;border:1px solid #E5E7EB;background:white;border-radius:10px;font-size:12px;font-weight:800;color:#374151;cursor:pointer">🖨️ พิมพ์เอกสาร</button>
+          <button onclick="downloadEbookPdf()" style="padding:8px 18px;background:#15803D;color:white;border:none;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer">⬇️ บันทึกไฟล์ PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Universal Rich Multi-Column Footer -->
   <footer id="footer-container"></footer>
 
@@ -148,11 +233,27 @@
   <script src="./js/app.js"></script>
   <script>
     let currentCourse = COURSES[0];
-    let currentLesson = currentCourse.lessons[0];
+    let currentLesson = currentCourse.lessons && currentCourse.lessons.length > 0 ? currentCourse.lessons[0] : null;
 
     document.addEventListener('DOMContentLoaded', () => {
       renderHeader('classroom');
-      renderMyCoursesCatalog();
+
+      // Check deep link URL parameter e.g. classroom.html?course=bio-intensive-2
+      const urlParams = new URLSearchParams(window.location.search);
+      const courseParam = urlParams.get('course');
+      const lessonParam = urlParams.get('lesson');
+
+      if (courseParam) {
+        const target = COURSES.find(c => c.id === courseParam);
+        if (target) {
+          openClassroomRoom(target.id, lessonParam);
+        } else {
+          renderMyCoursesCatalog();
+        }
+      } else {
+        renderMyCoursesCatalog();
+      }
+
       renderNotes();
     });
 
@@ -189,64 +290,258 @@
         return;
       }
 
-      container.innerHTML = enrolled.map((c, idx) => `
-        <div class="course-card" data-reveal data-delay="${(idx % 4) * 0.08}s" style="background:white;border-radius:20px;border:1px solid #E5E7EB;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.02);display:flex;flex-direction:column">
-          <!-- Thumbnail Container matching standard approved UI pattern -->
-          <div style="position:relative;overflow:hidden;height:200px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;padding:14px">
-            <img src="${c.imageUrl}" alt="${c.title}" style="height:155px;max-width:85%;object-fit:contain;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.12)" />
-            <span style="position:absolute;top:12px;left:12px;background:${c.badgeBg};color:white;font-size:10px;font-weight:800;padding:4px 10px;border-radius:999px;z-index:2">
-              ${c.badge}
-            </span>
-            <span class="card-duration-badge">
-              ${c.hours} ชั่วโมงเรียน
-            </span>
-          </div>
-
-          <!-- Body details -->
-          <div style="padding:18px;display:flex;flex-direction:column;gap:10px;flex:1">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <span style="display:inline-block;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;background:${c.tagBg};color:${c.tagColor}">
-                ${c.tag}
+      container.innerHTML = enrolled.map((c, idx) => {
+        const prog = AppState.getCourseProgress(c.id);
+        return `
+          <div class="course-card" data-reveal data-delay="${(idx % 4) * 0.08}s" style="background:white;border-radius:20px;border:1px solid #E5E7EB;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.02);display:flex;flex-direction:column">
+            <!-- Thumbnail Container matching standard approved UI pattern -->
+            <div style="position:relative;overflow:hidden;height:200px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;padding:14px">
+              <img src="${c.imageUrl}" alt="${c.title}" style="height:155px;max-width:85%;object-fit:contain;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.12)" />
+              <span style="position:absolute;top:12px;left:12px;background:${c.badgeBg};color:white;font-size:10px;font-weight:800;padding:4px 10px;border-radius:999px;z-index:2">
+                ${c.badge}
               </span>
-              <span style="font-size:10px;font-weight:700;color:#9CA3AF">${c.Level}</span>
+              <span class="card-duration-badge">
+                ${c.hours} ชั่วโมงเรียน
+              </span>
             </div>
 
-            <h3 style="font-weight:850;color:var(--c-navy);font-size:15px;line-height:1.3;margin:0">${c.title}</h3>
-            <p style="font-size:11px;color:#9CA3AF;font-weight:600;margin:0">ผู้สอน: ${c.instructor}</p>
+            <!-- Body details -->
+            <div style="padding:18px;display:flex;flex-direction:column;gap:10px;flex:1">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <span style="display:inline-block;font-size:10px;font-weight:800;padding:3px 8px;border-radius:6px;background:${c.tagBg};color:${c.tagColor}">
+                  ${c.tag}
+                </span>
+                <span style="font-size:10px;font-weight:700;color:#9CA3AF">${c.Level}</span>
+              </div>
 
-            <div style="margin-top:auto;padding-top:12px;border-top:1px solid #F3F4F6">
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-                <span style="font-size:11px;font-weight:800;color:var(--c-sky)">ความก้าวหน้าการเรียน</span>
-                <span style="font-size:11px;font-weight:900;color:var(--c-navy)">75%</span>
+              <h3 style="font-weight:850;color:var(--c-navy);font-size:15px;line-height:1.3;margin:0">${c.title}</h3>
+              <p style="font-size:11px;color:#9CA3AF;font-weight:600;margin:0">ผู้สอน: ${c.instructor}</p>
+
+              <div style="margin-top:auto;padding-top:12px;border-top:1px solid #F3F4F6">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                  <span style="font-size:11px;font-weight:800;color:var(--c-sky)">ความก้าวหน้าการเรียน</span>
+                  <span style="font-size:11px;font-weight:900;color:var(--c-navy)">${prog.percentage}% (${prog.completedCount}/${prog.totalCount} ตอน)</span>
+                </div>
+                <div style="background:#E5E7EB;height:6px;border-radius:3px;overflow:hidden;margin-bottom:12px">
+                  <div style="width:${prog.percentage}%;height:100%;background:var(--c-sky);transition:width 0.3s ease"></div>
+                </div>
+                <button onclick="openClassroomRoom('${c.id}')" style="width:100%;background:var(--c-sky);color:white;font-weight:850;font-size:13px;padding:12px;border-radius:12px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
+                  ▶ เข้าสู่ห้องเรียน
+                </button>
               </div>
-              <div style="background:#E5E7EB;height:6px;border-radius:3px;overflow:hidden;margin-bottom:12px">
-                <div style="width:75%;height:100%;background:var(--c-sky)"></div>
-              </div>
-              <button onclick="openClassroomRoom('${c.id}')" style="width:100%;background:var(--c-sky);color:white;font-weight:850;font-size:13px;padding:12px;border-radius:12px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
-                ▶ เข้าสู่ห้องเรียน
-              </button>
             </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
 
       initScrollReveal();
     }
 
     function showMyCoursesCatalog() {
+      history.replaceState(null, '', 'classroom.html');
       document.getElementById('my-courses-grid-view').style.display = 'block';
       document.getElementById('video-classroom-view').style.display = 'none';
+      renderMyCoursesCatalog();
     }
 
-    function openClassroomRoom(courseId) {
+    function openClassroomRoom(courseId, lessonId = null) {
       const found = COURSES.find(c => c.id === courseId);
       if (found) currentCourse = found;
-      currentLesson = currentCourse.lessons[0];
+      
+      if (lessonId && currentCourse.lessons) {
+        const targetLesson = currentCourse.lessons.find(l => l.id === lessonId);
+        currentLesson = targetLesson || currentCourse.lessons[0];
+      } else {
+        currentLesson = currentCourse.lessons && currentCourse.lessons.length > 0 ? currentCourse.lessons[0] : null;
+      }
+
+      // Update deep-linking URL
+      history.replaceState(null, '', `?course=${currentCourse.id}${currentLesson ? '&lesson=' + currentLesson.id : ''}`);
 
       document.getElementById('my-courses-grid-view').style.display = 'none';
       document.getElementById('video-classroom-view').style.display = 'block';
 
+      updateEbookBanner();
+      updateActiveLessonBar();
       renderLessonList();
+
+      if (currentLesson && currentLesson.videoUrl) {
+        document.getElementById('main-video-player').src = currentLesson.videoUrl;
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateEbookBanner() {
+      const eb = currentCourse.ebookInfo;
+      const titleEl = document.getElementById('ebook-title-display');
+      const badgeEl = document.getElementById('ebook-badge-display');
+      const descEl = document.getElementById('ebook-desc-display');
+
+      if (eb) {
+        if (titleEl) titleEl.textContent = eb.title;
+        if (badgeEl) badgeEl.textContent = `${eb.pages} • ${eb.size}`;
+        if (descEl) descEl.textContent = `เอกสารประกอบการเรียนฉบับสมบูรณ์ (${eb.file}) • สรุปสาระสำคัญ แผนภาพสี และแบบฝึกหัดท้ายบท`;
+      } else {
+        if (titleEl) titleEl.textContent = `ชีทสรุปบทเรียน: ${currentCourse.title}`;
+        if (badgeEl) badgeEl.textContent = `PDF e-Book`;
+        if (descEl) descEl.textContent = `เอกสารประกอบการเรียนฉบับสมบูรณ์ • สรุปสาระสำคัญและแบบฝึกหัดท้ายบท`;
+      }
+    }
+
+    function updateActiveLessonBar() {
+      if (!currentLesson) return;
+      const prog = AppState.getCourseProgress(currentCourse.id);
+      const isCompleted = prog.completedLessonIds.includes(currentLesson.id);
+
+      const idx = currentCourse.lessons.findIndex(l => l.id === currentLesson.id);
+      const badge = document.getElementById('active-lesson-badge');
+      const title = document.getElementById('active-lesson-title');
+      const btn = document.getElementById('btn-toggle-current-completion');
+      const icon = document.getElementById('completion-status-icon');
+      const text = document.getElementById('completion-status-text');
+
+      if (badge) badge.textContent = `EP.${idx + 1}`;
+      if (title) title.textContent = currentLesson.title;
+
+      if (btn) {
+        if (isCompleted) {
+          btn.style.background = '#10B981';
+          btn.style.color = '#FFFFFF';
+          btn.style.borderColor = '#059669';
+          icon.textContent = '✓';
+          text.textContent = 'เรียนจบแล้ว (คลิกเพื่อยกเลิก)';
+        } else {
+          btn.style.background = '#ECFDF5';
+          btn.style.color = '#047857';
+          btn.style.borderColor = '#10B981';
+          icon.textContent = '○';
+          text.textContent = 'ทำเครื่องหมายว่าเรียนจบแล้ว';
+        }
+      }
+    }
+
+    function toggleCurrentLessonCompletion() {
+      if (!currentLesson) return;
+      const newProg = AppState.toggleLessonProgress(currentCourse.id, currentLesson.id);
+      const isCompleted = newProg.completedLessonIds.includes(currentLesson.id);
+      updateActiveLessonBar();
+      renderLessonList();
+      showToast(isCompleted ? `🎉 บันทึก "${currentLesson.title}" ว่าเรียนจบแล้ว!` : `↩️ ยกเลิกสถานะเรียนจบของ "${currentLesson.title}"`, 'success');
+    }
+
+    function toggleLessonCompletion(e, courseId, lessonId) {
+      e.stopPropagation();
+      const newProg = AppState.toggleLessonProgress(courseId, lessonId);
+      const isCompleted = newProg.completedLessonIds.includes(lessonId);
+      updateActiveLessonBar();
+      renderLessonList();
+      showToast(isCompleted ? `🎉 บันทึกว่าเรียนจบตอนนี้แล้ว` : `↩️ ยกเลิกสถานะเรียนจบ`, 'success');
+    }
+
+    function renderLessonList() {
+      document.getElementById('course-title').textContent = currentCourse.title;
+      const prog = AppState.getCourseProgress(currentCourse.id);
+      
+      const pBadge = document.getElementById('course-progress-badge');
+      const pBar = document.getElementById('course-progress-bar-fill');
+      if (pBadge) pBadge.textContent = `${prog.percentage}% (${prog.completedCount}/${prog.totalCount})`;
+      if (pBar) pBar.style.width = `${prog.percentage}%`;
+
+      const list = document.getElementById('lesson-list');
+      list.innerHTML = currentCourse.lessons.map((l, idx) => {
+        const isActive = currentLesson && l.id === currentLesson.id;
+        const isDone = prog.completedLessonIds.includes(l.id);
+
+        return `
+          <div onclick="selectLesson('${l.id}')" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;border-bottom:1px solid #F3F4F6;background:${isActive ? '#EFF6FF' : 'white'};transition:background 0.2s">
+            <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+              <span style="width:24px;height:24px;border-radius:50%;background:${isActive ? 'var(--c-sky)' : '#F3F4F6'};color:${isActive ? 'white' : '#4B5563'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;flex-shrink:0">
+                ${idx + 1}
+              </span>
+              <div style="overflow:hidden">
+                <p style="font-size:12px;font-weight:700;color:${isActive ? 'var(--c-navy)' : '#374151'};margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.title}</p>
+                <div style="display:flex;align-items:center;gap:6px;margin-top:2px">
+                  <span style="font-size:10px;color:#9CA3AF">${l.duration} นาที</span>
+                  ${isDone ? `<span style="font-size:9.5px;font-weight:800;color:#10B981;background:#ECFDF5;padding:1px 6px;border-radius:4px">✓ จบแล้ว</span>` : ''}
+                </div>
+              </div>
+            </div>
+
+            <!-- Completion Checkbox Button -->
+            <button type="button" onclick="toggleLessonCompletion(event, '${currentCourse.id}', '${l.id}')" title="${isDone ? 'คลิกเพื่อยกเลิกสถานะเรียนจบ' : 'คลิกเพื่อทำเครื่องหมายว่าเรียนจบแล้ว'}" style="width:26px;height:26px;border-radius:50%;border:1.5px solid ${isDone ? '#10B981' : '#CBD5E1'};background:${isDone ? '#10B981' : 'white'};color:${isDone ? 'white' : '#94A3B8'};display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;font-weight:900;transition:all 0.2s;flex-shrink:0;margin-left:8px">
+              ${isDone ? '✓' : ''}
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function selectLesson(id) {
+      currentLesson = currentCourse.lessons.find(l => l.id === id);
+      if (!currentLesson) return;
+      document.getElementById('main-video-player').src = currentLesson.videoUrl || 'https://www.w3schools.com/html/mov_bbb.mp4';
+      history.replaceState(null, '', `?course=${currentCourse.id}&lesson=${currentLesson.id}`);
+      updateActiveLessonBar();
+      renderLessonList();
+    }
+
+    function openEbookPreviewModal() {
+      const eb = currentCourse.ebookInfo;
+      const modal = document.getElementById('ebook-modal');
+      if (!modal) return;
+
+      const title = eb ? eb.title : `ชีทสรุปบทเรียน: ${currentCourse.title}`;
+      const pages = eb ? eb.pages : '150+ หน้า';
+      const size = eb ? eb.size : '12.4 MB';
+
+      document.getElementById('modal-ebook-title').textContent = title;
+      document.getElementById('modal-ebook-heading').textContent = title;
+      document.getElementById('modal-ebook-pages').textContent = `📄 ${pages}`;
+      document.getElementById('modal-ebook-size').textContent = `💾 ${size}`;
+      document.getElementById('modal-ebook-cover').src = currentCourse.imageUrl;
+
+      const toc = document.getElementById('modal-ebook-toc');
+      toc.innerHTML = currentCourse.lessons.map((l, i) => `
+        <div style="display:flex;align-items:center;justify-content:space-between;background:white;padding:10px 14px;border-radius:10px;border:1px solid #E5E7EB;font-size:12px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-weight:900;color:var(--c-sky)">บทที่ ${i + 1}</span>
+            <span style="font-weight:700;color:#374151">${l.title}</span>
+          </div>
+          <span style="color:#9CA3AF;font-size:11px">หน้า ${(i * 24) + 1} - ${(i + 1) * 24}</span>
+        </div>
+      `).join('');
+
+      modal.style.display = 'flex';
+    }
+
+    function closeEbookPreviewModal() {
+      const modal = document.getElementById('ebook-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function downloadEbookPdf() {
+      const eb = currentCourse.ebookInfo;
+      const fileName = eb ? eb.file : `${currentCourse.id}-handout.pdf`;
+      const title = eb ? eb.title : currentCourse.title;
+
+      showToast(`📥 กำลังจัดเตรียมไฟล์ดาวน์โหลด "${title}"...`, 'info');
+
+      // Create downloadable text/PDF placeholder blob with official course summary
+      setTimeout(() => {
+        const content = `INBIOLOGY Academy by Kru Ton\nCourse: ${currentCourse.title}\nDocument: ${title}\nChapters:\n` +
+          currentCourse.lessons.map((l, i) => `Chapter ${i + 1}: ${l.title} (${l.duration} mins)`).join('\n') +
+          `\n\nOfficial Student Resource — INBIOLOGY Academy`;
+        const blob = new Blob([content], { type: 'application/pdf;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast(`🎉 ดาวน์โหลด "${fileName}" เรียบร้อยแล้ว!`, 'success');
+      }, 700);
     }
 
     function switchTab(tabName) {
@@ -275,31 +570,11 @@
       box.innerHTML = `💬 **ตอบกลับจากพี่ต้น**: ได้รับคำถามเรื่อง "${q}" เรียบร้อยแล้วครับ! เดี๋ยวพี่ต้นจะมาตอบคลายข้อสงสัยให้น้องทางกล่องข้อความอย่างละเอียดแน่นอนครับ ✌️`;
     }
 
-    function renderLessonList() {
-      document.getElementById('course-title').textContent = currentCourse.title;
-      const list = document.getElementById('lesson-list');
-      list.innerHTML = currentCourse.lessons.map((l, idx) => `
-        <button onclick="selectLesson('${l.id}')" style="width:100%;display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;border:none;border-bottom:1px solid #F3F4F6;background:${l.id === currentLesson.id ? '#EFF6FF' : 'white'};text-align:left">
-          <span style="width:22px;height:22px;border-radius:50%;background:${l.id === currentLesson.id ? 'var(--c-sky)' : '#F3F4F6'};color:${l.id === currentLesson.id ? 'white' : '#4B5563'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800">${idx + 1}</span>
-          <div>
-            <p style="font-size:12px;font-weight:700;color:#374151;margin:0">${l.title}</p>
-            <span style="font-size:10px;color:#9CA3AF">${l.duration} นาที</span>
-          </div>
-        </button>
-      `).join('');
-    }
-
-    function selectLesson(id) {
-      currentLesson = currentCourse.lessons.find(l => l.id === id);
-      document.getElementById('main-video-player').src = currentLesson.videoUrl || 'https://www.w3schools.com/html/mov_bbb.mp4';
-      renderLessonList();
-    }
-
     function saveNote() {
       const text = document.getElementById('note-input').value.trim();
       if (!text) return;
       const notes = JSON.parse(localStorage.getItem('inbiology_notes') || '[]');
-      notes.push({ id: Date.now(), courseTitle: currentCourse.title, lessonTitle: currentLesson.title, text });
+      notes.push({ id: Date.now(), courseTitle: currentCourse.title, lessonTitle: currentLesson ? currentLesson.title : currentCourse.title, text });
       localStorage.setItem('inbiology_notes', JSON.stringify(notes));
       document.getElementById('note-input').value = '';
       showToast('📝 บันทึกโน้ตย่อสำเร็จ', 'success');
@@ -309,6 +584,11 @@
     function renderNotes() {
       const notes = JSON.parse(localStorage.getItem('inbiology_notes') || '[]');
       const container = document.getElementById('saved-notes-list');
+      if (!container) return;
+      if (notes.length === 0) {
+        container.innerHTML = `<p style="color:#9CA3AF;font-size:11.5px;margin:0">ยังไม่มีโน้ตย่อที่บันทึกไว้ในบทนี้</p>`;
+        return;
+      }
       container.innerHTML = notes.map(n => `
         <div style="background:#F9FAFB;padding:10px 14px;border-radius:10px;border:1px solid #E5E7EB;font-size:12px">
           <span style="font-weight:800;color:var(--c-sky);display:block">${n.lessonTitle}</span>

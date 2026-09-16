@@ -451,6 +451,11 @@
       const pwd = document.getElementById('input-password').value;
 
       if (currentAuthTab === 'register') {
+        if (pwd.length < 6) {
+          showToast('❌ รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร', 'error');
+          return;
+        }
+
         const confirmPwd = document.getElementById('input-confirm-password').value;
         if (pwd !== confirmPwd) {
           showToast('❌ รหัสผ่านทั้งสองช่องไม่ตรงกัน กรุณาตรวจสอบอีกครั้ง', 'error');
@@ -461,17 +466,21 @@
         const school = document.getElementById('input-school').value.trim();
         const level = document.getElementById('input-grade').value;
 
+        const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || 'classroom.html';
+
         try {
           showToast('🔄 กำลังสร้างบัญชีผู้ใช้งาน...', 'info');
           if (window.CloudService) {
             await window.CloudService.register(email, pwd, { fullName, school, level });
           }
           showToast('🎉 สมัครสมาชิกสำเร็จ ยินดีต้อนรับสู่ INBIOLOGY!', 'success');
-          setTimeout(() => location.href = 'classroom.html', 700);
+          setTimeout(() => location.href = redirectUrl, 700);
         } catch (err) {
           showToast(`❌ ${err.message || 'เกิดข้อผิดพลาดในการสมัครสมาชิก'}`, 'error');
         }
       } else {
+        const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || 'classroom.html';
+
         try {
           showToast('🔄 กำลังตรวจสอบข้อมูลเข้าสู่ระบบ...', 'info');
           if (window.CloudService) {
@@ -482,7 +491,7 @@
             setTimeout(() => location.href = 'admin.html', 600);
           } else {
             showToast('🎓 เข้าสู่ระบบสำเร็จ ยินดีต้อนรับครับ!', 'success');
-            setTimeout(() => location.href = 'classroom.html', 600);
+            setTimeout(() => location.href = redirectUrl, 600);
           }
         } catch (err) {
           showToast(`❌ ${err.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง'}`, 'error');

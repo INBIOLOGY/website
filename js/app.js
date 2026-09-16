@@ -38,6 +38,40 @@ const AppState = {
   saveStudentProfile(profile) {
     localStorage.setItem('inbiology_student_profile', JSON.stringify(profile));
   },
+
+  getCourseProgress(courseId) {
+    const saved = localStorage.getItem('inbiology_progress_' + courseId);
+    let completed = [];
+    if (saved) {
+      try { completed = JSON.parse(saved); } catch(e){}
+    }
+    const course = typeof COURSES !== 'undefined' ? COURSES.find(c => c.id === courseId) : null;
+    const total = course && course.lessons && course.lessons.length ? course.lessons.length : 1;
+    const count = completed.length;
+    const percentage = Math.min(100, Math.round((count / total) * 100));
+    return {
+      completedLessonIds: completed,
+      completedCount: count,
+      totalCount: total,
+      percentage: percentage
+    };
+  },
+
+  toggleLessonProgress(courseId, lessonId) {
+    const saved = localStorage.getItem('inbiology_progress_' + courseId);
+    let completed = [];
+    if (saved) {
+      try { completed = JSON.parse(saved); } catch(e){}
+    }
+    const exists = completed.includes(lessonId);
+    if (exists) {
+      completed = completed.filter(id => id !== lessonId);
+    } else {
+      completed.push(lessonId);
+    }
+    localStorage.setItem('inbiology_progress_' + courseId, JSON.stringify(completed));
+    return this.getCourseProgress(courseId);
+  },
   
   saveCart() {
     localStorage.setItem('inbiology_cart', JSON.stringify(this.cart));
