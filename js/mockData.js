@@ -87,6 +87,41 @@ const COURSES = [
     rating: 4.8, reviewCount: 415, Level: 'ม.6', Category: '🦴 Bio Intensive'
   },
   {
+    id: 'bio-intensive-5',
+    title: '🧠 Bio Intensive V: Animal Biology II (Control & Coordination)',
+    instructor: 'พี่ต้น (เกียรตินิยมอันดับ 1)',
+    price: 1490, originalPrice: 2800,
+    badge: 'Bio Intensive V', badgeBg: '#8B5CF6',
+    tag: 'ม.6 & ติวสอบ', tagBg: '#F3E8FF', tagColor: '#6B21A8',
+    description: 'กายวิภาคศาสตร์และสรีรวิทยาของสัตว์และมนุษย์ พาร์ต 2: ระบบประสาทและอวัยวะรับความรู้สึก ระบบต่อมไร้ท่อและฮอร์โมน ระบบภูมิคุ้มกัน ระบบสืบพันธุ์ และการเจริญเติบโต',
+    hours: 36, validity: 365, ebook: true,
+    lessons: [
+      { id: 'l1', title: 'EP 1: การทำงานของเซลล์ประสาทและไซแนปส์ (Action Potential)', duration: 55, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l2', title: 'EP 2: ระบบสมอง ไขสันหลัง และระบบประสาทอัตโนมัติ', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l3', title: 'EP 3: ระบบต่อมไร้ท่อและการควบคุมสมดุลฮอร์โมน', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l4', title: 'EP 4: ระบบภูมิคุ้มกันร่างกายและการตอบสนองต่อเชื้อโรค', duration: 45, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
+    ],
+    imageUrl: './course-cover-1.png',
+    rating: 4.95, reviewCount: 390, Level: 'ม.6', Category: '🦴 Bio Intensive'
+  },
+  {
+    id: 'bio-intensive-6',
+    title: '🌍 Bio Intensive VI: Ecology, Diversity & Animal Behavior',
+    instructor: 'พี่ต้น (เกียรตินิยมอันดับ 1)',
+    price: 1390, originalPrice: 2600,
+    badge: 'Bio Intensive VI', badgeBg: '#059669',
+    tag: 'ม.6 & ติวสอบ', tagBg: '#ECFDF5', tagColor: '#047857',
+    description: 'นิเวศวิทยา ระบบนิเวศ การถ่ายทอดพลังงาน ประชากรศาสตร์ พฤติกรรมของสัตว์ ความหลากหลายทางชีวภาพ (Biodiversity) อาณาจักรสิ่งมีชีวิต และปัญหาสิ่งแวดล้อมโลก',
+    hours: 32, validity: 365, ebook: true,
+    lessons: [
+      { id: 'l1', title: 'EP 1: พฤติกรรมของสัตว์ (Innate & Learned Behavior)', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l2', title: 'EP 2: ระบบนิเวศ การหมุนเวียนสาร และวัฏจักรชีวิต', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+      { id: 'l3', title: 'EP 3: ความหลากหลายทางชีวภาพและ 5 อาณาจักรสิ่งมีชีวิต', duration: 60, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
+    ],
+    imageUrl: './course-cover-3.jpg',
+    rating: 4.9, reviewCount: 360, Level: 'ม.6', Category: '🌱 Bio Intensive'
+  },
+  {
     id: 'special-posn-100',
     title: '🎯 คอร์ส ตะลุยโจทย์ สอวน . ละเอียด 100 ข้อ',
     instructor: 'พี่ต้น (เกียรตินิยมอันดับ 1)',

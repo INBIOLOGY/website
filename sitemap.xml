@@ -1,61 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://inbiology.github.io/</loc>
+    <loc>https://inbiology-official.vercel.app/</loc>
     <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://inbiology.github.io/courses.html</loc>
+    <loc>https://inbiology-official.vercel.app/courses.html</loc>
     <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://inbiology.github.io/classroom.html</loc>
+    <loc>https://inbiology-official.vercel.app/classroom.html</loc>
     <lastmod>2026-03-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://inbiology.github.io/exam.html</loc>
+    <loc>https://inbiology-official.vercel.app/exam.html</loc>
     <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://inbiology.github.io/about.html</loc>
+    <loc>https://inbiology-official.vercel.app/about.html</loc>
     <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://inbiology.github.io/faq.html</loc>
+    <loc>https://inbiology-official.vercel.app/faq.html</loc>
     <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://inbiology.github.io/privacy.html</loc>
+    <loc>https://inbiology-official.vercel.app/privacy.html</loc>
     <lastmod>2026-03-16</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://inbiology.github.io/terms.html</loc>
+    <loc>https://inbiology-official.vercel.app/terms.html</loc>
     <lastmod>2026-03-16</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://inbiology.github.io/guide.html</loc>
+    <loc>https://inbiology-official.vercel.app/guide.html</loc>
     <lastmod>2026-03-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://inbiology.github.io/login.html</loc>
+    <loc>https://inbiology-official.vercel.app/login.html</loc>
     <lastmod>2026-03-16</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>

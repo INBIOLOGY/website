@@ -512,21 +512,21 @@ function renderFooter() {
             <span>💬</span>
             <div>
               <strong style="color:#F1F5F9">LINE Official:</strong>
-              <div>@inbiology (บริการ 24 ชม.)</div>
+              <div>@inbiology (ตอบกลับทุกวัน 09:00 - 21:00 น.)</div>
             </div>
           </div>
           <div class="footer-contact-item">
             <span>📧</span>
             <div>
               <strong style="color:#F1F5F9">อีเมลติดต่อ:</strong>
-              <div>contact@inbiology.com</div>
+              <div>contact.inbiology@gmail.com</div>
             </div>
           </div>
           <div class="footer-contact-item">
-            <span>📞</span>
+            <span>📱</span>
             <div>
-              <strong style="color:#F1F5F9">โทรศัพท์ฝ่ายบริการ:</strong>
-              <div>098-765-4321</div>
+              <strong style="color:#F1F5F9">ฝ่ายบริการนักเรียน:</strong>
+              <div>ติดต่อด่วนผ่าน LINE @inbiology</div>
             </div>
           </div>
           <div style="margin-top:14px;background:#1E293B;padding:12px 14px;border-radius:12px;border:1px solid #334155;font-size:12px;line-height:1.5;color:#CBD5E1">
