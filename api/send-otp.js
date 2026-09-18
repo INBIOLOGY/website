@@ -34,14 +34,9 @@ export default async function handler(req, res) {
 
   const resendApiKey = process.env.RESEND_API_KEY;
 
-  // Fallback if not configured in Vercel yet
   if (!resendApiKey) {
-    console.warn('⚠️ RESEND_API_KEY not configured. Running in simulated demo mode.');
-    return res.status(200).json({
-      success: true,
-      mode: 'demo',
-      message: 'จำลองการส่งรหัส OTP สำเร็จ (ยังไม่ได้ตั้งค่า RESEND_API_KEY บน Vercel)',
-      otpCode: otpCode
+    return res.status(500).json({
+      error: 'ระบบส่งอีเมลยังไม่พร้อมใช้งาน: ยังไม่ได้ตั้งค่า RESEND_API_KEY ใน Vercel Project Settings'
     });
   }
 

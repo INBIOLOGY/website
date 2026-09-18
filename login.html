@@ -472,12 +472,7 @@
 
                   <!-- OTP Status Pill -->
                   <div id="otp-status-pill" class="otp-status-badge unverified">
-                    <span>⏳</span> ยังไม่ได้ยืนยันอีเมล (ต้องกดยืนยัน OTP ก่อนสมัคร)
-                  </div>
-
-                  <!-- Test helper hint for tester preview -->
-                  <div id="otp-demo-hint" class="otp-demo-card">
-                    💡 <strong>รหัสทดสอบ OTP ของคุณคือ:</strong> <span id="otp-demo-code" style="font-weight:900;font-size:14px;letter-spacing:2px;color:#1E3A8A"></span> (จำลองการส่งเข้าอีเมล)
+                    <span>⏳</span> ยังไม่ได้ยืนยันอีเมล (ระบบส่งรหัส 6 หลักเข้าอีเมลของคุณ)
                   </div>
                 </div>
 
@@ -622,12 +617,12 @@
     </div>
   </div>
 
-  <script src="./js/mockData.js?v=20260918_v3"></script>
-  <script src="./js/firebaseConfig.js?v=20260918_v3"></script>
-  <script src="./js/supabaseConfig.js?v=20260918_v3"></script>
-  <script src="./js/googleConfig.js?v=20260918_v3"></script>
-  <script src="./js/cloudService.js?v=20260918_v3"></script>
-  <script src="./js/app.js?v=20260918_v3"></script>
+  <script src="./js/mockData.js?v=20260918_v4"></script>
+  <script src="./js/firebaseConfig.js?v=20260918_v4"></script>
+  <script src="./js/supabaseConfig.js?v=20260918_v4"></script>
+  <script src="./js/googleConfig.js?v=20260918_v4"></script>
+  <script src="./js/cloudService.js?v=20260918_v4"></script>
+  <script src="./js/app.js?v=20260918_v4"></script>
   <script>
     let currentAuthTab = 'login';
     let otpCooldownTimer = null;
@@ -729,16 +724,8 @@
 
         // Reveal OTP Input Row
         document.getElementById('otp-input-box').style.display = 'block';
-
-        // Reveal Demo Hint for easy testing
-        if (res.otpPreview) {
-          const hint = document.getElementById('otp-demo-hint');
-          const codeEl = document.getElementById('otp-demo-code');
-          codeEl.textContent = res.otpPreview;
-          hint.style.display = 'block';
-          // Auto-fill for developer convenience, or user can type
-          document.getElementById('input-reg-otp').value = res.otpPreview;
-        }
+        document.getElementById('input-reg-otp').value = '';
+        document.getElementById('input-reg-otp').focus();
 
         // Start 60s cooldown timer
         startOtpCooldown(res.cooldownSeconds || 60);

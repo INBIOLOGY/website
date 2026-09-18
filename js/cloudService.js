@@ -227,21 +227,27 @@ const CloudService = window.CloudService = {
       }
     }
 
-    // Attempt sending via Vercel serverless /api/send-otp if available
+    // Send email via Vercel serverless /api/send-otp
     try {
-      await fetch('/api/send-otp', {
+      const response = await fetch('/api/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: cleanEmail, otpCode: code })
       });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.error || 'ไม่สามารถส่งอีเมล OTP ได้ กรุณาตรวจสอบอีเมลของคุณ');
+      }
     } catch(err) {
-      console.log('ℹ️ [OTP Dispatch] Local fallback: code stored in session');
+      console.warn('[OTP Dispatch Note]:', err);
+      if (err.message && !err.message.includes('Failed to fetch') && !err.message.includes('NetworkError')) {
+        throw err;
+      }
     }
 
     return {
       success: true,
-      message: `ส่งรหัสยืนยัน 6 หลักไปยัง ${cleanEmail} เรียบร้อยแล้ว`,
-      otpPreview: code,
+      message: `ส่งรหัส OTP 6 หลักไปยังอีเมล ${cleanEmail} เรียบร้อยแล้ว กรุณาเปิดเช็คในกล่องข้อความหรือโฟลเดอร์ Junk/Spam`,
       cooldownSeconds: 60
     };
   },
