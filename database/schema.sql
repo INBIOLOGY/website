@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     
     -- Login Credentials
-    username VARCHAR(50) UNIQUE NOT NULL,            -- Username (case-insensitive indexed)
+    username VARCHAR(50) UNIQUE,                     -- Optional Username
     email VARCHAR(255) UNIQUE NOT NULL,              -- Email (case-insensitive indexed)
     password_hash VARCHAR(255),                      -- Nullable if signed up strictly via Google
     email_verified_at TIMESTAMP WITH TIME ZONE NOT NULL, -- Timestamp when email OTP was verified
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS users (
     nickname VARCHAR(50) NOT NULL,                  -- ชื่อเล่น
     birthdate DATE NOT NULL,                         -- วันเกิด
     age INT DEFAULT 0,                               -- อายุ (คำนวณอัตโนมัติจากวันเกิดผ่าน Trigger ด้านล่าง)
-    phone_number VARCHAR(20) NOT NULL,               -- เบอร์โทรศัพท์ติดต่อ
+    phone_number VARCHAR(20) NOT NULL,               -- เบอร์โทรศัพท์ติดต่อ (ใช้เข้าสู่ระบบได้)
     
     -- Education Information
     school VARCHAR(150) NOT NULL,                    -- โรงเรียน
@@ -67,6 +67,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- Case-insensitive indexes for lightning fast login queries
 CREATE INDEX IF NOT EXISTS idx_users_email_lower ON users (LOWER(email));
 CREATE INDEX IF NOT EXISTS idx_users_username_lower ON users (LOWER(username));
+CREATE INDEX IF NOT EXISTS idx_users_phone ON users (phone_number);
 
 -- Trigger to automatically calculate age whenever birthdate is inserted or updated
 CREATE OR REPLACE FUNCTION set_user_age()

@@ -389,19 +389,11 @@
             </svg>
             เข้าสู่ระบบด้วย Google
           </button>
-
-          <!-- LINE Login Button -->
-          <button type="button" id="btn-line-login" onclick="handleLineLogin()" style="width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#06C755;border:none;border-radius:12px;padding:11px 16px;font-size:13.5px;font-weight:700;color:#FFFFFF;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 14px rgba(6,199,85,0.25)">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-              <path d="M19.365 9.89c.50 0 .866.37.866.82 0 .45-.366.82-.866.82h-2.132v1.39h2.132c.5 0 .866.37.866.82 0 .45-.366.82-.866.82h-2.998c-.5 0-.866-.37-.866-.82V9.07c0-.45.366-.82.866-.82h2.998zm-5.498 4.87c0 .45-.366.82-.866.82-.3 0-.567-.15-.718-.38l-2.74-3.73v3.29c0 .45-.366.82-.866.82-.5 0-.866-.37-.866-.82V9.07c0-.45.366-.82.866-.82.3 0 .567.15.718.38l2.74 3.73V9.07c0-.45.366-.82.866-.82.5 0 .866.37.866.82v4.69zM8.08 9.07v4.69c0 .45-.366.82-.866.82-.5 0-.866-.37-.866-.82V9.07c0-.45.366-.82.866-.82.5 0 .866.37.866.82zm-2.998 0v4.69c0 .45-.366.82-.866.82H1.218c-.5 0-.866-.37-.866-.82 0-.45.366-.82.866-.82h2.132v-3.87H1.218c-.5 0-.866-.37-.866-.82 0-.45.366-.82.866-.82h2.998c.5 0 .866.37.866.82z" fill-rule="evenodd"/>
-            </svg>
-            เข้าสู่ระบบด้วย LINE
-          </button>
         </div>
 
         <div id="divider-row" style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
           <div style="flex:1;height:1px;background:#E2E8F0"></div>
-          <span id="divider-text" style="font-size:11px;color:#94A3B8;font-weight:700">หรือใช้อีเมล / Username</span>
+          <span id="divider-text" style="font-size:11px;color:#94A3B8;font-weight:700">หรือใช้อีเมล / เบอร์โทรศัพท์</span>
           <div style="flex:1;height:1px;background:#E2E8F0"></div>
         </div>
 
@@ -411,14 +403,14 @@
         <form id="auth-form" style="display:flex;flex-direction:column;gap:16px">
 
           <!-- ─────────────────────────────────────────────────────────────── -->
-          <!-- A. LOGIN MODE FIELDS (Username OR Email + Password) -->
+          <!-- A. LOGIN MODE FIELDS (Email OR Phone + Password) -->
           <!-- ─────────────────────────────────────────────────────────────── -->
           <div id="login-fields-container" style="display:flex;flex-direction:column;gap:14px">
             <div class="form-group">
               <label class="form-label">
-                <span style="color:#1E3A8A">👤</span> ชื่อผู้ใช้ (Username) หรือ ✉️ อีเมล
+                <span style="color:#1E3A8A">✉️</span> อีเมล หรือ 📱 เบอร์โทรศัพท์
               </label>
-              <input type="text" id="input-login-identifier" placeholder="เช่น witsarut หรือ witsarut@inbiology.com" class="form-input" autocomplete="username" />
+              <input type="text" id="input-login-identifier" placeholder="เช่น student@gmail.com หรือ 0812345678" class="form-input" autocomplete="username" />
             </div>
 
             <div class="form-group">
@@ -453,19 +445,10 @@
               </div>
 
               <div style="display:flex;flex-direction:column;gap:12px;margin-top:10px">
-                <!-- Username -->
-                <div class="form-group">
-                  <label class="form-label">
-                    <span>🏷️</span> ชื่อผู้ใช้ (Username) <span class="required-dot">*</span>
-                    <span style="font-size:11px;color:#64748B;font-weight:400">(ใช้สำหรับเข้าสู่ระบบ ตัวพิมพ์เล็ก/ตัวเลข/ขีดล่าง)</span>
-                  </label>
-                  <input type="text" id="input-reg-username" placeholder="เช่น somchai_bio หรือ student99" class="form-input" pattern="[a-zA-Z0-9_]{3,30}" />
-                </div>
-
                 <!-- Email + In-page OTP Verification -->
                 <div class="form-group">
                   <label class="form-label">
-                    <span style="color:#1E3A8A">✉️</span> อีเมล (Email) <span class="required-dot">*</span>
+                    <span style="color:#1E3A8A">✉️</span> อีเมล (Email) สำหรับเข้าสู่ระบบ <span class="required-dot">*</span>
                   </label>
                   <div class="otp-row">
                     <input type="email" id="input-reg-email" placeholder="student@gmail.com" class="form-input" style="flex:1" />
@@ -562,7 +545,7 @@
 
                 <!-- Phone -->
                 <div class="form-group">
-                  <label class="form-label"><span>📱</span> เบอร์โทรศัพท์ (สำหรับติดต่อรับเอกสาร) <span class="required-dot">*</span></label>
+                  <label class="form-label"><span>📱</span> เบอร์โทรศัพท์ (ใช้เข้าสู่ระบบ & ติดต่อ) <span class="required-dot">*</span></label>
                   <input type="tel" id="input-reg-phone" placeholder="081-234-5678" class="form-input" />
                 </div>
               </div>
@@ -578,12 +561,10 @@
                 <div class="form-group">
                   <label class="form-label"><span>🎓</span> ระดับชั้น <span class="required-dot">*</span></label>
                   <select id="input-reg-grade" class="form-input" style="background:white">
-                    <option value="ม.4">มัธยมศึกษาปีที่ 4</option>
-                    <option value="ม.5" selected>มัธยมศึกษาปีที่ 5</option>
-                    <option value="ม.6">มัธยมศึกษาปีที่ 6</option>
-                    <option value="เด็กซิ่ว / เตรียม A-Level">เด็กซิ่ว / เตรียม A-Level</option>
-                    <option value="สอวน. ชีววิทยา">สอวน. ชีววิทยา</option>
-                    <option value="มหาวิทยาลัย / บุคคลทั่วไป">มหาวิทยาลัย / บุคคลทั่วไป</option>
+                    <option value="มัธยมศึกษาปีที่ 4">มัธยมศึกษาปีที่ 4</option>
+                    <option value="มัธยมศึกษาปีที่ 5" selected>มัธยมศึกษาปีที่ 5</option>
+                    <option value="มัธยมศึกษาปีที่ 6">มัธยมศึกษาปีที่ 6</option>
+                    <option value="อื่นๆ">อื่นๆ</option>
                   </select>
                 </div>
                 <div class="form-group">
@@ -641,13 +622,12 @@
     </div>
   </div>
 
-  <script src="./js/mockData.js"></script>
-  <script src="./js/firebaseConfig.js"></script>
-  <script src="./js/supabaseConfig.js"></script>
-  <script src="./js/googleConfig.js"></script>
-  <script src="./js/lineConfig.js"></script>
-  <script src="./js/cloudService.js"></script>
-  <script src="./js/app.js"></script>
+  <script src="./js/mockData.js?v=20260918_v3"></script>
+  <script src="./js/firebaseConfig.js?v=20260918_v3"></script>
+  <script src="./js/supabaseConfig.js?v=20260918_v3"></script>
+  <script src="./js/googleConfig.js?v=20260918_v3"></script>
+  <script src="./js/cloudService.js?v=20260918_v3"></script>
+  <script src="./js/app.js?v=20260918_v3"></script>
   <script>
     let currentAuthTab = 'login';
     let otpCooldownTimer = null;
@@ -731,6 +711,11 @@
       if (!email || !email.includes('@')) {
         showToast('❌ กรุณากรอกอีเมลให้ถูกต้องก่อนกดส่งรหัส OTP', 'error');
         document.getElementById('input-reg-email').focus();
+        return;
+      }
+
+      if (!window.CloudService || typeof window.CloudService.sendEmailOtp !== 'function') {
+        showToast('⚠️ กำลังเตรียมระบบความปลอดภัย กรุณากดรีเฟรชหน้าเว็บ (Ctrl+F5) อีกครั้ง', 'error');
         return;
       }
 
@@ -832,6 +817,11 @@
         const payload = decodeGoogleJwt(response.credential);
         if (!payload) throw new Error('ถอดรหัส Google ID Token ไม่สำเร็จ');
 
+        if (!window.CloudService || typeof window.CloudService.loginWithGooglePayload !== 'function') {
+          showToast('⚠️ กำลังเตรียมระบบความปลอดภัย กรุณากดรีเฟรชหน้าเว็บ (Ctrl+F5) อีกครั้ง', 'error');
+          return;
+        }
+
         showToast('🔄 กำลังเข้าสู่ระบบด้วย Google...', 'info');
         const res = await window.CloudService.loginWithGooglePayload(payload);
 
@@ -907,31 +897,6 @@
       }
     }
 
-    function handleLineLogin() {
-      const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || 'classroom.html';
-      if (!window.LINE_CONFIG || !window.isLineConfigured || !window.isLineConfigured()) {
-        showToast('⚠️ LINE Login ยังไม่ได้ตั้งค่า Channel ID ใน js/lineConfig.js', 'error');
-        return;
-      }
-
-      sessionStorage.setItem('line_redirect', redirectUrl);
-      const state = Math.random().toString(36).substring(2) + Date.now().toString(36);
-      sessionStorage.setItem('line_oauth_state', state);
-
-      const params = new URLSearchParams({
-        response_type: 'code',
-        client_id: window.LINE_CONFIG.lineChannelId,
-        redirect_uri: window.LINE_CONFIG.lineCallbackUrl,
-        state: state,
-        scope: window.LINE_CONFIG.lineScope || 'profile openid email',
-        nonce: Math.random().toString(36).substring(2)
-      });
-
-      const lineAuthUrl = 'https://access.line.me/oauth2/v2.1/authorize?' + params.toString();
-      showToast('🔄 กำลังเชื่อมต่อไปยัง LINE...', 'info');
-      setTimeout(() => { window.location.href = lineAuthUrl; }, 500);
-    }
-
     async function handleForgotPassword() {
       const email = prompt('กรุณากรอกอีเมลของคุณเพื่อรับลิงก์รีเซ็ตรหัสผ่าน:');
       if (!email) return;
@@ -953,7 +918,6 @@
       // ─── 1. REGISTER FLOW ──────────────────────────────────────────────────
       if (currentAuthTab === 'register') {
         const email = document.getElementById('input-reg-email').value.trim();
-        const username = document.getElementById('input-reg-username').value.trim();
         const pwd = document.getElementById('input-reg-password').value;
         const confirmPwd = document.getElementById('input-reg-confirm-password').value;
         const fullName = document.getElementById('input-reg-fullname').value.trim();
@@ -970,12 +934,6 @@
         if (!isEmailVerifiedState && !window.CloudService.isEmailVerified(email)) {
           showToast('❌ กรุณายืนยันรหัส OTP ทางอีเมลก่อนกดสมัครสมาชิก', 'error');
           document.getElementById('btn-send-otp').focus();
-          return;
-        }
-
-        if (!username || username.length < 3) {
-          showToast('❌ Username ต้องมีความยาวอย่างน้อย 3 ตัวอักษร', 'error');
-          document.getElementById('input-reg-username').focus();
           return;
         }
 
@@ -1022,7 +980,6 @@
         try {
           showToast('🔄 กำลังบันทึกข้อมูลและสร้างบัญชี...', 'info');
           const newUser = await window.CloudService.register({
-            username,
             email,
             password: pwd,
             fullName,
@@ -1044,13 +1001,13 @@
           showToast(`❌ ${err.message}`, 'error');
         }
 
-      // ─── 2. LOGIN FLOW (Username OR Email + Password) ──────────────────────
+      // ─── 2. LOGIN FLOW (Email OR Phone + Password) ────────────────────────
       } else {
         const identifier = document.getElementById('input-login-identifier').value.trim();
         const pwd = document.getElementById('input-login-password').value;
 
         if (!identifier || !pwd) {
-          showToast('❌ กรุณากรอก Username/อีเมล และรหัสผ่าน', 'error');
+          showToast('❌ กรุณากรอกอีเมล/เบอร์โทรศัพท์ และรหัสผ่าน', 'error');
           return;
         }
 

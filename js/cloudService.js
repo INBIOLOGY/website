@@ -9,7 +9,7 @@
 // 5. Firebase Live Cloud with graceful LocalStorage Offline Database Fallback
 // ─────────────────────────────────────────────────────────────────────────────
 
-const CloudService = {
+const CloudService = window.CloudService = {
   initialized: false,
   isLive: false,
   auth: null,
@@ -339,7 +339,6 @@ const CloudService = {
       facebook
     } = userData;
 
-    if (!username || !username.trim()) throw new Error('กรุณาระบุ Username (ชื่อผู้ใช้)');
     if (!email || !email.trim()) throw new Error('กรุณาระบุ Email');
     if (!password || password.length < 6) throw new Error('รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร');
     if (!fullName || !fullName.trim()) throw new Error('กรุณาระบุชื่อ-นามสกุล');
@@ -348,8 +347,11 @@ const CloudService = {
     if (!birthdate) throw new Error('กรุณาระบุวันเกิด');
     if (!school || !school.trim()) throw new Error('กรุณาระบุโรงเรียน');
 
-    const cleanUsername = username.trim().toLowerCase();
     const cleanEmail = email.trim().toLowerCase();
+    const cleanPhone = phone.trim().replace(/[-\s]/g, '');
+    const cleanUsername = (username && username.trim()) 
+      ? username.trim().toLowerCase() 
+      : cleanEmail.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_') + '_' + (cleanPhone.slice(-4) || 'user');
 
     // Verify OTP was passed
     if (!this.isEmailVerified(cleanEmail)) {
@@ -358,14 +360,14 @@ const CloudService = {
 
     const users = this._getUsersDb();
 
-    // Check unique username in local DB
-    if (users.some(u => u.username && u.username.toLowerCase() === cleanUsername)) {
-      throw new Error(`ชื่อผู้ใช้ "@${username}" นี้มีผู้ใช้งานแล้ว กรุณาเลือกชื่ออื่น`);
+    // Check unique email in local DB
+    if (users.some(u => u.email && u.email.toLowerCase() === cleanEmail)) {
+      throw new Error('อีเมลนี้เคยลงทะเบียนไว้แล้ว กรุณาเข้าสู่ระบบด้วยอีเมลนี้');
     }
 
-    // Check unique email in local DB
-    if (users.some(u => u.email.toLowerCase() === cleanEmail)) {
-      throw new Error('อีเมลนี้เคยลงทะเบียนไว้แล้ว กรุณาใช้สำหรับเข้าสู่ระบบ');
+    // Check unique phone in local DB
+    if (cleanPhone && users.some(u => (u.phone || '').replace(/[-\s]/g, '') === cleanPhone)) {
+      throw new Error('เบอร์โทรศัพท์นี้ถูกใช้งานแล้ว กรุณาเข้าสู่ระบบ หรือใช้เบอร์อื่น');
     }
 
     // Calculate age if not provided
@@ -468,15 +470,16 @@ const CloudService = {
    * @param {string} password 
    */
   async login(identifier, password) {
-    if (!identifier || !identifier.trim()) throw new Error('กรุณากรอก Username หรือ อีเมล');
+    if (!identifier || !identifier.trim()) throw new Error('กรุณากรอก อีเมล หรือ เบอร์โทรศัพท์');
     if (!password) throw new Error('กรุณากรอกรหัสผ่าน');
 
     const cleanInput = identifier.trim().toLowerCase();
+    const cleanPhone = identifier.replace(/[-\s]/g, '');
 
     // Check Supabase Cloud Database first
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
-        const q = `/users?or=(username.ilike.${encodeURIComponent(cleanInput)},email.ilike.${encodeURIComponent(cleanInput)})&limit=1`;
+        const q = `/users?or=(email.ilike.${encodeURIComponent(cleanInput)},phone_number.ilike.%${encodeURIComponent(cleanPhone)}%,phone_number.eq.${encodeURIComponent(identifier.trim())},username.ilike.${encodeURIComponent(cleanInput)})&limit=1`;
         const sbUsers = await this._supabaseFetch(q);
         if (sbUsers && sbUsers.length > 0) {
           const sbUser = sbUsers[0];
@@ -484,7 +487,7 @@ const CloudService = {
             throw new Error('บัญชีนี้ลงทะเบียนผ่าน Google กรุณาเข้าสู่ระบบด้วย Google หรือตั้งรหัสผ่านใหม่');
           }
           if (sbUser.password_hash !== password) {
-            throw new Error('ชื่อผู้ใช้/อีเมล หรือรหัสผ่านไม่ถูกต้อง');
+            throw new Error('อีเมล/เบอร์โทรศัพท์ หรือรหัสผ่านไม่ถูกต้อง');
           }
           const userProfile = {
             id: sbUser.id,
@@ -518,14 +521,16 @@ const CloudService = {
 
     const users = this._getUsersDb();
 
-    // Query: WHERE LOWER(username) = :identifier OR LOWER(email) = :identifier
-    const user = users.find(u => 
-      (u.username && u.username.toLowerCase() === cleanInput) || 
-      (u.email && u.email.toLowerCase() === cleanInput)
-    );
+    // Query: WHERE email = :identifier OR phone = :identifier OR username = :identifier
+    const user = users.find(u => {
+      const uEmail = (u.email || '').toLowerCase();
+      const uPhone = (u.phone || u.phoneNumber || '').replace(/[-\s]/g, '');
+      const uName = (u.username || '').toLowerCase();
+      return uEmail === cleanInput || (cleanPhone && uPhone === cleanPhone) || uName === cleanInput;
+    });
 
     if (!user) {
-      throw new Error('ชื่อผู้ใช้/อีเมล หรือรหัสผ่านไม่ถูกต้อง');
+      throw new Error('อีเมล/เบอร์โทรศัพท์ หรือรหัสผ่านไม่ถูกต้อง');
     }
 
     if (!user.password) {
@@ -533,7 +538,7 @@ const CloudService = {
     }
 
     if (user.password !== password) {
-      throw new Error('ชื่อผู้ใช้/อีเมล หรือรหัสผ่านไม่ถูกต้อง');
+      throw new Error('อีเมล/เบอร์โทรศัพท์ หรือรหัสผ่านไม่ถูกต้อง');
     }
 
     // Success
