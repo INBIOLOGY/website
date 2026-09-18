@@ -1,10 +1,14 @@
 {
   "name": "inbiology-academy",
   "version": "1.0.0",
+  "type": "module",
   "private": true,
   "description": "INBIOLOGY Academy — Pure Vanilla HTML/CSS/JS Web Application",
   "scripts": {
     "dev": "npx serve .",
     "start": "npx serve ."
+  },
+  "dependencies": {
+    "nodemailer": "^10.0.10"
   }
 }
