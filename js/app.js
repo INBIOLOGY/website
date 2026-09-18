@@ -15,33 +15,21 @@ function pct(orig, cur) {
 // Global Application State & Storage
 const AppState = {
   cart: JSON.parse(localStorage.getItem('inbiology_cart') || '[]'),
-  enrolled: JSON.parse(localStorage.getItem('inbiology_enrolled') || '["bio-intensive-1"]'),
+  enrolled: [],
   lang: localStorage.getItem('inbiology_lang') || 'TH',
   appliedCoupon: null,
   userRole: localStorage.getItem('inbiology_role') || null,
+
+  isLoggedIn() {
+    return Boolean(this.userRole && this.userRole !== 'guest');
+  },
   
   getStudentProfile() {
     const saved = localStorage.getItem('inbiology_student_profile');
     if (saved) {
       try { return JSON.parse(saved); } catch(e){}
     }
-    return {
-      username: 'witsarut',
-      nickname: 'วิทศรุต',
-      fullName: 'นาย วิทศรุต สายตา',
-      phone: '089-123-4567',
-      birthdate: '2009-05-15',
-      age: 17,
-      school: 'โรงเรียนสตรีวิทยา',
-      level: 'ม.5',
-      email: 'witsarut@inbiology.com',
-      instagram: '@witsarut.bio',
-      lineId: 'witsarut_bio',
-      facebook: 'Witsarut Saitaa',
-      role: 'student',
-      linkedProviders: [],
-      password: '••••••••'
-    };
+    return null;
   },
 
   saveStudentProfile(profile) {
@@ -88,8 +76,8 @@ const AppState = {
   },
   
   addToCart(course) {
-    if (!this.userRole || this.userRole === 'guest') {
-      showLoginModal('กรุณาเข้าสู่ระบบก่อนเลือกซื้อคอร์สเรียนลงในตะกร้าสินค้า');
+    if (!this.isLoggedIn()) {
+      showLoginModal('กรุณาเข้าสู่ระบบหรือสมัครสมาชิกก่อนเลือกซื้อคอร์สเรียน');
       return;
     }
     if (this.enrolled.includes(course.id)) {
@@ -116,7 +104,10 @@ const AppState = {
       window.CloudService.logout();
     }
     this.userRole = null;
+    this.enrolled = [];
     localStorage.removeItem('inbiology_role');
+    localStorage.removeItem('inbiology_student_profile');
+    localStorage.removeItem('inbiology_enrolled');
     showToast('👋 ออกจากระบบเรียบร้อยแล้ว', 'info');
     setTimeout(() => { location.href = 'index.html'; }, 500);
   },
@@ -129,6 +120,19 @@ const AppState = {
     });
   }
 };
+
+// Strict Enrollment & State Synchronization
+if (AppState.isLoggedIn()) {
+  try {
+    AppState.enrolled = JSON.parse(localStorage.getItem('inbiology_enrolled') || '[]');
+  } catch(e) {
+    AppState.enrolled = [];
+  }
+} else {
+  // Guests & unauthenticated visitors strictly have 0 enrolled courses
+  AppState.enrolled = [];
+  localStorage.removeItem('inbiology_enrolled');
+}
 
 // Coupon Discount Validator Engine
 function applyCouponCode(codeStr) {
@@ -242,7 +246,7 @@ function renderCartDrawer() {
 }
 
 // Login Requirement Prompt Modal
-function showLoginModal(message = 'กรุณาเข้าสู่ระบบก่อนเลือกซื้อคอร์สเรียนหรือเข้าดูบทเรียนของคุณ') {
+function showLoginModal(message = 'กรุณาเข้าสู่ระบบก่อนเลือกซื้อคอร์สเรียนหรือเข้าดูบทเรียนของคุณ', redirectUrl = '') {
   let modal = document.getElementById('login-required-modal');
   if (!modal) {
     modal = document.createElement('div');
@@ -251,6 +255,10 @@ function showLoginModal(message = 'กรุณาเข้าสู่ระบ
     modal.onclick = () => modal.classList.remove('show');
     document.body.appendChild(modal);
   }
+
+  const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+  const targetUrl = redirectUrl || (currentPath + window.location.search);
+  const loginUrl = 'login.html?redirect=' + encodeURIComponent(targetUrl);
 
   modal.innerHTML = `
     <div class="modal-backdrop"></div>
@@ -262,7 +270,7 @@ function showLoginModal(message = 'กรุณาเข้าสู่ระบ
       <p style="font-size:13.5px;color:#6B7280;line-height:1.5;margin:0 0 24px">${message}</p>
       
       <div style="display:flex;flex-direction:column;gap:10px">
-        <a href="login.html" style="background:#1E3A8A;color:white;font-weight:900;font-size:14px;padding:12px;border-radius:12px;text-decoration:none;display:block;box-shadow:0 4px 14px rgba(30,58,138,0.25)">
+        <a href="${loginUrl}" style="background:#1E3A8A;color:white;font-weight:900;font-size:14px;padding:12px;border-radius:12px;text-decoration:none;display:block;box-shadow:0 4px 14px rgba(30,58,138,0.25)">
           🔑 เข้าสู่ระบบ / สมัครสมาชิก ➔
         </a>
         <button onclick="document.getElementById('login-required-modal').classList.remove('show')" style="background:none;border:1px solid #E5E7EB;color:#6B7280;font-weight:800;font-size:13px;padding:10px;border-radius:12px;cursor:pointer">
@@ -405,7 +413,7 @@ function renderHeader(activePage = 'home') {
   const isAdmin = AppState.userRole === 'admin';
 
   const studentProfile = AppState.getStudentProfile();
-  const studentDisplayName = `🎓 พี่${studentProfile.nickname || 'วิทศรุต'}`;
+  const studentDisplayName = studentProfile ? `🎓 น้อง${studentProfile.nickname || 'นักเรียน'}` : '🎓 นักเรียน';
 
   header.innerHTML = `
     <div class="header-container">
@@ -420,11 +428,13 @@ function renderHeader(activePage = 'home') {
       <nav class="desktop-nav" aria-label="เมนูหลัก">
         <a href="index.html" class="nav-link ${activePage === 'home' ? 'active' : ''}">หน้าแรก</a>
         <a href="courses.html" class="nav-link ${activePage === 'courses' ? 'active' : ''}">คอร์สเรียน</a>
-        <a href="classroom.html" class="nav-link ${activePage === 'classroom' ? 'active' : ''}">คอร์สเรียนของฉัน</a>
         <a href="exam.html" class="nav-link ${activePage === 'exam' ? 'active' : ''}">คลังข้อสอบ</a>
         <a href="about.html" class="nav-link ${activePage === 'about' ? 'active' : ''}">เกี่ยวกับเรา</a>
         <a href="faq.html" class="nav-link ${activePage === 'faq' ? 'active' : ''}">คำถามพบบ่อย</a>
-        <a href="dashboard.html" class="nav-link ${activePage === 'dashboard' ? 'active' : ''}">Dashboard</a>
+        ${isLoggedIn ? `
+          <a href="classroom.html" class="nav-link ${activePage === 'classroom' ? 'active' : ''}">คอร์สของฉัน</a>
+          <a href="dashboard.html" class="nav-link ${activePage === 'dashboard' ? 'active' : ''}">แดชบอร์ด</a>
+        ` : ''}
         ${isAdmin ? `<a href="admin.html" class="nav-link ${activePage === 'admin' ? 'active' : ''}">แอดมิน</a>` : ''}
       </nav>
 
@@ -455,12 +465,14 @@ function renderHeader(activePage = 'home') {
         <div id="nav-dropdown" class="dropdown-panel">
           <a href="index.html" class="dropdown-item">👉 หน้าแรก</a>
           <a href="courses.html" class="dropdown-item">📚 คอร์สเรียนทั้งหมด</a>
-          <a href="classroom.html" class="dropdown-item">🎓 คอร์สเรียนของฉัน</a>
           <a href="exam.html" class="dropdown-item">🏆 คลังข้อสอบ A-Level</a>
           <a href="about.html" class="dropdown-item">🔬 เกี่ยวกับเรา (พี่ต้น)</a>
           <a href="faq.html" class="dropdown-item">❓ คำถามพบบ่อย (FAQ)</a>
-          <a href="dashboard.html" class="dropdown-item">👤 บัญชีของฉัน</a>
           <a href="guide.html" class="dropdown-item">📖 คู่มือการใช้งาน</a>
+          ${isLoggedIn ? `
+            <a href="classroom.html" class="dropdown-item">🎓 คอร์สเรียนของฉัน</a>
+            <a href="dashboard.html" class="dropdown-item">👤 แดชบอร์ดของฉัน</a>
+          ` : ''}
           ${isAdmin ? `<a href="admin.html" class="dropdown-item">🛡 แดชบอร์ดแอดมิน</a>` : ''}
           ${isLoggedIn 
             ? `<button onclick="AppState.logout()" class="dropdown-item" style="color:#DC2626;font-weight:800">🚪 ออกจากระบบ</button>`
@@ -490,6 +502,9 @@ function renderFooter() {
   } else {
     footer.className = 'site-footer';
   }
+
+  const isLoggedIn = AppState.isLoggedIn();
+  const profileLink = isLoggedIn ? 'dashboard.html' : 'login.html?redirect=dashboard.html';
 
   footer.innerHTML = `
     <div class="footer-inner">
@@ -542,7 +557,7 @@ function renderFooter() {
             <li><a href="about.html">🔬 เกี่ยวกับพี่ต้น & สถาบัน</a></li>
             <li><a href="faq.html">❓ คำถามที่พบบ่อย (FAQ)</a></li>
             <li><a href="guide.html">📖 คู่มือการเรียน & ใช้งาน</a></li>
-            <li><a href="dashboard.html">👤 โปรไฟล์และประวัติการเรียน</a></li>
+            <li><a href="${profileLink}">👤 โปรไฟล์และประวัติการเรียน</a></li>
             <li><a href="privacy.html">🔒 นโยบายความเป็นส่วนตัว</a></li>
             <li><a href="terms.html">📜 ข้อตกลงและเงื่อนไข</a></li>
           </ul>

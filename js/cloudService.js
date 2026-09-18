@@ -155,7 +155,7 @@ const CloudService = window.CloudService = {
           emailVerified: true,
           emailVerifiedAt: '2026-02-15T00:00:00.000Z',
           linkedProviders: [],
-          enrolled: ['bio-intensive-1']
+          enrolled: []
         }
       ];
       this._saveUsersDb(defaultUsers);
@@ -403,7 +403,7 @@ const CloudService = window.CloudService = {
       emailVerified: true,
       emailVerifiedAt: new Date().toISOString(),
       linkedProviders: [],
-      enrolled: ['bio-intensive-1'],
+      enrolled: [],
       createdAt: new Date().toISOString()
     };
 
@@ -512,7 +512,7 @@ const CloudService = window.CloudService = {
             facebook: sbUser.facebook || '',
             role: sbUser.role || 'student',
             linkedProviders: [],
-            enrolled: ['bio-intensive-1']
+            enrolled: (sbUser.enrolled && Array.isArray(sbUser.enrolled)) ? sbUser.enrolled : []
           };
           AppState.userRole = userProfile.role;
           localStorage.setItem('inbiology_role', AppState.userRole);
@@ -638,7 +638,7 @@ const CloudService = window.CloudService = {
         email: googleEmail,
         linkedAt: new Date().toISOString()
       }],
-      enrolled: ['bio-intensive-1'],
+      enrolled: [],
       createdAt: new Date().toISOString()
     };
 
@@ -787,7 +787,7 @@ const CloudService = window.CloudService = {
       const doc = await this.db.collection('users').doc(uid).get();
       if (doc.exists && doc.data().enrolled) return doc.data().enrolled;
     }
-    return JSON.parse(localStorage.getItem('inbiology_enrolled') || '["bio-intensive-1"]');
+    return JSON.parse(localStorage.getItem('inbiology_enrolled') || '[]');
   }
 };
 

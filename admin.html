@@ -196,12 +196,19 @@
     </div>
   </div>
 
-  <script src="./js/mockData.js"></script>
-  <script src="./js/firebaseConfig.js"></script>
-  <script src="./js/cloudService.js"></script>
-  <script src="./js/app.js"></script>
+  <script src="./js/mockData.js?v=20260918_v5"></script>
+  <script src="./js/firebaseConfig.js?v=20260918_v5"></script>
+  <script src="./js/cloudService.js?v=20260918_v5"></script>
+  <script src="./js/app.js?v=20260918_v5"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // 🔒 AUTH GUARD: Only admin can access admin dashboard
+      if (AppState.userRole !== 'admin') {
+        alert('⛔ เฉพาะแอดมินผู้ดูแลระบบเท่านั้นที่สามารถเข้าถึงหน้านี้ได้');
+        window.location.replace('login.html?redirect=admin.html');
+        return;
+      }
+
       renderHeader('admin');
       renderAdminTable();
       renderOrdersTable();

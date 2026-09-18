@@ -25,11 +25,9 @@
       <nav class="desktop-nav" aria-label="เมนูหลัก">
         <a href="index.html" class="nav-link">หน้าแรก</a>
         <a href="courses.html" class="nav-link">คอร์สเรียน</a>
-        <a href="classroom.html" class="nav-link">คอร์สเรียนของฉัน</a>
         <a href="exam.html" class="nav-link">คลังข้อสอบ</a>
         <a href="about.html" class="nav-link">เกี่ยวกับเรา</a>
         <a href="faq.html" class="nav-link">คำถามพบบ่อย</a>
-        <a href="dashboard.html" class="nav-link active">Dashboard</a>
       </nav>
 
       <div style="display:flex;align-items:center;gap:12px">
@@ -49,11 +47,9 @@
         <div id="nav-dropdown" class="dropdown-panel">
           <a href="index.html" class="dropdown-item">👉 หน้าแรก</a>
           <a href="courses.html" class="dropdown-item">📚 คอร์สเรียนทั้งหมด</a>
-          <a href="classroom.html" class="dropdown-item">🎓 คอร์สเรียนของฉัน</a>
           <a href="exam.html" class="dropdown-item">🏆 คลังข้อสอบ A-Level</a>
           <a href="about.html" class="dropdown-item">🔬 เกี่ยวกับเรา (พี่ต้น)</a>
           <a href="faq.html" class="dropdown-item">❓ คำถามพบบ่อย (FAQ)</a>
-          <a href="dashboard.html" class="dropdown-item">👤 บัญชีของฉัน</a>
           <a href="guide.html" class="dropdown-item">📖 คู่มือการใช้งาน</a>
           <a href="login.html" class="dropdown-item" style="color:var(--c-sky);font-weight:800">🔑 เข้าสู่ระบบ</a>
         </div>
@@ -69,11 +65,11 @@
           👨‍🎓
         </div>
         <!-- Line 1: น้อง(ชื่อเล่น) -->
-        <h3 id="sidebar-nickname" style="font-weight:900;font-size:18px;color:var(--c-navy);margin:0 0 4px">น้องวิทศรุต</h3>
+        <h3 id="sidebar-nickname" style="font-weight:900;font-size:18px;color:var(--c-navy);margin:0 0 4px">น้องนักเรียน</h3>
         <!-- Line 2: ชื่อจริง - นามสกุล -->
-        <p id="sidebar-fullname" style="font-weight:700;font-size:13px;color:#4B5563;margin:0 0 6px">นาย วิทศรุต สายตา</p>
+        <p id="sidebar-fullname" style="font-weight:700;font-size:13px;color:#4B5563;margin:0 0 6px">ผู้เรียนชีววิทยา</p>
         <!-- Line 3: โรงเรียน • ระดับชั้น -->
-        <p id="sidebar-school-level" style="font-size:11px;color:#9CA3AF;margin:0 0 16px">โรงเรียนสตรีวิทยา • ม.5</p>
+        <p id="sidebar-school-level" style="font-size:11px;color:#9CA3AF;margin:0 0 16px">โรงเรียนทั่วไป • มัธยมศึกษา</p>
         <button onclick="switchDashTab('profile')" style="width:100%;background:#F8FAFC;border:1px solid #E5E7EB;color:var(--c-navy);font-weight:800;font-size:11px;padding:8px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
           ⚙️ แก้ไขข้อมูลส่วนตัว
         </button>
@@ -249,14 +245,20 @@
   <footer id="footer-container"></footer>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="./js/mockData.js?v=20260918_v4"></script>
-  <script src="./js/firebaseConfig.js?v=20260918_v4"></script>
-  <script src="./js/supabaseConfig.js?v=20260918_v4"></script>
-  <script src="./js/googleConfig.js?v=20260918_v4"></script>
-  <script src="./js/cloudService.js?v=20260918_v4"></script>
-  <script src="./js/app.js?v=20260918_v4"></script>
+  <script src="./js/mockData.js?v=20260918_v5"></script>
+  <script src="./js/firebaseConfig.js?v=20260918_v5"></script>
+  <script src="./js/supabaseConfig.js?v=20260918_v5"></script>
+  <script src="./js/googleConfig.js?v=20260918_v5"></script>
+  <script src="./js/cloudService.js?v=20260918_v5"></script>
+  <script src="./js/app.js?v=20260918_v5"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // 🔒 AUTH GUARD: Must be logged in to view dashboard
+      if (!AppState.isLoggedIn()) {
+        window.location.replace('login.html?redirect=dashboard.html');
+        return;
+      }
+
       renderHeader('dashboard');
       loadStudentProfileToUI();
       renderGoogleLinkStatus();
@@ -280,10 +282,10 @@
     }
 
     function loadStudentProfileToUI() {
-      const p = AppState.getStudentProfile();
+      const p = AppState.getStudentProfile() || {};
       document.getElementById('sidebar-nickname').textContent = `น้อง${p.nickname || 'นักเรียน'}`;
       document.getElementById('sidebar-fullname').textContent = p.fullName || 'ผู้เรียนชีววิทยา';
-      document.getElementById('sidebar-school-level').textContent = `${p.school || 'โรงเรียนทั่วไป'} • ${p.level || 'ม.5'}`;
+      document.getElementById('sidebar-school-level').textContent = `${p.school || 'โรงเรียนทั่วไป'} • ${p.level || 'มัธยมศึกษา'}`;
 
       const uEl = document.getElementById('edit-username');
       if (uEl) uEl.value = p.username ? `@${p.username}` : '';

@@ -25,11 +25,9 @@
       <nav class="desktop-nav" aria-label="เมนูหลัก">
         <a href="index.html" class="nav-link">หน้าแรก</a>
         <a href="courses.html" class="nav-link">คอร์สเรียน</a>
-        <a href="classroom.html" class="nav-link">คอร์สเรียนของฉัน</a>
         <a href="exam.html" class="nav-link active">คลังข้อสอบ</a>
         <a href="about.html" class="nav-link">เกี่ยวกับเรา</a>
         <a href="faq.html" class="nav-link">คำถามพบบ่อย</a>
-        <a href="dashboard.html" class="nav-link">Dashboard</a>
       </nav>
 
       <div style="display:flex;align-items:center;gap:12px">
@@ -49,11 +47,9 @@
         <div id="nav-dropdown" class="dropdown-panel">
           <a href="index.html" class="dropdown-item">👉 หน้าแรก</a>
           <a href="courses.html" class="dropdown-item">📚 คอร์สเรียนทั้งหมด</a>
-          <a href="classroom.html" class="dropdown-item">🎓 คอร์สเรียนของฉัน</a>
           <a href="exam.html" class="dropdown-item">🏆 คลังข้อสอบ A-Level</a>
           <a href="about.html" class="dropdown-item">🔬 เกี่ยวกับเรา (พี่ต้น)</a>
           <a href="faq.html" class="dropdown-item">❓ คำถามพบบ่อย (FAQ)</a>
-          <a href="dashboard.html" class="dropdown-item">👤 บัญชีของฉัน</a>
           <a href="guide.html" class="dropdown-item">📖 คู่มือการใช้งาน</a>
           <a href="login.html" class="dropdown-item" style="color:var(--c-sky);font-weight:800">🔑 เข้าสู่ระบบ</a>
         </div>
@@ -82,7 +78,7 @@
           <button onclick="showTopicSelector()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;border:1px solid #E5E7EB;background:white;color:var(--c-navy);font-weight:800;font-size:12px;cursor:pointer">
             ⬅ เลือกชุดข้อสอบอื่น
           </button>
-          <span style="font-size:11px;font-weight:800;color:#6B7280" id="current-user-badge">ผู้ทำสอบ: 🎓 พี่วิทศรุต</span>
+          <span style="font-size:11px;font-weight:800;color:#6B7280" id="current-user-badge">ผู้ทำสอบ: 🎓 นักเรียน</span>
         <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
           <div>
             <h2 id="quiz-topic-title" style="font-size:18px;font-weight:950;color:var(--c-navy);margin:0">🏆 คลังข้อสอบจำลอง A-Level ชีววิทยา</h2>
@@ -104,10 +100,10 @@
   <!-- Universal Rich Multi-Column Footer -->
   <footer id="footer-container"></footer>
 
-  <script src="./js/mockData.js"></script>
-  <script src="./js/firebaseConfig.js"></script>
-  <script src="./js/cloudService.js"></script>
-  <script src="./js/app.js"></script>
+  <script src="./js/mockData.js?v=20260918_v5"></script>
+  <script src="./js/firebaseConfig.js?v=20260918_v5"></script>
+  <script src="./js/cloudService.js?v=20260918_v5"></script>
+  <script src="./js/app.js?v=20260918_v5"></script>
   <script>
     let activeTopic = null;
     let activeQuestions = [];
@@ -120,7 +116,9 @@
       renderHeader('exam');
       const p = AppState.getStudentProfile();
       const userBadge = document.getElementById('current-user-badge');
-      if (userBadge) userBadge.textContent = `ผู้ทำสอบ: 🎓 พี่${p.nickname || 'วิทศรุต'}`;
+      if (userBadge) {
+        userBadge.textContent = p ? `ผู้ทำสอบ: 🎓 น้อง${p.nickname || p.fullName || 'นักเรียน'}` : 'ผู้ทำสอบ: 🎓 บุคคลทั่วไป';
+      }
       renderTopicsMenu();
     });
 

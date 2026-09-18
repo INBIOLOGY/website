@@ -617,12 +617,12 @@
     </div>
   </div>
 
-  <script src="./js/mockData.js?v=20260918_v4"></script>
-  <script src="./js/firebaseConfig.js?v=20260918_v4"></script>
-  <script src="./js/supabaseConfig.js?v=20260918_v4"></script>
-  <script src="./js/googleConfig.js?v=20260918_v4"></script>
-  <script src="./js/cloudService.js?v=20260918_v4"></script>
-  <script src="./js/app.js?v=20260918_v4"></script>
+  <script src="./js/mockData.js?v=20260918_v5"></script>
+  <script src="./js/firebaseConfig.js?v=20260918_v5"></script>
+  <script src="./js/supabaseConfig.js?v=20260918_v5"></script>
+  <script src="./js/googleConfig.js?v=20260918_v5"></script>
+  <script src="./js/cloudService.js?v=20260918_v5"></script>
+  <script src="./js/app.js?v=20260918_v5"></script>
   <script>
     let currentAuthTab = 'login';
     let otpCooldownTimer = null;
@@ -799,7 +799,7 @@
     }
 
     async function handleGsiCredentialResponse(response) {
-      const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || 'classroom.html';
+      const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || 'dashboard.html';
       try {
         const payload = decodeGoogleJwt(response.credential);
         if (!payload) throw new Error('ถอดรหัส Google ID Token ไม่สำเร็จ');
@@ -864,7 +864,7 @@
     }
 
     async function handleGoogleLoginFallback() {
-      const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || 'classroom.html';
+      const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || 'dashboard.html';
       // Demo OAuth Payload
       const demoPayload = {
         sub: 'google_sub_demo_987654',
@@ -900,7 +900,7 @@
     // ─── FORM SUBMIT HANDLER (LOGIN OR REGISTER) ──────────────────────────────
     document.getElementById('auth-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || 'classroom.html';
+      const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || 'dashboard.html';
 
       // ─── 1. REGISTER FLOW ──────────────────────────────────────────────────
       if (currentAuthTab === 'register') {
@@ -1017,6 +1017,18 @@
     });
 
     document.addEventListener('DOMContentLoaded', () => {
+      // If already logged in, redirect away from login page
+      if (AppState.isLoggedIn()) {
+        const redirectUrl = new URLSearchParams(window.location.search).get('redirect');
+        if (redirectUrl) {
+          location.replace(redirectUrl);
+        } else if (AppState.userRole === 'admin') {
+          location.replace('admin.html');
+        } else {
+          location.replace('dashboard.html');
+        }
+        return;
+      }
       initGoogleSignIn();
     });
   </script>
