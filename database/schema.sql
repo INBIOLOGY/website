@@ -105,3 +105,26 @@ CREATE TABLE IF NOT EXISTS oauth_accounts (
 
 CREATE INDEX IF NOT EXISTS idx_oauth_accounts_lookup 
     ON oauth_accounts (provider, provider_user_id);
+
+-- =============================================================================
+-- 4. ROW-LEVEL SECURITY (RLS) POLICIES FOR INBIOLOGY CLIENT
+-- =============================================================================
+-- To allow the web frontend (using the anon/publishable key) to register students,
+-- verify email OTPs, and link OAuth accounts, run this section:
+
+-- OPTION A: Disable RLS completely (Simplest for direct frontend access)
+ALTER TABLE public.users DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.email_verifications DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.oauth_accounts DISABLE ROW LEVEL SECURITY;
+
+-- OPTION B: Or enable RLS with permissive policies for anon & authenticated roles:
+-- ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE public.email_verifications ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE public.oauth_accounts ENABLE ROW LEVEL SECURITY;
+-- CREATE POLICY "Allow anon insert users" ON public.users FOR INSERT TO anon, authenticated WITH CHECK (true);
+-- CREATE POLICY "Allow anon select users" ON public.users FOR SELECT TO anon, authenticated USING (true);
+-- CREATE POLICY "Allow anon update users" ON public.users FOR UPDATE TO anon, authenticated USING (true);
+-- CREATE POLICY "Allow anon insert email_verifications" ON public.email_verifications FOR INSERT TO anon, authenticated WITH CHECK (true);
+-- CREATE POLICY "Allow anon select email_verifications" ON public.email_verifications FOR SELECT TO anon, authenticated USING (true);
+-- CREATE POLICY "Allow anon update email_verifications" ON public.email_verifications FOR UPDATE TO anon, authenticated USING (true);
+-- CREATE POLICY "Allow anon all oauth_accounts" ON public.oauth_accounts FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);

@@ -411,7 +411,7 @@ const CloudService = window.CloudService = {
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
         const sbPayload = {
-          username: cleanUsername,
+          username: cleanUsername ? cleanUsername : null,
           email: cleanEmail,
           password_hash: password,
           email_verified_at: new Date().toISOString(),
@@ -642,6 +642,45 @@ const CloudService = window.CloudService = {
       createdAt: new Date().toISOString()
     };
 
+    // Sync Google Student to Supabase Cloud
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        const sbPayload = {
+          email: googleEmail,
+          email_verified_at: new Date().toISOString(),
+          full_name: payload.name || 'ผู้ใช้งาน Google',
+          nickname: derivedNickname,
+          birthdate: '2008-01-01',
+          phone_number: '0000000000',
+          school: 'ยังไม่ได้ระบุ',
+          grade_level: 'ม.5',
+          role: 'student',
+          avatar_url: payload.picture || null,
+          is_active: true
+        };
+        const sbResult = await this._supabaseFetch('/users', {
+          method: 'POST',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify(sbPayload)
+        });
+        if (sbResult && sbResult[0] && sbResult[0].id) {
+          newUser.id = sbResult[0].id;
+          await this._supabaseFetch('/oauth_accounts', {
+            method: 'POST',
+            body: JSON.stringify({
+              user_id: sbResult[0].id,
+              provider: 'google',
+              provider_user_id: googleSub,
+              provider_email: googleEmail
+            })
+          });
+          console.log('☁️ [Supabase Cloud] Google Student & OAuth Account synced:', newUser.id);
+        }
+      } catch (err) {
+        console.warn('Supabase Google user sync note:', err);
+      }
+    }
+
     users.push(newUser);
     this._saveUsersDb(users);
 
@@ -649,6 +688,34 @@ const CloudService = window.CloudService = {
     localStorage.setItem('inbiology_role', 'student');
     AppState.saveStudentProfile(newUser);
     return { user: newUser, isNew: true, isAutoLinked: false };
+  },
+
+  /**
+   * Update Student Profile in Supabase Cloud
+   */
+  async saveUserProfile(uid, updated) {
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured() && updated && updated.email) {
+      try {
+        await this._supabaseFetch(`/users?email=eq.${encodeURIComponent(updated.email.trim().toLowerCase())}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            full_name: updated.fullName,
+            nickname: updated.nickname,
+            phone_number: updated.phone,
+            birthdate: updated.birthdate,
+            school: updated.school,
+            grade_level: updated.level,
+            instagram: updated.instagram || null,
+            line_id: updated.lineId || null,
+            facebook: updated.facebook || null,
+            updated_at: new Date().toISOString()
+          })
+        });
+        console.log('☁️ [Supabase Cloud] Profile updated successfully');
+      } catch (e) {
+        console.warn('Supabase update note:', e);
+      }
+    }
   },
 
   // ─── 5. ACCOUNT LINKING IN DASHBOARD ───────────────────────────────────────
