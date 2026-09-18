@@ -858,6 +858,228 @@ const CloudService = window.CloudService = {
       if (doc.exists && doc.data().enrolled) return doc.data().enrolled;
     }
     return JSON.parse(localStorage.getItem('inbiology_enrolled') || '[]');
+  },
+
+  // ─── 6. ORDER MANAGEMENT ────────────────────────────────────────────────────
+
+  /**
+   * Submit a new payment order (pending slip verification)
+   */
+  async submitOrder({ userEmail, userName, userId, courseIds, courseTitles, totalAmount, couponCode, discountAmount, slipBase64 }) {
+    const orderData = {
+      user_email: userEmail.toLowerCase().trim(),
+      user_name: userName || '',
+      user_id: userId || null,
+      course_ids: courseIds,
+      course_titles: courseTitles || courseIds.join(', '),
+      total_amount: totalAmount,
+      coupon_code: couponCode || null,
+      discount_amount: discountAmount || 0,
+      slip_image: slipBase64 || null,
+      status: 'pending'
+    };
+
+    // Save to Supabase Cloud
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        const result = await this._supabaseFetch('/orders', {
+          method: 'POST',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify(orderData)
+        });
+        if (result && result[0] && result[0].id) {
+          const orderId = result[0].id;
+          console.log('☁️ [Supabase Cloud] Order saved:', orderId);
+          // Mirror to localStorage
+          this._saveOrderLocally({ ...orderData, id: orderId, created_at: new Date().toISOString() });
+          return { success: true, orderId };
+        }
+      } catch(err) {
+        console.warn('[Order Submit Supabase Error]:', err);
+      }
+    }
+
+    // Fallback: localStorage only
+    const localId = 'order-' + Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
+    this._saveOrderLocally({ ...orderData, id: localId, created_at: new Date().toISOString() });
+    return { success: true, orderId: localId };
+  },
+
+  _saveOrderLocally(order) {
+    try {
+      const orders = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
+      orders.unshift(order);
+      localStorage.setItem('inbiology_orders', JSON.stringify(orders));
+    } catch(e) {}
+  },
+
+  /**
+   * Get orders for current logged-in student
+   */
+  async getMyOrders(userEmail) {
+    if (!userEmail) return [];
+
+    // Try Supabase first
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        const result = await this._supabaseFetch(
+          `/orders?user_email=eq.${encodeURIComponent(userEmail.toLowerCase().trim())}&order=created_at.desc`
+        );
+        if (result && Array.isArray(result)) return result;
+      } catch(err) {
+        console.warn('[getMyOrders Supabase Error]:', err);
+      }
+    }
+
+    // Fallback: localStorage
+    try {
+      const all = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
+      return all.filter(o => o.user_email === userEmail.toLowerCase().trim());
+    } catch(e) { return []; }
+  },
+
+  /**
+   * Get all orders (Admin only) — optionally filter by status
+   */
+  async getAllOrders(status = null) {
+    let endpoint = '/orders?order=created_at.desc&limit=200';
+    if (status) endpoint += `&status=eq.${status}`;
+
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        const result = await this._supabaseFetch(endpoint);
+        if (result && Array.isArray(result)) return result;
+      } catch(err) {
+        console.warn('[getAllOrders Supabase Error]:', err);
+      }
+    }
+
+    // Fallback: all localStorage orders
+    try {
+      const all = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
+      return status ? all.filter(o => o.status === status) : all;
+    } catch(e) { return []; }
+  },
+
+  /**
+   * Admin: Approve an order → unlock courses for the student
+   */
+  async approveOrder(orderId, userEmail, courseIds) {
+    const adminProfile = AppState.getStudentProfile();
+    const adminName = adminProfile ? (adminProfile.nickname || adminProfile.fullName || 'Admin') : 'Admin';
+    const now = new Date().toISOString();
+
+    // 1. Update order status in Supabase
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        await this._supabaseFetch(`/orders?id=eq.${orderId}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            status: 'approved',
+            reviewed_by: adminName,
+            approved_at: now,
+            updated_at: now
+          })
+        });
+
+        // 2. Add courses to the student's Supabase user record
+        // First fetch current enrolled array
+        const userRows = await this._supabaseFetch(
+          `/users?email=eq.${encodeURIComponent(userEmail.toLowerCase().trim())}&select=id,enrolled`
+        );
+        if (userRows && userRows[0]) {
+          const currentEnrolled = userRows[0].enrolled || [];
+          const merged = [...new Set([...currentEnrolled, ...courseIds])];
+          await this._supabaseFetch(`/users?email=eq.${encodeURIComponent(userEmail.toLowerCase().trim())}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ enrolled: merged, updated_at: now })
+          });
+        }
+        console.log('☁️ [Supabase Cloud] Order approved & enrollment updated:', orderId);
+      } catch(err) {
+        console.warn('[approveOrder Supabase Error]:', err);
+      }
+    }
+
+    // 3. Mirror in localStorage orders
+    try {
+      const orders = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
+      const o = orders.find(x => x.id === orderId);
+      if (o) { o.status = 'approved'; o.reviewed_by = adminName; o.approved_at = now; }
+      localStorage.setItem('inbiology_orders', JSON.stringify(orders));
+    } catch(e) {}
+
+    return { success: true };
+  },
+
+  /**
+   * Admin: Reject an order
+   */
+  async rejectOrder(orderId, adminNote) {
+    const adminProfile = AppState.getStudentProfile();
+    const adminName = adminProfile ? (adminProfile.nickname || adminProfile.fullName || 'Admin') : 'Admin';
+    const now = new Date().toISOString();
+
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        await this._supabaseFetch(`/orders?id=eq.${orderId}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            status: 'rejected',
+            admin_note: adminNote || 'ไม่ผ่านการตรวจสอบ',
+            reviewed_by: adminName,
+            updated_at: now
+          })
+        });
+      } catch(err) {
+        console.warn('[rejectOrder Supabase Error]:', err);
+      }
+    }
+
+    // Mirror localStorage
+    try {
+      const orders = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
+      const o = orders.find(x => x.id === orderId);
+      if (o) { o.status = 'rejected'; o.admin_note = adminNote; o.reviewed_by = adminName; }
+      localStorage.setItem('inbiology_orders', JSON.stringify(orders));
+    } catch(e) {}
+
+    return { success: true };
+  },
+
+  /**
+   * Sync enrolled courses from approved Supabase orders (call on login/dashboard load)
+   */
+  async syncEnrolledFromCloud(userEmail) {
+    if (!userEmail) return;
+
+    // Fetch user's enrolled column from Supabase users table
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        const userRows = await this._supabaseFetch(
+          `/users?email=eq.${encodeURIComponent(userEmail.toLowerCase().trim())}&select=enrolled`
+        );
+        if (userRows && userRows[0] && Array.isArray(userRows[0].enrolled) && userRows[0].enrolled.length > 0) {
+          AppState.enrolled = userRows[0].enrolled;
+          localStorage.setItem('inbiology_enrolled', JSON.stringify(AppState.enrolled));
+          console.log('☁️ [Supabase Cloud] Enrolled synced:', AppState.enrolled);
+          return;
+        }
+      } catch(err) {
+        console.warn('[syncEnrolledFromCloud Supabase Error]:', err);
+      }
+    }
+
+    // Fallback: derive from local approved orders
+    try {
+      const orders = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
+      const approved = orders.filter(o => o.user_email === userEmail.toLowerCase().trim() && o.status === 'approved');
+      const courseIds = [...new Set(approved.flatMap(o => o.course_ids || []))];
+      if (courseIds.length > 0) {
+        AppState.enrolled = courseIds;
+        localStorage.setItem('inbiology_enrolled', JSON.stringify(AppState.enrolled));
+      }
+    } catch(e) {}
   }
 };
 

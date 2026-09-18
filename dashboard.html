@@ -88,6 +88,9 @@
             <button onclick="switchDashTab('notes')" id="dtab-notes" style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
               📝 สมุดบันทึกโน้ตย่อ
             </button>
+            <button onclick="switchDashTab('orders')" id="dtab-orders" style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
+              🧾 คำสั่งซื้อของฉัน
+            </button>
             <button onclick="switchDashTab('faq')" id="dtab-faq" style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
               ❓ ศูนย์ช่วยเหลือ FAQ
             </button>
@@ -97,6 +100,15 @@
           <div id="dpanel-courses">
             <h2 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 16px">📚 คอร์สเรียนของคุณ</h2>
             <div id="enrolled-list" class="enrolled-courses-grid"></div>
+          </div>
+
+          <!-- Orders Panel -->
+          <div id="dpanel-orders" style="display:none;flex-direction:column;gap:14px">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+              <h2 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0">🧾 คำสั่งซื้อของฉัน</h2>
+              <button onclick="loadMyOrders()" style="background:#F1F5F9;border:none;color:#374151;font-size:11px;font-weight:800;padding:6px 12px;border-radius:8px;cursor:pointer">🔄 รีเฟรช</button>
+            </div>
+            <div id="orders-list"><p style="color:#9CA3AF;font-size:13px;text-align:center;padding:20px">⏳ กำลังโหลดคำสั่งซื้อ...</p></div>
           </div>
 
           <!-- Profile Edit & Account Linking Panel -->
@@ -245,14 +257,14 @@
   <footer id="footer-container"></footer>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="./js/mockData.js?v=20260918_v6"></script>
-  <script src="./js/firebaseConfig.js?v=20260918_v6"></script>
-  <script src="./js/supabaseConfig.js?v=20260918_v6"></script>
-  <script src="./js/googleConfig.js?v=20260918_v6"></script>
-  <script src="./js/cloudService.js?v=20260918_v6"></script>
-  <script src="./js/app.js?v=20260918_v6"></script>
+  <script src="./js/mockData.js?v=20260918_v7"></script>
+  <script src="./js/firebaseConfig.js?v=20260918_v7"></script>
+  <script src="./js/supabaseConfig.js?v=20260918_v7"></script>
+  <script src="./js/googleConfig.js?v=20260918_v7"></script>
+  <script src="./js/cloudService.js?v=20260918_v7"></script>
+  <script src="./js/app.js?v=20260918_v7"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       // 🔒 AUTH GUARD: Must be logged in to view dashboard
       if (!AppState.isLoggedIn()) {
         window.location.replace('login.html?redirect=dashboard.html');
@@ -262,6 +274,15 @@
       renderHeader('dashboard');
       loadStudentProfileToUI();
       renderGoogleLinkStatus();
+
+      // Sync enrolled courses from Supabase cloud before rendering
+      const profile = AppState.getStudentProfile();
+      if (profile && profile.email && window.CloudService) {
+        try {
+          await window.CloudService.syncEnrolledFromCloud(profile.email);
+        } catch(e) { console.warn('Sync enrolled note:', e); }
+      }
+
       renderEnrolled();
       renderNotes();
       renderFAQs();
@@ -441,7 +462,7 @@
     }
 
     function switchDashTab(tabName) {
-      ['courses', 'profile', 'notes', 'faq'].forEach(t => {
+      ['courses', 'profile', 'notes', 'orders', 'faq'].forEach(t => {
         const btn = document.getElementById(`dtab-${t}`);
         const panel = document.getElementById(`dpanel-${t}`);
         if (t === tabName) {
@@ -454,6 +475,8 @@
           panel.style.display = 'none';
         }
       });
+      // Lazy load orders when tab opened
+      if (tabName === 'orders') loadMyOrders();
     }
 
     function renderEnrolled() {
@@ -495,6 +518,56 @@
         }).join('');
         initScrollReveal();
       }
+    }
+
+    async function loadMyOrders() {
+      const container = document.getElementById('orders-list');
+      container.innerHTML = `<p style="color:#9CA3AF;font-size:13px;text-align:center;padding:20px">⏳ กำลังโหลด...</p>`;
+
+      const profile = AppState.getStudentProfile();
+      if (!profile || !profile.email) {
+        container.innerHTML = `<p style="color:#9CA3AF;font-size:13px;text-align:center;padding:20px">ไม่พบข้อมูลบัญชี</p>`;
+        return;
+      }
+
+      let orders = [];
+      try {
+        orders = await CloudService.getMyOrders(profile.email);
+      } catch(e) { console.warn('loadMyOrders error:', e); }
+
+      if (!orders || orders.length === 0) {
+        container.innerHTML = `
+          <div style="background:#F8FAFC;border:1.5px dashed #CBD5E1;border-radius:14px;padding:32px;text-align:center">
+            <p style="color:#6B7280;font-size:13px;margin:0 0 12px">ยังไม่มีคำสั่งซื้อในระบบ</p>
+            <a href="courses.html" style="background:var(--c-navy);color:white;font-weight:800;font-size:12px;padding:10px 20px;border-radius:10px;text-decoration:none">🛒 เลือกซื้อคอร์สเรียน</a>
+          </div>`;
+        return;
+      }
+
+      const statusLabel = { pending: '⏳ รอตรวจสลิป', approved: '✅ อนุมัติแล้ว', rejected: '❌ ไม่ผ่านการตรวจสอบ' };
+      const statusClass = { pending: 'status-pending', approved: 'status-approved', rejected: 'status-rejected' };
+
+      container.innerHTML = orders.map(o => {
+        const date = new Date(o.created_at).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
+        const shortId = (o.id || '').substring(0, 8).toUpperCase();
+        return `
+          <div style="background:white;border:1px solid #E5E7EB;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px">
+              <div>
+                <span style="font-size:10px;color:#9CA3AF;font-weight:700">ออเดอร์ #${shortId}</span>
+                <p style="font-size:13px;font-weight:800;color:var(--c-navy);margin:2px 0 0">${o.course_titles || o.course_ids?.join(', ')}</p>
+              </div>
+              <span class="status-badge ${statusClass[o.status] || 'status-pending'}">${statusLabel[o.status] || o.status}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px">
+              <span style="font-size:11.5px;color:#64748B">${date}</span>
+              <span style="font-size:14px;font-weight:900;color:#B91C1C">฿${Number(o.total_amount).toLocaleString('th-TH')}</span>
+            </div>
+            ${o.admin_note ? `<div style="background:#FEF2F2;border:1px solid #FEE2E2;border-radius:10px;padding:8px 12px;font-size:11.5px;color:#991B1B">หมายเหตุ Admin: ${o.admin_note}</div>` : ''}
+            ${o.status === 'approved' ? `<a href="classroom.html?course=${(o.course_ids||[])[0]}" style="background:var(--c-sky);color:white;font-weight:800;font-size:12px;padding:8px;border-radius:10px;text-decoration:none;text-align:center">▶ เข้าสู่ห้องเรียน</a>` : ''}
+          </div>
+        `;
+      }).join('');
     }
 
     function renderNotes() {

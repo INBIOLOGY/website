@@ -107,7 +107,43 @@ CREATE INDEX IF NOT EXISTS idx_oauth_accounts_lookup
     ON oauth_accounts (provider, provider_user_id);
 
 -- =============================================================================
--- 4. ROW-LEVEL SECURITY (RLS) POLICIES FOR INBIOLOGY CLIENT
+-- 4. TABLE: orders (Payment Orders with Slip Verification)
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS orders (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    -- Who is paying
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    user_email VARCHAR(255) NOT NULL,           -- Snapshot of email at order time
+    user_name VARCHAR(100),                     -- Snapshot of student name
+
+    -- What they bought
+    course_ids TEXT[] NOT NULL,                 -- Array of course IDs e.g. {'bio-intensive-1','bio-intensive-2'}
+    course_titles TEXT,                         -- Human-readable course names (comma-separated)
+    total_amount NUMERIC(10, 2) NOT NULL,       -- Final amount after coupon
+    coupon_code VARCHAR(50),                    -- Coupon used (if any)
+    discount_amount NUMERIC(10, 2) DEFAULT 0,
+
+    -- Payment Evidence
+    slip_image TEXT,                            -- Base64 encoded image or Supabase Storage URL
+
+    -- Status Lifecycle: pending → approved | rejected
+    status VARCHAR(20) DEFAULT 'pending',       -- 'pending' | 'approved' | 'rejected'
+    admin_note TEXT,                            -- Admin's reason for rejection (optional)
+    reviewed_by VARCHAR(100),                   -- Admin name who approved/rejected
+    approved_at TIMESTAMP WITH TIME ZONE,
+
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Fast lookup indexes
+CREATE INDEX IF NOT EXISTS idx_orders_user_email ON orders (LOWER(user_email));
+CREATE INDEX IF NOT EXISTS idx_orders_status ON orders (status, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders (user_id);
+
+-- =============================================================================
+-- 5. ROW-LEVEL SECURITY (RLS) POLICIES FOR INBIOLOGY CLIENT
 -- =============================================================================
 -- To allow the web frontend (using the anon/publishable key) to register students,
 -- verify email OTPs, and link OAuth accounts, run this section:
@@ -116,11 +152,13 @@ CREATE INDEX IF NOT EXISTS idx_oauth_accounts_lookup
 ALTER TABLE public.users DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.email_verifications DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.oauth_accounts DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.orders DISABLE ROW LEVEL SECURITY;
 
 -- OPTION B: Or enable RLS with permissive policies for anon & authenticated roles:
 -- ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 -- ALTER TABLE public.email_verifications ENABLE ROW LEVEL SECURITY;
 -- ALTER TABLE public.oauth_accounts ENABLE ROW LEVEL SECURITY;
+-- ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 -- CREATE POLICY "Allow anon insert users" ON public.users FOR INSERT TO anon, authenticated WITH CHECK (true);
 -- CREATE POLICY "Allow anon select users" ON public.users FOR SELECT TO anon, authenticated USING (true);
 -- CREATE POLICY "Allow anon update users" ON public.users FOR UPDATE TO anon, authenticated USING (true);
@@ -128,3 +166,6 @@ ALTER TABLE public.oauth_accounts DISABLE ROW LEVEL SECURITY;
 -- CREATE POLICY "Allow anon select email_verifications" ON public.email_verifications FOR SELECT TO anon, authenticated USING (true);
 -- CREATE POLICY "Allow anon update email_verifications" ON public.email_verifications FOR UPDATE TO anon, authenticated USING (true);
 -- CREATE POLICY "Allow anon all oauth_accounts" ON public.oauth_accounts FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+-- CREATE POLICY "Allow anon insert orders" ON public.orders FOR INSERT TO anon, authenticated WITH CHECK (true);
+-- CREATE POLICY "Allow anon select orders" ON public.orders FOR SELECT TO anon, authenticated USING (true);
+-- CREATE POLICY "Allow anon update orders" ON public.orders FOR UPDATE TO anon, authenticated USING (true);
