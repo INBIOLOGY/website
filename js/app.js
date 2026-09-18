@@ -26,11 +26,20 @@ const AppState = {
       try { return JSON.parse(saved); } catch(e){}
     }
     return {
+      username: 'witsarut',
       nickname: 'วิทศรุต',
       fullName: 'นาย วิทศรุต สายตา',
+      phone: '089-123-4567',
+      birthdate: '2009-05-15',
+      age: 17,
       school: 'โรงเรียนสตรีวิทยา',
       level: 'ม.5',
       email: 'witsarut@inbiology.com',
+      instagram: '@witsarut.bio',
+      lineId: 'witsarut_bio',
+      facebook: 'Witsarut Saitaa',
+      role: 'student',
+      linkedProviders: [],
       password: '••••••••'
     };
   },
@@ -736,10 +745,19 @@ document.addEventListener('DOMContentLoaded', () => {
   localStorage.removeItem('inbiology_darkmode');
   document.body.classList.remove('dark-mode');
   initScrollReveal();
-  initBackToTop();
-  if (!document.querySelector('.site-footer')) {
-    renderFooter();
+
+  const isAuthPage = Boolean(
+    document.querySelector('.auth-wrapper') ||
+    window.location.pathname.endsWith('login.html')
+  );
+
+  if (!isAuthPage) {
+    initBackToTop();
+    if (!document.querySelector('.site-footer')) {
+      renderFooter();
+    }
   }
+
   if (document.getElementById('faq-list-container')) {
     initFaqPage();
   }
