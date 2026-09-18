@@ -481,15 +481,36 @@ const CloudService = window.CloudService = {
     if (!password) throw new Error('กรุณากรอกรหัสผ่าน');
 
     const cleanInput = identifier.trim().toLowerCase();
-    const cleanPhone = identifier.replace(/[-\s]/g, '');
+    const cleanPhone = identifier.trim().replace(/[-\s]/g, '');
 
-    // Check Supabase Cloud Database first
+    // Check Supabase Cloud Database — use SEPARATE queries to avoid or= dot-parsing bug
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
-        const q = `/users?or=(email.ilike.${encodeURIComponent(cleanInput)},phone_number.ilike.%${encodeURIComponent(cleanPhone)}%,phone_number.eq.${encodeURIComponent(identifier.trim())},username.ilike.${encodeURIComponent(cleanInput)})&limit=1`;
-        const sbUsers = await this._supabaseFetch(q);
-        if (sbUsers && sbUsers.length > 0) {
-          const sbUser = sbUsers[0];
+        let sbUser = null;
+
+        // 1. Try email match (exact, case-insensitive via ilike)
+        const byEmail = await this._supabaseFetch(
+          `/users?email=ilike.${encodeURIComponent(cleanInput)}&limit=1`
+        );
+        if (byEmail && byEmail.length > 0) sbUser = byEmail[0];
+
+        // 2. Try phone match if email didn't find anything
+        if (!sbUser && cleanPhone && cleanPhone.length >= 9) {
+          const byPhone = await this._supabaseFetch(
+            `/users?phone_number=eq.${encodeURIComponent(cleanPhone)}&limit=1`
+          );
+          if (byPhone && byPhone.length > 0) sbUser = byPhone[0];
+        }
+
+        // 3. Try username match
+        if (!sbUser) {
+          const byUsername = await this._supabaseFetch(
+            `/users?username=ilike.${encodeURIComponent(cleanInput)}&limit=1`
+          );
+          if (byUsername && byUsername.length > 0) sbUser = byUsername[0];
+        }
+
+        if (sbUser) {
           if (!sbUser.password_hash) {
             throw new Error('บัญชีนี้ลงทะเบียนผ่าน Google กรุณาเข้าสู่ระบบด้วย Google หรือตั้งรหัสผ่านใหม่');
           }
@@ -518,6 +539,10 @@ const CloudService = window.CloudService = {
           AppState.userRole = userProfile.role;
           localStorage.setItem('inbiology_role', AppState.userRole);
           AppState.saveStudentProfile(userProfile);
+          if (userProfile.enrolled.length > 0) {
+            AppState.enrolled = userProfile.enrolled;
+            localStorage.setItem('inbiology_enrolled', JSON.stringify(userProfile.enrolled));
+          }
           return userProfile;
         }
       } catch(err) {
