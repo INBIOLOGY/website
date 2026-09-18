@@ -410,8 +410,9 @@ const CloudService = window.CloudService = {
     // Save to Supabase Cloud Database
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
+        const safeUsername = cleanUsername || (cleanEmail.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '') + '_' + Math.random().toString(36).substring(2, 6));
         const sbPayload = {
-          username: cleanUsername ? cleanUsername : null,
+          username: safeUsername,
           email: cleanEmail,
           password_hash: password,
           email_verified_at: new Date().toISOString(),
@@ -645,7 +646,9 @@ const CloudService = window.CloudService = {
     // Sync Google Student to Supabase Cloud
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
+        const googleUsername = googleEmail.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '') + '_' + Math.random().toString(36).substring(2, 6);
         const sbPayload = {
+          username: googleUsername,
           email: googleEmail,
           email_verified_at: new Date().toISOString(),
           full_name: payload.name || 'ผู้ใช้งาน Google',
