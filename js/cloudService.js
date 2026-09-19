@@ -1212,6 +1212,67 @@ const CloudService = window.CloudService = {
   },
 
   /**
+   * Admin: Revert an approved/rejected order back to 'pending' (undo accidental click)
+   */
+  async revertOrderToPending(orderId, userEmail, courseIds = []) {
+    const now = new Date().toISOString();
+
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        await this._supabaseFetch(`/orders?id=eq.${orderId}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            status: 'pending',
+            reviewed_by: null,
+            approved_at: null,
+            admin_note: null,
+            updated_at: now
+          })
+        });
+
+        // Revoke courses from user record if no other approved order includes them
+        if (userEmail && courseIds && courseIds.length > 0) {
+          const cleanEmail = userEmail.toLowerCase().trim();
+          const remainingOrders = await this._supabaseFetch(
+            `/orders?user_email=eq.${encodeURIComponent(cleanEmail)}&status=eq.approved&id=neq.${orderId}&select=course_ids`
+          ).catch(() => []);
+          const validEnrolled = [...new Set((remainingOrders || []).flatMap(o => o.course_ids || []))];
+
+          await this._supabaseFetch(`/users?email=eq.${encodeURIComponent(cleanEmail)}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ enrolled: validEnrolled, updated_at: now })
+          });
+        }
+      } catch(err) {
+        console.warn('[revertOrderToPending Supabase Error]:', err);
+      }
+    }
+
+    // Mirror localStorage
+    try {
+      const orders = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
+      const o = orders.find(x => x.id === orderId);
+      if (o) {
+        o.status = 'pending';
+        o.reviewed_by = null;
+        o.approved_at = null;
+        o.admin_note = null;
+      }
+      localStorage.setItem('inbiology_orders', JSON.stringify(orders));
+
+      const currentProfile = AppState.getStudentProfile();
+      if (currentProfile && currentProfile.email && currentProfile.email.toLowerCase().trim() === (userEmail || '').toLowerCase().trim()) {
+        const remainingApproved = orders.filter(x => (x.user_email || '').toLowerCase().trim() === userEmail.toLowerCase().trim() && x.status === 'approved');
+        const remainingCourses = [...new Set(remainingApproved.flatMap(x => x.course_ids || []))];
+        AppState.enrolled = remainingCourses;
+        localStorage.setItem('inbiology_enrolled', JSON.stringify(remainingCourses));
+      }
+    } catch(e) {}
+
+    return { success: true };
+  },
+
+  /**
    * Sync enrolled courses from approved Supabase orders (call on login/dashboard load)
    */
   async syncEnrolledFromCloud(userEmail) {

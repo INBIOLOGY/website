@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>แดชบอร์ดแอดมิน — INBIOLOGY Academy</title>
-  <link rel="stylesheet" href="./css/style.css?v=20260919_v17">
+  <link rel="stylesheet" href="./css/style.css?v=20260919_v18">
   <style>
     .status-badge { display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;padding:4px 12px;border-radius:999px; }
     .status-pending  { background:#FEF9C3;color:#92400E; }
@@ -85,10 +85,24 @@
       </div>
 
       <!-- Tab: Orders Verification -->
-      <div id="apanel-orders" style="display:none;flex-direction:column;gap:20px">
+      <div id="apanel-orders" style="display:none;flex-direction:column;gap:16px">
+        <!-- Search & Status Filter Toolbar -->
+        <div style="background:white;border:1px solid #E5E7EB;border-radius:18px;padding:16px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.02)">
+          <div style="position:relative;flex:1;min-width:260px">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:14px;color:#94A3B8;pointer-events:none">🔍</span>
+            <input type="text" id="admin-order-search" oninput="handleOrderFilter()" placeholder="ค้นหาออเดอร์ (#รหัส, ชื่อนักเรียน, อีเมล, วิชา)..." style="width:100%;border:1.5px solid #E2E8F0;border-radius:12px;padding:10px 14px 10px 38px;font-size:12.5px;outline:none;background:#F8FAFC;transition:all 0.2s" onfocus="this.style.background='white';this.style.borderColor='var(--c-sky)'" onblur="this.style.background='#F8FAFC';this.style.borderColor='#E2E8F0'" />
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button type="button" onclick="setOrderFilterStatus('all')" id="ofilter-all" style="padding:7px 14px;border-radius:999px;font-size:11.5px;font-weight:800;border:1px solid var(--c-navy);background:var(--c-navy);color:white;cursor:pointer">ทั้งหมด</button>
+            <button type="button" onclick="setOrderFilterStatus('pending')" id="ofilter-pending" style="padding:7px 14px;border-radius:999px;font-size:11.5px;font-weight:800;border:1px solid #E2E8F0;background:white;color:#B45309;cursor:pointer">⏳ รอตรวจสอบ</button>
+            <button type="button" onclick="setOrderFilterStatus('approved')" id="ofilter-approved" style="padding:7px 14px;border-radius:999px;font-size:11.5px;font-weight:800;border:1px solid #E2E8F0;background:white;color:#065F46;cursor:pointer">✅ อนุมัติแล้ว</button>
+            <button type="button" onclick="setOrderFilterStatus('rejected')" id="ofilter-rejected" style="padding:7px 14px;border-radius:999px;font-size:11.5px;font-weight:800;border:1px solid #E2E8F0;background:white;color:#991B1B;cursor:pointer">❌ ปฏิเสธแล้ว</button>
+          </div>
+        </div>
+
         <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden">
           <div class="admin-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%">
-            <table style="width:100%;min-width:700px;border-collapse:collapse;font-size:12px">
+            <table style="width:100%;min-width:720px;border-collapse:collapse;font-size:12px">
               <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
                 <tr>
                   <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ออเดอร์</th>
@@ -283,8 +297,8 @@
 
   <script src="./js/mockData.js?v=20260919_v9"></script>
   <script src="./js/supabaseConfig.js?v=20260919_v9"></script>
-  <script src="./js/cloudService.js?v=20260919_v9"></script>
-  <script src="./js/app.js?v=20260919_v10"></script>
+  <script src="./js/cloudService.js?v=20260919_v10"></script>
+  <script src="./js/app.js?v=20260919_v11"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // 🔒 AUTH GUARD: Only admin can access admin dashboard
@@ -375,34 +389,84 @@
       renderOrdersTable();
     }
 
-    function renderOrdersTable(filterStatus = null) {
+    let _currentOrderFilterStatus = 'all';
+    let _currentOrderSearchQuery = '';
+
+    function handleOrderFilter() {
+      const searchInput = document.getElementById('admin-order-search');
+      _currentOrderSearchQuery = (searchInput ? searchInput.value : '').trim().toLowerCase();
+      renderOrdersTable();
+    }
+
+    function setOrderFilterStatus(status) {
+      _currentOrderFilterStatus = status;
+      ['all', 'pending', 'approved', 'rejected'].forEach(s => {
+        const btn = document.getElementById(`ofilter-${s}`);
+        if (!btn) return;
+        if (s === status) {
+          btn.style.background = 'var(--c-navy)';
+          btn.style.color = 'white';
+          btn.style.borderColor = 'var(--c-navy)';
+        } else {
+          btn.style.background = 'white';
+          btn.style.color = s === 'pending' ? '#B45309' : (s === 'approved' ? '#065F46' : (s === 'rejected' ? '#991B1B' : '#374151'));
+          btn.style.borderColor = '#E2E8F0';
+        }
+      });
+      renderOrdersTable();
+    }
+
+    function renderOrdersTable() {
       const tbody = document.getElementById('admin-orders-table');
-      const orders = filterStatus ? _ordersCache.filter(o => o.status === filterStatus) : _ordersCache;
 
       // Update pending count badge
       const pendingCount = _ordersCache.filter(o => o.status === 'pending').length;
       const tabBtn = document.getElementById('atab-orders');
       if (tabBtn) tabBtn.textContent = `💳 ตรวจสลิปออเดอร์${pendingCount > 0 ? ` (🔴 ${pendingCount})` : ''}`;
 
-      if (orders.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="padding:20px;text-align:center;color:#9CA3AF;font-size:13px">ไม่มีออเดอร์</td></tr>`;
+      // Filter orders by status and search query
+      let filtered = _ordersCache;
+      if (_currentOrderFilterStatus !== 'all') {
+        filtered = filtered.filter(o => o.status === _currentOrderFilterStatus);
+      }
+      if (_currentOrderSearchQuery) {
+        const q = _currentOrderSearchQuery;
+        filtered = filtered.filter(o => {
+          const id = (o.id || '').toLowerCase();
+          const name = (o.user_name || '').toLowerCase();
+          const email = (o.user_email || '').toLowerCase();
+          const courses = (o.course_titles || (o.course_ids || []).join(' ')).toLowerCase();
+          return id.includes(q) || name.includes(q) || email.includes(q) || courses.includes(q);
+        });
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="padding:28px;text-align:center;color:#94A3B8;font-size:13px">🔍 ไม่พบออเดอร์ที่ตรงกับเงื่อนไขการค้นหา</td></tr>`;
         return;
       }
 
-      const statusLabel = { pending: '<span style="background:#FEF9C3;color:#92400E;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px">⏳ รอ</span>', approved: '<span style="background:#D1FAE5;color:#065F46;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px">✅ อนุมัติ</span>', rejected: '<span style="background:#FEE2E2;color:#991B1B;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px">❌ ปฏิเสธ</span>' };
+      const statusLabel = {
+        pending: '<span style="background:#FEF9C3;color:#92400E;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px">⏳ รอตรวจสอบ</span>',
+        approved: '<span style="background:#D1FAE5;color:#065F46;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px">✅ อนุมัติแล้ว</span>',
+        rejected: '<span style="background:#FEE2E2;color:#991B1B;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px">❌ ปฏิเสธ</span>'
+      };
 
-      tbody.innerHTML = orders.map(o => {
+      tbody.innerHTML = filtered.map(o => {
         const shortId = (o.id || '').substring(0, 8).toUpperCase();
         const date = new Date(o.created_at).toLocaleDateString('th-TH', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         const hasSlip = o.slip_image && o.slip_image.length > 0;
         return `
           <tr style="border-bottom:1px solid #F3F4F6">
-            <td style="padding:10px 16px;font-family:monospace;font-weight:800;font-size:11px;color:#475569">#${shortId}<br><span style="font-size:10px;color:#9CA3AF;font-weight:400">${date}</span></td>
+            <td style="padding:10px 16px;font-family:monospace;font-weight:800;font-size:11px;color:#475569">
+              #${shortId}<br><span style="font-size:10px;color:#9CA3AF;font-weight:400">${date}</span>
+            </td>
             <td style="padding:10px 16px">
-              <div style="font-weight:800;font-size:12px;color:var(--c-navy)">${o.user_name || 'ไม่ระบุ'}</div>
+              <div style="font-weight:800;font-size:12px;color:var(--c-navy)">${o.user_name || 'ไม่ระบุชื่อ'}</div>
               <div style="font-size:11px;color:#6B7280">${o.user_email}</div>
             </td>
-            <td style="padding:10px 16px;font-size:11.5px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${o.course_titles || ''}"><strong>${o.course_titles || (o.course_ids||[]).join(', ')}</strong></td>
+            <td style="padding:10px 16px;font-size:11.5px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${o.course_titles || ''}">
+              <strong>${o.course_titles || (o.course_ids||[]).join(', ')}</strong>
+            </td>
             <td style="padding:10px 16px;font-weight:900;color:#B91C1C">฿${Number(o.total_amount).toLocaleString('th-TH')}</td>
             <td style="padding:10px 16px">
               ${statusLabel[o.status] || o.status}
@@ -414,11 +478,45 @@
                   <button onclick="openApprovalModal('${o.id}')" style="background:var(--c-sky);color:white;border:none;padding:6px 10px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer">✅ อนุมัติ</button>
                   <button onclick="promptReject('${o.id}')" style="background:#FEE2E2;color:#DC2626;border:none;padding:6px 10px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer">❌ ปฏิเสธ</button>
                 </div>
-              ` : `<span style="font-size:11px;color:#9CA3AF">${o.reviewed_by ? 'โดย: ' + o.reviewed_by : '—'}</span>`}
+              ` : (o.status === 'approved' ? `
+                <div style="display:flex;flex-direction:column;gap:4px">
+                  <span style="font-size:10.5px;color:#059669;font-weight:700">✓ ${o.reviewed_by ? 'โดย: ' + o.reviewed_by : 'อนุมัติแล้ว'}</span>
+                  <button onclick="revertOrderApproval('${o.id}')" title="ยกเลิกการอนุมัติเผื่อกรณีแอดมินกดผิด" style="background:#FEF3C7;color:#B45309;border:1px solid #FCD34D;padding:4px 8px;border-radius:6px;font-weight:800;font-size:10.5px;cursor:pointer;display:inline-flex;align-items:center;gap:3px">
+                    ↩ ยกเลิกอนุมัติ (กดผิด)
+                  </button>
+                </div>
+              ` : `
+                <div style="display:flex;flex-direction:column;gap:4px">
+                  <span style="font-size:10.5px;color:#DC2626;font-weight:700">✕ ปฏิเสธแล้ว</span>
+                  <button onclick="revertOrderApproval('${o.id}')" title="เปลี่ยนสถานะกลับเป็นรอตรวจสอบ" style="background:#F1F5F9;color:#475569;border:1px solid #CBD5E1;padding:4px 8px;border-radius:6px;font-weight:800;font-size:10.5px;cursor:pointer;display:inline-flex;align-items:center;gap:3px">
+                    ↩ ตั้งเป็นรอตรวจสอบ
+                  </button>
+                </div>
+              `)}
             </td>
           </tr>
         `;
       }).join('');
+    }
+
+    async function revertOrderApproval(orderId) {
+      const o = _ordersCache.find(x => x.id === orderId);
+      if (!o) return;
+      const shortId = (o.id || '').substring(0, 8).toUpperCase();
+      const studentLabel = o.user_name ? `${o.user_name} (${o.user_email})` : o.user_email;
+
+      const isCurrentlyApproved = o.status === 'approved';
+      const actionText = isCurrentlyApproved ? 'ยกเลิกการอนุมัติ (ในกรณีที่แอดมินกดผิด)' : 'เปลี่ยนสถานะกลับเป็นรอตรวจสอบ';
+      const confirmAction = confirm(`⚠️ ยืนยัน${actionText} สำหรับออเดอร์ #${shortId} ของ ${studentLabel} ใช่หรือไม่?\n\n(ระบบจะเปลี่ยนสถานะกลับเป็น "รอตรวจสอบ" และเพิกถอนสิทธิ์คอร์สที่เปิดไว้ชั่วคราว)`);
+      if (!confirmAction) return;
+
+      try {
+        await CloudService.revertOrderToPending(orderId, o.user_email, o.course_ids);
+        showToast(`↩ ยกเลิกสถานะออเดอร์ #${shortId} เรียบร้อยแล้ว (สถานะกลับเป็นรอตรวจสอบ)`, 'info');
+        await loadAndRenderOrders();
+      } catch (e) {
+        showToast('❌ เกิดข้อผิดพลาด: ' + e.message, 'error');
+      }
     }
 
     function viewSlip(orderId) {

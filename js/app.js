@@ -707,120 +707,82 @@ function renderHeader(activePage = 'home') {
   initBackToTop();
 }
 
-// Universal Rich Multi-Column Footer (Audit 2.1, 2.2)
+// Clean, Streamlined Footer (Non-cluttered & hidden on focused workspaces)
 function renderFooter() {
+  const currentPath = window.location.pathname.toLowerCase();
+  const isFocusedPage = currentPath.includes('classroom') || currentPath.includes('checkout') || currentPath.includes('admin') || currentPath.includes('login');
+
   let footer = document.querySelector('.site-footer') || document.getElementById('footer-container');
+
+  if (isFocusedPage) {
+    if (footer) footer.style.display = 'none';
+    return;
+  }
+
   if (!footer) {
     footer = document.createElement('footer');
     footer.className = 'site-footer';
     document.body.appendChild(footer);
   } else {
     footer.className = 'site-footer';
+    footer.style.display = 'block';
   }
-
-  const isLoggedIn = AppState.isLoggedIn();
-  const profileLink = isLoggedIn ? 'dashboard.html' : 'login.html?redirect=dashboard.html';
 
   footer.innerHTML = `
     <div class="footer-inner">
-      <div class="footer-top-grid">
-        <!-- Col 1: Brand & Bio -->
-        <div class="footer-col">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-            <img src="./logo.png" alt="INBIOLOGY Logo" style="height:42px;width:auto;object-fit:contain" />
+      <div class="footer-clean-content">
+        <!-- Brand & Description -->
+        <div class="footer-brand-block">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <img src="./logo.png" alt="INBIOLOGY Logo" style="height:36px;width:auto;object-fit:contain" />
             <div>
-              <span style="font-weight:800;font-size:18px;color:#F8FAFC;display:block;line-height:1">INBIOLOGY</span>
-              <span style="font-size:11px;font-weight:600;color:#93C5FD;display:block;margin-top:2px">สถาบันกวดวิชาชีววิทยาออนไลน์</span>
+              <span style="font-weight:800;font-size:16px;color:#F8FAFC;display:block;line-height:1">INBIOLOGY</span>
+              <span style="font-size:10.5px;font-weight:600;color:#93C5FD;display:block;margin-top:2px">สถาบันกวดวิชาชีววิทยาออนไลน์ โดย พี่ต้น</span>
             </div>
           </div>
-          <p>
-            ติวเข้มชีววิทยา ม.ปลาย กับ <strong>พี่ต้น</strong> (เกียรตินิยมอันดับ 1 มหาวิทยาลัยนเรศวร & มหาวิทยาลัยขอนแก่น) ประสบการณ์สอนกว่า 9 ปี เน้นความเข้าใจ ไม่ใช่แค่ท่องจำ ดูแลนักเรียนกว่า 50,000+ คน สู่คณะในฝัน
+          <p style="font-size:12.5px;color:#94A3B8;margin:0 0 14px;line-height:1.5">
+            เรียนชีวะให้เข้าใจ ไม่ใช่แค่ท่องจำ ดูแลน้องๆ สู่คณะในฝัน
           </p>
-          <div class="footer-social-row">
+          <div class="footer-social-row" style="margin-top:0">
             <a href="https://line.me" target="_blank" rel="noopener" class="footer-social-btn" title="LINE Official @inbiology" aria-label="LINE Official">
-              <img src="./social_line.png" alt="LINE" style="width:20px;height:20px;object-fit:contain" />
+              <img src="./social_line.png" alt="LINE" style="width:18px;height:18px;object-fit:contain" />
             </a>
             <a href="https://tiktok.com" target="_blank" rel="noopener" class="footer-social-btn" title="TikTok @inbiology" aria-label="TikTok">
-              <img src="./social_tiktok.png" alt="TikTok" style="width:20px;height:20px;object-fit:contain" />
-            </a>
-            <a href="about.html" class="footer-social-btn" title="Facebook / สตูดิโอ" aria-label="Facebook">
-              <span style="font-size:16px">📘</span>
-            </a>
-            <a href="about.html" class="footer-social-btn" title="Instagram" aria-label="Instagram">
-              <span style="font-size:16px">📸</span>
+              <img src="./social_tiktok.png" alt="TikTok" style="width:18px;height:18px;object-fit:contain" />
             </a>
           </div>
         </div>
 
-        <!-- Col 2: Courses -->
-        <div class="footer-col">
-          <h4>หลักสูตรยอดนิยม</h4>
-          <ul class="footer-links">
-            <li><a href="courses.html?search=Bio+Intensive">🧬 Bio Intensive I - VI</a></li>
-            <li><a href="courses.html?search=Complete">📦 Bio Intensive Complete</a></li>
-            <li><a href="courses.html?search=A-Level">🎯 ตะลุยโจทย์ A-Level</a></li>
-            <li><a href="courses.html?search=สอวน">🏅 สอวน. ชีววิทยา ค่าย 1</a></li>
-            <li><a href="courses.html?search=99">⚡ คอร์ส 99.- Quick Review</a></li>
-            <li><a href="exam.html">🏆 คลังข้อสอบจับเวลาฟรี</a></li>
-          </ul>
-        </div>
+        <!-- Quick Navigation Links -->
+        <div class="footer-quick-nav">
+          <div class="footer-col">
+            <h4>เมนูลัด</h4>
+            <ul class="footer-links">
+              <li><a href="index.html">👉 หน้าแรก</a></li>
+              <li><a href="courses.html">📚 คอร์สเรียนทั้งหมด</a></li>
+              <li><a href="exam.html">🏆 คลังข้อสอบ A-Level</a></li>
+            </ul>
+          </div>
 
-        <!-- Col 3: Quick Links & Support -->
-        <div class="footer-col">
-          <h4>ข้อมูล & ช่วยเหลือ</h4>
-          <ul class="footer-links">
-            <li><a href="about.html">🔬 เกี่ยวกับพี่ต้น & สถาบัน</a></li>
-            <li><a href="faq.html">❓ คำถามที่พบบ่อย (FAQ)</a></li>
-            <li><a href="guide.html">📖 คู่มือการเรียน & ใช้งาน</a></li>
-            <li><a href="${profileLink}">👤 โปรไฟล์และประวัติการเรียน</a></li>
-            <li><a href="privacy.html">🔒 นโยบายความเป็นส่วนตัว</a></li>
-            <li><a href="terms.html">📜 ข้อตกลงและเงื่อนไข</a></li>
-          </ul>
-        </div>
-
-        <!-- Col 4: Contact & Verification -->
-        <div class="footer-col">
-          <h4>ติดต่อ & บริการนักเรียน</h4>
-          <div class="footer-contact-item">
-            <span>💬</span>
-            <div>
-              <strong style="color:#F1F5F9">LINE Official:</strong>
-              <div>@inbiology (ตอบกลับทุกวัน 09:00 - 21:00 น.)</div>
-            </div>
-          </div>
-          <div class="footer-contact-item">
-            <span>📧</span>
-            <div>
-              <strong style="color:#F1F5F9">อีเมลติดต่อ:</strong>
-              <div>contact.inbiology@gmail.com</div>
-            </div>
-          </div>
-          <div class="footer-contact-item">
-            <span>📱</span>
-            <div>
-              <strong style="color:#F1F5F9">ฝ่ายบริการนักเรียน:</strong>
-              <div>ติดต่อด่วนผ่าน LINE @inbiology</div>
-            </div>
-          </div>
-          <div style="margin-top:14px;background:#1E293B;padding:12px 14px;border-radius:12px;border:1px solid #334155;font-size:12px;line-height:1.5;color:#CBD5E1">
-            🛡️ <strong>ความปลอดภัยการชำระเงิน:</strong><br>
-            ชำระผ่าน PromptPay บัญชีทางการสถาบัน ตรวจสอบสลิปและรับใบเสร็จผ่าน LINE Official
+          <div class="footer-col">
+            <h4>ติดต่อ & ช่วยเหลือ</h4>
+            <ul class="footer-links">
+              <li><a href="about.html">🔬 เกี่ยวกับพี่ต้น</a></li>
+              <li><a href="faq.html">❓ คำถามพบบ่อย</a></li>
+              <li><a href="https://line.me" target="_blank" style="color:#38BDF8;font-weight:800">💬 LINE: @inbiology</a></li>
+            </ul>
           </div>
         </div>
       </div>
 
-      <div class="footer-bottom">
-        <div>
-          © 2026 <strong>INBIOLOGY Academy by พี่ต้น</strong>. สงวนลิขสิทธิ์ทุกประการ.
+      <div class="footer-bottom" style="margin-top:24px;padding-top:16px;border-top:1px solid #1E293B">
+        <div style="font-size:12px">
+          © 2026 <strong>INBIOLOGY Academy by พี่ต้น</strong>. All rights reserved.
         </div>
-        <div class="footer-legal-links">
+        <div class="footer-legal-links" style="font-size:11.5px;gap:14px">
           <a href="privacy.html">นโยบายความเป็นส่วนตัว (PDPA)</a>
           <span>•</span>
           <a href="terms.html">ข้อกำหนดการใช้งาน</a>
-          <span>•</span>
-          <a href="terms.html#refund">นโยบายการคืนเงินและเปลี่ยนคอร์ส</a>
-          <span>•</span>
-          <a href="terms.html#lifetime">เงื่อนไขสิทธิ์ตลอดชีพ</a>
         </div>
       </div>
     </div>
