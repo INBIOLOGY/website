@@ -75,9 +75,30 @@ const AppState = {
     this.updateCartBadges();
   },
   
+  isProfileComplete() {
+    if (!this.isLoggedIn()) return false;
+    const p = this.getStudentProfile();
+    if (!p) return false;
+    if (p.profileCompleted === false) return false;
+    // Essential fields required before placing an order
+    const phone = (p.phone || p.phone_number || '').trim();
+    const hasValidPhone = phone.length >= 9 && phone !== '0000000000';
+    const school = (p.school || '').trim();
+    const hasValidSchool = school.length > 0 && school !== 'ยังไม่ได้ระบุ';
+    const nickname = (p.nickname || '').trim();
+    const hasNickname = nickname.length > 0;
+    const fullName = (p.fullName || p.full_name || '').trim();
+    const hasFullName = fullName.length > 0 && fullName !== 'ผู้ใช้งาน Google';
+    return Boolean(hasValidPhone && hasValidSchool && hasNickname && hasFullName);
+  },
+
   addToCart(course) {
     if (!this.isLoggedIn()) {
       showLoginModal('กรุณาเข้าสู่ระบบหรือสมัครสมาชิกก่อนเลือกซื้อคอร์สเรียน');
+      return;
+    }
+    if (!this.isProfileComplete()) {
+      showCompleteProfileModal(course);
       return;
     }
     if (this.enrolled.includes(course.id)) {
@@ -281,6 +302,199 @@ function showLoginModal(message = 'กรุณาเข้าสู่ระบ
   `;
 
   modal.classList.add('show');
+}
+
+// ── Profile Completion Modal for Google Users ─────────────────────────────────
+function showCompleteProfileModal(courseToResume = null) {
+  let modal = document.getElementById('complete-profile-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'complete-profile-modal';
+    modal.className = 'modal-overlay';
+    document.body.appendChild(modal);
+  }
+
+  const p = AppState.getStudentProfile() || {};
+  const initialName = (p.fullName && p.fullName !== 'ผู้ใช้งาน Google') ? p.fullName : '';
+  const initialNick = (p.nickname && p.nickname !== 'นักเรียน') ? p.nickname : '';
+  const initialPhone = (p.phone && p.phone !== '0000000000') ? p.phone : '';
+  const initialSchool = (p.school && p.school !== 'ยังไม่ได้ระบุ') ? p.school : '';
+  const initialLevel = p.level || 'ม.5';
+  const initialBirth = p.birthdate || '2008-01-01';
+
+  modal.innerHTML = `
+    <div class="modal-backdrop" onclick="document.getElementById('complete-profile-modal').classList.remove('show')"></div>
+    <div class="modal-box animate-fade-in-up" onclick="event.stopPropagation()" style="max-width:480px;width:92%;padding:28px 24px;border-radius:24px;background:white;margin:auto;max-height:90vh;overflow-y:auto;box-shadow:0 20px 40px rgba(0,0,0,0.2)">
+      
+      <!-- Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;border-bottom:1px solid #F1F5F9;padding-bottom:12px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:26px">📝</span>
+          <div>
+            <h3 style="font-size:16.5px;font-weight:900;color:var(--c-navy);margin:0">กรอกข้อมูลนักเรียนให้ครบถ้วน</h3>
+            <p style="font-size:11.5px;color:#64748B;margin:2px 0 0">จำเป็นสำหรับการลงทะเบียนเรียนและตรวจสลิป</p>
+          </div>
+        </div>
+        <button onclick="document.getElementById('complete-profile-modal').classList.remove('show')" style="background:none;border:none;font-size:20px;cursor:pointer;color:#94A3B8;padding:4px">✕</button>
+      </div>
+
+      <!-- Info Banner -->
+      <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;margin-bottom:16px">
+        <span style="font-size:20px;flex-shrink:0">💡</span>
+        <div style="font-size:12px;color:#92400E;line-height:1.5">
+          คุณเข้าสู่ระบบด้วย Google เรียบร้อยแล้ว กรุณาระบุ <strong>เบอร์โทรศัพท์</strong> และ <strong>โรงเรียน</strong> ให้ครบถ้วนก่อนเลือกซื้อคอร์สเรียนครับ
+        </div>
+      </div>
+
+      <!-- Form -->
+      <form id="complete-profile-form" onsubmit="handleCompleteProfileSubmit(event)" style="display:flex;flex-direction:column;gap:12px;text-align:left">
+        
+        <!-- Full Name -->
+        <div>
+          <label style="display:block;font-size:12px;font-weight:800;color:#334155;margin-bottom:4px">
+            👤 ชื่อจริง - นามสกุล <span style="color:#EF4444">*</span>
+          </label>
+          <input type="text" id="cprofile-fullname" required value="${initialName}" placeholder="เช่น นาย วิทศรุต สายตา"
+            style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;box-sizing:border-box" />
+        </div>
+
+        <!-- Nickname & Level -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div>
+            <label style="display:block;font-size:12px;font-weight:800;color:#334155;margin-bottom:4px">
+              😊 ชื่อเล่น <span style="color:#EF4444">*</span>
+            </label>
+            <input type="text" id="cprofile-nickname" required value="${initialNick}" placeholder="เช่น ต้น"
+              style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;box-sizing:border-box" />
+          </div>
+          <div>
+            <label style="display:block;font-size:12px;font-weight:800;color:#334155;margin-bottom:4px">
+              🎓 ระดับชั้น <span style="color:#EF4444">*</span>
+            </label>
+            <select id="cprofile-level" required style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white;box-sizing:border-box">
+              <option value="ม.4" ${initialLevel === 'ม.4' ? 'selected' : ''}>มัธยมศึกษาปีที่ 4</option>
+              <option value="ม.5" ${initialLevel === 'ม.5' ? 'selected' : ''}>มัธยมศึกษาปีที่ 5</option>
+              <option value="ม.6" ${initialLevel === 'ม.6' ? 'selected' : ''}>มัธยมศึกษาปีที่ 6</option>
+              <option value="ม.ต้น" ${initialLevel === 'ม.ต้น' ? 'selected' : ''}>มัธยมศึกษาตอนต้น</option>
+              <option value="ปวช./ปวส." ${initialLevel === 'ปวช./ปวส.' ? 'selected' : ''}>ปวช. / ปวส.</option>
+              <option value="มหาวิทยาลัย" ${initialLevel === 'มหาวิทยาลัย' ? 'selected' : ''}>มหาวิทยาลัย</option>
+              <option value="บุคคลทั่วไป" ${initialLevel === 'บุคคลทั่วไป' ? 'selected' : ''}>บุคคลทั่วไป</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Phone Number -->
+        <div>
+          <label style="display:block;font-size:12px;font-weight:800;color:#334155;margin-bottom:4px">
+            📱 เบอร์โทรศัพท์มือถือ (10 หลัก) <span style="color:#EF4444">*</span>
+          </label>
+          <input type="tel" id="cprofile-phone" required maxlength="10" value="${initialPhone}" placeholder="เช่น 0812345678"
+            style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;box-sizing:border-box" />
+          <span style="font-size:11px;color:#64748B;display:block;margin-top:2px">ใช้สำหรับยืนยันการเรียนและการแจ้งเตือนผลตรวจสลิป</span>
+        </div>
+
+        <!-- School -->
+        <div>
+          <label style="display:block;font-size:12px;font-weight:800;color:#334155;margin-bottom:4px">
+            🏫 โรงเรียน / สถาบันการศึกษา <span style="color:#EF4444">*</span>
+          </label>
+          <input type="text" id="cprofile-school" required value="${initialSchool}" placeholder="เช่น สวนกุหลาบวิทยาลัย, เตรียมอุดมศึกษา"
+            style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;box-sizing:border-box" />
+        </div>
+
+        <!-- Birthdate -->
+        <div>
+          <label style="display:block;font-size:12px;font-weight:800;color:#334155;margin-bottom:4px">
+            🎂 วันเกิด
+          </label>
+          <input type="date" id="cprofile-birthdate" value="${initialBirth}"
+            style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;box-sizing:border-box" />
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="btn-save-cprofile"
+          style="margin-top:8px;background:var(--c-navy);color:white;font-weight:850;font-size:14px;padding:13px;border-radius:12px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 14px rgba(30,58,138,0.25)">
+          ✓ บันทึกข้อมูลและเลือกคอร์สต่อ ➔
+        </button>
+
+      </form>
+    </div>
+  `;
+
+  window._pendingCourseToAddToCart = courseToResume;
+  modal.classList.add('show');
+}
+
+async function handleCompleteProfileSubmit(e) {
+  e.preventDefault();
+  const fullName = document.getElementById('cprofile-fullname').value.trim();
+  const nickname = document.getElementById('cprofile-nickname').value.trim();
+  const phone = document.getElementById('cprofile-phone').value.trim().replace(/[^0-9]/g, '');
+  const school = document.getElementById('cprofile-school').value.trim();
+  const level = document.getElementById('cprofile-level').value;
+  const birthdate = document.getElementById('cprofile-birthdate').value;
+
+  if (!fullName) {
+    showToast('กรุณากรอกชื่อจริง-นามสกุล', 'error');
+    return;
+  }
+  if (!nickname) {
+    showToast('กรุณากรอกชื่อเล่น', 'error');
+    return;
+  }
+  if (phone.length < 9 || phone.length > 10) {
+    showToast('กรุณากรอกเบอร์โทรศัพท์ 9-10 หลักให้ถูกต้อง', 'error');
+    return;
+  }
+  if (!school) {
+    showToast('กรุณากรอกชื่อโรงเรียน', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('btn-save-cprofile');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ กำลังบันทึกข้อมูล...'; }
+
+  try {
+    const current = AppState.getStudentProfile() || {};
+    const updated = {
+      ...current,
+      fullName,
+      nickname,
+      phone,
+      school,
+      level,
+      birthdate,
+      profileCompleted: true
+    };
+
+    AppState.saveStudentProfile(updated);
+
+    // Save to Supabase Cloud in background
+    if (window.CloudService && typeof window.CloudService.saveUserProfile === 'function') {
+      window.CloudService.saveUserProfile(updated.id || updated.email, updated).catch(err => {
+        console.warn('Cloud profile save note:', err);
+      });
+    }
+
+    const modal = document.getElementById('complete-profile-modal');
+    if (modal) modal.classList.remove('show');
+
+    showToast('🎉 บันทึกข้อมูลนักเรียนเรียบร้อยแล้ว!', 'success');
+
+    if (typeof renderHeader === 'function') {
+      renderHeader();
+    }
+
+    // Resume adding course to cart if pending
+    if (window._pendingCourseToAddToCart) {
+      const course = window._pendingCourseToAddToCart;
+      window._pendingCourseToAddToCart = null;
+      AppState.addToCart(course);
+    }
+  } catch(err) {
+    showToast('เกิดข้อผิดพลาด: ' + (err.message || 'กรุณาลองใหม่อีกครั้ง'), 'error');
+    if (btn) { btn.disabled = false; btn.textContent = '✓ บันทึกข้อมูลและเลือกคอร์สต่อ ➔'; }
+  }
 }
 
 // Video Trial Modal Popup Player

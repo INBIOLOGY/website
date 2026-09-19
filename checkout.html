@@ -519,6 +519,11 @@
         showToast('กรุณาเข้าสู่ระบบก่อน', 'error');
         return;
       }
+      if (!AppState.isProfileComplete()) {
+        showToast('กรุณากรอกข้อมูลส่วนตัวให้ครบถ้วนก่อนส่งคำสั่งซื้อ', 'info');
+        showCompleteProfileModal();
+        return;
+      }
       if (AppState.cart.length === 0) {
         showToast('กรุณาเลือกคอร์สก่อนชำระเงิน', 'error');
         return;

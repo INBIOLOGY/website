@@ -100,6 +100,21 @@
 
       <!-- Main Panel & Sub Tabs -->
       <div data-reveal data-delay="0.1s" style="display:flex;flex-direction:column;gap:20px">
+
+        <!-- Profile Incomplete Alert Banner -->
+        <div id="incomplete-profile-banner" style="display:none;background:linear-gradient(135deg, #FEF2F2, #FFF1F2);border:1.5px solid #F87171;border-radius:16px;padding:16px 20px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:0 4px 12px rgba(239, 68, 68, 0.08)">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:24px;line-height:1">⚠️</span>
+            <div>
+              <div style="font-size:14px;font-weight:900;color:#991B1B">ข้อมูลโปรไฟล์นักเรียนยังไม่สมบูรณ์</div>
+              <div style="font-size:12px;color:#7F1D1D;margin-top:2px">กรุณากรอกเบอร์โทรศัพท์และโรงเรียนให้ครบถ้วน เพื่อเปิดใช้งานการเพิ่มคอร์สลงตะกร้าและการสั่งซื้อ</div>
+            </div>
+          </div>
+          <button type="button" onclick="switchDashTab('profile')" style="background:#DC2626;color:white;border:none;border-radius:10px;padding:8px 16px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(220, 38, 38, 0.25)">
+            ✏️ กรอกข้อมูลทันที
+          </button>
+        </div>
+
         <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px">
           <div class="dash-tabs-scroll">
             <button onclick="switchDashTab('courses')" id="dtab-courses"
@@ -427,17 +442,49 @@
       renderEnrolled();
       renderNotes();
       renderFAQs();
+      updateProfileIncompleteBanner();
 
-      // Check for direct tab link in URL (e.g. dashboard.html?tab=orders)
+      // Check for direct tab link in URL (e.g. dashboard.html?tab=orders or incomplete=1)
       const urlParams = new URLSearchParams(window.location.search);
-      const targetTab = urlParams.get('tab');
+      const targetTab = urlParams.get('tab') || (urlParams.get('incomplete') === '1' ? 'profile' : null);
       if (targetTab && ['courses', 'orders', 'profile', 'notes', 'faq'].includes(targetTab)) {
         switchDashTab(targetTab);
+        if (targetTab === 'profile' && urlParams.get('incomplete') === '1') {
+          setTimeout(() => {
+            highlightIncompleteFields();
+            showToast('⚠️ กรุณากรอกเบอร์โทรศัพท์และโรงเรียนให้ครบถ้วนก่อนเลือกซื้อคอร์ส', 'warning');
+          }, 200);
+        }
       } else {
         // Pre-fetch orders in background to show badge count in sidebar
         loadMyOrders(false, true);
       }
     });
+
+    function updateProfileIncompleteBanner() {
+      const banner = document.getElementById('incomplete-profile-banner');
+      if (!banner) return;
+      if (typeof AppState !== 'undefined' && typeof AppState.isProfileComplete === 'function') {
+        banner.style.display = AppState.isProfileComplete() ? 'none' : 'flex';
+      }
+    }
+
+    function highlightIncompleteFields() {
+      const phoneInput = document.getElementById('edit-phone');
+      const schoolInput = document.getElementById('edit-school');
+      if (phoneInput && (!phoneInput.value || phoneInput.value.length < 9)) {
+        phoneInput.style.borderColor = '#EF4444';
+        phoneInput.style.background = '#FEF2F2';
+        phoneInput.focus();
+      }
+      if (schoolInput && (!schoolInput.value || schoolInput.value === 'ยังไม่ได้ระบุ')) {
+        schoolInput.style.borderColor = '#EF4444';
+        schoolInput.style.background = '#FEF2F2';
+        if (!phoneInput || (phoneInput.value && phoneInput.value.length >= 9)) {
+          schoolInput.focus();
+        }
+      }
+    }
 
     function calcDashAge() {
       const bDateVal = document.getElementById('edit-birthdate').value;
@@ -581,6 +628,13 @@
         age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
       }
 
+      const isComplete = Boolean(
+        phone && phone.replace(/[^0-9]/g, '').length >= 9 &&
+        school && school !== 'ยังไม่ได้ระบุ' &&
+        nickname &&
+        fullName && fullName !== 'ผู้ใช้งาน Google'
+      );
+
       const updated = {
         ...current,
         nickname,
@@ -593,7 +647,8 @@
         instagram,
         lineId,
         facebook,
-        email
+        email,
+        profileCompleted: isComplete
       };
 
       AppState.saveStudentProfile(updated);
@@ -609,6 +664,7 @@
 
       loadStudentProfileToUI();
       renderHeader('dashboard');
+      updateProfileIncompleteBanner();
       showToast('🎉 บันทึกข้อมูลส่วนตัวเรียบร้อยแล้ว', 'success');
     }
 

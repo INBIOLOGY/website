@@ -858,7 +858,12 @@
           showToast(`🎉 ยินดีต้อนรับกลับ ${payload.name}! เข้าสู่ระบบด้วย Google สำเร็จ`, 'success');
         }
 
-        setTimeout(() => location.href = redirectUrl, 800);
+        if (!AppState.isProfileComplete()) {
+          showToast(`🎉 เข้าสู่ระบบด้วย Google สำเร็จ! กรุณาระบุเบอร์โทรและโรงเรียนเพื่อเปิดใช้งานการซื้อคอร์ส`, 'info');
+          setTimeout(() => location.href = 'dashboard.html?tab=profile&incomplete=1', 900);
+        } else {
+          setTimeout(() => location.href = redirectUrl, 800);
+        }
       } catch(err) {
         console.error('GSI credential error:', err);
         showToast(`❌ เข้าสู่ระบบด้วย Google ไม่สำเร็จ: ${err.message}`, 'error');
@@ -915,8 +920,12 @@
       try {
         showToast('🔄 จำลองการเข้าสู่ระบบด้วย Google OAuth...', 'info');
         const res = await window.CloudService.loginWithGooglePayload(demoPayload);
-        showToast(`🎉 เข้าสู่ระบบด้วย Google (Demo User: ${demoPayload.name}) สำเร็จ!`, 'success');
-        setTimeout(() => location.href = redirectUrl, 800);
+        if (!AppState.isProfileComplete()) {
+          showToast(`🎉 เข้าสู่ระบบด้วย Google สำเร็จ! กรุณาระบุเบอร์โทรและโรงเรียนเพื่อเปิดใช้งานการซื้อคอร์ส`, 'info');
+          setTimeout(() => location.href = 'dashboard.html?tab=profile&incomplete=1', 900);
+        } else {
+          setTimeout(() => location.href = redirectUrl, 800);
+        }
       } catch(e) {
         showToast(`❌ ${e.message}`, 'error');
       }

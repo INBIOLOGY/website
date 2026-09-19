@@ -665,6 +665,7 @@ const CloudService = window.CloudService = {
         linkedAt: new Date().toISOString()
       }],
       enrolled: [],
+      profileCompleted: false,
       createdAt: new Date().toISOString()
     };
 
