@@ -12,19 +12,44 @@ function pct(orig, cur) {
   return Math.round((1 - cur / orig) * 100);
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// TAB SESSION SECURITY GUARD
+// Enforce session-only authentication: When the browser tab/window is closed,
+// the login session automatically expires so users must log in again for security.
+// ─────────────────────────────────────────────────────────────────────────────
+(function enforceTabSessionSecurity() {
+  const isSessionActive = sessionStorage.getItem('inbiology_session_active');
+  if (!isSessionActive) {
+    // Tab was closed and reopened, or user opened in a new tab -> Invalidate credentials
+    localStorage.removeItem('inbiology_role');
+    localStorage.removeItem('inbiology_student_profile');
+    localStorage.removeItem('inbiology_enrolled');
+  }
+})();
+
 // Global Application State & Storage
 const AppState = {
   cart: JSON.parse(localStorage.getItem('inbiology_cart') || '[]'),
   enrolled: [],
   lang: localStorage.getItem('inbiology_lang') || 'TH',
   appliedCoupon: null,
-  userRole: localStorage.getItem('inbiology_role') || null,
+  userRole: (sessionStorage.getItem('inbiology_session_active') ? localStorage.getItem('inbiology_role') : null),
+
+  setSessionActive(active = true) {
+    if (active) {
+      sessionStorage.setItem('inbiology_session_active', 'true');
+    } else {
+      sessionStorage.removeItem('inbiology_session_active');
+    }
+  },
 
   isLoggedIn() {
-    return Boolean(this.userRole && this.userRole !== 'guest');
+    const isSessionActive = Boolean(sessionStorage.getItem('inbiology_session_active'));
+    return Boolean(isSessionActive && this.userRole && this.userRole !== 'guest');
   },
   
   getStudentProfile() {
+    if (!sessionStorage.getItem('inbiology_session_active')) return null;
     const saved = localStorage.getItem('inbiology_student_profile');
     if (saved) {
       try { return JSON.parse(saved); } catch(e){}
@@ -33,6 +58,7 @@ const AppState = {
   },
 
   saveStudentProfile(profile) {
+    sessionStorage.setItem('inbiology_session_active', 'true');
     localStorage.setItem('inbiology_student_profile', JSON.stringify(profile));
   },
 
@@ -126,6 +152,7 @@ const AppState = {
     }
     this.userRole = null;
     this.enrolled = [];
+    sessionStorage.removeItem('inbiology_session_active');
     localStorage.removeItem('inbiology_role');
     localStorage.removeItem('inbiology_student_profile');
     localStorage.removeItem('inbiology_enrolled');

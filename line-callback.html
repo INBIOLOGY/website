@@ -52,14 +52,14 @@
     async function processLineUser(info) {
       const name=info.name||'LINE User';
       const profile={lineId:info.sub,fullName:name,nickname:name.split(' ')[0],email:info.email||('line_'+info.sub+'@line.user'),avatar:info.picture||'',school:'ยังไม่ได้ระบุ',level:'ม.5',role:'student',authProvider:'line'};
-      AppState.userRole='student';localStorage.setItem('inbiology_role','student');AppState.saveStudentProfile(profile);
+      AppState.userRole='student';sessionStorage.setItem('inbiology_session_active','true');localStorage.setItem('inbiology_role','student');AppState.saveStudentProfile(profile);
       showSuccess(name);
       const r=sessionStorage.getItem('line_redirect')||'classroom.html';sessionStorage.removeItem('line_redirect');
       setTimeout(()=>{location.href=r;},1200);
     }
     async function processLineUserDemo(code) {
       const profile={fullName:'นาย LINE Demo User',nickname:'LINE',email:'line.demo@inbiology.com',school:'โรงเรียนทดสอบ',level:'ม.6',role:'student',authProvider:'line_demo'};
-      AppState.userRole='student';localStorage.setItem('inbiology_role','student');AppState.saveStudentProfile(profile);
+      AppState.userRole='student';sessionStorage.setItem('inbiology_session_active','true');localStorage.setItem('inbiology_role','student');AppState.saveStudentProfile(profile);
       showSuccess('LINE User (Demo)');
       const r=sessionStorage.getItem('line_redirect')||'classroom.html';sessionStorage.removeItem('line_redirect');
       setTimeout(()=>{location.href=r;},1500);

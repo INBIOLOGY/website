@@ -43,9 +43,16 @@ const CloudService = window.CloudService = {
           this.auth.onAuthStateChanged(async (user) => {
             this.currentUser = user;
             if (user) {
+              const isSessionActive = sessionStorage.getItem('inbiology_session_active');
+              if (!isSessionActive) {
+                // Tab was closed, sign out stale Firebase auth
+                try { await this.auth.signOut(); } catch(e){}
+                return;
+              }
               const profile = await this.getUserProfile(user.uid);
               if (profile) {
                 AppState.userRole = profile.role || 'student';
+                sessionStorage.setItem('inbiology_session_active', 'true');
                 localStorage.setItem('inbiology_role', AppState.userRole);
                 AppState.saveStudentProfile(profile);
               }
@@ -457,6 +464,7 @@ const CloudService = window.CloudService = {
 
     // Set Active State
     AppState.userRole = 'student';
+    sessionStorage.setItem('inbiology_session_active', 'true');
     localStorage.setItem('inbiology_role', 'student');
     AppState.saveStudentProfile(newUser);
 
@@ -537,6 +545,7 @@ const CloudService = window.CloudService = {
             enrolled: (sbUser.enrolled && Array.isArray(sbUser.enrolled)) ? sbUser.enrolled : []
           };
           AppState.userRole = userProfile.role;
+          sessionStorage.setItem('inbiology_session_active', 'true');
           localStorage.setItem('inbiology_role', AppState.userRole);
           AppState.saveStudentProfile(userProfile);
           if (userProfile.enrolled.length > 0) {
@@ -575,6 +584,7 @@ const CloudService = window.CloudService = {
 
     // Success
     AppState.userRole = user.role || 'student';
+    sessionStorage.setItem('inbiology_session_active', 'true');
     localStorage.setItem('inbiology_role', AppState.userRole);
     AppState.saveStudentProfile(user);
 
@@ -608,6 +618,7 @@ const CloudService = window.CloudService = {
     if (user) {
       // Direct OAuth login match
       AppState.userRole = user.role || 'student';
+      sessionStorage.setItem('inbiology_session_active', 'true');
       localStorage.setItem('inbiology_role', AppState.userRole);
       AppState.saveStudentProfile(user);
       return { user, isNew: false, isAutoLinked: false };
@@ -630,6 +641,7 @@ const CloudService = window.CloudService = {
       this._saveUsersDb(users);
 
       AppState.userRole = user.role || 'student';
+      sessionStorage.setItem('inbiology_session_active', 'true');
       localStorage.setItem('inbiology_role', AppState.userRole);
       AppState.saveStudentProfile(user);
       return { user, isNew: false, isAutoLinked: true };
@@ -714,6 +726,7 @@ const CloudService = window.CloudService = {
     this._saveUsersDb(users);
 
     AppState.userRole = 'student';
+    sessionStorage.setItem('inbiology_session_active', 'true');
     localStorage.setItem('inbiology_role', 'student');
     AppState.saveStudentProfile(newUser);
     return { user: newUser, isNew: true, isAutoLinked: false };
@@ -850,10 +863,13 @@ const CloudService = window.CloudService = {
 
   async logout() {
     if (this.isLive && this.auth) {
-      await this.auth.signOut();
+      try { await this.auth.signOut(); } catch(e){}
     }
     AppState.userRole = null;
+    sessionStorage.removeItem('inbiology_session_active');
     localStorage.removeItem('inbiology_role');
+    localStorage.removeItem('inbiology_student_profile');
+    localStorage.removeItem('inbiology_enrolled');
   },
 
   async getUserProfile(uid) {
