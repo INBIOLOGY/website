@@ -752,14 +752,13 @@ h6 {
     align-items: stretch !important;
   }
 
-  /* Mobile overlay — Subtle gradient so top text and bottom stats remain crystal clear */
+  /* Mobile overlay — Natural sky view with gentle bottom vignette for buttons */
   .hero-section::before {
     background: linear-gradient(
       to bottom,
-      rgba(5, 15, 50, 0.72) 0%,
-      rgba(5, 15, 50, 0.35) 24%,
-      rgba(5, 15, 50, 0.05) 45%,
-      rgba(5, 15, 50, 0.12) 65%,
+      rgba(5, 15, 50, 0.25) 0%,
+      rgba(5, 15, 50, 0.0) 35%,
+      rgba(5, 15, 50, 0.08) 60%,
       rgba(5, 15, 50, 0.55) 100%
     );
   }
@@ -773,11 +772,11 @@ h6 {
     box-sizing: border-box !important;
   }
 
-  /* Full-height column separating Top Title and Bottom Actions across the bird illustration */
+  /* Full-height column pushing Bottom Actions to the bottom below the bird illustration */
   .hero-content-col {
     display: flex !important;
     flex-direction: column !important;
-    justify-content: space-between !important;
+    justify-content: flex-end !important;
     flex: 1 !important;
     width: 100% !important;
     min-height: calc(100svh - 150px) !important;
@@ -785,32 +784,9 @@ h6 {
     z-index: 5 !important;
   }
 
-  /* Top Title Block */
+  /* Hide "เรียนชีวะให้เข้าใจ ไม่ใช่แค่จำ" on mobile phone ONLY as requested */
   .hero-top-block {
-    text-align: center !important;
-    width: 100% !important;
-    margin-top: 4px !important;
-  }
-
-  .hero-main-title {
-    font-size: clamp(28px, 8.2vw, 34px) !important;
-    line-height: 1.18 !important;
-    margin: 0 !important;
-    text-shadow: 0 4px 18px rgba(15, 23, 42, 0.75) !important;
-    text-align: center !important;
-  }
-
-  .hero-title-highlight {
-    font-size: clamp(25px, 7.2vw, 30px) !important;
-    margin-top: 3px !important;
-    text-shadow: 0 3px 12px rgba(0, 0, 0, 0.45) !important;
-  }
-
-  .hero-title-sub {
-    font-size: 13px !important;
-    margin-top: 8px !important;
-    opacity: 0.95 !important;
-    text-align: center !important;
+    display: none !important;
   }
 
   /* Bottom Actions & Stats Block (Below the bird illustration as requested) */
