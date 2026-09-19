@@ -462,379 +462,207 @@ h6 {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   HERO — NEW LAYOUT SYSTEM
-   รูปนก = <img> จริงไม่ใช่ background, content row ข้างล่าง
+   HERO SECTION — INBIOLOGY Illustration Hero
+   Desktop/iPad: landscape bird bg + instructor glass card right (Everything on top of bird)
+   Mobile: portrait bird bg + stacked clean layout
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Wrapper ครอบทั้งหมด */
-.hero-wrapper {
-  width: 100%;
-  background: var(--c-page);
-  padding-top: 72px; /* header height */
-}
-
-/* ── 1. Image Banner ─────────────────────────────────────────────────────── */
-.hero-img-banner {
-  width: 100%;
+.hero-section {
+  padding-top: 130px;
+  padding-bottom: 70px;
   overflow: hidden;
-  line-height: 0;
-  max-height: 480px; /* desktop: landscape ratio */
+  position: relative;
+  /* Desktop: landscape bird illustration */
+  background: url('../hero-desktop.jpg') center 55% / cover no-repeat;
+  min-height: 720px;
+  display: flex;
+  align-items: center;
+  border-bottom: none !important;
 }
 
-.hero-img-desktop {
-  width: 100%;
-  height: 100%;
-  max-height: 480px;
-  object-fit: cover;
-  object-position: center 55%;
-  display: block;
+/* Dark overlay — ซ้ายบนเข้มให้อ่านตัวหนังสือชัดเจน, ขวาล่างโปร่งให้เห็นภาพนกงดงาม */
+.hero-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    rgba(5, 15, 50, 0.65) 0%,
+    rgba(5, 15, 50, 0.42) 40%,
+    rgba(5, 15, 50, 0.12) 70%,
+    rgba(5, 15, 50, 0.05) 100%
+  );
+  z-index: 1;
 }
 
-.hero-img-mobile {
-  display: none; /* hidden on desktop */
-}
-
-/* ── 2. Content Section (below image) ───────────────────────────────────── */
-.hero-content-section {
-  background: linear-gradient(180deg, #EFF6FF 0%, var(--c-page) 60%);
-  padding: 40px 0 48px;
-}
-
-.hero-content-inner {
-  max-width: 1200px;
+.hero-grid {
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 40px;
   display: grid;
-  grid-template-columns: 1fr 360px;
+  grid-template-columns: 1.15fr 0.85fr;
   gap: 40px;
-  align-items: flex-start;
-}
-
-/* ── Left column: Title + Buttons + Stats ───────────────────────────────── */
-.hero-left-col {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.hero-title {
-  font-size: clamp(32px, 3.5vw, 52px);
-  font-weight: 950;
-  color: var(--c-navy);
-  line-height: 1.15;
-  margin: 0 0 6px;
-}
-
-.hero-title-yellow {
-  display: block;
-  color: #DC2626;
-  font-size: clamp(28px, 3vw, 46px);
-  font-weight: 950;
-  margin-top: 4px;
-}
-
-.hero-subtitle {
-  display: block;
-  color: #4B5563;
-  font-size: clamp(14px, 1.5vw, 18px);
-  font-weight: 600;
-  margin-top: 12px;
-  line-height: 1.5;
-}
-
-/* Buttons */
-.hero-btn-row {
-  display: flex;
-  gap: 14px;
-  flex-wrap: wrap;
-  margin-top: 24px;
-}
-
-.hero-btn-primary {
-  background: #EF4444;
-  color: white;
-  font-weight: 850;
-  font-size: 15px;
-  padding: 13px 28px;
-  border-radius: 12px;
-  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  box-shadow: 0 8px 20px rgba(239,68,68,0.35);
-  text-decoration: none;
-  transition: transform 0.15s, box-shadow 0.15s;
-}
-.hero-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(239,68,68,0.4); }
-
-.hero-btn-outline {
-  background: #EFF6FF;
-  border: 2px solid #1E3A8A;
-  color: #1E3A8A;
-  font-weight: 800;
-  font-size: 15px;
-  padding: 12px 24px;
-  border-radius: 12px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-  transition: background 0.15s;
-}
-.hero-btn-outline:hover { background: #DBEAFE; }
-
-/* Stats Row */
-.hero-stats-row {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  margin-top: 28px;
-  background: white;
-  border: 1.5px solid #E5E7EB;
-  border-radius: 20px;
-  padding: 16px 24px;
-  box-shadow: 0 4px 16px rgba(15,23,42,0.05);
-  max-width: 480px;
+  width: 100%;
+  position: relative;
+  z-index: 2;
 }
 
-.hero-stat-item {
-  flex: 1;
-  text-align: center;
-}
-
-.hero-stat-num {
-  font-size: 22px;
-  font-weight: 950;
-  color: var(--c-navy);
-  line-height: 1;
-  margin-bottom: 4px;
-}
-
-.hero-stat-label {
-  font-size: 10.5px;
-  font-weight: 700;
-  color: #6B7280;
-  line-height: 1.3;
-}
-
-.hero-stat-divider {
-  width: 1px;
-  height: 40px;
-  background: #E5E7EB;
-  flex-shrink: 0;
-}
-
-/* ── Right column: Instructor Card ─────────────────────────────────────── */
-.hero-right-col {
+.hero-instructor-wrap {
   display: flex;
   justify-content: flex-end;
+  width: 100%;
 }
 
 .instructor-glass-card {
-  width: 340px;
+  width: 320px;
   max-width: 100%;
   border-radius: 28px;
-  background: white;
-  border: 1.5px solid #E5E7EB;
-  padding: 24px;
-  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
+  background: rgba(240, 246, 255, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  padding: 22px;
+  box-shadow: 0 24px 56px rgba(15, 23, 42, 0.18);
+  margin: 0;
 }
 
-/* ── TABLET (641px–1024px) ─────────────────────────────────────────────── */
+/* Stats grid desktop */
+.hero-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  align-items: center;
+}
+
+/* ─── TABLET (641px–1024px) ─────────────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .hero-content-inner {
-    grid-template-columns: 1fr 300px;
-    gap: 28px;
+  .hero-section {
+    min-height: 640px;
+    padding-top: 110px;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
     padding: 0 24px;
+    align-items: flex-start;
   }
 
-  .hero-img-banner {
-    max-height: 360px;
-  }
-
-  .hero-img-desktop {
-    max-height: 360px;
+  .hero-instructor-wrap {
+    justify-content: flex-end !important;
+    margin: 0 !important;
   }
 
   .instructor-glass-card {
-    width: 100%;
-    padding: 20px;
+    width: 280px;
+    padding: 18px;
   }
 }
 
-/* ── MOBILE (≤640px): Full-screen bird hero with text overlay ──────────── */
+/* ─── MOBILE (≤640px): portrait illustration, stacked clean layout ───────── */
 @media (max-width: 640px) {
-  .hero-wrapper {
-    padding-top: 0; /* header is fixed, no top pad needed */
-  }
-
-  /* ─ Image Banner: full viewport height ─ */
-  .hero-img-banner {
-    max-height: none;
-    height: 100svh;
-    position: relative;
-    overflow: hidden;
-  }
-
-  /* Switch to portrait image */
-  .hero-img-desktop { display: none !important; }
-  .hero-img-mobile {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center center;
-  }
-
-  /* ─ Mobile Overlay: text floating on the bird image ─ */
-  .hero-mobile-overlay {
-    display: flex !important; /* show on mobile */
-    flex-direction: column;
+  .hero-section {
+    /* Mobile: portrait bird illustration */
+    background: url('../hero-mobile.jpg') center top / cover no-repeat;
+    min-height: 100svh;
+    padding-top: 76px;
+    padding-bottom: 40px;
     align-items: flex-start;
-    gap: 14px;
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    padding: 80px 22px 24px; /* top pad for header */
+  }
+
+  /* Mobile overlay — เข้มด้านบนเพื่อให้อ่านข้อความง่าย ชัดเจน */
+  .hero-section::before {
     background: linear-gradient(
       to bottom,
-      rgba(5, 15, 55, 0.72) 0%,
-      rgba(5, 15, 55, 0.40) 38%,
-      rgba(5, 15, 55, 0.00) 60%
+      rgba(5, 15, 50, 0.72) 0%,
+      rgba(5, 15, 50, 0.45) 30%,
+      rgba(5, 15, 50, 0.15) 55%,
+      rgba(5, 15, 50, 0.35) 100%
     );
-    z-index: 5;
   }
 
-  .hero-mobile-title {
-    font-size: clamp(26px, 8vw, 34px);
-    font-weight: 950;
-    color: #FFFFFF;
-    line-height: 1.2;
-    margin: 0;
-    text-shadow: 0 3px 14px rgba(0,0,0,0.6);
-  }
-
-  .hero-mobile-yellow {
-    display: block;
-    color: #FACC15;
-    font-size: clamp(22px, 7vw, 30px);
-    font-weight: 950;
-    margin-top: 2px;
-    text-shadow: 0 2px 10px rgba(0,0,0,0.4);
-  }
-
-  .hero-mobile-sub {
-    display: block;
-    color: rgba(255,255,255,0.92);
-    font-size: 13px;
-    font-weight: 600;
-    margin-top: 8px;
-    line-height: 1.4;
-    text-shadow: 0 1px 8px rgba(0,0,0,0.5);
-  }
-
-  .hero-mobile-btn-row {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 4px;
-  }
-
-  /* Red primary button */
-  .hero-mobile-btn-row .hero-btn-primary {
-    background: #EF4444;
-    color: white;
-    font-weight: 850;
-    font-size: 13px;
-    padding: 10px 20px;
-    border-radius: 10px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    box-shadow: 0 6px 16px rgba(239,68,68,0.4);
-    text-decoration: none;
-    white-space: nowrap;
-  }
-
-  /* Glass outline button */
-  .hero-btn-glass {
-    background: rgba(59,130,246,0.35);
-    border: 1.5px solid rgba(255,255,255,0.75);
-    color: white;
-    font-weight: 800;
-    font-size: 13px;
-    padding: 10px 20px;
-    border-radius: 10px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-
-  /* Compact stats pill */
-  .hero-mobile-stats-pill {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(255,255,255,0.18);
-    border: 1px solid rgba(255,255,255,0.40);
-    border-radius: 999px;
-    padding: 7px 16px;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    flex-wrap: wrap;
-  }
-
-  .hero-mobile-stats-pill span {
-    font-size: 11px;
-    font-weight: 800;
-    color: white;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
-    white-space: nowrap;
-  }
-
-  .pill-dot {
-    color: rgba(255,255,255,0.5) !important;
-    font-size: 14px !important;
-    font-weight: 400 !important;
-  }
-
-  /* ─ Content Section: show only instructor card below image ─ */
-  .hero-content-section {
-    padding: 24px 0 32px;
-    background: linear-gradient(180deg, #EFF6FF 0%, #F8FAFC 70%);
-  }
-
-  .hero-content-inner {
+  .hero-grid {
     grid-template-columns: 1fr;
-    gap: 0;
+    gap: 24px;
     padding: 0 20px;
+    align-items: flex-start;
   }
 
-  /* Hide the desktop left col (text+stats) on mobile — already shown in overlay */
-  .hero-left-col {
-    display: none !important;
-  }
-
-  /* Card: full width, centered */
-  .hero-right-col {
-    justify-content: center;
+  .hero-instructor-wrap {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    margin-top: 12px !important;
   }
 
   .instructor-glass-card {
-    width: 100%;
-    max-width: 360px;
-    margin: 0 auto;
+    width: 100% !important;
+    max-width: 330px !important;
+    margin: 0 auto !important;
+    background: rgba(240, 246, 255, 0.90) !important;
   }
-}
 
-/* Ensure mobile overlay hidden on desktop */
-.hero-mobile-overlay {
-  display: none;
-}
-.hero-btn-glass {
-  /* desktop fallback — not shown since overlay is hidden */
+  /* Text adjustments on mobile */
+  .hero-section h1 {
+    font-size: clamp(26px, 8vw, 34px) !important;
+    line-height: 1.2 !important;
+  }
+
+  .hero-section h1 > span:first-of-type {
+    font-size: clamp(23px, 7vw, 30px) !important;
+  }
+
+  .hero-section h1 > span:last-of-type {
+    font-size: 13.5px !important;
+    margin-top: 10px !important;
+  }
+
+  /* Buttons on mobile */
+  .hero-section [style*="display:flex"][style*="gap:14px"] {
+    gap: 10px !important;
+    margin-top: 18px !important;
+  }
+
+  .hero-section [style*="display:flex"][style*="gap:14px"] a {
+    font-size: 13px !important;
+    padding: 10px 18px !important;
+    border-radius: 10px !important;
+  }
+
+  /* Stats grid on mobile */
+  .hero-stats-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    margin-top: 18px !important;
+    padding: 12px 14px !important;
+    gap: 0 !important;
+  }
+
+  .hero-stats-grid > div {
+    flex: 1;
+    text-align: center;
+    border-left: 1px solid rgba(255,255,255,0.22) !important;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+
+  .hero-stats-grid > div:first-child {
+    border-left: none !important;
+    padding-left: 0 !important;
+  }
+
+  .hero-stats-grid > div > div:first-child {
+    font-size: 16px !important;
+  }
+
+  .hero-stats-grid > div > div:last-child {
+    font-size: 9.5px !important;
+    white-space: normal !important;
+    line-height: 1.2 !important;
+  }
 }
 
 

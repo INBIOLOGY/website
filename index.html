@@ -25,7 +25,7 @@
   <meta property="twitter:image" content="https://inbiology-official.vercel.app/instructor.jpg">
 
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
-  <link rel="stylesheet" href="./css/style.css?v=20260919_v15">
+  <link rel="stylesheet" href="./css/style.css?v=20260919_v16">
 </head>
 <body id="top">
 
@@ -78,132 +78,106 @@
     </div>
   </header>
 
-  <!-- ═══════════════════════════════════════════════════════════════════
-       HERO SECTION — New Layout
-       รูปนก = img จริง (ไม่ใช่ background), content ทั้งหมดอยู่ข้างล่าง
-       ═══════════════════════════════════════════════════════════════════ -->
-  <div class="hero-wrapper">
-
-    <!-- ── 1. HERO IMAGE BANNER ───────────────────────────────────────── -->
-    <div class="hero-img-banner">
-      <!-- Desktop / iPad: landscape -->
-      <img src="./hero-desktop.jpg" alt="INBIOLOGY Academy — นักเรียนนั่งบนนกบินในท้องฟ้า" class="hero-img-desktop" loading="eager" decoding="async" />
-      <!-- Mobile: portrait -->
-      <img src="./hero-mobile.jpg" alt="INBIOLOGY Academy — นักเรียนนั่งบนนกบินในท้องฟ้า" class="hero-img-mobile" loading="eager" decoding="async" />
-
-      <!-- Mobile-only: text overlay ON the bird image (hidden on desktop) -->
-      <div class="hero-mobile-overlay">
-        <h1 class="hero-mobile-title">
+  <!-- Hero Banner -->
+  <section class="hero-section">
+    <div class="hero-grid">
+      <!-- Hero Left Content (Matching User Screenshot) -->
+      <div class="animate-fade-in-up">
+        <h1 style="font-size:clamp(38px,5vw,60px);font-weight:950;color:#FFFFFF;line-height:1.15;margin:0;text-shadow:0 4px 16px rgba(15,23,42,0.6)">
           เรียนชีวะให้เข้าใจ
-          <span class="hero-mobile-yellow">ไม่ใช่แค่จำ</span>
-          <span class="hero-mobile-sub">ติวเข้มออนไลน์แบบครบวงจรกับ พี่ต้น</span>
+          <span style="display:block;color:#FACC15;font-size:clamp(34px,4.5vw,54px);font-weight:950;margin-top:6px;text-shadow:0 4px 12px rgba(0,0,0,0.3)">ไม่ใช่แค่จำ</span>
+          <span style="display:block;color:#FFFFFF;font-size:clamp(16px,2.2vw,22px);font-weight:700;margin-top:14px;opacity:0.95">ติวเข้มออนไลน์แบบครบวงจรกับ พี่ต้น</span>
         </h1>
-        <div class="hero-mobile-btn-row">
-          <a href="courses.html" class="hero-btn-primary">ดูคอร์สทั้งหมด ➔</a>
-          <a href="#trial" class="hero-btn-glass">▶ เริ่มเรียนฟรี</a>
+
+        <!-- Hero Buttons -->
+        <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:28px">
+          <a href="courses.html" style="background:#EF4444;color:white;font-weight:850;font-size:14px;padding:12px 24px;border-radius:12px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 8px 20px rgba(239,68,68,0.35);text-decoration:none">
+            ดูคอร์สทั้งหมด ➔
+          </a>
+          <a href="#trial" style="background:rgba(59,130,246,0.35);border:1.5px solid rgba(255,255,255,0.7);color:white;font-weight:800;font-size:14px;padding:12px 24px;border-radius:12px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:inline-flex;align-items:center;gap:6px;cursor:pointer;text-decoration:none">
+            ▶ เริ่มเรียนฟรี
+          </a>
         </div>
-        <div class="hero-mobile-stats-pill">
-          <span>50,000+ นักเรียน</span>
-          <span class="pill-dot">·</span>
-          <span>11+ คอร์ส</span>
-          <span class="pill-dot">·</span>
-          <span>100% ตรงเกณฑ์</span>
+
+        <!-- Translucent Glass Stats Bar (Matching User Screenshot & Audit 1.3) -->
+        <div class="hero-stats-grid" style="background:rgba(255,255,255,0.14);border:1.5px solid rgba(255,255,255,0.35);border-radius:20px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:18px 24px;margin-top:28px">
+          <div>
+            <div style="font-size:20px;font-weight:950;color:white;margin-bottom:3px;line-height:1">50,000+</div>
+            <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.85);white-space:nowrap">นักเรียนไว้วางใจตั้งแต่ปี 2018</div>
+          </div>
+          <div style="border-left:1px solid rgba(255,255,255,0.25);padding-left:12px">
+            <div style="font-size:20px;font-weight:950;color:white;margin-bottom:3px;line-height:1">11+</div>
+            <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.85);white-space:nowrap">คอร์สคุณภาพ</div>
+          </div>
+          <div style="border-left:1px solid rgba(255,255,255,0.25);padding-left:12px">
+            <div style="font-size:20px;font-weight:950;color:white;margin-bottom:3px;line-height:1">100%</div>
+            <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.85);white-space:nowrap">ตรงตามเกณฑ์การสอบ</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Instructor Glass Card (Centered on mobile, right-aligned on desktop) -->
+      <div class="animate-fade-in hero-instructor-wrap">
+        <div class="instructor-glass-card">
+          <div style="display:flex;flex-direction:column;align-items:center;text-align:center">
+            
+            <!-- Avatar with Active Green Dot -->
+            <div style="position:relative;margin-bottom:12px">
+              <div style="width:110px;height:110px;min-width:110px;min-height:110px;aspect-ratio:1/1;border-radius:50%;border:3px solid #1E3A8A;overflow:hidden;background:#1E3A8A;box-shadow:0 8px 24px rgba(30,58,138,0.2)">
+                <img src="./instructor.jpg" alt="พี่ต้น" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;object-position:center top" />
+              </div>
+              <span style="position:absolute;bottom:4px;right:6px;width:16px;height:16px;min-width:16px;min-height:16px;aspect-ratio:1/1;background:#10B981;border:2.5px solid white;border-radius:50%;display:block"></span>
+            </div>
+
+            <!-- Name & Subtitle -->
+            <h3 style="color:#111827;font-weight:900;font-size:20px;margin:0 0 2px">พี่ต้น</h3>
+            <p style="color:#6B7280;font-size:12px;font-weight:600;margin:0 0 10px">นายพิสิษฐ์ สายตา</p>
+
+            <!-- Badges -->
+            <div style="display:flex;justify-content:center;gap:6px;margin-bottom:16px;flex-wrap:wrap">
+              <span style="background:#FEE2E2;color:#EF4444;font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px">🔬 ชีววิทยา</span>
+              <span style="background:#EFF6FF;color:#1E3A8A;font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px">🎓 เกียรตินิยมอันดับ 1</span>
+            </div>
+
+            <!-- Qualification List White Card -->
+            <div style="background:#FFFFFF;border-radius:20px;padding:12px 16px;width:100%;box-shadow:0 4px 16px rgba(0,0,0,0.02);text-align:left;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;gap:10px;font-size:11.5px;color:#374151;font-weight:700">
+                <span style="font-size:14px">🎓</span>
+                <span>ป.ตรี คณะศึกษาศาสตร์ มหาวิทยาลัยนเรศวร</span>
+              </div>
+              <div style="border-top:1px solid #F3F4F6;padding-top:8px;display:flex;align-items:center;gap:10px;font-size:11.5px;color:#374151;font-weight:700">
+                <span style="font-size:14px">🎓</span>
+                <span>ป.โท คณะศึกษาศาสตร์ มหาวิทยาลัยขอนแก่น</span>
+              </div>
+              <div style="border-top:1px solid #F3F4F6;padding-top:8px;display:flex;align-items:center;gap:10px;font-size:11.5px;color:#374151;font-weight:700">
+                <span style="font-size:14px">📚</span>
+                <span>ประสบการณ์สอน 9 ปี</span>
+              </div>
+              <div style="border-top:1px solid #F3F4F6;padding-top:8px;display:flex;align-items:center;gap:10px;font-size:11.5px;color:#374151;font-weight:700">
+                <span style="font-size:14px">🏫</span>
+                <span>วิทยากรพิเศษตามโรงเรียนต่างๆ</span>
+              </div>
+            </div>
+
+            <!-- Rating & Reviews Bar -->
+            <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:16px;width:100%">
+              <span style="color:#F59E0B;font-size:14px">⭐ ⭐ ⭐ ⭐ ⭐</span>
+              <span style="font-size:14px;font-weight:900;color:#111827;margin-left:4px">4.98</span>
+              <span style="font-size:11px;color:#9CA3AF;font-weight:600">(2,847 รีวิว)</span>
+            </div>
+
+          </div>
         </div>
       </div>
     </div>
 
-
-    <!-- ── 2. HERO CONTENT ROW (below image) ─────────────────────────── -->
-    <div class="hero-content-section">
-      <div class="hero-content-inner">
-
-        <!-- Left: Title + Subtitle + Buttons + Stats -->
-        <div class="hero-left-col animate-fade-in-up">
-
-          <!-- Title -->
-          <h1 class="hero-title">
-            เรียนชีวะให้เข้าใจ
-            <span class="hero-title-yellow">ไม่ใช่แค่จำ</span>
-            <span class="hero-subtitle">ติวเข้มออนไลน์แบบครบวงจรกับ พี่ต้น</span>
-          </h1>
-
-          <!-- Buttons -->
-          <div class="hero-btn-row">
-            <a href="courses.html" class="hero-btn-primary">
-              ดูคอร์สทั้งหมด ➔
-            </a>
-            <a href="#trial" class="hero-btn-outline">
-              ▶ เริ่มเรียนฟรี
-            </a>
-          </div>
-
-          <!-- Stats Bar -->
-          <div class="hero-stats-row">
-            <div class="hero-stat-item">
-              <div class="hero-stat-num">50,000+</div>
-              <div class="hero-stat-label">นักเรียนไว้วางใจตั้งแต่ปี 2018</div>
-            </div>
-            <div class="hero-stat-divider"></div>
-            <div class="hero-stat-item">
-              <div class="hero-stat-num">11+</div>
-              <div class="hero-stat-label">คอร์สคุณภาพ</div>
-            </div>
-            <div class="hero-stat-divider"></div>
-            <div class="hero-stat-item">
-              <div class="hero-stat-num">100%</div>
-              <div class="hero-stat-label">ตรงตามเกณฑ์การสอบ</div>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Right: Instructor Glass Card -->
-        <div class="hero-right-col animate-fade-in">
-          <div class="instructor-glass-card">
-            <div style="display:flex;flex-direction:column;align-items:center;text-align:center">
-
-              <!-- Avatar with Active Green Dot -->
-              <div style="position:relative;margin-bottom:12px">
-                <div style="width:110px;height:110px;min-width:110px;min-height:110px;aspect-ratio:1/1;border-radius:50%;border:3px solid #1E3A8A;overflow:hidden;background:#1E3A8A;box-shadow:0 8px 24px rgba(30,58,138,0.2)">
-                  <img src="./instructor.jpg" alt="พี่ต้น" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;object-position:center top" />
-                </div>
-                <span style="position:absolute;bottom:4px;right:6px;width:16px;height:16px;min-width:16px;min-height:16px;aspect-ratio:1/1;background:#10B981;border:2.5px solid white;border-radius:50%;display:block"></span>
-              </div>
-
-              <!-- Name & Subtitle -->
-              <h3 style="color:#111827;font-weight:900;font-size:20px;margin:0 0 2px">พี่ต้น</h3>
-              <p style="color:#6B7280;font-size:12px;font-weight:600;margin:0 0 10px">นายพิสิษฐ์ สายตา</p>
-
-              <!-- Badges -->
-              <div style="display:flex;justify-content:center;gap:6px;margin-bottom:16px;flex-wrap:wrap">
-                <span style="background:#FEE2E2;color:#EF4444;font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px">🔬 ชีววิทยา</span>
-                <span style="background:#EFF6FF;color:#1E3A8A;font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px">🎓 เกียรตินิยมอันดับ 1</span>
-              </div>
-
-              <!-- Qualification List White Card -->
-              <div style="background:#FFFFFF;border-radius:20px;padding:12px 16px;width:100%;box-shadow:0 4px 16px rgba(0,0,0,0.02);text-align:left;display:flex;flex-direction:column;gap:10px">
-                <div style="display:flex;align-items:center;gap:10px;font-size:11.5px;color:#374151;font-weight:700"><span style="font-size:14px">🎓</span><span>ป.ตรี คณะศึกษาศาสตร์ มหาวิทยาลัยนเรศวร</span></div>
-                <div style="border-top:1px solid #F3F4F6;padding-top:8px;display:flex;align-items:center;gap:10px;font-size:11.5px;color:#374151;font-weight:700"><span style="font-size:14px">🎓</span><span>ป.โท คณะศึกษาศาสตร์ มหาวิทยาลัยขอนแก่น</span></div>
-                <div style="border-top:1px solid #F3F4F6;padding-top:8px;display:flex;align-items:center;gap:10px;font-size:11.5px;color:#374151;font-weight:700"><span style="font-size:14px">📚</span><span>ประสบการณ์สอน 9 ปี</span></div>
-                <div style="border-top:1px solid #F3F4F6;padding-top:8px;display:flex;align-items:center;gap:10px;font-size:11.5px;color:#374151;font-weight:700"><span style="font-size:14px">🏫</span><span>วิทยากรพิเศษตามโรงเรียนต่างๆ</span></div>
-              </div>
-
-              <!-- Rating & Reviews Bar -->
-              <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:16px;width:100%">
-                <span style="color:#F59E0B;font-size:14px">⭐ ⭐ ⭐ ⭐ ⭐</span>
-                <span style="font-size:14px;font-weight:900;color:#111827;margin-left:4px">4.98</span>
-                <span style="font-size:11px;color:#9CA3AF;font-weight:600">(2,847 รีวิว)</span>
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-      </div>
+    <!-- Seamless Wave Divider (No dark gap / seam line) -->
+    <div style="position:absolute;bottom:-3px;left:0;right:0;width:100%;line-height:0;z-index:10;pointer-events:none">
+      <svg viewBox="0 0 1440 70" preserveAspectRatio="none" style="width:100%;height:65px;display:block">
+        <path fill="var(--c-page)" d="M0,40 C360,80 1080,0 1440,40 L1440,70 L0,70 Z"></path>
+      </svg>
     </div>
-
-  </div>
-  <!-- end .hero-wrapper -->
+  </section>
 
   <!-- Promo Sale Banner Card Section (Matching User Screenshot) -->
   <section style="padding:32px 24px 10px;background:var(--c-page);position:relative;margin-top:-1px;border:none">
