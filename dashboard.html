@@ -80,10 +80,22 @@
         <!-- Line 3: โรงเรียน • ระดับชั้น -->
         <p id="sidebar-school-level" style="font-size:11px;color:#9CA3AF;margin:0 0 16px">โรงเรียนทั่วไป • มัธยมศึกษา
         </p>
-        <button onclick="switchDashTab('profile')"
-          style="width:100%;background:#F8FAFC;border:1px solid #E5E7EB;color:var(--c-navy);font-weight:800;font-size:11px;padding:8px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
-          ⚙️ แก้ไขข้อมูลส่วนตัว
-        </button>
+        <!-- Quick Sidebar Navigation -->
+        <div style="display:flex;flex-direction:column;gap:6px;width:100%;margin-top:6px">
+          <button onclick="switchDashTab('courses')" id="sbtn-courses"
+            style="width:100%;background:#F8FAFC;border:1px solid #E5E7EB;color:var(--c-navy);font-weight:800;font-size:11.5px;padding:9px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:8px;text-align:left">
+            📚 คอร์สเรียนของฉัน
+          </button>
+          <button onclick="switchDashTab('orders')" id="sbtn-orders"
+            style="width:100%;background:#EFF6FF;border:1px solid #BFDBFE;color:#1E3A8A;font-weight:800;font-size:11.5px;padding:9px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px">
+            <span style="display:flex;align-items:center;gap:8px">🧾 ประวัติการสั่งซื้อ</span>
+            <span id="sidebar-order-badge" style="display:none;background:#EF4444;color:white;font-size:10px;font-weight:900;padding:2px 7px;border-radius:999px">0</span>
+          </button>
+          <button onclick="switchDashTab('profile')" id="sbtn-profile"
+            style="width:100%;background:#F8FAFC;border:1px solid #E5E7EB;color:#475569;font-weight:800;font-size:11.5px;padding:9px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:8px;text-align:left">
+            ⚙️ แก้ไขข้อมูลส่วนตัว
+          </button>
+        </div>
       </aside>
 
       <!-- Main Panel & Sub Tabs -->
@@ -94,6 +106,10 @@
               style="padding:8px 16px;border-radius:8px;border:none;background:var(--c-navy);color:white;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
               📚 คอร์สเรียนของฉัน
             </button>
+            <button onclick="switchDashTab('orders')" id="dtab-orders"
+              style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
+              🧾 ประวัติการสั่งซื้อ
+            </button>
             <button onclick="switchDashTab('profile')" id="dtab-profile"
               style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
               ⚙️ แก้ไขข้อมูลส่วนตัว
@@ -101,10 +117,6 @@
             <button onclick="switchDashTab('notes')" id="dtab-notes"
               style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
               📝 สมุดบันทึกโน้ตย่อ
-            </button>
-            <button onclick="switchDashTab('orders')" id="dtab-orders"
-              style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
-              🧾 คำสั่งซื้อของฉัน
             </button>
             <button onclick="switchDashTab('faq')" id="dtab-faq"
               style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
@@ -118,17 +130,72 @@
             <div id="enrolled-list" class="enrolled-courses-grid"></div>
           </div>
 
-          <!-- Orders Panel -->
-          <div id="dpanel-orders" style="display:none;flex-direction:column;gap:14px">
-            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-              <h2 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0">🧾 คำสั่งซื้อของฉัน</h2>
-              <button onclick="loadMyOrders()"
-                style="background:#F1F5F9;border:none;color:#374151;font-size:11px;font-weight:800;padding:6px 12px;border-radius:8px;cursor:pointer">🔄
-                รีเฟรช</button>
+          <!-- Orders Panel (ประวัติการสั่งซื้อ & ตรวจสอบสถานะสลิป) -->
+          <div id="dpanel-orders" style="display:none;flex-direction:column;gap:18px">
+            
+            <!-- Header Row -->
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-bottom:1px solid #F1F5F9;padding-bottom:14px">
+              <div>
+                <h2 style="font-size:18px;font-weight:900;color:var(--c-navy);margin:0 0 4px">🧾 ประวัติการสั่งซื้อ</h2>
+                <p style="font-size:12px;color:#64748B;margin:0">ติดตามสถานะการชำระเงิน การตรวจสลิป และประวัติคอร์สเรียนทั้งหมดของคุณ</p>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <button onclick="loadMyOrders(true)" id="refresh-orders-btn"
+                  style="background:#F8FAFC;border:1px solid #E2E8F0;color:#334155;font-size:11.5px;font-weight:800;padding:7px 14px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:6px">
+                  🔄 รีเฟรชข้อมูล
+                </button>
+                <a href="courses.html"
+                  style="background:var(--c-navy);color:white;font-size:11.5px;font-weight:800;padding:8px 14px;border-radius:10px;text-decoration:none;display:flex;align-items:center;gap:6px">
+                  🛒 สั่งซื้อคอร์สเพิ่ม
+                </a>
+              </div>
             </div>
-            <div id="orders-list">
-              <p style="color:#9CA3AF;font-size:13px;text-align:center;padding:20px">⏳ กำลังโหลดคำสั่งซื้อ...</p>
+
+            <!-- Order Stats Overview Cards (4 Stats) -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:10px" id="order-stats-container">
+              <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:14px;padding:12px 14px">
+                <div style="font-size:11px;color:#64748B;font-weight:700">📦 ออเดอร์ทั้งหมด</div>
+                <div id="stat-total-orders" style="font-size:20px;font-weight:900;color:var(--c-navy);margin-top:2px">0</div>
+              </div>
+              <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:14px;padding:12px 14px">
+                <div style="font-size:11px;color:#B45309;font-weight:700">⏳ รอตรวจสอบสลิป</div>
+                <div id="stat-pending-orders" style="font-size:20px;font-weight:900;color:#B45309;margin-top:2px">0</div>
+              </div>
+              <div style="background:#ECFDF5;border:1px solid #A7F3D0;border-radius:14px;padding:12px 14px">
+                <div style="font-size:11px;color:#047857;font-weight:700">✅ อนุมัติสำเร็จ</div>
+                <div id="stat-approved-orders" style="font-size:20px;font-weight:900;color:#047857;margin-top:2px">0</div>
+              </div>
+              <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:14px;padding:12px 14px">
+                <div style="font-size:11px;color:#B91C1C;font-weight:700">💰 ยอดชำระสะสม</div>
+                <div id="stat-total-spent" style="font-size:20px;font-weight:900;color:#B91C1C;margin-top:2px">฿0</div>
+              </div>
             </div>
+
+            <!-- Status Filter Tabs -->
+            <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px" id="order-filter-buttons">
+              <button onclick="filterMyOrders('all')" id="ofilter-all"
+                style="padding:6px 14px;border-radius:999px;border:none;background:var(--c-navy);color:white;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap">
+                ทั้งหมด (<span id="count-filter-all">0</span>)
+              </button>
+              <button onclick="filterMyOrders('pending')" id="ofilter-pending"
+                style="padding:6px 14px;border-radius:999px;border:1px solid #E2E8F0;background:white;color:#334155;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap">
+                ⏳ รอตรวจสลิป (<span id="count-filter-pending">0</span>)
+              </button>
+              <button onclick="filterMyOrders('approved')" id="ofilter-approved"
+                style="padding:6px 14px;border-radius:999px;border:1px solid #E2E8F0;background:white;color:#334155;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap">
+                ✅ อนุมัติแล้ว (<span id="count-filter-approved">0</span>)
+              </button>
+              <button onclick="filterMyOrders('rejected')" id="ofilter-rejected"
+                style="padding:6px 14px;border-radius:999px;border:1px solid #E2E8F0;background:white;color:#334155;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap">
+                ❌ ไม่ผ่าน (<span id="count-filter-rejected">0</span>)
+              </button>
+            </div>
+
+            <!-- Orders List Container -->
+            <div id="orders-list" style="display:flex;flex-direction:column;gap:14px">
+              <p style="color:#9CA3AF;font-size:13px;text-align:center;padding:30px">⏳ กำลังโหลดประวัติการสั่งซื้อ...</p>
+            </div>
+
           </div>
 
           <!-- Profile Edit & Account Linking Panel -->
@@ -360,6 +427,16 @@
       renderEnrolled();
       renderNotes();
       renderFAQs();
+
+      // Check for direct tab link in URL (e.g. dashboard.html?tab=orders)
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetTab = urlParams.get('tab');
+      if (targetTab && ['courses', 'orders', 'profile', 'notes', 'faq'].includes(targetTab)) {
+        switchDashTab(targetTab);
+      } else {
+        // Pre-fetch orders in background to show badge count in sidebar
+        loadMyOrders(false, true);
+      }
     });
 
     function calcDashAge() {
@@ -536,21 +613,52 @@
     }
 
     function switchDashTab(tabName) {
-      ['courses', 'profile', 'notes', 'orders', 'faq'].forEach(t => {
+      ['courses', 'orders', 'profile', 'notes', 'faq'].forEach(t => {
         const btn = document.getElementById(`dtab-${t}`);
         const panel = document.getElementById(`dpanel-${t}`);
-        if (t === tabName) {
-          btn.style.background = 'var(--c-navy)';
-          btn.style.color = 'white';
-          panel.style.display = t === 'courses' ? 'block' : 'flex';
-        } else {
-          btn.style.background = 'white';
-          btn.style.color = '#374151';
-          panel.style.display = 'none';
+        if (btn) {
+          if (t === tabName) {
+            btn.style.background = 'var(--c-navy)';
+            btn.style.color = 'white';
+            btn.style.border = 'none';
+          } else {
+            btn.style.background = 'white';
+            btn.style.color = '#374151';
+            btn.style.border = '1px solid #E5E7EB';
+          }
+        }
+        if (panel) {
+          panel.style.display = (t === tabName) ? (t === 'courses' ? 'block' : 'flex') : 'none';
         }
       });
-      // Lazy load orders when tab opened
-      if (tabName === 'orders') loadMyOrders();
+
+      // Update sidebar quick nav highlight
+      const sbtnCourses = document.getElementById('sbtn-courses');
+      const sbtnOrders = document.getElementById('sbtn-orders');
+      const sbtnProfile = document.getElementById('sbtn-profile');
+      if (sbtnCourses) {
+        sbtnCourses.style.background = tabName === 'courses' ? 'var(--c-navy)' : '#F8FAFC';
+        sbtnCourses.style.color = tabName === 'courses' ? 'white' : 'var(--c-navy)';
+      }
+      if (sbtnOrders) {
+        sbtnOrders.style.background = tabName === 'orders' ? 'var(--c-navy)' : '#EFF6FF';
+        sbtnOrders.style.color = tabName === 'orders' ? 'white' : '#1E3A8A';
+      }
+      if (sbtnProfile) {
+        sbtnProfile.style.background = tabName === 'profile' ? 'var(--c-navy)' : '#F8FAFC';
+        sbtnProfile.style.color = tabName === 'profile' ? 'white' : '#475569';
+      }
+
+      // Lazy load orders when orders tab opened
+      if (tabName === 'orders') {
+        loadMyOrders();
+        // Update URL query param quietly without page reload
+        try {
+          const url = new URL(window.location);
+          url.searchParams.set('tab', 'orders');
+          window.history.replaceState({}, '', url);
+        } catch(e){}
+      }
     }
 
     function renderEnrolled() {
@@ -594,79 +702,279 @@
       }
     }
 
-    async function loadMyOrders() {
+    // ─── ORDER HISTORY & SLIP MANAGEMENT ─────────────────────────────────────
+    let _studentOrdersCache = [];
+    let _currentOrderFilter = 'all';
+
+    async function loadMyOrders(forceRefresh = false, backgroundOnly = false) {
       const container = document.getElementById('orders-list');
-      container.innerHTML = `<p style="color:#9CA3AF;font-size:13px;text-align:center;padding:20px">⏳ กำลังโหลด...</p>`;
+      const refreshBtn = document.getElementById('refresh-orders-btn');
+      
+      if (!backgroundOnly && container) {
+        container.innerHTML = `
+          <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:16px;padding:36px;text-align:center">
+            <div style="font-size:28px;margin-bottom:8px">⏳</div>
+            <p style="color:#64748B;font-size:13px;font-weight:700;margin:0">กำลังดึงข้อมูลประวัติคำสั่งซื้อจาก Cloud...</p>
+          </div>`;
+      }
+      if (refreshBtn) refreshBtn.innerHTML = '⏳ กำลังโหลด...';
 
       const profile = AppState.getStudentProfile();
       if (!profile || !profile.email) {
-        container.innerHTML = `<p style="color:#9CA3AF;font-size:13px;text-align:center;padding:20px">ไม่พบข้อมูลบัญชี</p>`;
+        if (!backgroundOnly && container) {
+          container.innerHTML = `<p style="color:#9CA3AF;font-size:13px;text-align:center;padding:20px">ไม่พบข้อมูลบัญชีผู้ใช้</p>`;
+        }
+        if (refreshBtn) refreshBtn.innerHTML = '🔄 รีเฟรชข้อมูล';
         return;
       }
 
       let orders = [];
       try {
         orders = await CloudService.getMyOrders(profile.email);
-      } catch (e) { console.warn('loadMyOrders error:', e); }
+      } catch (e) {
+        console.warn('loadMyOrders error:', e);
+      }
 
       _studentOrdersCache = orders || [];
 
-      if (!orders || orders.length === 0) {
+      // 1. Calculate & Render Statistics
+      const totalCount = _studentOrdersCache.length;
+      const pendingCount = _studentOrdersCache.filter(o => o.status === 'pending').length;
+      const approvedCount = _studentOrdersCache.filter(o => o.status === 'approved').length;
+      const rejectedCount = _studentOrdersCache.filter(o => o.status === 'rejected').length;
+      const totalSpent = _studentOrdersCache
+        .filter(o => o.status === 'approved' || o.status === 'pending')
+        .reduce((sum, o) => sum + (Number(o.total_amount) || 0), 0);
+
+      const elTotal = document.getElementById('stat-total-orders');
+      const elPending = document.getElementById('stat-pending-orders');
+      const elApproved = document.getElementById('stat-approved-orders');
+      const elSpent = document.getElementById('stat-total-spent');
+      if (elTotal) elTotal.textContent = totalCount;
+      if (elPending) elPending.textContent = pendingCount;
+      if (elApproved) elApproved.textContent = approvedCount;
+      if (elSpent) elSpent.textContent = `฿${totalSpent.toLocaleString('th-TH')}`;
+
+      // 2. Update Filter Badge Counts
+      const elCAll = document.getElementById('count-filter-all');
+      const elCPending = document.getElementById('count-filter-pending');
+      const elCApproved = document.getElementById('count-filter-approved');
+      const elCRejected = document.getElementById('count-filter-rejected');
+      if (elCAll) elCAll.textContent = totalCount;
+      if (elCPending) elCPending.textContent = pendingCount;
+      if (elCApproved) elCApproved.textContent = approvedCount;
+      if (elCRejected) elCRejected.textContent = rejectedCount;
+
+      // 3. Update Sidebar Badge
+      const sBadge = document.getElementById('sidebar-order-badge');
+      if (sBadge) {
+        if (pendingCount > 0) {
+          sBadge.textContent = `${pendingCount} รอตรวจ`;
+          sBadge.style.background = '#F59E0B';
+          sBadge.style.display = 'inline-block';
+        } else if (totalCount > 0) {
+          sBadge.textContent = totalCount;
+          sBadge.style.background = 'var(--c-sky)';
+          sBadge.style.display = 'inline-block';
+        } else {
+          sBadge.style.display = 'none';
+        }
+      }
+
+      if (refreshBtn) refreshBtn.innerHTML = '🔄 รีเฟรชข้อมูล';
+
+      if (!backgroundOnly) {
+        renderOrdersList(_currentOrderFilter);
+        if (forceRefresh) showToast('รีเฟรชประวัติคำสั่งซื้อสำเร็จ', 'success');
+      }
+    }
+
+    function filterMyOrders(status) {
+      _currentOrderFilter = status;
+      ['all', 'pending', 'approved', 'rejected'].forEach(s => {
+        const btn = document.getElementById(`ofilter-${s}`);
+        if (btn) {
+          if (s === status) {
+            btn.style.background = 'var(--c-navy)';
+            btn.style.color = 'white';
+            btn.style.border = 'none';
+          } else {
+            btn.style.background = 'white';
+            btn.style.color = '#334155';
+            btn.style.border = '1px solid #E2E8F0';
+          }
+        }
+      });
+      renderOrdersList(status);
+    }
+
+    function renderOrdersList(filterStatus = 'all') {
+      const container = document.getElementById('orders-list');
+      if (!container) return;
+
+      const filtered = filterStatus === 'all' 
+        ? _studentOrdersCache 
+        : _studentOrdersCache.filter(o => o.status === filterStatus);
+
+      if (filtered.length === 0) {
+        const emptyLabels = {
+          all: 'ยังไม่มีประวัติคำสั่งซื้อในระบบ',
+          pending: 'ไม่มีคำสั่งซื้อที่รอตรวจสอบสลิปในขณะนี้',
+          approved: 'ยังไม่มีคำสั่งซื้อที่อนุมัติแล้ว',
+          rejected: 'ไม่มีคำสั่งซื้อที่ไม่ผ่านการตรวจสอบ'
+        };
         container.innerHTML = `
-          <div style="background:#F8FAFC;border:1.5px dashed #CBD5E1;border-radius:14px;padding:32px;text-align:center">
-            <p style="color:#6B7280;font-size:13px;margin:0 0 12px">ยังไม่มีคำสั่งซื้อในระบบ</p>
-            <a href="courses.html" style="background:var(--c-navy);color:white;font-weight:800;font-size:12px;padding:10px 20px;border-radius:10px;text-decoration:none">🛒 เลือกซื้อคอร์สเรียน</a>
+          <div style="background:#F8FAFC;border:1.5px dashed #CBD5E1;border-radius:18px;padding:40px 20px;text-align:center">
+            <div style="font-size:36px;margin-bottom:10px">🛒</div>
+            <p style="color:#64748B;font-size:14px;font-weight:700;margin:0 0 14px">${emptyLabels[filterStatus] || 'ไม่มีข้อมูลคำสั่งซื้อ'}</p>
+            <a href="courses.html" style="background:var(--c-navy);color:white;font-weight:800;font-size:12.5px;padding:10px 22px;border-radius:12px;text-decoration:none;display:inline-block;box-shadow:0 4px 12px rgba(185,28,28,0.2)">
+              📚 เลือกซื้อคอร์สเรียนชีววิทยา
+            </a>
           </div>`;
         return;
       }
 
-      const statusLabel = { pending: '⏳ รอตรวจสลิป', approved: '✅ อนุมัติแล้ว', rejected: '❌ ไม่ผ่านการตรวจสอบ' };
-      const statusClass = { pending: 'status-pending', approved: 'status-approved', rejected: 'status-rejected' };
+      const statusBadgeMap = {
+        pending: `
+          <div style="display:flex;align-items:center;gap:6px;background:#FFFBEB;border:1px solid #FDE68A;color:#B45309;font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px">
+            <span>⏳</span> รอเจ้าหน้าที่ตรวจสลิป (ภายใน 24 ชม.)
+          </div>`,
+        approved: `
+          <div style="display:flex;align-items:center;gap:6px;background:#ECFDF5;border:1px solid #A7F3D0;color:#047857;font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px">
+            <span>✅</span> อนุมัติเรียบร้อย — เข้าเรียนได้เลย
+          </div>`,
+        rejected: `
+          <div style="display:flex;align-items:center;gap:6px;background:#FEF2F2;border:1px solid #FECACA;color:#B91C1C;font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px">
+            <span>❌</span> ไม่ผ่านการตรวจสอบ
+          </div>`
+      };
 
-      container.innerHTML = orders.map(o => {
-        const date = new Date(o.created_at).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
+      container.innerHTML = filtered.map(o => {
+        const fullDate = o.created_at ? new Date(o.created_at).toLocaleDateString('th-TH', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }) : 'ไม่ระบุวัน';
+
         const shortId = (o.id || '').substring(0, 8).toUpperCase();
         const hasSlip = o.slip_image && o.slip_image.length > 0;
+        const firstCourseId = (Array.isArray(o.course_ids) && o.course_ids.length > 0) ? o.course_ids[0] : null;
+
         return `
-          <div style="background:white;border:1px solid #E5E7EB;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px">
+          <div style="background:white;border:1px solid #E2E8F0;border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 2px 10px rgba(0,0,0,0.02)">
+            
+            <!-- Order Header Row -->
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;border-bottom:1px solid #F1F5F9;padding-bottom:12px">
               <div>
-                <span style="font-size:10px;color:#9CA3AF;font-weight:700">ออเดอร์ #${shortId}</span>
-                <p style="font-size:13px;font-weight:800;color:var(--c-navy);margin:2px 0 0">${o.course_titles || (o.course_ids||[]).join(', ')}</p>
-              </div>
-              <span class="status-badge ${statusClass[o.status] || 'status-pending'}">${statusLabel[o.status] || o.status}</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px">
-              <span style="font-size:11.5px;color:#64748B">${date}</span>
-              <span style="font-size:14px;font-weight:900;color:#B91C1C">฿${Number(o.total_amount).toLocaleString('th-TH')}</span>
-            </div>
-
-            <!-- Attached Slip Row -->
-            <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px">
-              ${hasSlip ? `
-                <div style="display:flex;align-items:center;gap:10px">
-                  <img src="${o.slip_image}" alt="สลิป" style="width:40px;height:40px;object-fit:cover;border-radius:8px;border:1px solid #CBD5E1;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.06)" onclick="viewStudentOrderSlip('${o.id}')" title="คลิกเพื่อดูสลิปขนาดเต็ม" />
-                  <div>
-                    <div style="font-size:11.5px;font-weight:800;color:var(--c-navy)">หลักฐานการชำระเงิน (สลิป)</div>
-                    <div style="font-size:10px;color:#10B981;font-weight:700">✓ แนบสลิปเข้าระบบแล้ว</div>
-                  </div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="font-family:monospace;font-size:13px;font-weight:850;color:#1E3A8A;background:#EFF6FF;padding:3px 8px;border-radius:6px">#${shortId}</span>
+                  <button onclick="copyOrderId('${o.id}', this)" style="background:none;border:none;color:#64748B;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:2px" title="คัดลอกรหัสออเดอร์">
+                    📋 คัดลอก
+                  </button>
                 </div>
-                <button onclick="viewStudentOrderSlip('${o.id}')" style="background:#EFF6FF;color:#1E3A8A;border:1px solid #BFDBFE;padding:6px 12px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer">
-                  🖼️ ดูสลิป
-                </button>
-              ` : `
-                <div style="font-size:11.5px;color:#94A3B8">⚠️ ไม่มีรูปสลิปแนบมากับคำสั่งซื้อนี้</div>
-              `}
+                <div style="font-size:11.5px;color:#64748B;margin-top:4px">📅 วันที่สั่งซื้อ: ${fullDate} น.</div>
+              </div>
+              <div>
+                ${statusBadgeMap[o.status] || `<span class="status-badge status-pending">${o.status}</span>`}
+              </div>
             </div>
 
-            ${o.admin_note ? `<div style="background:#FEF2F2;border:1px solid #FEE2E2;border-radius:10px;padding:8px 12px;font-size:11.5px;color:#991B1B">หมายเหตุ Admin: ${o.admin_note}</div>` : ''}
-            ${o.status === 'approved' ? `<a href="classroom.html?course=${(o.course_ids || [])[0]}" style="background:var(--c-sky);color:white;font-weight:800;font-size:12px;padding:8px;border-radius:10px;text-decoration:none;text-align:center">▶ เข้าสู่ห้องเรียน</a>` : ''}
+            <!-- Course Info -->
+            <div>
+              <div style="font-size:10.5px;font-weight:800;color:#64748B;text-transform:uppercase;margin-bottom:3px">รายการคอร์สที่สั่งซื้อ</div>
+              <div style="font-size:14px;font-weight:900;color:var(--c-navy);line-height:1.5">
+                📚 ${o.course_titles || (Array.isArray(o.course_ids) ? o.course_ids.join(', ') : o.course_ids)}
+              </div>
+              ${o.coupon_code ? `
+                <div style="font-size:11px;color:#059669;font-weight:700;margin-top:2px">
+                  🏷️ ใช้โค้ดส่วนลด: <strong>${o.coupon_code}</strong> (ลด ฿${Number(o.discount_amount || 0).toLocaleString('th-TH')})
+                </div>
+              ` : ''}
+            </div>
+
+            <!-- Price Summary & Attached Payment Slip Row -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px;align-items:center;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:14px;padding:12px 16px">
+              
+              <!-- Left: Price Info -->
+              <div>
+                <div style="font-size:11px;color:#64748B">ยอดชำระสุทธิ</div>
+                <div style="font-size:18px;font-weight:950;color:#B91C1C">
+                  ฿${Number(o.total_amount).toLocaleString('th-TH')}
+                </div>
+              </div>
+
+              <!-- Right: Slip Preview & Verification Status -->
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+                ${hasSlip ? `
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <img src="${o.slip_image}" alt="สลิปที่แนบ" 
+                         style="width:48px;height:48px;object-fit:cover;border-radius:8px;border:1px solid #CBD5E1;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.08)" 
+                         onclick="viewStudentOrderSlip('${o.id}')" 
+                         title="คลิกเพื่อขยายดูสลิป" />
+                    <div>
+                      <div style="font-size:11px;font-weight:800;color:var(--c-navy)">📸 หลักฐานการโอนเงิน</div>
+                      <div style="font-size:10.5px;color:#059669;font-weight:700">✓ แนบสลิปเรียบร้อยแล้ว</div>
+                    </div>
+                  </div>
+                  <button onclick="viewStudentOrderSlip('${o.id}')" 
+                          style="background:white;color:#1E3A8A;border:1px solid #BFDBFE;padding:7px 12px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
+                    🔍 ขยายดูสลิป
+                  </button>
+                ` : `
+                  <div style="font-size:11.5px;color:#94A3B8;display:flex;align-items:center;gap:6px">
+                    <span>⚠️</span> ไม่มีรูปสลิปแนบในระบบ
+                  </div>
+                `}
+              </div>
+
+            </div>
+
+            <!-- Admin Feedback Note (If Rejected or Note Attached) -->
+            ${o.admin_note ? `
+              <div style="background:#FEF2F2;border:1px solid #FEE2E2;border-radius:12px;padding:10px 14px;font-size:12px;color:#991B1B">
+                <strong>📢 ข้อความจากแอดมิน:</strong> ${o.admin_note}
+              </div>
+            ` : ''}
+
+            <!-- Bottom Action Row -->
+            <div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;padding-top:4px">
+              ${o.status === 'approved' ? `
+                <a href="classroom.html?course=${firstCourseId || ''}" 
+                   style="background:var(--c-sky);color:white;font-weight:850;font-size:12.5px;padding:10px 20px;border-radius:10px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(30,58,138,0.2)">
+                  ▶ เข้าสู่ห้องเรียนทันที
+                </a>
+              ` : (o.status === 'rejected' ? `
+                <a href="https://line.me" target="_blank" 
+                   style="background:#F1F5F9;color:#0F172A;font-weight:800;font-size:11.5px;padding:8px 14px;border-radius:10px;text-decoration:none;display:inline-flex;align-items:center;gap:6px">
+                  💬 ติดต่อแอดมินทาง LINE
+                </a>
+              ` : `
+                <span style="font-size:11.5px;color:#64748B">
+                  💡 หากโอนเงินแล้ว สิทธิ์เรียนจะเปิดให้อัตโนมัติหลังแอดมินตรวจสลิปครับ
+                </span>
+              `)}
+            </div>
+
           </div>
         `;
       }).join('');
     }
 
-    let _studentOrdersCache = [];
+    function copyOrderId(orderId, btn) {
+      if (!orderId) return;
+      navigator.clipboard.writeText(orderId).then(() => {
+        if (btn) {
+          const oldText = btn.innerHTML;
+          btn.innerHTML = '✅ สำเร็จ';
+          setTimeout(() => { btn.innerHTML = oldText; }, 1500);
+        }
+        showToast('คัดลอกรหัสออเดอร์เรียบร้อยแล้ว', 'success');
+      }).catch(() => {
+        showToast(`รหัสออเดอร์: ${orderId}`, 'info');
+      });
+    }
 
     function viewStudentOrderSlip(orderId) {
       const o = _studentOrdersCache.find(x => x.id === orderId);

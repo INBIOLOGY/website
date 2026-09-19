@@ -472,6 +472,7 @@ function renderHeader(activePage = 'home') {
           ${isLoggedIn ? `
             <a href="classroom.html" class="dropdown-item">🎓 คอร์สเรียนของฉัน</a>
             <a href="dashboard.html" class="dropdown-item">👤 แดชบอร์ดของฉัน</a>
+            <a href="dashboard.html?tab=orders" class="dropdown-item">🧾 ประวัติการสั่งซื้อ</a>
           ` : ''}
           ${isAdmin ? `<a href="admin.html" class="dropdown-item">🛡 แดชบอร์ดแอดมิน</a>` : ''}
           ${isLoggedIn 
