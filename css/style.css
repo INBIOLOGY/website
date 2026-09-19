@@ -739,10 +739,11 @@ h6 {
   }
 }
 
-/* ─── MOBILE (≤640px): portrait illustration, bottom-positioned actions ──────── */
+/* ─── MOBILE (≤640px): portrait illustration, bird shifted up, cluster below bird ── */
 @media (max-width: 640px) {
   .hero-section {
-    background: url('../hero-mobile.jpg') center top / cover no-repeat;
+    /* Shift illustration UP by 95px so '= INBIOLOGY =' is closer to top edge */
+    background: url('../hero-mobile.jpg') center -95px / cover no-repeat;
     min-height: 100svh;
     padding-top: 76px;
     padding-bottom: 74px; /* Space above wave divider */
@@ -752,14 +753,15 @@ h6 {
     align-items: stretch !important;
   }
 
-  /* Mobile overlay — Natural sky view with gentle bottom vignette for buttons */
+  /* Mobile overlay — Clear on upper bird illustration, smooth dark blue over bottom cluster */
   .hero-section::before {
     background: linear-gradient(
       to bottom,
-      rgba(5, 15, 50, 0.25) 0%,
-      rgba(5, 15, 50, 0.0) 35%,
-      rgba(5, 15, 50, 0.08) 60%,
-      rgba(5, 15, 50, 0.55) 100%
+      rgba(5, 15, 50, 0.15) 0%,
+      rgba(5, 15, 50, 0.0) 25%,
+      rgba(5, 15, 50, 0.05) 45%,
+      rgba(5, 15, 50, 0.55) 68%,
+      rgba(5, 15, 50, 0.85) 100%
     );
   }
 
@@ -772,32 +774,58 @@ h6 {
     box-sizing: border-box !important;
   }
 
-  /* Full-height column pushing Bottom Actions to the bottom below the bird illustration */
+  /* Full-height column pushing the entire cluster down below the bird */
   .hero-content-col {
     display: flex !important;
     flex-direction: column !important;
     justify-content: flex-end !important;
+    align-items: center !important;
     flex: 1 !important;
     width: 100% !important;
     min-height: calc(100svh - 150px) !important;
     position: relative !important;
     z-index: 5 !important;
+    gap: 10px !important;
   }
 
-  /* Hide "เรียนชีวะให้เข้าใจ ไม่ใช่แค่จำ" on mobile phone ONLY as requested */
+  /* Top Title Block (Restored and placed right above buttons in the bottom cluster) */
   .hero-top-block {
-    display: none !important;
+    display: block !important;
+    text-align: center !important;
+    width: 100% !important;
+    margin-bottom: 2px !important;
   }
 
-  /* Bottom Actions & Stats Block (Below the bird illustration as requested) */
+  .hero-main-title {
+    font-size: clamp(23px, 6.8vw, 28px) !important;
+    line-height: 1.18 !important;
+    margin: 0 !important;
+    text-shadow: 0 4px 18px rgba(15, 23, 42, 0.85) !important;
+    text-align: center !important;
+  }
+
+  .hero-title-highlight {
+    font-size: clamp(20px, 6vw, 25px) !important;
+    margin-top: 2px !important;
+    text-shadow: 0 3px 12px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .hero-title-sub {
+    font-size: 11.5px !important;
+    margin-top: 4px !important;
+    opacity: 0.95 !important;
+    text-align: center !important;
+  }
+
+  /* Bottom Actions & Stats Block */
   .hero-bottom-block {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     width: 100% !important;
     max-width: 400px !important;
-    margin: auto auto 0 !important;
-    gap: 10px !important;
+    margin: 0 auto !important;
+    gap: 8px !important;
     position: relative !important;
     z-index: 15 !important;
   }
