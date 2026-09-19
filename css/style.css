@@ -598,6 +598,107 @@ h6 {
   margin: 0;
 }
 
+/* ─── Hero Kicker Pill & General Typography ──────────────────────────────── */
+.hero-kicker-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1.2px solid rgba(255, 255, 255, 0.38);
+  border-radius: 9999px;
+  padding: 6px 14px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+.hero-kicker-pill .pill-dot {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 900;
+}
+
+.hero-main-title {
+  font-size: clamp(38px, 5vw, 60px);
+  font-weight: 950;
+  color: #FFFFFF;
+  line-height: 1.15;
+  margin: 0;
+  text-shadow: 0 4px 16px rgba(15, 23, 42, 0.6);
+}
+
+.hero-title-highlight {
+  display: block;
+  color: #FACC15;
+  font-size: clamp(34px, 4.5vw, 54px);
+  font-weight: 950;
+  margin-top: 6px;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.hero-title-sub {
+  display: block;
+  color: #FFFFFF;
+  font-size: clamp(16px, 2.2vw, 22px);
+  font-weight: 700;
+  margin-top: 14px;
+  opacity: 0.95;
+}
+
+.hero-actions-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+
+.hero-btn-primary {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  color: white;
+  font-weight: 850;
+  font-size: 14px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.35);
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hero-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(239, 68, 68, 0.45);
+}
+
+.hero-btn-secondary {
+  background: rgba(59, 130, 246, 0.35);
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  color: white;
+  font-weight: 800;
+  font-size: 14px;
+  padding: 12px 24px;
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.hero-btn-secondary:hover {
+  transform: translateY(-2px);
+  background: rgba(59, 130, 246, 0.5);
+}
+
 /* Stats grid desktop */
 .hero-stats-grid {
   display: grid;
@@ -631,128 +732,110 @@ h6 {
   }
 }
 
-/* ─── MOBILE (≤640px): portrait illustration, stacked clean layout ───────── */
+/* ─── MOBILE (≤640px): portrait illustration, harmonious centered hero ──────── */
 @media (max-width: 640px) {
   .hero-section {
-    /* Mobile: portrait bird illustration */
     background: url('../hero-mobile.jpg') center top / cover no-repeat;
     min-height: 100svh;
-    padding-top: 76px;
-    padding-bottom: 40px;
+    padding-top: 74px;
+    padding-bottom: 30px;
     align-items: flex-start;
   }
 
-  /* Mobile overlay — เข้มด้านบนเพื่อให้อ่านข้อความง่าย ชัดเจน */
+  /* Mobile overlay — Smooth gentle top vignette to make text shine */
   .hero-section::before {
     background: linear-gradient(
       to bottom,
-      rgba(5, 15, 50, 0.72) 0%,
-      rgba(5, 15, 50, 0.45) 30%,
-      rgba(5, 15, 50, 0.15) 55%,
-      rgba(5, 15, 50, 0.35) 100%
+      rgba(5, 15, 50, 0.70) 0%,
+      rgba(5, 15, 50, 0.42) 26%,
+      rgba(5, 15, 50, 0.08) 48%,
+      rgba(5, 15, 50, 0.25) 100%
     );
   }
 
   .hero-grid {
     grid-template-columns: 1fr;
-    gap: 24px;
-    padding: 0 20px;
-    align-items: flex-start;
+    gap: 0;
+    padding: 0 16px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
   }
 
-  /* Hide instructor card in mobile hero (illustrated in user screenshot) */
+  .hero-content-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  /* Hide instructor card in mobile hero (shown in dedicated section below) */
   .hero-instructor-wrap {
     display: none !important;
   }
 
+  /* Top Kicker Pill on Mobile */
+  .hero-kicker-pill {
+    padding: 5px 12px !important;
+    font-size: 11px !important;
+    margin-bottom: 12px !important;
+    background: rgba(255, 255, 255, 0.18) !important;
+    border: 1px solid rgba(255, 255, 255, 0.45) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15) !important;
+  }
+
   /* Text adjustments on mobile */
-  .hero-section h1 {
-    font-size: clamp(28px, 8.5vw, 36px) !important;
-    line-height: 1.15 !important;
+  .hero-main-title {
+    font-size: clamp(28px, 8.2vw, 34px) !important;
+    line-height: 1.18 !important;
     margin: 0 !important;
-    text-shadow: 0 4px 16px rgba(15, 23, 42, 0.7) !important;
+    text-shadow: 0 4px 18px rgba(15, 23, 42, 0.75) !important;
+    text-align: center !important;
   }
 
-  .hero-section h1 > span:first-of-type {
-    font-size: clamp(24px, 7.5vw, 32px) !important;
-    margin-top: 4px !important;
-    text-shadow: 0 3px 12px rgba(0, 0, 0, 0.4) !important;
+  .hero-title-highlight {
+    font-size: clamp(25px, 7.2vw, 30px) !important;
+    margin-top: 3px !important;
+    text-shadow: 0 3px 12px rgba(0, 0, 0, 0.45) !important;
   }
 
-  .hero-section h1 > span:last-of-type {
-    font-size: 13.5px !important;
-    margin-top: 10px !important;
+  .hero-title-sub {
+    font-size: 13px !important;
+    margin-top: 8px !important;
     opacity: 0.95 !important;
+    text-align: center !important;
   }
 
-  /* Buttons on mobile - perfectly leveled side-by-side */
-  .hero-section [style*="display:flex"][style*="gap:14px"] {
+  /* Buttons on mobile - Centered side-by-side */
+  .hero-actions-row {
     display: flex !important;
     flex-wrap: nowrap !important;
     gap: 10px !important;
-    margin-top: 18px !important;
+    margin-top: 16px !important;
     width: 100% !important;
+    max-width: 360px !important;
+    justify-content: center !important;
   }
 
-  .hero-section [style*="display:flex"][style*="gap:14px"] a {
-    height: 44px !important;
+  .hero-actions-row a {
+    height: 42px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 13.5px !important;
+    font-size: 13px !important;
     font-weight: 850 !important;
-    padding: 0 16px !important;
+    padding: 0 14px !important;
     border-radius: 12px !important;
     white-space: nowrap !important;
     box-sizing: border-box !important;
-    flex: 1 1 auto !important;
-    max-width: 180px !important;
+    flex: 1 1 50% !important;
   }
 
-  /* Stats grid on mobile - Sleek 1-row horizontal glass pill */
-  .hero-stats-grid {
-    display: grid !important;
-    grid-template-columns: 1.2fr 0.9fr 0.9fr !important;
-    align-items: center !important;
-    margin-top: 16px !important;
-    padding: 10px 8px !important;
-    background: rgba(255, 255, 255, 0.16) !important;
-    border: 1.5px solid rgba(255, 255, 255, 0.35) !important;
-    border-radius: 16px !important;
-    backdrop-filter: blur(14px) !important;
-    -webkit-backdrop-filter: blur(14px) !important;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12) !important;
-    width: 100% !important;
-    max-width: 440px !important;
-    gap: 0 !important;
-  }
-
-  .hero-stats-grid > div {
-    text-align: center !important;
-    border-left: 1px solid rgba(255, 255, 255, 0.25) !important;
-    border-top: none !important;
-    padding: 0 4px !important;
-  }
-
-  .hero-stats-grid > div:first-child {
-    border-left: none !important;
-    padding-left: 0 !important;
-  }
-
-  .hero-stats-grid > div > div:first-child {
-    font-size: 16px !important;
-    font-weight: 950 !important;
-    color: #FFFFFF !important;
-    line-height: 1.1 !important;
-    margin-bottom: 2px !important;
-  }
-
-  .hero-stats-grid > div > div:last-child {
-    font-size: 8.5px !important;
-    font-weight: 700 !important;
-    color: rgba(255, 255, 255, 0.92) !important;
-    white-space: normal !important;
-    line-height: 1.25 !important;
+  /* Hide bulky stats grid inside hero on mobile so artwork remains 100% unobstructed */
+  .desktop-only-stats {
+    display: none !important;
   }
 }
 
@@ -766,6 +849,43 @@ h6 {
     display: block !important;
     padding: 24px 20px 8px;
     background: var(--c-page);
+  }
+
+  /* Mobile stats card (Clean 3-column white card under wave) */
+  .mobile-stats-card {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    background: white !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 20px !important;
+    padding: 14px 6px !important;
+    margin-bottom: 18px !important;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05) !important;
+    text-align: center !important;
+  }
+
+  .m-stat-item {
+    border-left: 1px solid #F1F5F9 !important;
+    padding: 0 4px !important;
+  }
+
+  .m-stat-item:first-child {
+    border-left: none !important;
+  }
+
+  .m-stat-val {
+    font-size: 17px !important;
+    font-weight: 950 !important;
+    color: #1E3A8A !important;
+    line-height: 1.1 !important;
+    margin-bottom: 2px !important;
+  }
+
+  .m-stat-lbl {
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    color: #64748B !important;
+    line-height: 1.2 !important;
   }
 
   /* Courses grid single column on mobile */
