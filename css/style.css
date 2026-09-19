@@ -261,15 +261,35 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (max-width: 640px) {
   .header-container {
-    padding: 0 14px;
-    height: 60px;
+    padding: 0 12px;
+    height: 58px;
   }
   .logo-img {
-    height: 36px;
+    height: 34px;
   }
   .cart-icon-btn {
     padding: 6px 8px;
   }
+  .header-user-actions {
+    gap: 4px !important;
+  }
+  .header-user-badge {
+    max-width: 105px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    font-size: 11px !important;
+    padding: 5px 8px !important;
+  }
+  .header-logout-btn {
+    display: none !important;
+  }
+}
+
+.admin-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
 }
 
 /* Dropdown Menu */

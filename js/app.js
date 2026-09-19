@@ -446,11 +446,11 @@ function renderHeader(activePage = 'home') {
 
         ${!isLoggedIn
           ? `<a href="login.html" class="btn-login">เข้าสู่ระบบ</a>`
-          : `<div style="display:flex;align-items:center;gap:8px">
-              <a href="dashboard.html" style="font-weight:800;font-size:12px;color:var(--c-navy);background:#FEF2F2;padding:6px 12px;border-radius:10px;border:1px solid rgba(185,28,28,0.15)">
+          : `<div class="header-user-actions" style="display:flex;align-items:center;gap:8px">
+              <a href="dashboard.html" class="header-user-badge" style="font-weight:800;font-size:12px;color:var(--c-navy);background:#FEF2F2;padding:6px 12px;border-radius:10px;border:1px solid rgba(185,28,28,0.15);white-space:nowrap;display:inline-block">
                 ${isAdmin ? '🛡️ แอดมินผู้ดูแล' : studentDisplayName}
               </a>
-              <button onclick="AppState.logout()" title="ออกจากระบบ" style="padding:6px 12px;background:#FEE2E2;color:#DC2626;border-radius:10px;font-size:11px;font-weight:800;border:none;cursor:pointer;display:flex;align-items:center;gap:4px">
+              <button onclick="AppState.logout()" class="header-logout-btn" title="ออกจากระบบ" style="padding:6px 12px;background:#FEE2E2;color:#DC2626;border-radius:10px;font-size:11px;font-weight:800;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap">
                 🚪 ออกจากระบบ
               </button>
             </div>`

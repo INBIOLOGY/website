@@ -890,13 +890,16 @@ const CloudService = window.CloudService = {
   /**
    * Submit a new payment order (pending slip verification)
    */
-  async submitOrder({ userEmail, userName, userId, courseIds, courseTitles, totalAmount, couponCode, discountAmount, slipBase64 }) {
+  async submitOrder({ userEmail, userName, userId, courseIds, courseTitles, totalAmount, couponCode, discountAmount, slipBase64, userNote }) {
+    const rawTitles = courseTitles || courseIds.join(', ');
+    const displayTitles = userNote ? `${rawTitles} [หมายเหตุ: ${userNote}]` : rawTitles;
+
     const orderData = {
       user_email: userEmail.toLowerCase().trim(),
       user_name: userName || '',
       user_id: userId || null,
       course_ids: courseIds,
-      course_titles: courseTitles || courseIds.join(', '),
+      course_titles: displayTitles,
       total_amount: totalAmount,
       coupon_code: couponCode || null,
       discount_amount: discountAmount || 0,
@@ -916,7 +919,7 @@ const CloudService = window.CloudService = {
           const orderId = result[0].id;
           console.log('☁️ [Supabase Cloud] Order saved:', orderId);
           // Mirror to localStorage
-          this._saveOrderLocally({ ...orderData, id: orderId, created_at: new Date().toISOString() });
+          this._saveOrderLocally({ ...orderData, id: orderId, user_note: userNote || null, created_at: new Date().toISOString() });
           return { success: true, orderId };
         }
       } catch(err) {
@@ -925,15 +928,22 @@ const CloudService = window.CloudService = {
     }
 
     // Fallback: localStorage only
-    const localId = 'order-' + Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
-    this._saveOrderLocally({ ...orderData, id: localId, created_at: new Date().toISOString() });
+    const localId = (typeof crypto !== 'undefined' && crypto.randomUUID) 
+      ? crypto.randomUUID() 
+      : '00000000-0000-4000-8000-' + Date.now().toString(16).padStart(12, '0');
+    this._saveOrderLocally({ ...orderData, id: localId, user_note: userNote || null, created_at: new Date().toISOString() });
     return { success: true, orderId: localId };
   },
 
   _saveOrderLocally(order) {
     try {
       const orders = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
-      orders.unshift(order);
+      const idx = orders.findIndex(x => x.id === order.id);
+      if (idx >= 0) {
+        orders[idx] = { ...orders[idx], ...order };
+      } else {
+        orders.unshift(order);
+      }
       localStorage.setItem('inbiology_orders', JSON.stringify(orders));
     } catch(e) {}
   },
@@ -943,47 +953,67 @@ const CloudService = window.CloudService = {
    */
   async getMyOrders(userEmail) {
     if (!userEmail) return [];
+    const cleanEmail = userEmail.toLowerCase().trim();
+    let cloudOrders = [];
 
     // Try Supabase first
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
         const result = await this._supabaseFetch(
-          `/orders?user_email=eq.${encodeURIComponent(userEmail.toLowerCase().trim())}&order=created_at.desc`
+          `/orders?user_email=eq.${encodeURIComponent(cleanEmail)}&order=created_at.desc`
         );
-        if (result && Array.isArray(result)) return result;
+        if (result && Array.isArray(result)) cloudOrders = result;
       } catch(err) {
         console.warn('[getMyOrders Supabase Error]:', err);
       }
     }
 
-    // Fallback: localStorage
+    // Merge with local fallback orders (deduplicated by id)
     try {
-      const all = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
-      return all.filter(o => o.user_email === userEmail.toLowerCase().trim());
-    } catch(e) { return []; }
+      const localAll = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
+      const localMatching = localAll.filter(o => (o.user_email || '').toLowerCase().trim() === cleanEmail);
+      const combined = [...cloudOrders];
+      localMatching.forEach(lo => {
+        if (!combined.some(co => co.id === lo.id)) {
+          combined.push(lo);
+        }
+      });
+      return combined.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+    } catch(e) {
+      return cloudOrders;
+    }
   },
 
   /**
    * Get all orders (Admin only) — optionally filter by status
    */
   async getAllOrders(status = null) {
+    let cloudOrders = [];
     let endpoint = '/orders?order=created_at.desc&limit=200';
     if (status) endpoint += `&status=eq.${status}`;
 
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
         const result = await this._supabaseFetch(endpoint);
-        if (result && Array.isArray(result)) return result;
+        if (result && Array.isArray(result)) cloudOrders = result;
       } catch(err) {
         console.warn('[getAllOrders Supabase Error]:', err);
       }
     }
 
-    // Fallback: all localStorage orders
+    // Merge with local fallback orders (deduplicated by id)
     try {
-      const all = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
-      return status ? all.filter(o => o.status === status) : all;
-    } catch(e) { return []; }
+      const localAll = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
+      const combined = [...cloudOrders];
+      localAll.forEach(lo => {
+        if (!combined.some(co => co.id === lo.id)) {
+          if (!status || lo.status === status) combined.push(lo);
+        }
+      });
+      return combined.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+    } catch(e) {
+      return cloudOrders;
+    }
   },
 
   /**
@@ -1032,6 +1062,14 @@ const CloudService = window.CloudService = {
       const o = orders.find(x => x.id === orderId);
       if (o) { o.status = 'approved'; o.reviewed_by = adminName; o.approved_at = now; }
       localStorage.setItem('inbiology_orders', JSON.stringify(orders));
+
+      // Also mirror to active session if user is currently logged in
+      const currentProfile = AppState.getStudentProfile();
+      if (currentProfile && currentProfile.email && currentProfile.email.toLowerCase().trim() === userEmail.toLowerCase().trim()) {
+        const merged = [...new Set([...(AppState.enrolled || []), ...(courseIds || [])])];
+        AppState.enrolled = merged;
+        localStorage.setItem('inbiology_enrolled', JSON.stringify(merged));
+      }
     } catch(e) {}
 
     return { success: true };

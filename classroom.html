@@ -223,15 +223,15 @@
   <!-- Universal Rich Multi-Column Footer -->
   <footer id="footer-container"></footer>
 
-  <script src="./js/mockData.js?v=20260918_v5"></script>
-  <script src="./js/firebaseConfig.js?v=20260918_v5"></script>
-  <script src="./js/cloudService.js?v=20260918_v5"></script>
-  <script src="./js/app.js?v=20260918_v5"></script>
+  <script src="./js/mockData.js?v=20260918_v7"></script>
+  <script src="./js/supabaseConfig.js?v=20260918_v7"></script>
+  <script src="./js/cloudService.js?v=20260918_v7"></script>
+  <script src="./js/app.js?v=20260918_v7"></script>
   <script>
     let currentCourse = COURSES[0];
     let currentLesson = currentCourse.lessons && currentCourse.lessons.length > 0 ? currentCourse.lessons[0] : null;
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       // 🔒 AUTH GUARD: Must be logged in to view my courses / classroom
       if (!AppState.isLoggedIn()) {
         const redirectUrl = window.location.search ? 'classroom.html' + window.location.search : 'classroom.html';
@@ -240,6 +240,14 @@
       }
 
       renderHeader('classroom');
+
+      // Sync enrolled courses from Supabase cloud before rendering
+      const profile = AppState.getStudentProfile();
+      if (profile && profile.email && window.CloudService && typeof window.CloudService.syncEnrolledFromCloud === 'function') {
+        try {
+          await window.CloudService.syncEnrolledFromCloud(profile.email);
+        } catch(e) { console.warn('Sync enrolled note:', e); }
+      }
 
       // Check deep link URL parameter e.g. classroom.html?course=bio-intensive-2
       const urlParams = new URLSearchParams(window.location.search);

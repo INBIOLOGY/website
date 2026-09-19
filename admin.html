@@ -68,36 +68,40 @@
         </div>
 
         <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden">
-          <table style="width:100%;border-collapse:collapse;font-size:12px">
-            <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
-              <tr>
-                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ชื่อวิชา</th>
-                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ระดับชั้น</th>
-                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ราคา</th>
-                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">การจัดการ</th>
-              </tr>
-            </thead>
-            <tbody id="admin-course-table"></tbody>
-          </table>
+          <div class="admin-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%">
+            <table style="width:100%;min-width:600px;border-collapse:collapse;font-size:12px">
+              <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
+                <tr>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ชื่อวิชา</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ระดับชั้น</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ราคา</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">การจัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="admin-course-table"></tbody>
+            </table>
+          </div>
         </div>
       </div>
 
       <!-- Tab: Orders Verification -->
       <div id="apanel-orders" style="display:none;flex-direction:column;gap:20px">
         <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden">
-          <table style="width:100%;border-collapse:collapse;font-size:12px">
-            <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
-              <tr>
-                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ออเดอร์</th>
-                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ชื่อนักเรียน</th>
-                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">วิชา</th>
-                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ราคา</th>
-                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">สถานะ / สลิป</th>
-                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">การจัดการ</th>
-              </tr>
-            </thead>
-            <tbody id="admin-orders-table"></tbody>
-          </table>
+          <div class="admin-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%">
+            <table style="width:100%;min-width:700px;border-collapse:collapse;font-size:12px">
+              <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
+                <tr>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ออเดอร์</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ชื่อนักเรียน</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">วิชา</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ราคา</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">สถานะ / สลิป</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">การจัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="admin-orders-table"></tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -105,22 +109,24 @@
       <div id="apanel-coupons" style="display:none;flex-direction:column;gap:20px">
         <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px">
           <h3 style="font-size:14px;font-weight:900;color:var(--c-navy);margin:0 0 12px">+ สร้างคูปองส่วนลดใหม่</h3>
-          <form id="add-coupon-form" style="display:flex;gap:10px">
+          <form id="add-coupon-form" style="display:flex;gap:10px;flex-wrap:wrap">
             <input type="text" id="coupon-code" placeholder="โค้ดส่วนลด" required style="border:1px solid #E5E7EB;border-radius:8px;padding:8px 12px;font-size:12px;outline:none" />
             <input type="number" id="coupon-discount" placeholder="ส่วนลด (บาท)" required style="border:1px solid #E5E7EB;border-radius:8px;padding:8px 12px;font-size:12px;outline:none" />
             <button type="submit" style="background:var(--c-sky);color:white;font-weight:800;font-size:12px;padding:8px 16px;border-radius:8px;border:none;cursor:pointer">สร้างคูปอง</button>
           </form>
         </div>
         <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden">
-          <table style="width:100%;border-collapse:collapse;font-size:12px">
-            <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
-              <tr>
-                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">โค้ด</th>
-                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">มูลค่า</th>
-              </tr>
-            </thead>
-            <tbody id="admin-coupons-table"></tbody>
-          </table>
+          <div class="admin-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%">
+            <table style="width:100%;min-width:360px;border-collapse:collapse;font-size:12px">
+              <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
+                <tr>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">โค้ด</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">มูลค่า</th>
+                </tr>
+              </thead>
+              <tbody id="admin-coupons-table"></tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -133,18 +139,89 @@
           </div>
         </div>
         <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden">
-          <table style="width:100%;border-collapse:collapse;font-size:12px">
-            <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
-              <tr>
-                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ชื่อจริง - นามสกุล</th>
-                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ชื่อเล่น</th>
-                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">อีเมล</th>
-                <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">โรงเรียน / ชั้น</th>
-                <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280">สิทธิ์แอดมิน</th>
-              </tr>
-            </thead>
-            <tbody id="admin-students-table"></tbody>
-          </table>
+          <div class="admin-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%">
+            <table style="width:100%;min-width:700px;border-collapse:collapse;font-size:12px">
+              <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
+                <tr>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ชื่อจริง - นามสกุล</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ชื่อเล่น</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">อีเมล</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">โรงเรียน / ชั้น</th>
+                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280">สิทธิ์แอดมิน</th>
+                </tr>
+              </thead>
+              <tbody id="admin-students-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2-Step Admin Order Approval Confirmation Modal -->
+  <div id="admin-approval-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.65);backdrop-filter:blur(6px);z-index:10000;align-items:center;justify-content:center;padding:16px">
+    <div style="background:white;border-radius:24px;width:100%;max-width:540px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.3);overflow:hidden;animation:fadeIn 0.2s ease;max-height:90vh;display:flex;flex-direction:column">
+      <div style="padding:18px 24px;border-bottom:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center;background:#F8FAFC">
+        <div>
+          <h3 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0">📋 ตรวจสอบสลิป & ยืนยันการอนุมัติคอร์ส</h3>
+          <p style="font-size:11px;color:#64748B;margin:2px 0 0">กรุณาตรวจสอบยอดโอนและชื่อบัญชีให้ถูกต้องก่อนอนุมัติ</p>
+        </div>
+        <button onclick="closeApprovalModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#94A3B8;font-weight:700;line-height:1">✕</button>
+      </div>
+
+      <div style="padding:20px 24px;overflow-y:auto;display:flex;flex-direction:column;gap:16px">
+        <!-- Warning alert banner -->
+        <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;font-size:12px;color:#92400E">
+          <span style="font-size:18px">⚠️</span>
+          <span>กรุณาตรวจสอบว่ามีเงินเข้าบัญชีจริงตรงตามยอดด้านล่าง ระบบจะเปิดสิทธิ์เข้าห้องเรียนให้นักเรียนทันทีที่อนุมัติ</span>
+        </div>
+
+        <!-- Slip & Info Grid -->
+        <div style="display:grid;grid-template-columns:140px 1fr;gap:16px;align-items:start">
+          <!-- Slip Preview -->
+          <div style="text-align:center">
+            <div id="modal-slip-container" style="width:140px;height:175px;border-radius:12px;background:#F1F5F9;overflow:hidden;border:1px solid #E2E8F0;display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="viewSlipFromModal()" title="คลิกเพื่อดูสลิปขนาดเต็ม">
+              <img id="modal-slip-img" src="" alt="สลิป" style="width:100%;height:100%;object-fit:cover" />
+            </div>
+            <button type="button" onclick="viewSlipFromModal()" style="margin-top:6px;background:none;border:none;color:var(--c-sky);font-size:11px;font-weight:800;cursor:pointer;text-decoration:underline">
+              🔍 ดูภาพขนาดเต็ม
+            </button>
+          </div>
+
+          <!-- Order Summary Details -->
+          <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px;font-size:12px">
+            <div>
+              <div style="font-size:10px;font-weight:800;color:#64748B;text-transform:uppercase">👤 นักเรียน</div>
+              <div id="modal-student-name" style="font-weight:900;color:var(--c-navy);font-size:13px"></div>
+              <div id="modal-student-email" style="color:#64748B;font-size:11px"></div>
+            </div>
+            <div style="border-top:1px solid #E2E8F0;padding-top:6px">
+              <div style="font-size:10px;font-weight:800;color:#64748B;text-transform:uppercase">📚 คอร์สที่ซื้อ</div>
+              <div id="modal-course-titles" style="font-weight:700;color:#1E293B"></div>
+            </div>
+            <div style="border-top:1px solid #E2E8F0;padding-top:6px">
+              <div style="font-size:10px;font-weight:800;color:#64748B;text-transform:uppercase">💰 ยอดโอนสุทธิที่ต้องตรวจสอบ</div>
+              <div id="modal-total-amount" style="font-weight:950;color:#B91C1C;font-size:18px"></div>
+            </div>
+            <div id="modal-note-row" style="border-top:1px solid #E2E8F0;padding-top:6px;display:none">
+              <div style="font-size:10px;font-weight:800;color:#64748B;text-transform:uppercase">📝 บันทึกจากผู้เรียน</div>
+              <div id="modal-user-note" style="color:#334155;font-style:italic"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:16px 24px;border-top:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center;background:#FAFAFA">
+        <button type="button" onclick="rejectFromModal()" style="background:#FEE2E2;color:#DC2626;border:1px solid #FCA5A5;font-weight:800;font-size:12px;padding:9px 16px;border-radius:10px;cursor:pointer">
+          ❌ ปฏิเสธออเดอร์
+        </button>
+        <div style="display:flex;gap:10px">
+          <button type="button" onclick="closeApprovalModal()" style="background:#F1F5F9;color:#475569;font-weight:800;font-size:12px;padding:9px 16px;border-radius:10px;border:none;cursor:pointer">
+            ยกเลิก
+          </button>
+          <button type="button" id="modal-confirm-btn" onclick="confirmApproval()" style="background:var(--c-sky);color:white;font-weight:900;font-size:12px;padding:9px 20px;border-radius:10px;border:none;cursor:pointer;box-shadow:0 4px 12px rgba(30,58,138,0.25)">
+            ✅ ยืนยันยอดเงิน & อนุมัติทันที
+          </button>
         </div>
       </div>
     </div>
@@ -204,7 +281,6 @@
   </div>
 
   <script src="./js/mockData.js?v=20260918_v7"></script>
-  <script src="./js/firebaseConfig.js?v=20260918_v7"></script>
   <script src="./js/supabaseConfig.js?v=20260918_v7"></script>
   <script src="./js/cloudService.js?v=20260918_v7"></script>
   <script src="./js/app.js?v=20260918_v7"></script>
@@ -334,7 +410,7 @@
             <td style="padding:10px 16px">
               ${o.status === 'pending' ? `
                 <div style="display:flex;flex-direction:column;gap:4px">
-                  <button onclick="doApproveOrder('${o.id}', '${o.user_email}', JSON.parse(atob('${btoa(JSON.stringify(o.course_ids||[]))}'))" style="background:var(--c-sky);color:white;border:none;padding:6px 10px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer">✅ อนุมัติ</button>
+                  <button onclick="openApprovalModal('${o.id}')" style="background:var(--c-sky);color:white;border:none;padding:6px 10px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer">✅ อนุมัติ</button>
                   <button onclick="promptReject('${o.id}')" style="background:#FEE2E2;color:#DC2626;border:none;padding:6px 10px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer">❌ ปฏิเสธ</button>
                 </div>
               ` : `<span style="font-size:11px;color:#9CA3AF">${o.reviewed_by ? 'โดย: ' + o.reviewed_by : '—'}</span>`}
@@ -348,34 +424,122 @@
       const o = _ordersCache.find(x => x.id === orderId);
       if (!o || !o.slip_image) return;
       const overlay = document.createElement('div');
-      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;cursor:pointer';
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;cursor:pointer;backdrop-filter:blur(4px)';
       overlay.onclick = () => overlay.remove();
       overlay.innerHTML = `
-        <div style="background:white;border-radius:16px;padding:16px;max-width:480px;width:100%;text-align:center" onclick="event.stopPropagation()">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-            <span style="font-weight:800;color:var(--c-navy);font-size:14px">🖼️ สลิปโอนเงิน</span>
-            <button onclick="this.closest('[style*=fixed]').remove()" style="background:none;border:none;font-size:18px;cursor:pointer;color:#9CA3AF">✕</button>
+        <div style="background:white;border-radius:20px;padding:20px;max-width:520px;width:100%;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,0.3)" onclick="event.stopPropagation()">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:1px solid #F1F5F9;padding-bottom:10px">
+            <span style="font-weight:850;color:var(--c-navy);font-size:15px">🖼️ หลักฐานการโอนเงิน (สลิป)</span>
+            <button onclick="this.closest('[style*=fixed]').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#9CA3AF;font-weight:700">✕</button>
           </div>
-          <img src="${o.slip_image}" style="max-width:100%;max-height:60vh;object-fit:contain;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.15)" alt="สลิป" />
-          <p style="font-size:11px;color:#6B7280;margin:10px 0 0">${o.user_name} (${o.user_email}) — ฿${Number(o.total_amount).toLocaleString('th-TH')}</p>
+          <div style="max-height:65vh;overflow-y:auto;border-radius:12px;background:#F8FAFC;padding:8px">
+            <img src="${o.slip_image}" style="max-width:100%;height:auto;object-fit:contain;border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,0.1)" alt="สลิป" />
+          </div>
+          <div style="margin-top:12px;font-size:12px;color:#475569;line-height:1.6;text-align:left;background:#F1F5F9;padding:10px 14px;border-radius:10px">
+            <div><strong>นักเรียน:</strong> ${o.user_name || 'ไม่ระบุ'} (${o.user_email})</div>
+            <div><strong>คอร์สที่ซื้อ:</strong> ${o.course_titles || (o.course_ids||[]).join(', ')}</div>
+            <div><strong>ยอดโอนสุทธิ:</strong> <span style="color:#B91C1C;font-weight:900">฿${Number(o.total_amount).toLocaleString('th-TH')}</span></div>
+            ${o.user_note ? `<div style="margin-top:4px;color:#334155"><strong>บันทึก:</strong> ${o.user_note}</div>` : ''}
+          </div>
+          ${o.status === 'pending' ? `
+            <div style="display:flex;gap:10px;margin-top:14px;justify-content:flex-end">
+              <button onclick="this.closest('[style*=fixed]').remove(); promptReject('${o.id}');" style="background:#FEE2E2;color:#DC2626;border:none;padding:8px 16px;border-radius:10px;font-weight:800;font-size:12px;cursor:pointer">❌ ปฏิเสธ</button>
+              <button onclick="this.closest('[style*=fixed]').remove(); openApprovalModal('${o.id}');" style="background:var(--c-sky);color:white;border:none;padding:8px 20px;border-radius:10px;font-weight:800;font-size:12px;cursor:pointer">✅ ตรวจสอบ & อนุมัติ</button>
+            </div>
+          ` : ''}
         </div>
       `;
       document.body.appendChild(overlay);
     }
 
-    async function doApproveOrder(orderId, userEmail, courseIds) {
-      if (!confirm(`✅ ยืนยันอนุมัติออเดอร์และเปิดคอร์สให้ ${userEmail}?`)) return;
+    let _currentApprovingOrderId = null;
+
+    function openApprovalModal(orderId) {
+      const o = _ordersCache.find(x => x.id === orderId);
+      if (!o) return;
+      _currentApprovingOrderId = orderId;
+
+      document.getElementById('modal-student-name').textContent = o.user_name || 'ไม่ระบุชื่อ';
+      document.getElementById('modal-student-email').textContent = o.user_email || '—';
+      document.getElementById('modal-course-titles').textContent = o.course_titles || (o.course_ids || []).join(', ');
+      document.getElementById('modal-total-amount').textContent = `฿${Number(o.total_amount).toLocaleString('th-TH')}`;
+
+      const noteRow = document.getElementById('modal-note-row');
+      const userNoteEl = document.getElementById('modal-user-note');
+      if (o.user_note && o.user_note.trim()) {
+        userNoteEl.textContent = o.user_note;
+        noteRow.style.display = 'block';
+      } else {
+        noteRow.style.display = 'none';
+      }
+
+      const slipImg = document.getElementById('modal-slip-img');
+      const slipContainer = document.getElementById('modal-slip-container');
+      if (o.slip_image) {
+        slipImg.src = o.slip_image;
+        slipImg.style.display = 'block';
+        slipContainer.style.background = '#F8FAFC';
+      } else {
+        slipImg.style.display = 'none';
+        slipContainer.innerHTML = '<span style="font-size:11px;color:#94A3B8;padding:10px;text-align:center">ไม่มีสลิป</span>';
+      }
+
+      const modal = document.getElementById('admin-approval-modal');
+      modal.style.display = 'flex';
+    }
+
+    function closeApprovalModal() {
+      const modal = document.getElementById('admin-approval-modal');
+      if (modal) modal.style.display = 'none';
+      _currentApprovingOrderId = null;
+    }
+
+    function viewSlipFromModal() {
+      if (_currentApprovingOrderId) {
+        viewSlip(_currentApprovingOrderId);
+      }
+    }
+
+    function rejectFromModal() {
+      const orderId = _currentApprovingOrderId;
+      closeApprovalModal();
+      if (orderId) {
+        promptReject(orderId);
+      }
+    }
+
+    async function confirmApproval() {
+      if (!_currentApprovingOrderId) return;
+      const orderId = _currentApprovingOrderId;
+      const o = _ordersCache.find(x => x.id === orderId);
+      if (!o) return;
+
+      const confirmBtn = document.getElementById('modal-confirm-btn');
+      if (confirmBtn) {
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = '⏳ กำลังอนุมัติ...';
+      }
+
       try {
-        await CloudService.approveOrder(orderId, userEmail, courseIds);
-        showToast(`✅ อนุมัติและเปิดคอร์สให้ ${userEmail} เรียบร้อยแล้ว`, 'success');
+        await CloudService.approveOrder(orderId, o.user_email, o.course_ids);
+        const studentLabel = o.user_name ? `${o.user_name} (${o.user_email})` : o.user_email;
+        showToast(`✅ อนุมัติและเปิดคอร์สให้ ${studentLabel} เรียบร้อยแล้ว`, 'success');
+        closeApprovalModal();
         await loadAndRenderOrders();
-      } catch(e) {
+      } catch (e) {
         showToast('❌ เกิดข้อผิดพลาด: ' + e.message, 'error');
+      } finally {
+        if (confirmBtn) {
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = '✅ ยืนยันยอดเงิน & อนุมัติทันที';
+        }
       }
     }
 
     async function promptReject(orderId) {
-      const note = prompt('ใส่เหตุผลการปฏิเสธ (จะส่งให้น้อง):');
+      const o = _ordersCache.find(x => x.id === orderId);
+      const studentLabel = o ? (o.user_name || o.user_email) : 'นักเรียน';
+      const note = prompt(`ใส่เหตุผลการปฏิเสธออเดอร์ของ ${studentLabel} (จะส่งแจ้งเตือนให้น้อง):`, 'สลิปไม่ถูกต้อง หรือยอดโอนไม่ครบ');
       if (note === null) return; // Cancelled
       try {
         await CloudService.rejectOrder(orderId, note || 'สลิปไม่ถูกต้อง กรุณาส่งสลิปใหม่');

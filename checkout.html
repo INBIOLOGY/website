@@ -116,18 +116,30 @@
           <div
             style="background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:20px;padding:22px;display:flex;flex-direction:column;align-items:center;gap:14px">
             <p style="font-size:12.5px;font-weight:700;color:#334155;margin:0;text-align:center">
-              📌 โอนเงินผ่าน PromptPay หรือ QR Code ด้านล่าง แล้วแนบสลิปเพื่อยืนยัน
+              📌 โอนเงินผ่าน PromptPay หรือสแกน QR Code ด้านล่าง แล้วแนบสลิปเพื่อยืนยัน
             </p>
 
+            <!-- Dynamic transfer amount banner -->
+            <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:14px;padding:10px 20px;text-align:center;width:100%;max-width:320px;box-sizing:border-box">
+              <span style="font-size:11px;font-weight:700;color:#1E3A8A;display:block">ยอดเงินที่ต้องโอนสุทธิ</span>
+              <span id="qr-pay-amount" style="font-size:22px;font-weight:950;color:#B91C1C;display:block;margin-top:2px">฿0</span>
+            </div>
+
             <!-- QR Code — Krungthai PromptPay อัปเดตจริง -->
-            <div style="width:220px;border:2px solid #CBD5E1;border-radius:16px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.08)">
+            <div style="width:220px;border:2px solid #CBD5E1;border-radius:16px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,0.08);background:white">
               <img src="./promptpay-qr.jpg" id="qr-img" style="width:100%;display:block" alt="QR PromptPay นายวิทย์ศรุต INBIOLOGY" />
             </div>
 
-            <div style="text-align:center;font-size:12.5px;color:#475569;line-height:1.8">
+            <div style="text-align:center;font-size:12.5px;color:#475569;line-height:1.9;width:100%">
               <div><strong>ชื่อบัญชี:</strong> นายวิทย์ศรุต จันทร์บ้านโต้น</div>
-              <div><strong>เลขพร้อมเพย์:</strong> <code id="promptpay-number"
-                  style="font-size:14px;font-weight:900;color:#1E3A8A;background:#EFF6FF;padding:2px 8px;border-radius:6px">098-675-1052</code>
+              <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin:4px 0">
+                <span><strong>เลขพร้อมเพย์:</strong></span>
+                <code id="promptpay-number"
+                  style="font-size:14px;font-weight:900;color:#1E3A8A;background:#EFF6FF;padding:3px 10px;border-radius:8px;letter-spacing:0.5px">098-675-1052</code>
+                <button type="button" onclick="copyPromptPayNumber()" id="btn-copy-pp"
+                  style="background:#1E3A8A;color:white;border:none;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:all 0.2s">
+                  📋 คัดลอก
+                </button>
               </div>
               <div><strong>ธนาคาร:</strong> กรุงไทย (Krungthai)</div>
             </div>
@@ -257,7 +269,6 @@
   <footer id="footer-container"></footer>
 
   <script src="./js/mockData.js?v=20260918_v7"></script>
-  <script src="./js/firebaseConfig.js?v=20260918_v7"></script>
   <script src="./js/supabaseConfig.js?v=20260918_v7"></script>
   <script src="./js/cloudService.js?v=20260918_v7"></script>
   <script src="./js/app.js?v=20260918_v7"></script>
@@ -273,15 +284,54 @@
         setTimeout(() => location.href = 'login.html?redirect=checkout.html', 1000);
         return;
       }
+
+      // Auto add course if passed via URL ?course=... and cart is empty
+      const urlParams = new URLSearchParams(window.location.search);
+      const courseIdParam = urlParams.get('course');
+      if (courseIdParam && AppState.cart.length === 0) {
+        const found = COURSES.find(c => c.id === courseIdParam);
+        if (found && !AppState.enrolled.includes(found.id)) {
+          AppState.cart = [found];
+          AppState.saveCart();
+        }
+      }
+
       renderHeader('checkout');
       renderSummary();
     });
+
+    function copyPromptPayNumber() {
+      const rawNumber = '0986751052';
+      const btn = document.getElementById('btn-copy-pp');
+      navigator.clipboard.writeText(rawNumber).then(() => {
+        showToast('📋 คัดลอกเลขพร้อมเพย์ 098-675-1052 แล้ว', 'success');
+        if (btn) {
+          const original = btn.innerHTML;
+          btn.innerHTML = '✓ คัดลอกแล้ว';
+          btn.style.background = '#059669';
+          setTimeout(() => {
+            btn.innerHTML = original;
+            btn.style.background = '#1E3A8A';
+          }, 2000);
+        }
+      }).catch(() => {
+        // Fallback
+        const temp = document.createElement('textarea');
+        temp.value = rawNumber;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+        showToast('📋 คัดลอกเลขพร้อมเพย์แล้ว', 'success');
+      });
+    }
 
     function renderSummary() {
       const itemsContainer = document.getElementById('checkout-items');
       const totalEl = document.getElementById('checkout-total');
       const subtotalEl = document.getElementById('subtotal-amount');
       const discountEl = document.getElementById('discount-amount');
+      const qrAmountEl = document.getElementById('qr-pay-amount');
 
       if (AppState.cart.length === 0) {
         itemsContainer.innerHTML = `<p style="font-size:12px;color:#9CA3AF;text-align:center;padding:12px 0">ไม่มีสินค้าในตะกร้า — <a href="courses.html" style="color:var(--c-sky);font-weight:800">เลือกคอร์ส</a></p>`;
@@ -303,6 +353,7 @@
       subtotalEl.textContent = `฿${formatPrice(subtotal)}`;
       discountEl.textContent = `- ฿${formatPrice(discount)}`;
       totalEl.textContent = `฿${formatPrice(finalTotal)}`;
+      if (qrAmountEl) qrAmountEl.textContent = `฿${formatPrice(finalTotal)}`;
     }
 
     function handleCouponSubmit() {
@@ -320,7 +371,7 @@
       }
     }
 
-    // ── Slip Upload Handling ─────────────────────────────────────────────────
+    // ── Slip Upload & Canvas Compression ─────────────────────────────────────
 
     function handleSlipFile(input) {
       if (input.files && input.files[0]) {
@@ -340,24 +391,61 @@
     }
 
     function processSlipFile(file) {
-      if (file.size > 5 * 1024 * 1024) {
-        showToast('ไฟล์ใหญ่เกิน 5MB กรุณาเลือกไฟล์ขนาดเล็กกว่า', 'error');
+      if (!file.type.startsWith('image/')) {
+        showToast('กรุณาเลือกไฟล์รูปภาพเท่านั้น (JPG, PNG)', 'error');
         return;
       }
+      if (file.size > 15 * 1024 * 1024) {
+        showToast('ไฟล์ใหญ่เกิน 15MB กรุณาเลือกไฟล์ขนาดเล็กกว่า', 'error');
+        return;
+      }
+
+      showToast('🔄 กำลังประมวลผลรูปภาพสลิป...', 'info');
+
       const reader = new FileReader();
       reader.onload = (e) => {
-        slipBase64 = e.target.result;
-        // Show preview
-        document.getElementById('slip-dropzone-content').style.display = 'none';
-        const preview = document.getElementById('slip-preview');
-        preview.style.display = 'flex';
-        document.getElementById('slip-preview-img').src = slipBase64;
-        document.getElementById('slip-preview-name').textContent = `✅ ${file.name}`;
-        document.getElementById('slip-dropzone').classList.add('has-file');
-        // Enable submit button
-        document.getElementById('confirm-btn').disabled = false;
-        document.getElementById('confirm-btn').style.opacity = '1';
-        showToast('แนบสลิปเรียบร้อย กดยืนยันเพื่อส่งคำสั่งซื้อ', 'success');
+        const img = new Image();
+        img.onload = () => {
+          // Automatic Client-side Canvas Compression (Max 1200px, JPEG 0.82)
+          const maxDim = 1200;
+          let w = img.width;
+          let h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+
+          slipBase64 = canvas.toDataURL('image/jpeg', 0.82);
+
+          // Show preview
+          document.getElementById('slip-dropzone-content').style.display = 'none';
+          const preview = document.getElementById('slip-preview');
+          preview.style.display = 'flex';
+          document.getElementById('slip-preview-img').src = slipBase64;
+          document.getElementById('slip-preview-name').textContent = `✅ ${file.name} (พร้อมส่ง)`;
+          document.getElementById('slip-dropzone').classList.add('has-file');
+
+          // Enable submit button
+          const confirmBtn = document.getElementById('confirm-btn');
+          confirmBtn.disabled = false;
+          confirmBtn.style.opacity = '1';
+          showToast('แนบสลิปเรียบร้อย กดยืนยันเพื่อส่งคำสั่งซื้อ', 'success');
+        };
+        img.onerror = () => {
+          showToast('ไม่สามารถอ่านไฟล์รูปภาพได้ กรุณาลองใหม่อีกครั้ง', 'error');
+        };
+        img.src = e.target.result;
       };
       reader.readAsDataURL(file);
     }
@@ -391,7 +479,7 @@
 
       const btn = document.getElementById('confirm-btn');
       btn.disabled = true;
-      btn.textContent = '⏳ กำลังส่งข้อมูล...';
+      btn.textContent = '⏳ กำลังส่งข้อมูลคำสั่งซื้อ...';
 
       try {
         const profile = AppState.getStudentProfile();
@@ -410,7 +498,8 @@
           totalAmount: finalTotal,
           couponCode: appliedCouponCode,
           discountAmount: discount,
-          slipBase64: slipBase64
+          slipBase64: slipBase64,
+          userNote: note
         });
 
         if (result && result.success) {

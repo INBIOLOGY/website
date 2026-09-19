@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LINE Login Callback ó INBIOLOGY Academy</title>
+  <title>LINE Login Callback ‚Äî INBIOLOGY Academy</title>
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="stylesheet" href="./css/style.css">
   <style>
@@ -20,27 +20,27 @@
   <div class="callback-card">
     <div style="font-size:48px;margin-bottom:12px">??</div>
     <div class="spinner" id="spinner"></div>
-    <h1 class="status-title" id="status-title">°”≈—ß‡¢È“ ŸË√–∫∫¥È«¬ LINE...</h1>
-    <p class="status-sub" id="status-sub">°√ÿ≥“√Õ —°§√ŸË √–∫∫°”≈—ßµ√«® Õ∫¢ÈÕ¡Ÿ≈¢Õß§ÿ≥</p>
+    <h1 class="status-title" id="status-title">‡∏Å‡∏≥‡∏•‡∏±‡∏á‡πÄ‡∏Ç‡πâ‡∏≤‡∏™‡∏π‡πà‡∏£‡∏∞‡∏ö‡∏ö‡∏î‡πâ‡∏ß‡∏¢ LINE...</h1>
+    <p class="status-sub" id="status-sub">‡∏Å‡∏£‡∏∏‡∏ì‡∏≤‡∏£‡∏≠‡∏™‡∏±‡∏Å‡∏Ñ‡∏£‡∏π‡πà ‡∏£‡∏∞‡∏ö‡∏ö‡∏Å‡∏≥‡∏•‡∏±‡∏á‡∏ï‡∏£‡∏ß‡∏à‡∏™‡∏≠‡∏ö‡∏Ç‡πâ‡∏≠‡∏°‡∏π‡∏•‡∏Ç‡∏≠‡∏á‡∏Ñ‡∏∏‡∏ì</p>
     <div class="error-box" id="error-box"></div>
   </div>
   <script src="./js/mockData.js"></script>
-  <script src="./js/firebaseConfig.js"></script>
+  <script src="./js/supabaseConfig.js"></script>
   <script src="./js/lineConfig.js"></script>
   <script src="./js/cloudService.js"></script>
   <script src="./js/app.js"></script>
   <script>
     function showError(msg) {
       document.getElementById('spinner').style.display='none';
-      document.getElementById('status-title').textContent='‡¢È“ ŸË√–∫∫‰¡Ë ”‡√Á®';
-      document.getElementById('status-sub').textContent='°√ÿ≥“≈Õß„À¡ËÕ’°§√—Èß';
+      document.getElementById('status-title').textContent='‡πÄ‡∏Ç‡πâ‡∏≤‡∏™‡∏π‡πà‡∏£‡∏∞‡∏ö‡∏ö‡πÑ‡∏°‡πà‡∏™‡∏≥‡πÄ‡∏£‡πá‡∏à';
+      document.getElementById('status-sub').textContent='‡∏Å‡∏£‡∏∏‡∏ì‡∏≤‡∏•‡∏≠‡∏á‡πÉ‡∏´‡∏°‡πà‡∏≠‡∏µ‡∏Å‡∏Ñ‡∏£‡∏±‡πâ‡∏á';
       const eb=document.getElementById('error-box');eb.style.display='block';eb.textContent=msg;
       setTimeout(()=>{location.href='login.html';},3500);
     }
     function showSuccess(name) {
       document.getElementById('spinner').style.display='none';
-      document.getElementById('status-title').textContent='?? ¬‘π¥’µÈÕπ√—∫ '+name+'!';
-      document.getElementById('status-sub').textContent='‡¢È“ ŸË√–∫∫ ”‡√Á® °”≈—ßπ”§ÿ≥‰ª¬—ßÀÈÕß‡√’¬π...';
+      document.getElementById('status-title').textContent='?? ‡∏¢‡∏¥‡∏ô‡∏î‡∏µ‡∏ï‡πâ‡∏≠‡∏ô‡∏£‡∏±‡∏ö '+name+'!';
+      document.getElementById('status-sub').textContent='‡πÄ‡∏Ç‡πâ‡∏≤‡∏™‡∏π‡πà‡∏£‡∏∞‡∏ö‡∏ö‡∏™‡∏≥‡πÄ‡∏£‡πá‡∏à ‡∏Å‡∏≥‡∏•‡∏±‡∏á‡∏ô‡∏≥‡∏Ñ‡∏∏‡∏ì‡πÑ‡∏õ‡∏¢‡∏±‡∏á‡∏´‡πâ‡∏≠‡∏á‡πÄ‡∏£‡∏µ‡∏¢‡∏ô...';
     }
     function decodeJwt(token) {
       try {
@@ -51,14 +51,14 @@
     }
     async function processLineUser(info) {
       const name=info.name||'LINE User';
-      const profile={lineId:info.sub,fullName:name,nickname:name.split(' ')[0],email:info.email||('line_'+info.sub+'@line.user'),avatar:info.picture||'',school:'¬—ß‰¡Ë‰¥È√–∫ÿ',level:'¡.5',role:'student',authProvider:'line'};
+      const profile={lineId:info.sub,fullName:name,nickname:name.split(' ')[0],email:info.email||('line_'+info.sub+'@line.user'),avatar:info.picture||'',school:'‡∏¢‡∏±‡∏á‡πÑ‡∏°‡πà‡πÑ‡∏î‡πâ‡∏£‡∏∞‡∏ö‡∏∏',level:'‡∏°.5',role:'student',authProvider:'line'};
       AppState.userRole='student';localStorage.setItem('inbiology_role','student');AppState.saveStudentProfile(profile);
       showSuccess(name);
       const r=sessionStorage.getItem('line_redirect')||'classroom.html';sessionStorage.removeItem('line_redirect');
       setTimeout(()=>{location.href=r;},1200);
     }
     async function processLineUserDemo(code) {
-      const profile={fullName:'π“¬ LINE Demo User',nickname:'LINE',email:'line.demo@inbiology.com',school:'‚√ß‡√’¬π∑¥ Õ∫',level:'¡.6',role:'student',authProvider:'line_demo'};
+      const profile={fullName:'‡∏ô‡∏≤‡∏¢ LINE Demo User',nickname:'LINE',email:'line.demo@inbiology.com',school:'‡πÇ‡∏£‡∏á‡πÄ‡∏£‡∏µ‡∏¢‡∏ô‡∏ó‡∏î‡∏™‡∏≠‡∏ö',level:'‡∏°.6',role:'student',authProvider:'line_demo'};
       AppState.userRole='student';localStorage.setItem('inbiology_role','student');AppState.saveStudentProfile(profile);
       showSuccess('LINE User (Demo)');
       const r=sessionStorage.getItem('line_redirect')||'classroom.html';sessionStorage.removeItem('line_redirect');
@@ -67,11 +67,11 @@
     async function handleLineCallback() {
       const p=new URLSearchParams(window.location.search);
       const code=p.get('code'),state=p.get('state'),err=p.get('error');
-      if(err){showError('LINE ªØ‘‡ ∏°“√‡¢È“∂÷ß: '+(p.get('error_description')||err));return;}
+      if(err){showError('LINE ‡∏õ‡∏è‡∏¥‡πÄ‡∏™‡∏ò‡∏Å‡∏≤‡∏£‡πÄ‡∏Ç‡πâ‡∏≤‡∏ñ‡∏∂‡∏á: '+(p.get('error_description')||err));return;}
       const saved=sessionStorage.getItem('line_oauth_state');
-      if(!state||state!==saved){showError('State ‰¡Ëµ√ß°—π °√ÿ≥“≈Õß„À¡Ë');return;}
+      if(!state||state!==saved){showError('State ‡πÑ‡∏°‡πà‡∏ï‡∏£‡∏á‡∏Å‡∏±‡∏ô ‡∏Å‡∏£‡∏∏‡∏ì‡∏≤‡∏•‡∏≠‡∏á‡πÉ‡∏´‡∏°‡πà');return;}
       sessionStorage.removeItem('line_oauth_state');
-      if(!code){showError('‰¡Ë‰¥È√—∫ authorization code');return;}
+      if(!code){showError('‡πÑ‡∏°‡πà‡πÑ‡∏î‡πâ‡∏£‡∏±‡∏ö authorization code');return;}
       const hp=new URLSearchParams(window.location.hash.replace('#',''));
       const idTok=hp.get('id_token');
       if(idTok){const pl=decodeJwt(idTok);if(pl){await processLineUser(pl);return;}}
