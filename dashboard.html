@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>แดชบอร์ดนักเรียน — INBIOLOGY Academy by พี่ต้น</title>
-  <meta name="description" content="แดชบอร์ดส่วนตัวของนักเรียน INBIOLOGY จัดการโปรไฟล์ คอร์สที่ลงทะเบียน โน้ตสรุป และติดตามผลการเรียน">
+  <meta name="description"
+    content="แดชบอร์ดส่วนตัวของนักเรียน INBIOLOGY จัดการโปรไฟล์ คอร์สที่ลงทะเบียน โน้ตสรุป และติดตามผลการเรียน">
   <meta name="robots" content="noindex, follow">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="stylesheet" href="./css/style.css">
 </head>
+
 <body id="top">
 
   <!-- Universal Header (Static Initial HTML for Crawlers & Instant Render) -->
@@ -17,7 +20,8 @@
       <a href="index.html" class="logo-btn" aria-label="INBIOLOGY หน้าแรก">
         <img src="./logo.png" alt="INBIOLOGY Logo" class="logo-img" style="height:44px;width:auto;object-fit:contain" />
         <div style="text-align:left">
-          <span style="font-weight:700;font-size:18px;color:var(--c-navy);display:block;line-height:1;letter-spacing:-0.3px">INBIOLOGY</span>
+          <span
+            style="font-weight:700;font-size:18px;color:var(--c-navy);display:block;line-height:1;letter-spacing:-0.3px">INBIOLOGY</span>
           <span style="font-size:10px;font-weight:600;color:var(--c-sky);display:block;margin-top:2px">by พี่ต้น</span>
         </div>
       </a>
@@ -38,7 +42,8 @@
 
         <a href="login.html" class="btn-login">เข้าสู่ระบบ</a>
 
-        <button onclick="document.getElementById('nav-dropdown').classList.toggle('show')" class="hamburger-btn" aria-label="เปิดเมนูบนมือถือ">
+        <button onclick="document.getElementById('nav-dropdown').classList.toggle('show')" class="hamburger-btn"
+          aria-label="เปิดเมนูบนมือถือ">
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
           <span class="hamburger-line"></span>
@@ -60,41 +65,49 @@
   <div style="min-height:80vh;background:var(--c-page);padding-top:40px;padding-bottom:60px">
     <div class="student-dashboard-layout" style="max-width:1100px;margin:0 auto;padding:0 24px">
       <!-- Profile Sidebar -->
-      <aside class="dashboard-sidebar" style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:24px 20px;text-align:center;height:fit-content;display:flex;flex-direction:column;align-items:center">
-        <div class="dashboard-avatar" style="width:84px;height:84px;border-radius:50%;background:var(--c-sky-light);color:var(--c-sky);font-size:36px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 4px 12px rgba(30,58,138,0.1)">
+      <aside
+        style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:24px 20px;text-align:center;height:fit-content;display:flex;flex-direction:column;align-items:center">
+        <div
+          style="width:84px;height:84px;border-radius:50%;background:var(--c-sky-light);color:var(--c-sky);font-size:36px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 4px 12px rgba(30,58,138,0.1)">
           👨‍🎓
         </div>
-        <div class="dashboard-sidebar-info">
-          <!-- Line 1: น้อง(ชื่อเล่น) -->
-          <h3 id="sidebar-nickname" style="font-weight:900;font-size:18px;color:var(--c-navy);margin:0 0 4px">น้องนักเรียน</h3>
-          <!-- Line 2: ชื่อจริง - นามสกุล -->
-          <p id="sidebar-fullname" style="font-weight:700;font-size:13px;color:#4B5563;margin:0 0 6px">ผู้เรียนชีววิทยา</p>
-          <!-- Line 3: โรงเรียน • ระดับชั้น -->
-          <p id="sidebar-school-level" style="font-size:11px;color:#9CA3AF;margin:0">โรงเรียนทั่วไป • มัธยมศึกษา</p>
-        </div>
-        <button onclick="switchDashTab('profile')" class="dashboard-edit-btn" style="background:#F8FAFC;border:1px solid #E5E7EB;color:var(--c-navy);font-weight:800;font-size:11px;padding:8px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:16px;width:100%">
+        <!-- Line 1: น้อง(ชื่อเล่น) -->
+        <h3 id="sidebar-nickname" style="font-weight:900;font-size:18px;color:var(--c-navy);margin:0 0 4px">น้องนักเรียน
+        </h3>
+        <!-- Line 2: ชื่อจริง - นามสกุล -->
+        <p id="sidebar-fullname" style="font-weight:700;font-size:13px;color:#4B5563;margin:0 0 6px">ผู้เรียนชีววิทยา
+        </p>
+        <!-- Line 3: โรงเรียน • ระดับชั้น -->
+        <p id="sidebar-school-level" style="font-size:11px;color:#9CA3AF;margin:0 0 16px">โรงเรียนทั่วไป • มัธยมศึกษา
+        </p>
+        <button onclick="switchDashTab('profile')"
+          style="width:100%;background:#F8FAFC;border:1px solid #E5E7EB;color:var(--c-navy);font-weight:800;font-size:11px;padding:8px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
           ⚙️ แก้ไขข้อมูลส่วนตัว
         </button>
       </aside>
-
 
       <!-- Main Panel & Sub Tabs -->
       <div data-reveal data-delay="0.1s" style="display:flex;flex-direction:column;gap:20px">
         <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px">
           <div class="dash-tabs-scroll">
-            <button onclick="switchDashTab('courses')" id="dtab-courses" style="padding:8px 16px;border-radius:8px;border:none;background:var(--c-navy);color:white;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
+            <button onclick="switchDashTab('courses')" id="dtab-courses"
+              style="padding:8px 16px;border-radius:8px;border:none;background:var(--c-navy);color:white;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
               📚 คอร์สเรียนของฉัน
             </button>
-            <button onclick="switchDashTab('profile')" id="dtab-profile" style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
+            <button onclick="switchDashTab('profile')" id="dtab-profile"
+              style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
               ⚙️ แก้ไขข้อมูลส่วนตัว
             </button>
-            <button onclick="switchDashTab('notes')" id="dtab-notes" style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
+            <button onclick="switchDashTab('notes')" id="dtab-notes"
+              style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
               📝 สมุดบันทึกโน้ตย่อ
             </button>
-            <button onclick="switchDashTab('orders')" id="dtab-orders" style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
+            <button onclick="switchDashTab('orders')" id="dtab-orders"
+              style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
               🧾 คำสั่งซื้อของฉัน
             </button>
-            <button onclick="switchDashTab('faq')" id="dtab-faq" style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
+            <button onclick="switchDashTab('faq')" id="dtab-faq"
+              style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
               ❓ ศูนย์ช่วยเหลือ FAQ
             </button>
           </div>
@@ -109,56 +122,88 @@
           <div id="dpanel-orders" style="display:none;flex-direction:column;gap:14px">
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
               <h2 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0">🧾 คำสั่งซื้อของฉัน</h2>
-              <button onclick="loadMyOrders()" style="background:#F1F5F9;border:none;color:#374151;font-size:11px;font-weight:800;padding:6px 12px;border-radius:8px;cursor:pointer">🔄 รีเฟรช</button>
+              <button onclick="loadMyOrders()"
+                style="background:#F1F5F9;border:none;color:#374151;font-size:11px;font-weight:800;padding:6px 12px;border-radius:8px;cursor:pointer">🔄
+                รีเฟรช</button>
             </div>
-            <div id="orders-list"><p style="color:#9CA3AF;font-size:13px;text-align:center;padding:20px">⏳ กำลังโหลดคำสั่งซื้อ...</p></div>
+            <div id="orders-list">
+              <p style="color:#9CA3AF;font-size:13px;text-align:center;padding:20px">⏳ กำลังโหลดคำสั่งซื้อ...</p>
+            </div>
           </div>
 
           <!-- Profile Edit & Account Linking Panel -->
           <div id="dpanel-profile" style="display:none;flex-direction:column;gap:20px">
             <div>
-              <h2 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 4px">👤 ข้อมูลส่วนตัวนักเรียน</h2>
-              <p style="font-size:12px;color:#6B7280;margin:0 0 12px">จัดการข้อมูลส่วนตัว ข้อมูลติดต่อสำหรับการเรียน และการเชื่อมต่อบัญชี</p>
+              <h2 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 4px">👤 ข้อมูลส่วนตัวนักเรียน
+              </h2>
+              <p style="font-size:12px;color:#6B7280;margin:0 0 12px">จัดการข้อมูลส่วนตัว ข้อมูลติดต่อสำหรับการเรียน
+                และการเชื่อมต่อบัญชี</p>
             </div>
-            
-            <form id="student-profile-form" onsubmit="handleSaveProfile(event)" class="profile-form-grid" style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:16px;padding:20px">
-              
+
+            <form id="student-profile-form" onsubmit="handleSaveProfile(event)" class="profile-form-grid"
+              style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:16px;padding:20px">
+
               <!-- Row: Full Name & Nickname -->
               <div>
-                <label for="edit-fullname" style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">👤 ชื่อจริง - นามสกุล (Full Name)</label>
-                <input type="text" id="edit-fullname" required style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white" placeholder="เช่น นาย วิทศรุต สายตา" />
+                <label for="edit-fullname"
+                  style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">👤 ชื่อจริง -
+                  นามสกุล (Full Name)</label>
+                <input type="text" id="edit-fullname" required
+                  style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white"
+                  placeholder="เช่น นาย วิทศรุต สายตา" />
               </div>
 
               <div>
-                <label for="edit-nickname" style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">😊 ชื่อเล่น (Nickname)</label>
-                <input type="text" id="edit-nickname" required style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white" placeholder="เช่น วิทศรุต, ภูมิ" />
+                <label for="edit-nickname"
+                  style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">😊 ชื่อเล่น
+                  (Nickname)</label>
+                <input type="text" id="edit-nickname" required
+                  style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white"
+                  placeholder="เช่น วิทศรุต, ภูมิ" />
               </div>
 
               <div>
-                <label for="edit-phone" style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">📱 เบอร์โทรศัพท์ (Phone)</label>
-                <input type="tel" id="edit-phone" required style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white" placeholder="081-234-5678" />
+                <label for="edit-phone"
+                  style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">📱 เบอร์โทรศัพท์
+                  (Phone)</label>
+                <input type="tel" id="edit-phone" required
+                  style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white"
+                  placeholder="081-234-5678" />
               </div>
 
               <!-- Row: Birthdate & Age -->
               <div>
-                <label for="edit-birthdate" style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">🎂 วันเกิด (Birthdate)</label>
-                <input type="date" id="edit-birthdate" onchange="calcDashAge()" style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white" />
+                <label for="edit-birthdate"
+                  style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">🎂 วันเกิด
+                  (Birthdate)</label>
+                <input type="date" id="edit-birthdate" onchange="calcDashAge()"
+                  style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white" />
               </div>
 
               <div>
-                <label for="edit-age" style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">⌛ อายุ (คำนวณอัตโนมัติ)</label>
-                <input type="text" id="edit-age" readonly style="width:100%;border:1px solid #E5E7EB;border-radius:10px;padding:10px 12px;font-size:13px;background:#F1F5F9;color:#1E3A8A;font-weight:700" />
+                <label for="edit-age"
+                  style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">⌛ อายุ
+                  (คำนวณอัตโนมัติ)</label>
+                <input type="text" id="edit-age" readonly
+                  style="width:100%;border:1px solid #E5E7EB;border-radius:10px;padding:10px 12px;font-size:13px;background:#F1F5F9;color:#1E3A8A;font-weight:700" />
               </div>
 
               <!-- Row: School & Grade -->
               <div>
-                <label for="edit-school" style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">🏫 โรงเรียน (School)</label>
-                <input type="text" id="edit-school" required style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white" placeholder="เช่น โรงเรียนสตรีวิทยา" />
+                <label for="edit-school"
+                  style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">🏫 โรงเรียน
+                  (School)</label>
+                <input type="text" id="edit-school" required
+                  style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white"
+                  placeholder="เช่น โรงเรียนสตรีวิทยา" />
               </div>
 
               <div>
-                <label for="edit-level" style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">🎓 ระดับชั้น (Level)</label>
-                <select id="edit-level" style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white">
+                <label for="edit-level"
+                  style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">🎓 ระดับชั้น
+                  (Level)</label>
+                <select id="edit-level"
+                  style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white">
                   <option value="มัธยมศึกษาปีที่ 4">มัธยมศึกษาปีที่ 4</option>
                   <option value="มัธยมศึกษาปีที่ 5">มัธยมศึกษาปีที่ 5</option>
                   <option value="มัธยมศึกษาปีที่ 6">มัธยมศึกษาปีที่ 6</option>
@@ -168,49 +213,70 @@
 
               <!-- Row: Socials (IG, LINE, FB) -->
               <div>
-                <label for="edit-instagram" style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">📸 Instagram</label>
-                <input type="text" id="edit-instagram" style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white" placeholder="@username" />
+                <label for="edit-instagram"
+                  style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">📸
+                  Instagram</label>
+                <input type="text" id="edit-instagram"
+                  style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white"
+                  placeholder="@username" />
               </div>
 
               <div>
-                <label for="edit-line-id" style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">💬 LINE ID</label>
-                <input type="text" id="edit-line-id" style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white" placeholder="ไอดีไลน์" />
+                <label for="edit-line-id"
+                  style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">💬 LINE
+                  ID</label>
+                <input type="text" id="edit-line-id"
+                  style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white"
+                  placeholder="ไอดีไลน์" />
               </div>
 
               <div style="grid-column:span 2">
-                <label for="edit-facebook" style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">📘 Facebook Link / Name</label>
-                <input type="text" id="edit-facebook" style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white" placeholder="ชื่อหรือลิงก์ Facebook" />
+                <label for="edit-facebook"
+                  style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">📘 Facebook Link
+                  / Name</label>
+                <input type="text" id="edit-facebook"
+                  style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white"
+                  placeholder="ชื่อหรือลิงก์ Facebook" />
               </div>
 
               <!-- Disabled Email Field -->
               <div>
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
                   <label style="font-size:12px;font-weight:800;color:#6B7280">อีเมล (Email)</label>
-                  <span style="font-size:10px;font-weight:800;color:#059669;background:#D1FAE5;padding:2px 8px;border-radius:6px">✓ ยืนยัน OTP แล้ว</span>
+                  <span
+                    style="font-size:10px;font-weight:800;color:#059669;background:#D1FAE5;padding:2px 8px;border-radius:6px">✓
+                    ยืนยัน OTP แล้ว</span>
                 </div>
-                <input type="email" id="edit-email" disabled style="width:100%;border:1px solid #E5E7EB;border-radius:10px;padding:10px 12px;font-size:13px;background:#F3F4F6;color:#6B7280;cursor:not-allowed" />
+                <input type="email" id="edit-email" disabled
+                  style="width:100%;border:1px solid #E5E7EB;border-radius:10px;padding:10px 12px;font-size:13px;background:#F3F4F6;color:#6B7280;cursor:not-allowed" />
               </div>
 
               <!-- Password Placeholder Field -->
               <div>
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
                   <label style="font-size:12px;font-weight:800;color:#6B7280">รหัสผ่าน (Password)</label>
-                  <span style="font-size:10px;font-weight:800;color:#DC2626;background:#FEE2E2;padding:2px 8px;border-radius:6px">🔒 ปลอดภัย</span>
+                  <span
+                    style="font-size:10px;font-weight:800;color:#DC2626;background:#FEE2E2;padding:2px 8px;border-radius:6px">🔒
+                    ปลอดภัย</span>
                 </div>
-                <input type="password" id="edit-password" value="••••••••" disabled style="width:100%;border:1px solid #E5E7EB;border-radius:10px;padding:10px 12px;font-size:13px;background:#F3F4F6;color:#6B7280;cursor:not-allowed" />
+                <input type="password" id="edit-password" value="••••••••" disabled
+                  style="width:100%;border:1px solid #E5E7EB;border-radius:10px;padding:10px 12px;font-size:13px;background:#F3F4F6;color:#6B7280;cursor:not-allowed" />
               </div>
 
               <div class="full-span" style="grid-column:span 2;display:flex;justify-content:flex-end;margin-top:8px">
-                <button type="submit" style="background:var(--c-navy);color:white;font-weight:850;font-size:13px;padding:12px 24px;border-radius:10px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(185,28,28,0.2)">
+                <button type="submit"
+                  style="background:var(--c-navy);color:white;font-weight:850;font-size:13px;padding:12px 24px;border-radius:10px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(185,28,28,0.2)">
                   💾 บันทึกการเปลี่ยนแปลงข้อมูล
                 </button>
               </div>
             </form>
 
             <!-- ─── ACCOUNT LINKING SECTION ────────────────────────────────── -->
-            <div style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px">
+            <div
+              style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px">
               <div>
-                <h3 style="font-size:15px;font-weight:900;color:var(--c-navy);margin:0 0 4px;display:flex;align-items:center;gap:8px">
+                <h3
+                  style="font-size:15px;font-weight:900;color:var(--c-navy);margin:0 0 4px;display:flex;align-items:center;gap:8px">
                   🔗 การเชื่อมต่อบัญชี (Account Linking)
                 </h3>
                 <p style="font-size:12px;color:#64748B;margin:0">
@@ -219,17 +285,23 @@
               </div>
 
               <!-- Google Link Item -->
-              <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;flex-wrap:wrap;gap:10px">
+              <div
+                style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;flex-wrap:wrap;gap:10px">
                 <div style="display:flex;align-items:center;gap:12px">
                   <svg width="24" height="24" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                    <path fill="#4285F4"
+                      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="#34A853"
+                      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="#FBBC05"
+                      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                    <path fill="#EA4335"
+                      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
                   </svg>
                   <div>
                     <div style="font-size:13.5px;font-weight:700;color:#0F172A">บัญชี Google (OAuth)</div>
-                    <div id="google-link-status-text" style="font-size:11.5px;color:#64748B">ตรวจสอบสถานะการเชื่อมต่อ...</div>
+                    <div id="google-link-status-text" style="font-size:11.5px;color:#64748B">ตรวจสอบสถานะการเชื่อมต่อ...
+                    </div>
                   </div>
                 </div>
                 <div id="google-link-action-container">
@@ -282,7 +354,7 @@
       if (profile && profile.email && window.CloudService) {
         try {
           await window.CloudService.syncEnrolledFromCloud(profile.email);
-        } catch(e) { console.warn('Sync enrolled note:', e); }
+        } catch (e) { console.warn('Sync enrolled note:', e); }
       }
 
       renderEnrolled();
@@ -374,7 +446,7 @@
               await window.CloudService.linkGoogleAccount(payload);
               showToast(`🎉 ผูกบัญชี Google (${payload.email}) สำเร็จเรียบร้อย!`, 'success');
               renderGoogleLinkStatus();
-            } catch(e) {
+            } catch (e) {
               showToast(`❌ ${e.message}`, 'error');
             }
           }
@@ -392,7 +464,7 @@
           await window.CloudService.linkGoogleAccount(demoPayload);
           showToast(`🎉 ผูกบัญชี Google (${demoPayload.email}) สำเร็จเรียบร้อย! (Demo Mode)`, 'success');
           renderGoogleLinkStatus();
-        } catch(e) {
+        } catch (e) {
           showToast(`❌ ${e.message}`, 'error');
         }
       }
@@ -404,7 +476,7 @@
         await window.CloudService.unlinkProvider('google');
         showToast('👋 ยกเลิกการเชื่อมต่อบัญชี Google เรียบร้อยแล้ว', 'info');
         renderGoogleLinkStatus();
-      } catch(err) {
+      } catch (err) {
         showToast(`❌ ${err.message}`, 'error');
       }
     }
@@ -535,7 +607,9 @@
       let orders = [];
       try {
         orders = await CloudService.getMyOrders(profile.email);
-      } catch(e) { console.warn('loadMyOrders error:', e); }
+      } catch (e) { console.warn('loadMyOrders error:', e); }
+
+      _studentOrdersCache = orders || [];
 
       if (!orders || orders.length === 0) {
         container.innerHTML = `
@@ -552,12 +626,13 @@
       container.innerHTML = orders.map(o => {
         const date = new Date(o.created_at).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
         const shortId = (o.id || '').substring(0, 8).toUpperCase();
+        const hasSlip = o.slip_image && o.slip_image.length > 0;
         return `
           <div style="background:white;border:1px solid #E5E7EB;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px">
               <div>
                 <span style="font-size:10px;color:#9CA3AF;font-weight:700">ออเดอร์ #${shortId}</span>
-                <p style="font-size:13px;font-weight:800;color:var(--c-navy);margin:2px 0 0">${o.course_titles || o.course_ids?.join(', ')}</p>
+                <p style="font-size:13px;font-weight:800;color:var(--c-navy);margin:2px 0 0">${o.course_titles || (o.course_ids||[]).join(', ')}</p>
               </div>
               <span class="status-badge ${statusClass[o.status] || 'status-pending'}">${statusLabel[o.status] || o.status}</span>
             </div>
@@ -565,11 +640,58 @@
               <span style="font-size:11.5px;color:#64748B">${date}</span>
               <span style="font-size:14px;font-weight:900;color:#B91C1C">฿${Number(o.total_amount).toLocaleString('th-TH')}</span>
             </div>
+
+            <!-- Attached Slip Row -->
+            <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+              ${hasSlip ? `
+                <div style="display:flex;align-items:center;gap:10px">
+                  <img src="${o.slip_image}" alt="สลิป" style="width:40px;height:40px;object-fit:cover;border-radius:8px;border:1px solid #CBD5E1;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.06)" onclick="viewStudentOrderSlip('${o.id}')" title="คลิกเพื่อดูสลิปขนาดเต็ม" />
+                  <div>
+                    <div style="font-size:11.5px;font-weight:800;color:var(--c-navy)">หลักฐานการชำระเงิน (สลิป)</div>
+                    <div style="font-size:10px;color:#10B981;font-weight:700">✓ แนบสลิปเข้าระบบแล้ว</div>
+                  </div>
+                </div>
+                <button onclick="viewStudentOrderSlip('${o.id}')" style="background:#EFF6FF;color:#1E3A8A;border:1px solid #BFDBFE;padding:6px 12px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer">
+                  🖼️ ดูสลิป
+                </button>
+              ` : `
+                <div style="font-size:11.5px;color:#94A3B8">⚠️ ไม่มีรูปสลิปแนบมากับคำสั่งซื้อนี้</div>
+              `}
+            </div>
+
             ${o.admin_note ? `<div style="background:#FEF2F2;border:1px solid #FEE2E2;border-radius:10px;padding:8px 12px;font-size:11.5px;color:#991B1B">หมายเหตุ Admin: ${o.admin_note}</div>` : ''}
-            ${o.status === 'approved' ? `<a href="classroom.html?course=${(o.course_ids||[])[0]}" style="background:var(--c-sky);color:white;font-weight:800;font-size:12px;padding:8px;border-radius:10px;text-decoration:none;text-align:center">▶ เข้าสู่ห้องเรียน</a>` : ''}
+            ${o.status === 'approved' ? `<a href="classroom.html?course=${(o.course_ids || [])[0]}" style="background:var(--c-sky);color:white;font-weight:800;font-size:12px;padding:8px;border-radius:10px;text-decoration:none;text-align:center">▶ เข้าสู่ห้องเรียน</a>` : ''}
           </div>
         `;
       }).join('');
+    }
+
+    let _studentOrdersCache = [];
+
+    function viewStudentOrderSlip(orderId) {
+      const o = _studentOrdersCache.find(x => x.id === orderId);
+      if (!o || !o.slip_image) {
+        alert('ไม่พบรูปสลิปสำหรับคำสั่งซื้อนี้');
+        return;
+      }
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;cursor:pointer;backdrop-filter:blur(4px)';
+      overlay.onclick = () => overlay.remove();
+      overlay.innerHTML = `
+        <div style="background:white;border-radius:20px;padding:20px;max-width:500px;width:100%;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,0.3)" onclick="event.stopPropagation()">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid #F1F5F9;padding-bottom:10px">
+            <span style="font-weight:850;color:var(--c-navy);font-size:15px">🖼️ สลิปที่แนบ (ออเดอร์ #${(o.id || '').substring(0, 8).toUpperCase()})</span>
+            <button onclick="this.closest('[style*=fixed]').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#9CA3AF;font-weight:700">✕</button>
+          </div>
+          <div style="max-height:65vh;overflow-y:auto;border-radius:12px;background:#F8FAFC;padding:8px">
+            <img src="${o.slip_image}" style="max-width:100%;height:auto;object-fit:contain;border-radius:8px" alt="สลิป" />
+          </div>
+          <div style="margin-top:10px;font-size:12px;color:#64748B">
+            ยอดโอน: <strong style="color:#B91C1C">฿${Number(o.total_amount).toLocaleString('th-TH')}</strong> • สถานะ: <strong>${o.status === 'approved' ? 'อนุมัติแล้ว' : (o.status === 'rejected' ? 'ไม่ผ่าน' : 'รอตรวจสลิป')}</strong>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
     }
 
     function renderNotes() {
@@ -598,4 +720,5 @@
     }
   </script>
 </body>
+
 </html>

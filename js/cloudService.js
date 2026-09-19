@@ -891,30 +891,45 @@ const CloudService = window.CloudService = {
    * Submit a new payment order (pending slip verification)
    */
   async submitOrder({ userEmail, userName, userId, courseIds, courseTitles, totalAmount, couponCode, discountAmount, slipBase64, userNote }) {
-    const rawTitles = courseTitles || courseIds.join(', ');
+    const rawTitles = courseTitles || (Array.isArray(courseIds) ? courseIds.join(', ') : String(courseIds || ''));
     const displayTitles = userNote ? `${rawTitles} [หมายเหตุ: ${userNote}]` : rawTitles;
 
+    // Validate UUID format for PostgreSQL UUID column; default to null if invalid/integer to prevent 400 Bad Request
+    const isUUID = userId && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(userId));
+    const validUserId = isUUID ? String(userId) : null;
+
     const orderData = {
-      user_email: userEmail.toLowerCase().trim(),
+      user_email: (userEmail || '').toLowerCase().trim(),
       user_name: userName || '',
-      user_id: userId || null,
-      course_ids: courseIds,
+      user_id: validUserId,
+      course_ids: Array.isArray(courseIds) ? courseIds : (courseIds ? [courseIds] : []),
       course_titles: displayTitles,
-      total_amount: totalAmount,
+      total_amount: Number(totalAmount) || 0,
       coupon_code: couponCode || null,
-      discount_amount: discountAmount || 0,
+      discount_amount: Number(discountAmount) || 0,
       slip_image: slipBase64 || null,
       status: 'pending'
     };
 
-    // Save to Supabase Cloud
+    // 1. Save to Supabase Cloud
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
-        const result = await this._supabaseFetch('/orders', {
+        let result = await this._supabaseFetch('/orders', {
           method: 'POST',
           headers: { 'Prefer': 'return=representation' },
           body: JSON.stringify(orderData)
         });
+
+        // If failed and had user_id, retry with user_id: null (avoids foreign key constraint violation)
+        if (!result && orderData.user_id !== null) {
+          orderData.user_id = null;
+          result = await this._supabaseFetch('/orders', {
+            method: 'POST',
+            headers: { 'Prefer': 'return=representation' },
+            body: JSON.stringify(orderData)
+          });
+        }
+
         if (result && result[0] && result[0].id) {
           const orderId = result[0].id;
           console.log('☁️ [Supabase Cloud] Order saved:', orderId);
@@ -927,7 +942,7 @@ const CloudService = window.CloudService = {
       }
     }
 
-    // Secondary Cloud Path: Vercel Serverless Function Bridge (/api/orders)
+    // 2. Secondary Cloud Path: Vercel Serverless Function Bridge (/api/orders)
     try {
       const bridgeRes = await fetch('/api/orders', {
         method: 'POST',
@@ -935,8 +950,8 @@ const CloudService = window.CloudService = {
         body: JSON.stringify({
           userEmail,
           userName,
-          userId,
-          courseIds,
+          userId: validUserId,
+          courseIds: orderData.course_ids,
           courseTitles,
           totalAmount,
           couponCode,
@@ -957,7 +972,7 @@ const CloudService = window.CloudService = {
       console.warn('[/api/orders Bridge Network]:', err);
     }
 
-    // Fallback: localStorage only
+    // 3. Fallback: localStorage with resilient quota management
     const localId = (typeof crypto !== 'undefined' && crypto.randomUUID) 
       ? crypto.randomUUID() 
       : '00000000-0000-4000-8000-' + Date.now().toString(16).padStart(12, '0');
@@ -967,15 +982,31 @@ const CloudService = window.CloudService = {
 
   _saveOrderLocally(order) {
     try {
-      const orders = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
+      let orders = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
       const idx = orders.findIndex(x => x.id === order.id);
       if (idx >= 0) {
         orders[idx] = { ...orders[idx], ...order };
       } else {
         orders.unshift(order);
       }
-      localStorage.setItem('inbiology_orders', JSON.stringify(orders));
-    } catch(e) {}
+
+      try {
+        localStorage.setItem('inbiology_orders', JSON.stringify(orders));
+      } catch(quotaErr) {
+        console.warn('[localStorage QuotaExceeded] Pruning older order slips to retain newest orders');
+        // If quota exceeded, strip slip_image from older orders (keep newest 2 orders with slips)
+        orders = orders.map((o, i) => i < 2 ? o : { ...o, slip_image: null });
+        try {
+          localStorage.setItem('inbiology_orders', JSON.stringify(orders));
+        } catch(e2) {
+          // If still exceeded, keep only current order with slip, others without
+          orders = orders.map((o, i) => i === 0 ? o : { ...o, slip_image: null });
+          localStorage.setItem('inbiology_orders', JSON.stringify(orders));
+        }
+      }
+    } catch(e) {
+      console.warn('[_saveOrderLocally Error]:', e);
+    }
   },
 
   /**
@@ -986,11 +1017,11 @@ const CloudService = window.CloudService = {
     const cleanEmail = userEmail.toLowerCase().trim();
     let cloudOrders = [];
 
-    // Try Supabase first
+    // Try Supabase first (case-insensitive email matching)
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
         const result = await this._supabaseFetch(
-          `/orders?user_email=eq.${encodeURIComponent(cleanEmail)}&order=created_at.desc`
+          `/orders?user_email=ilike.${encodeURIComponent(cleanEmail)}&order=created_at.desc`
         );
         if (result && Array.isArray(result)) cloudOrders = result;
       } catch(err) {
@@ -1011,14 +1042,17 @@ const CloudService = window.CloudService = {
       } catch(e) {}
     }
 
-    // Merge with local fallback orders (deduplicated by id)
+    // Merge with local fallback orders (deduplicated by id + hydrate slip)
     try {
       const localAll = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
       const localMatching = localAll.filter(o => (o.user_email || '').toLowerCase().trim() === cleanEmail);
       const combined = [...cloudOrders];
       localMatching.forEach(lo => {
-        if (!combined.some(co => co.id === lo.id)) {
+        const existing = combined.find(co => co.id === lo.id);
+        if (!existing) {
           combined.push(lo);
+        } else if (!existing.slip_image && lo.slip_image) {
+          existing.slip_image = lo.slip_image;
         }
       });
       return combined.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
@@ -1064,13 +1098,16 @@ const CloudService = window.CloudService = {
       }
     }
 
-    // Merge with local fallback orders (deduplicated by id)
+    // Merge with local fallback orders (deduplicated by id + hydrate slip)
     try {
       const localAll = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
       const combined = [...cloudOrders];
       localAll.forEach(lo => {
-        if (!combined.some(co => co.id === lo.id)) {
+        const existing = combined.find(co => co.id === lo.id);
+        if (!existing) {
           if (!status || lo.status === status) combined.push(lo);
+        } else if (!existing.slip_image && lo.slip_image) {
+          existing.slip_image = lo.slip_image;
         }
       });
       return combined.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));

@@ -181,9 +181,10 @@
           <!-- Slip Preview -->
           <div style="text-align:center">
             <div id="modal-slip-container" style="width:140px;height:175px;border-radius:12px;background:#F1F5F9;overflow:hidden;border:1px solid #E2E8F0;display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="viewSlipFromModal()" title="คลิกเพื่อดูสลิปขนาดเต็ม">
-              <img id="modal-slip-img" src="" alt="สลิป" style="width:100%;height:100%;object-fit:cover" />
+              <img id="modal-slip-img" src="" alt="สลิป" style="width:100%;height:100%;object-fit:cover;display:none" />
+              <span id="modal-slip-placeholder" style="font-size:11px;color:#94A3B8;padding:10px;text-align:center">ไม่มีสลิป</span>
             </div>
-            <button type="button" onclick="viewSlipFromModal()" style="margin-top:6px;background:none;border:none;color:var(--c-sky);font-size:11px;font-weight:800;cursor:pointer;text-decoration:underline">
+            <button id="modal-slip-zoom-btn" type="button" onclick="viewSlipFromModal()" style="margin-top:6px;background:none;border:none;color:var(--c-sky);font-size:11px;font-weight:800;cursor:pointer;text-decoration:underline">
               🔍 ดูภาพขนาดเต็ม
             </button>
           </div>
@@ -422,7 +423,10 @@
 
     function viewSlip(orderId) {
       const o = _ordersCache.find(x => x.id === orderId);
-      if (!o || !o.slip_image) return;
+      if (!o || !o.slip_image) {
+        alert('คำสั่งซื้อนี้ไม่มีรูปสลิปแนบมา');
+        return;
+      }
       const overlay = document.createElement('div');
       overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;cursor:pointer;backdrop-filter:blur(4px)';
       overlay.onclick = () => overlay.remove();
@@ -474,14 +478,25 @@
       }
 
       const slipImg = document.getElementById('modal-slip-img');
+      const slipPlaceholder = document.getElementById('modal-slip-placeholder');
       const slipContainer = document.getElementById('modal-slip-container');
+      const zoomBtn = document.getElementById('modal-slip-zoom-btn');
       if (o.slip_image) {
-        slipImg.src = o.slip_image;
-        slipImg.style.display = 'block';
-        slipContainer.style.background = '#F8FAFC';
+        if (slipImg) {
+          slipImg.src = o.slip_image;
+          slipImg.style.display = 'block';
+        }
+        if (slipPlaceholder) slipPlaceholder.style.display = 'none';
+        if (slipContainer) slipContainer.style.background = '#F8FAFC';
+        if (zoomBtn) zoomBtn.style.display = 'inline-block';
       } else {
-        slipImg.style.display = 'none';
-        slipContainer.innerHTML = '<span style="font-size:11px;color:#94A3B8;padding:10px;text-align:center">ไม่มีสลิป</span>';
+        if (slipImg) {
+          slipImg.src = '';
+          slipImg.style.display = 'none';
+        }
+        if (slipPlaceholder) slipPlaceholder.style.display = 'block';
+        if (slipContainer) slipContainer.style.background = '#F1F5F9';
+        if (zoomBtn) zoomBtn.style.display = 'none';
       }
 
       const modal = document.getElementById('admin-approval-modal');

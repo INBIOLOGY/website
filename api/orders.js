@@ -70,11 +70,15 @@ export default async function handler(req, res) {
       const rawTitles = courseTitles || (courseIds ? courseIds.join(', ') : '');
       const displayTitles = userNote ? `${rawTitles} [หมายเหตุ: ${userNote}]` : rawTitles;
 
+      // Validate UUID format for PostgreSQL UUID column
+      const isUUID = userId && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(userId));
+      const validUserId = isUUID ? String(userId) : null;
+
       const orderPayload = {
         user_email: userEmail.toLowerCase().trim(),
         user_name: userName || '',
-        user_id: userId || null,
-        course_ids: Array.isArray(courseIds) ? courseIds : [],
+        user_id: validUserId,
+        course_ids: Array.isArray(courseIds) ? courseIds : (courseIds ? [courseIds] : []),
         course_titles: displayTitles,
         total_amount: Number(totalAmount) || 0,
         coupon_code: couponCode || null,
@@ -84,7 +88,7 @@ export default async function handler(req, res) {
         created_at: new Date().toISOString()
       };
 
-      const response = await fetch(`${supabaseUrl}/rest/v1/orders`, {
+      let response = await fetch(`${supabaseUrl}/rest/v1/orders`, {
         method: 'POST',
         headers: {
           ...defaultHeaders,
@@ -92,6 +96,19 @@ export default async function handler(req, res) {
         },
         body: JSON.stringify(orderPayload)
       });
+
+      // If initial insert failed and had user_id, retry without user_id
+      if (!response.ok && orderPayload.user_id !== null) {
+        orderPayload.user_id = null;
+        response = await fetch(`${supabaseUrl}/rest/v1/orders`, {
+          method: 'POST',
+          headers: {
+            ...defaultHeaders,
+            'Prefer': 'return=representation'
+          },
+          body: JSON.stringify(orderPayload)
+        });
+      }
 
       if (!response.ok) {
         const errText = await response.text();
