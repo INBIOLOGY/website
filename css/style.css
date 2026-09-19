@@ -1378,105 +1378,320 @@ input, select, textarea {
   font-size: 14px;
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
-   MOBILE-FIRST PROFESSIONAL RESPONSIVE DESIGN (PHONES 360px - 430px & TABLETS)
-   Tailored specifically for mobile screens to eliminate overflow and wrapping bugs
-   ───────────────────────────────────────────────────────────────────────────── */
+
+/* ═════════════════════════════════════════════════════════════════════════════
+   MOBILE-FIRST COMPLETE OVERHAUL  ●  MAX 768px
+   Covers: Header · Dashboard · Checkout · Courses · Admin · Classroom
+   Target: 360px–430px (iPhone SE → iPhone Pro Max)
+   ═════════════════════════════════════════════════════════════════════════════ */
 
 @media (max-width: 768px) {
-  /* Prevent any element from exceeding phone screen width */
-  *, *::before, *::after {
+
+  /* ── GLOBAL RESET FOR OVERFLOW ── */
+  body {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* Only box-model overflow fix — do NOT apply max-width:100% to everything (breaks flex) */
+  img, video, iframe, table {
     max-width: 100%;
+    height: auto;
   }
 
-  /* Page container paddings */
+  /* ── HEADER ── */
+  .site-header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 200;
+  }
+
   .header-container {
-    padding: 0 12px !important;
     height: 56px !important;
+    padding: 0 14px !important;
+    gap: 8px !important;
   }
 
+  /* Logo: smaller on mobile */
   .logo-img {
-    height: 32px !important;
+    height: 30px !important;
   }
 
+  .logo-btn span[style*="font-size:18px"] {
+    font-size: 15px !important;
+  }
+
+  /* Cart button: tighter */
   .cart-icon-btn {
     padding: 6px 8px !important;
+    font-size: 18px !important;
+    min-height: 36px !important;
+    min-width: 36px !important;
   }
 
-  /* Compact User Controls in Header */
-  .header-user-actions {
-    gap: 4px !important;
-  }
-
-  .header-user-badge {
-    max-width: 82px !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
-    font-size: 11px !important;
-    padding: 4px 8px !important;
-    font-weight: 700 !important;
-  }
-
-  .header-logout-btn {
+  /* Hide desktop-only buttons */
+  .header-logout-btn,
+  .desktop-nav {
     display: none !important;
   }
 
-  /* Dropdown Menu Mobile Placement */
-  .dropdown-menu {
-    width: min(320px, 92vw) !important;
-    right: 8px !important;
-    top: 60px !important;
-    padding: 12px 8px !important;
-    border-radius: 16px !important;
+  /* User badge: shrink but keep visible */
+  .header-user-actions {
+    gap: 4px !important;
+    align-items: center !important;
   }
 
-  /* Student Dashboard Mobile Layout */
-  .student-dashboard-layout {
+  .header-user-badge {
+    max-width: 90px !important;
+    font-size: 10.5px !important;
+    padding: 4px 7px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* Hamburger visible */
+  .hamburger-btn {
     display: flex !important;
+    padding: 7px !important;
+    min-height: 36px !important;
+    min-width: 36px !important;
+  }
+
+  /* Dropdown: full-width mobile panel */
+  .dropdown-panel {
+    position: fixed !important;
+    top: 56px !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    border-radius: 0 0 20px 20px !important;
+    max-height: calc(100vh - 56px) !important;
+    overflow-y: auto !important;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.15) !important;
+    padding: 8px 10px 16px !important;
+  }
+
+  .dropdown-item {
+    padding: 13px 16px !important;
+    font-size: 14px !important;
+    border-radius: 12px !important;
+  }
+
+  /* Page content offset for fixed header */
+  body > div[style*="padding-top"],
+  main[style*="padding-top"] {
+    padding-top: 56px !important;
+  }
+
+  /* ── HERO SECTION (index.html) ── */
+  .hero-section {
+    padding-top: 80px !important;
+    padding-bottom: 40px !important;
+    min-height: auto !important;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+    padding: 0 16px !important;
+  }
+
+  .hero-instructor-wrap {
+    justify-content: center !important;
+  }
+
+  .instructor-glass-card {
+    width: 100% !important;
+    max-width: 340px !important;
+    margin: 0 auto !important;
+    padding: 18px !important;
+  }
+
+  .hero-container {
+    padding: 20px 16px !important;
+  }
+
+  .hero-buttons-row {
     flex-direction: column !important;
-    gap: 16px !important;
-    padding: 0 12px !important;
+    gap: 10px !important;
     width: 100% !important;
+  }
+
+  .hero-buttons-row a,
+  .hero-buttons-row button {
+    width: 100% !important;
+    text-align: center !important;
+    justify-content: center !important;
     box-sizing: border-box !important;
   }
 
-  .student-dashboard-layout aside {
-    width: 100% !important;
-    box-sizing: border-box !important;
-    padding: 18px 14px !important;
-    border-radius: 16px !important;
+  /* Hero glass stats bar */
+  .hero-stats-bar {
+    flex-wrap: wrap !important;
+    gap: 10px 20px !important;
+    padding: 14px 16px !important;
   }
 
-  .student-dashboard-layout aside > div:first-child {
-    width: 64px !important;
-    height: 64px !important;
-    font-size: 28px !important;
-    margin-bottom: 8px !important;
-  }
-
-  .enrolled-courses-grid {
+  /* ── COURSES GRID ── */
+  .courses-grid {
     grid-template-columns: 1fr !important;
     gap: 14px !important;
   }
 
+  .course-card {
+    border-radius: 16px !important;
+  }
+
+  .courses-page-layout {
+    flex-direction: column !important;
+    padding: 0 12px !important;
+    gap: 16px !important;
+  }
+
+  /* ── REVIEW MARQUEE ── */
+  .reviews-marquee-track {
+    gap: 12px !important;
+  }
+
+  /* ── PROMO BANNER ── */
+  .promo-flash-card {
+    padding: 22px 16px !important;
+    border-radius: 20px !important;
+  }
+
+  /* ── STUDENT DASHBOARD LAYOUT ── */
+  .student-dashboard-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    padding: 0 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 auto !important;
+  }
+
+  /* Sidebar becomes a horizontal compact card on mobile */
+  .student-dashboard-layout > aside,
+  .dashboard-sidebar {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 16px 14px !important;
+    border-radius: 16px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 14px !important;
+    text-align: left !important;
+    height: auto !important;
+  }
+
+  /* Avatar on mobile: smaller circle */
+  .student-dashboard-layout > aside > div:first-child,
+  .dashboard-avatar {
+    width: 56px !important;
+    height: 56px !important;
+    min-width: 56px !important;
+    font-size: 24px !important;
+    margin-bottom: 0 !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Text area next to avatar */
+  .student-dashboard-layout > aside > div.sidebar-info-wrap,
+  .student-dashboard-layout > aside > div:nth-child(2),
+  .dashboard-sidebar-info {
+    flex: 1 !important;
+    min-width: 0 !important;
+    text-align: left !important;
+  }
+
+  /* Edit profile button on mobile */
+  .student-dashboard-layout > aside > button,
+  .student-dashboard-layout > aside button[onclick*="switchDashTab"],
+  .dashboard-edit-btn {
+    width: auto !important;
+    align-self: center !important;
+    white-space: nowrap !important;
+    padding: 7px 12px !important;
+    font-size: 11px !important;
+    flex-shrink: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  /* Main panel: full width */
+  .student-dashboard-layout > div {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Dashboard tab bar: horizontal scroll */
   .dash-tabs-scroll {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
     gap: 6px !important;
-    padding-bottom: 8px !important;
-    margin-bottom: 16px !important;
+    padding-bottom: 6px !important;
+    scrollbar-width: none !important;
+  }
+
+  .dash-tabs-scroll::-webkit-scrollbar {
+    display: none !important;
   }
 
   .dash-tabs-scroll button {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
     font-size: 11.5px !important;
-    padding: 7px 12px !important;
-    border-radius: 8px !important;
+    padding: 7px 11px !important;
   }
 
-  /* Checkout Mobile Layout */
+  /* Enrolled courses: single column */
+  .enrolled-courses-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Orders table on dashboard: make it a card stack instead of table */
+  #orders-list table {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  #orders-list thead {
+    display: none !important;
+  }
+
+  #orders-list tbody {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  #orders-list tr {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    background: #F8FAFC !important;
+    border-radius: 12px !important;
+    padding: 12px 14px !important;
+    border: 1px solid #E5E7EB !important;
+  }
+
+  #orders-list td {
+    display: block !important;
+    padding: 0 !important;
+    border: none !important;
+    font-size: 12px !important;
+  }
+
+  /* ── CHECKOUT PAGE ── */
   .checkout-grid-layout {
     display: flex !important;
     flex-direction: column !important;
-    gap: 16px !important;
+    gap: 14px !important;
     padding: 0 12px !important;
     width: 100% !important;
     box-sizing: border-box !important;
@@ -1485,90 +1700,169 @@ input, select, textarea {
   .checkout-grid-layout > div {
     width: 100% !important;
     box-sizing: border-box !important;
-    padding: 20px 16px !important;
+    padding: 18px 14px !important;
     border-radius: 18px !important;
   }
 
-  /* Courses Catalog Layout */
-  .courses-page-layout {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 16px !important;
-    padding: 0 12px !important;
+  /* QR Code: smaller on mobile */
+  #checkout-form-panel div[style*="width:220px"] {
+    width: 180px !important;
   }
 
-  .courses-grid {
-    grid-template-columns: 1fr !important;
-    gap: 16px !important;
+  /* PromptPay row wrap fix */
+  div[style*="display:flex"][style*="align-items:center"][style*="gap:8px"] {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
   }
 
-  /* Hero Section Responsiveness */
-  .hero-container {
-    padding: 24px 14px !important;
+  /* Slip dropzone: smaller padding */
+  .slip-dropzone {
+    padding: 20px 14px !important;
   }
 
-  .hero-buttons-row {
-    flex-direction: column !important;
+  /* ── ADMIN PANEL ── */
+  .admin-table-scroll {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
     width: 100% !important;
-    gap: 10px !important;
   }
 
-  .hero-buttons-row a,
-  .hero-buttons-row button {
-    width: 100% !important;
-    justify-content: center !important;
-    text-align: center !important;
-    box-sizing: border-box !important;
+  /* Admin tab row: scroll */
+  div[id^="atab-"] {
+    white-space: nowrap !important;
   }
 
-  /* Modal Dialogs on Phone */
-  .modal-dialog,
-  .modal-content,
-  #admin-approval-modal > div,
-  #admin-reject-modal > div {
-    width: min(94vw, 480px) !important;
-    margin: 16px auto !important;
-    padding: 20px 16px !important;
-    border-radius: 18px !important;
-    max-height: 90vh !important;
+  #admin-approval-modal > div {
+    width: min(95vw, 480px) !important;
+    max-height: 88vh !important;
     overflow-y: auto !important;
+    padding: 0 !important;
+    border-radius: 20px !important;
   }
 
-  /* Form Inputs on Mobile: Prevent iOS zoom and improve tap targets */
+  /* Admin modal slip+info grid → stack */
+  #admin-approval-modal div[style*="grid-template-columns:140px"] {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  #admin-approval-modal div[style*="width:140px"] {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  #modal-slip-container {
+    width: 140px !important;
+    height: 175px !important;
+  }
+
+  /* ── CLASSROOM ── */
+  .classroom-layout,
+  [class*="classroom"] {
+    padding: 0 10px !important;
+  }
+
+  /* ── FORMS ── */
   input[type="text"],
   input[type="password"],
   input[type="email"],
   input[type="tel"],
-  input[type="date"],
   input[type="number"],
+  input[type="date"],
   select,
   textarea {
-    font-size: 14px !important;
-    min-height: 44px;
+    font-size: 16px !important; /* iOS: prevent auto-zoom */
+    min-height: 44px !important;
     box-sizing: border-box !important;
   }
 
-  /* Buttons on Mobile: Comfortable 44px+ tap target */
+  /* ── BUTTONS ── */
   button,
   .btn,
+  .btn-login,
   .btn-submit,
-  .btn-login {
-    min-height: 44px;
+  a.btn-login {
+    min-height: 44px !important;
   }
 
-  /* Typography Adjustments */
-  h1 {
-    font-size: 24px !important;
-    line-height: 1.3 !important;
+  /* ── MODALS ── */
+  [style*="position:fixed"][style*="z-index:9999"] > div,
+  [style*="position:fixed"][style*="z-index:10000"] > div {
+    width: min(95vw, 500px) !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    border-radius: 20px !important;
+    margin: 0 auto !important;
   }
-  h2 {
-    font-size: 18px !important;
-    line-height: 1.35 !important;
+
+  /* ── TOAST NOTIFICATIONS ── */
+  .toast-container,
+  #toast-container {
+    left: 10px !important;
+    right: 10px !important;
+    bottom: 16px !important;
+    width: auto !important;
   }
-  h3 {
-    font-size: 15px !important;
-    line-height: 1.4 !important;
+
+  /* ── TYPOGRAPHY SCALE DOWN ── */
+  h1 { font-size: 22px !important; line-height: 1.3 !important; }
+  h2 { font-size: 17px !important; line-height: 1.35 !important; }
+  h3 { font-size: 14px !important; line-height: 1.4 !important; }
+
+  /* Section headers */
+  [style*="font-size:22px"],
+  [style*="font-size:24px"] {
+    font-size: 17px !important;
+  }
+
+  /* ── PERFORMANCE: disable heavy animations ── */
+  .ambient-glow-1,
+  .ambient-glow-2 {
+    display: none !important;
+  }
+
+  .animate-float {
+    animation: none !important;
   }
 }
+
+/* ── VERY SMALL PHONES (360px wide) ── */
+@media (max-width: 390px) {
+  .header-container {
+    padding: 0 10px !important;
+    height: 52px !important;
+  }
+
+  .logo-img {
+    height: 26px !important;
+  }
+
+  .logo-btn > div {
+    display: none !important; /* Hide text logo, show only image */
+  }
+
+  .header-user-badge {
+    max-width: 72px !important;
+    font-size: 10px !important;
+  }
+
+  .student-dashboard-layout {
+    padding: 0 8px !important;
+  }
+
+  .checkout-grid-layout {
+    padding: 0 8px !important;
+  }
+
+  .courses-grid {
+    gap: 10px !important;
+  }
+
+  h1 { font-size: 19px !important; }
+  h2 { font-size: 15px !important; }
+}
+
+
 
 

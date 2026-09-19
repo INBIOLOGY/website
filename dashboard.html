@@ -60,20 +60,23 @@
   <div style="min-height:80vh;background:var(--c-page);padding-top:40px;padding-bottom:60px">
     <div class="student-dashboard-layout" style="max-width:1100px;margin:0 auto;padding:0 24px">
       <!-- Profile Sidebar -->
-      <aside style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:24px 20px;text-align:center;height:fit-content;display:flex;flex-direction:column;align-items:center">
-        <div style="width:84px;height:84px;border-radius:50%;background:var(--c-sky-light);color:var(--c-sky);font-size:36px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 4px 12px rgba(30,58,138,0.1)">
+      <aside class="dashboard-sidebar" style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:24px 20px;text-align:center;height:fit-content;display:flex;flex-direction:column;align-items:center">
+        <div class="dashboard-avatar" style="width:84px;height:84px;border-radius:50%;background:var(--c-sky-light);color:var(--c-sky);font-size:36px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 4px 12px rgba(30,58,138,0.1)">
           👨‍🎓
         </div>
-        <!-- Line 1: น้อง(ชื่อเล่น) -->
-        <h3 id="sidebar-nickname" style="font-weight:900;font-size:18px;color:var(--c-navy);margin:0 0 4px">น้องนักเรียน</h3>
-        <!-- Line 2: ชื่อจริง - นามสกุล -->
-        <p id="sidebar-fullname" style="font-weight:700;font-size:13px;color:#4B5563;margin:0 0 6px">ผู้เรียนชีววิทยา</p>
-        <!-- Line 3: โรงเรียน • ระดับชั้น -->
-        <p id="sidebar-school-level" style="font-size:11px;color:#9CA3AF;margin:0 0 16px">โรงเรียนทั่วไป • มัธยมศึกษา</p>
-        <button onclick="switchDashTab('profile')" style="width:100%;background:#F8FAFC;border:1px solid #E5E7EB;color:var(--c-navy);font-weight:800;font-size:11px;padding:8px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
+        <div class="dashboard-sidebar-info">
+          <!-- Line 1: น้อง(ชื่อเล่น) -->
+          <h3 id="sidebar-nickname" style="font-weight:900;font-size:18px;color:var(--c-navy);margin:0 0 4px">น้องนักเรียน</h3>
+          <!-- Line 2: ชื่อจริง - นามสกุล -->
+          <p id="sidebar-fullname" style="font-weight:700;font-size:13px;color:#4B5563;margin:0 0 6px">ผู้เรียนชีววิทยา</p>
+          <!-- Line 3: โรงเรียน • ระดับชั้น -->
+          <p id="sidebar-school-level" style="font-size:11px;color:#9CA3AF;margin:0">โรงเรียนทั่วไป • มัธยมศึกษา</p>
+        </div>
+        <button onclick="switchDashTab('profile')" class="dashboard-edit-btn" style="background:#F8FAFC;border:1px solid #E5E7EB;color:var(--c-navy);font-weight:800;font-size:11px;padding:8px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:16px;width:100%">
           ⚙️ แก้ไขข้อมูลส่วนตัว
         </button>
       </aside>
+
 
       <!-- Main Panel & Sub Tabs -->
       <div data-reveal data-delay="0.1s" style="display:flex;flex-direction:column;gap:20px">
