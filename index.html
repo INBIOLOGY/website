@@ -289,7 +289,6 @@
     <div class="marquee-container">
       <div class="marquee-content" id="reviews-marquee"></div>
     </div>
-    </div>
   </section>
 
   <!-- Social Connect Cards -->
@@ -318,10 +317,10 @@
   <!-- Universal Rich Multi-Column Footer -->
   <footer id="footer-container"></footer>
 
-  <script src="./js/mockData.js?v=20260918_v7"></script>
-  <script src="./js/supabaseConfig.js?v=20260918_v7"></script>
-  <script src="./js/cloudService.js?v=20260918_v7"></script>
-  <script src="./js/app.js?v=20260918_v7"></script>
+  <script src="./js/mockData.js?v=20260919_v9"></script>
+  <script src="./js/supabaseConfig.js?v=20260919_v9"></script>
+  <script src="./js/cloudService.js?v=20260919_v9"></script>
+  <script src="./js/app.js?v=20260919_v9"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       renderHeader('home');
@@ -445,10 +444,11 @@
         `).join('');
       }
 
-      // Render reviews marquee (8 unique verified reviews)
+      // Render reviews marquee (Real student reviews repeated for seamless continuous loop)
       const marqueeContainer = document.getElementById('reviews-marquee');
       if (marqueeContainer) {
-        marqueeContainer.innerHTML = REVIEWS.map(r => `
+        const repeatedReviews = [...REVIEWS, ...REVIEWS, ...REVIEWS, ...REVIEWS];
+        marqueeContainer.innerHTML = repeatedReviews.map(r => `
           <div class="review-card-container">
             <div style="width:110px;height:110px;border-radius:50%;overflow:hidden;border:3px solid #B91C1C;box-shadow:0 4px 12px rgba(185,28,28,0.15);flex-shrink:0;background:#DEC8B3">
               <img src="${r.avatar}" alt="${r.name}" style="width:100%;height:100%;object-fit:cover;object-position:${r.imagePosition || 'center top'}" />
