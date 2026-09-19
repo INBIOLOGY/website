@@ -56,7 +56,20 @@ body {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+   GLOBAL CIRCLE PROTECTION — ป้องกันวงกลมกลายเป็นวงรีบนมือถือ
+   Selector จับทุก element ที่มี inline style border-radius:50%
+   ───────────────────────────────────────────────────────────────────────────── */
+img[style*="border-radius:50%"],
+div[style*="border-radius:50%"],
+span[style*="border-radius:50%"],
+button[style*="border-radius:50%"] {
+  aspect-ratio: 1 / 1 !important;
+  flex-shrink: 0 !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
    GLOBAL UI CHROME & LABEL CARET PROTECTION
+
    Prevents text cursor / selection caret on labels, buttons, badges, tabs, etc.
    ───────────────────────────────────────────────────────────────────────────── */
 label,
