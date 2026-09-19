@@ -661,64 +661,161 @@ h6 {
   }
 }
 
-/* ── MOBILE (≤640px): portrait img + stacked content ─────────────────── */
+/* ── MOBILE (≤640px): Full-screen bird hero with text overlay ──────────── */
 @media (max-width: 640px) {
   .hero-wrapper {
-    padding-top: 64px;
+    padding-top: 0; /* header is fixed, no top pad needed */
   }
 
-  /* Switch images */
-  .hero-img-desktop { display: none; }
+  /* ─ Image Banner: full viewport height ─ */
+  .hero-img-banner {
+    max-height: none;
+    height: 100svh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Switch to portrait image */
+  .hero-img-desktop { display: none !important; }
   .hero-img-mobile {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
     object-fit: cover;
-    max-height: none; /* portrait: full height */
+    object-position: center center;
   }
 
-  .hero-img-banner {
-    max-height: none;
+  /* ─ Mobile Overlay: text floating on the bird image ─ */
+  .hero-mobile-overlay {
+    display: flex !important; /* show on mobile */
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    padding: 80px 22px 24px; /* top pad for header */
+    background: linear-gradient(
+      to bottom,
+      rgba(5, 15, 55, 0.72) 0%,
+      rgba(5, 15, 55, 0.40) 38%,
+      rgba(5, 15, 55, 0.00) 60%
+    );
+    z-index: 5;
   }
 
-  /* Content stacks below in single column */
+  .hero-mobile-title {
+    font-size: clamp(26px, 8vw, 34px);
+    font-weight: 950;
+    color: #FFFFFF;
+    line-height: 1.2;
+    margin: 0;
+    text-shadow: 0 3px 14px rgba(0,0,0,0.6);
+  }
+
+  .hero-mobile-yellow {
+    display: block;
+    color: #FACC15;
+    font-size: clamp(22px, 7vw, 30px);
+    font-weight: 950;
+    margin-top: 2px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+  }
+
+  .hero-mobile-sub {
+    display: block;
+    color: rgba(255,255,255,0.92);
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 8px;
+    line-height: 1.4;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+  }
+
+  .hero-mobile-btn-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+
+  /* Red primary button */
+  .hero-mobile-btn-row .hero-btn-primary {
+    background: #EF4444;
+    color: white;
+    font-weight: 850;
+    font-size: 13px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 6px 16px rgba(239,68,68,0.4);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  /* Glass outline button */
+  .hero-btn-glass {
+    background: rgba(59,130,246,0.35);
+    border: 1.5px solid rgba(255,255,255,0.75);
+    color: white;
+    font-weight: 800;
+    font-size: 13px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  /* Compact stats pill */
+  .hero-mobile-stats-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.40);
+    border-radius: 999px;
+    padding: 7px 16px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    flex-wrap: wrap;
+  }
+
+  .hero-mobile-stats-pill span {
+    font-size: 11px;
+    font-weight: 800;
+    color: white;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    white-space: nowrap;
+  }
+
+  .pill-dot {
+    color: rgba(255,255,255,0.5) !important;
+    font-size: 14px !important;
+    font-weight: 400 !important;
+  }
+
+  /* ─ Content Section: show only instructor card below image ─ */
   .hero-content-section {
-    padding: 28px 0 36px;
+    padding: 24px 0 32px;
     background: linear-gradient(180deg, #EFF6FF 0%, #F8FAFC 70%);
   }
 
   .hero-content-inner {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 0;
     padding: 0 20px;
   }
 
-  .hero-title {
-    font-size: clamp(26px, 8vw, 34px);
+  /* Hide the desktop left col (text+stats) on mobile — already shown in overlay */
+  .hero-left-col {
+    display: none !important;
   }
-
-  .hero-title-yellow {
-    font-size: clamp(22px, 7vw, 30px);
-  }
-
-  .hero-subtitle {
-    font-size: 14px;
-  }
-
-  .hero-btn-primary, .hero-btn-outline {
-    font-size: 14px;
-    padding: 11px 20px;
-  }
-
-  /* Stats: compact row */
-  .hero-stats-row {
-    padding: 12px 16px;
-    max-width: 100%;
-    border-radius: 14px;
-  }
-
-  .hero-stat-num { font-size: 18px; }
-  .hero-stat-label { font-size: 9.5px; }
 
   /* Card: full width, centered */
   .hero-right-col {
@@ -728,8 +825,19 @@ h6 {
   .instructor-glass-card {
     width: 100%;
     max-width: 360px;
+    margin: 0 auto;
   }
 }
+
+/* Ensure mobile overlay hidden on desktop */
+.hero-mobile-overlay {
+  display: none;
+}
+.hero-btn-glass {
+  /* desktop fallback — not shown since overlay is hidden */
+}
+
+
 
 /* COURSE CARDS GRID */
 .courses-grid {
