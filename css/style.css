@@ -461,27 +461,48 @@ h6 {
   background-color: #F9FAFB;
 }
 
-/* HERO SECTION */
+/* ═══════════════════════════════════════════════════════════════════════════
+   HERO SECTION — INBIOLOGY Illustration Hero
+   Desktop/iPad: landscape bird bg + instructor glass card right
+   Mobile: portrait bird bg, compact text top, bird visible bottom
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 .hero-section {
-  padding-top: 140px;
-  padding-bottom: 80px;
+  padding-top: 120px;
+  padding-bottom: 60px;
   overflow: hidden;
   position: relative;
-  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.2) 0%, rgba(15, 23, 42, 0.05) 50%, rgba(15, 23, 42, 0.3) 100%), url('../hero-bg.jpg') center center / cover no-repeat;
-  min-height: 700px;
+  /* Desktop: landscape illustration */
+  background: url('../hero-desktop.jpg') center 60% / cover no-repeat;
+  min-height: 720px;
   display: flex;
   align-items: center;
   border-bottom: none !important;
 }
 
+/* Dark overlay — ซ้ายบนเข้ม ให้ข้อความอ่านได้, ขวาล่างเบา ให้เห็นนก */
+.hero-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    rgba(5, 15, 50, 0.62) 0%,
+    rgba(5, 15, 50, 0.38) 40%,
+    rgba(5, 15, 50, 0.08) 70%,
+    rgba(5, 15, 50, 0.05) 100%
+  );
+  z-index: 1;
+}
+
 .hero-grid {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 40px;
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 48px;
-  align-items: center;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 40px;
+  align-items: flex-start;
   width: 100%;
   position: relative;
   z-index: 2;
@@ -491,93 +512,136 @@ h6 {
   display: flex;
   justify-content: flex-end;
   width: 100%;
+  padding-top: 8px;
 }
 
 .instructor-glass-card {
-  width: 330px;
+  width: 310px;
   max-width: 100%;
   border-radius: 28px;
-  background: rgba(240, 246, 255, 0.85);
+  background: rgba(240, 246, 255, 0.88);
   border: 1px solid rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  padding: 24px;
-  box-shadow: 0 32px 64px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  padding: 22px;
+  box-shadow: 0 24px 56px rgba(15, 23, 42, 0.18);
   margin: 0;
 }
 
+/* ─── TABLET (641px–900px): keep glass card, compact layout ──────────────── */
 @media (max-width: 900px) {
-  .hero-grid {
-    grid-template-columns: 1fr;
-    gap: 32px;
-  }
-
-  .hero-instructor-wrap {
-    justify-content: center !important;
-    margin: 10px auto 0 !important;
-  }
-
-  .instructor-glass-card {
-    margin: 0 auto !important;
-  }
-}
-
-/* ─── MOBILE HERO: ใช้รูป INBIOLOGY Illustration แทน ─────────────────────── */
-@media (max-width: 640px) {
   .hero-section {
-    background: url('../hero-mobile.jpg') center center / cover no-repeat;
-    min-height: 100svh;
-    padding-top: 80px;
-    padding-bottom: 0;
+    min-height: 640px;
+    padding-top: 110px;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 0 24px;
     align-items: flex-start;
   }
 
-  /* Overlay gradient บนรูป ให้ข้อความอ่านง่าย */
-  .hero-section::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to bottom,
-      rgba(10, 30, 80, 0.52) 0%,
-      rgba(10, 30, 80, 0.18) 45%,
-      rgba(10, 30, 80, 0.0) 65%,
-      rgba(10, 30, 80, 0.45) 100%
-    );
-    z-index: 1;
+  .hero-instructor-wrap {
+    justify-content: flex-end !important;
+    margin: 0 !important;
   }
 
+  .instructor-glass-card {
+    width: 270px;
+    padding: 18px;
+  }
+}
+
+/* ─── MOBILE (≤640px): portrait illustration, compact text on top ─────────── */
+@media (max-width: 640px) {
+  .hero-section {
+    /* Mobile: portrait illustration */
+    background: url('../hero-mobile.jpg') center center / cover no-repeat;
+    min-height: 100svh;
+    padding-top: 76px;
+    padding-bottom: 24px;
+    align-items: flex-start;
+  }
+
+  /* Mobile overlay — เข้มด้านบน ใสด้านล่าง */
+  .hero-section::before {
+    background: linear-gradient(
+      to bottom,
+      rgba(5, 15, 50, 0.68) 0%,
+      rgba(5, 15, 50, 0.40) 28%,
+      rgba(5, 15, 50, 0.08) 48%,
+      rgba(5, 15, 50, 0.00) 60%,
+      rgba(5, 15, 50, 0.30) 100%
+    );
+  }
+
+  /* Stack ทุกอย่างเป็น column ในช่วงบน 45% ของจอ */
   .hero-grid {
     grid-template-columns: 1fr;
     gap: 0;
-    padding: 0 20px;
-    z-index: 2;
-    position: relative;
+    padding: 0 18px;
+    align-items: flex-start;
   }
 
-  /* ซ่อน instructor card บนมือถือ — รูป illustration พูดแทนได้เลย */
+  /* ซ่อน glass card บนมือถือ */
   .hero-instructor-wrap {
     display: none !important;
   }
 
-  /* ข้อความหลัก hero — ปรับให้อ่านง่ายบนรูป */
+  /* ข้อความ — เล็กลงเพื่อประหยัดพื้นที่ */
   .hero-section h1 {
-    font-size: clamp(28px, 8vw, 38px) !important;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7) !important;
+    font-size: clamp(24px, 7.5vw, 32px) !important;
+    line-height: 1.2 !important;
+    margin-bottom: 0 !important;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.75) !important;
   }
 
-  /* Stats bar — ย้ายลงมาใกล้ bottom */
+  /* ปุ่ม — เล็กลง ไม่ wrap */
+  .hero-section [style*="display:flex"][style*="gap:14px"] {
+    gap: 10px !important;
+    margin-top: 16px !important;
+  }
+
+  /* Stats bar — แนวตั้ง → แนวนอน compact */
   .hero-stats-grid {
-    margin-top: 20px !important;
-    padding: 14px 16px !important;
-    background: rgba(255,255,255,0.18) !important;
-    border: 1.5px solid rgba(255,255,255,0.45) !important;
-    backdrop-filter: blur(14px) !important;
-    -webkit-backdrop-filter: blur(14px) !important;
-    border-radius: 16px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    margin-top: 14px !important;
+    padding: 10px 12px !important;
+    background: rgba(255,255,255,0.15) !important;
+    border: 1px solid rgba(255,255,255,0.40) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border-radius: 14px !important;
+    gap: 0 !important;
+  }
+
+  .hero-stats-grid > div {
+    flex: 1;
+    text-align: center;
+    border-left: 1px solid rgba(255,255,255,0.22) !important;
+    padding-left: 8px !important;
+  }
+
+  .hero-stats-grid > div:first-child {
+    border-left: none !important;
+    padding-left: 0 !important;
+  }
+
+  .hero-stats-grid > div > div:first-child {
+    font-size: 15px !important;
+    font-weight: 900 !important;
+  }
+
+  .hero-stats-grid > div > div:last-child {
+    font-size: 8.5px !important;
+    white-space: normal !important;
+    line-height: 1.25 !important;
   }
 }
-
 
 
 /* COURSE CARDS GRID */
