@@ -652,17 +652,17 @@ function renderHeader(activePage = 'home') {
         ${isAdmin ? `<a href="admin.html" class="nav-link ${activePage === 'admin' ? 'active' : ''}">แอดมิน</a>` : ''}
       </nav>
 
-      <div style="display:flex;align-items:center;gap:12px">
+      <div class="header-right-actions" style="display:flex;align-items:center;gap:8px">
         <button onclick="openCartDrawer()" class="cart-icon-btn" title="ตะกร้าสินค้า" aria-label="เปิดตะกร้าสินค้า">
-          <span style="font-size:20px">🛒</span>
+          <span style="font-size:18px;line-height:1">🛒</span>
           <span class="cart-badge" style="display:${AppState.cart.length > 0 ? 'flex' : 'none'}">${AppState.cart.length}</span>
         </button>
 
         ${!isLoggedIn
           ? `<a href="login.html" class="btn-login">เข้าสู่ระบบ</a>`
-          : `<div class="header-user-actions" style="display:flex;align-items:center;gap:8px">
-              <a href="dashboard.html" class="header-user-badge" style="font-weight:800;font-size:12px;color:var(--c-navy);background:#FEF2F2;padding:6px 12px;border-radius:10px;border:1px solid rgba(185,28,28,0.15);white-space:nowrap;display:inline-block">
-                ${isAdmin ? '🛡️ แอดมินผู้ดูแล' : studentDisplayName}
+          : `<div class="header-user-actions" style="display:flex;align-items:center;gap:6px">
+              <a href="dashboard.html" class="header-user-badge">
+                ${isAdmin ? '🛡️ แอดมิน' : studentDisplayName}
               </a>
               <button onclick="AppState.logout()" class="header-logout-btn" title="ออกจากระบบ" style="padding:6px 12px;background:#FEE2E2;color:#DC2626;border-radius:10px;font-size:11px;font-weight:800;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap">
                 🚪 ออกจากระบบ

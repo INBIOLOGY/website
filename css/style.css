@@ -357,18 +357,106 @@ h6 {
   }
 }
 
+/* Cart Icon Button */
+.cart-icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: white;
+  border: 1px solid #E5E7EB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s;
+  padding: 0;
+  flex-shrink: 0;
+}
+.cart-icon-btn:hover {
+  background: #F9FAFB;
+  border-color: #D1D5DB;
+}
+.cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #EF4444;
+  color: white;
+  font-size: 10px;
+  font-weight: 900;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  padding: 0 4px;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+/* User Badge in Header */
+.header-user-badge {
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 12px;
+  color: var(--c-navy);
+  background: #FEF2F2;
+  border: 1px solid rgba(185, 28, 28, 0.15);
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.header-user-badge:hover {
+  background: #FEE2E2;
+}
+
+/* Hamburger Button */
+.hamburger-btn {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 10px;
+  cursor: pointer;
+  background: white;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s;
+  padding: 0;
+  flex-shrink: 0;
+}
+.hamburger-btn:hover {
+  background: #F9FAFB;
+  border-color: #D1D5DB;
+}
+
+.hamburger-line {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: #4B5563;
+  transition: all 0.25s;
+}
+
 @media (max-width: 640px) {
   .header-container {
-    padding: 0 12px;
+    padding: 0 14px;
     height: 58px;
   }
 
   .logo-img {
-    height: 34px;
-  }
-
-  .cart-icon-btn {
-    padding: 6px 8px;
+    height: 36px;
   }
 
   .header-user-actions {
@@ -376,12 +464,19 @@ h6 {
   }
 
   .header-user-badge {
-    max-width: 105px !important;
+    height: 36px !important;
+    max-width: 110px !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
     font-size: 11px !important;
-    padding: 5px 8px !important;
+    padding: 0 8px !important;
+  }
+
+  .cart-icon-btn,
+  .hamburger-btn {
+    width: 36px !important;
+    height: 36px !important;
   }
 
   .header-logout-btn {
@@ -393,30 +488,6 @@ h6 {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   width: 100%;
-}
-
-/* Dropdown Menu */
-.hamburger-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4.5px;
-  padding: 9px 10px;
-  border-radius: 10px;
-  cursor: pointer;
-  background: none;
-  border: 1.5px solid transparent;
-  transition: all 0.2s;
-}
-
-.hamburger-line {
-  display: block;
-  width: 18px;
-  height: 2px;
-  border-radius: 2px;
-  background: #4B5563;
-  transition: all 0.25s;
 }
 
 .dropdown-panel {
@@ -589,64 +660,78 @@ h6 {
     align-items: flex-start;
   }
 
+  /* Hide instructor card in mobile hero (illustrated in user screenshot) */
   .hero-instructor-wrap {
-    display: flex !important;
-    justify-content: center !important;
-    width: 100% !important;
-    margin-top: 12px !important;
-  }
-
-  .instructor-glass-card {
-    width: 100% !important;
-    max-width: 330px !important;
-    margin: 0 auto !important;
-    background: rgba(240, 246, 255, 0.90) !important;
+    display: none !important;
   }
 
   /* Text adjustments on mobile */
   .hero-section h1 {
-    font-size: clamp(26px, 8vw, 34px) !important;
-    line-height: 1.2 !important;
+    font-size: clamp(28px, 8.5vw, 36px) !important;
+    line-height: 1.15 !important;
+    margin: 0 !important;
+    text-shadow: 0 4px 16px rgba(15, 23, 42, 0.7) !important;
   }
 
   .hero-section h1 > span:first-of-type {
-    font-size: clamp(23px, 7vw, 30px) !important;
+    font-size: clamp(24px, 7.5vw, 32px) !important;
+    margin-top: 4px !important;
+    text-shadow: 0 3px 12px rgba(0, 0, 0, 0.4) !important;
   }
 
   .hero-section h1 > span:last-of-type {
     font-size: 13.5px !important;
     margin-top: 10px !important;
+    opacity: 0.95 !important;
   }
 
-  /* Buttons on mobile */
+  /* Buttons on mobile - perfectly leveled side-by-side */
   .hero-section [style*="display:flex"][style*="gap:14px"] {
+    display: flex !important;
+    flex-wrap: nowrap !important;
     gap: 10px !important;
     margin-top: 18px !important;
+    width: 100% !important;
   }
 
   .hero-section [style*="display:flex"][style*="gap:14px"] a {
-    font-size: 13px !important;
-    padding: 10px 18px !important;
-    border-radius: 10px !important;
+    height: 44px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 13.5px !important;
+    font-weight: 850 !important;
+    padding: 0 16px !important;
+    border-radius: 12px !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+    flex: 1 1 auto !important;
+    max-width: 180px !important;
   }
 
-  /* Stats grid on mobile */
+  /* Stats grid on mobile - Sleek 1-row horizontal glass pill */
   .hero-stats-grid {
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: space-around !important;
+    display: grid !important;
+    grid-template-columns: 1.2fr 0.9fr 0.9fr !important;
     align-items: center !important;
-    margin-top: 18px !important;
-    padding: 12px 14px !important;
+    margin-top: 16px !important;
+    padding: 10px 8px !important;
+    background: rgba(255, 255, 255, 0.16) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.35) !important;
+    border-radius: 16px !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12) !important;
+    width: 100% !important;
+    max-width: 440px !important;
     gap: 0 !important;
   }
 
   .hero-stats-grid > div {
-    flex: 1;
-    text-align: center;
-    border-left: 1px solid rgba(255,255,255,0.22) !important;
-    padding-left: 6px !important;
-    padding-right: 6px !important;
+    text-align: center !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.25) !important;
+    border-top: none !important;
+    padding: 0 4px !important;
   }
 
   .hero-stats-grid > div:first-child {
@@ -656,12 +741,43 @@ h6 {
 
   .hero-stats-grid > div > div:first-child {
     font-size: 16px !important;
+    font-weight: 950 !important;
+    color: #FFFFFF !important;
+    line-height: 1.1 !important;
+    margin-bottom: 2px !important;
   }
 
   .hero-stats-grid > div > div:last-child {
-    font-size: 9.5px !important;
+    font-size: 8.5px !important;
+    font-weight: 700 !important;
+    color: rgba(255, 255, 255, 0.92) !important;
     white-space: normal !important;
-    line-height: 1.2 !important;
+    line-height: 1.25 !important;
+  }
+}
+
+/* Mobile-Only Teacher Ton Profile Section */
+.mobile-instructor-section {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .mobile-instructor-section {
+    display: block !important;
+    padding: 24px 20px 8px;
+    background: var(--c-page);
+  }
+
+  /* Courses grid single column on mobile */
+  .courses-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* Category grid 2 columns on mobile */
+  #category-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
   }
 }
 
@@ -1138,32 +1254,6 @@ h6 {
   }
 }
 
-/* Hero Stats Bar Layout */
-.hero-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  text-align: center;
-}
-
-@media (max-width: 640px) {
-  .hero-stats-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-
-  .hero-stats-grid>div {
-    border-left: none !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.25);
-    padding-left: 0 !important;
-    padding-top: 10px;
-  }
-
-  .hero-stats-grid>div:first-child {
-    border-top: none;
-    padding-top: 0;
-  }
-}
 
 /* Student Dashboard Tabs & Profile Form */
 .dash-tabs-scroll {
