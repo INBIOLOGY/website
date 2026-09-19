@@ -1023,21 +1023,95 @@ h6 {
   display: none;
 }
 
+/* Student Profile Form Styling (Responsive Desktop & Mobile) */
 .profile-form-grid {
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 18px;
+  padding: 24px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 18px;
+  box-sizing: border-box;
 }
 
-@media (max-width: 640px) {
-  .profile-form-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
+.profile-form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
 
-  .profile-form-grid .full-span {
-    grid-column: span 1 !important;
-  }
+.profile-label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #374151;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.profile-input {
+  width: 100%;
+  border: 1px solid #D1D5DB;
+  border-radius: 12px;
+  padding: 11px 14px;
+  font-size: 13.5px;
+  outline: none;
+  background: white;
+  color: #1F2937;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-input:focus {
+  border-color: var(--c-navy);
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+}
+
+.profile-select {
+  cursor: pointer;
+}
+
+.profile-birthdate-age-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  width: 100%;
+}
+
+.profile-span-2 {
+  grid-column: span 2;
+}
+
+.profile-submit-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.profile-submit-btn {
+  background: var(--c-navy);
+  color: white;
+  font-weight: 850;
+  font-size: 13.5px;
+  padding: 12px 28px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(30, 58, 138, 0.25);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.profile-submit-btn:hover {
+  background: #172554;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(30, 58, 138, 0.35);
 }
 
 /* Standardized Course Thumbnail Duration Badge (Rule 2) */
@@ -1502,7 +1576,7 @@ textarea {
 
   /* Page container paddings */
   .header-container {
-    padding: 0 12px !important;
+    padding: 0 10px !important;
     height: 56px !important;
   }
 
@@ -1516,17 +1590,17 @@ textarea {
 
   /* Compact User Controls in Header */
   .header-user-actions {
-    gap: 4px !important;
+    gap: 5px !important;
   }
 
   .header-user-badge {
-    max-width: 82px !important;
+    max-width: 115px !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
-    font-size: 11px !important;
-    padding: 4px 8px !important;
-    font-weight: 700 !important;
+    font-size: 11.5px !important;
+    padding: 5px 8px !important;
+    font-weight: 750 !important;
   }
 
   .header-logout-btn {
@@ -1547,7 +1621,7 @@ textarea {
     display: flex !important;
     flex-direction: column !important;
     gap: 16px !important;
-    padding: 0 12px !important;
+    padding: 0 10px !important;
     width: 100% !important;
     box-sizing: border-box !important;
   }
@@ -1564,6 +1638,80 @@ textarea {
     height: 64px !important;
     font-size: 28px !important;
     margin-bottom: 8px !important;
+  }
+
+  .student-dashboard-layout > div > div {
+    padding: 16px 12px !important;
+    border-radius: 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Profile Form 1-Column Responsive Mobile Flow */
+  .profile-form-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    padding: 16px 12px !important;
+    border-radius: 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .profile-form-group,
+  .profile-span-2 {
+    width: 100% !important;
+    grid-column: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  .profile-birthdate-age-row {
+    flex-direction: row !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .profile-input {
+    font-size: 14px !important;
+    min-height: 46px !important;
+    padding: 10px 12px !important;
+    box-sizing: border-box !important;
+    border-radius: 10px !important;
+  }
+
+  .profile-submit-container {
+    width: 100% !important;
+    margin-top: 10px !important;
+    display: flex !important;
+  }
+
+  .profile-submit-btn {
+    width: 100% !important;
+    min-height: 50px !important;
+    font-size: 15px !important;
+    padding: 14px 16px !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    border-radius: 12px !important;
+  }
+
+  /* Floating Back-To-Top Safe Floating Position on Mobile */
+  .back-to-top {
+    bottom: 80px !important;
+    right: 14px !important;
+    width: 42px !important;
+    height: 42px !important;
+    font-size: 17px !important;
+    z-index: 85 !important;
+    box-shadow: 0 4px 16px rgba(185, 28, 28, 0.35) !important;
+  }
+
+  /* Order stats 2x2 grid on mobile */
+  #order-stats-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
   }
 
   .enrolled-courses-grid {
