@@ -522,6 +522,64 @@ h6 {
   }
 }
 
+/* ─── MOBILE HERO: ใช้รูป INBIOLOGY Illustration แทน ─────────────────────── */
+@media (max-width: 640px) {
+  .hero-section {
+    background: url('../hero-mobile.jpg') center center / cover no-repeat;
+    min-height: 100svh;
+    padding-top: 80px;
+    padding-bottom: 0;
+    align-items: flex-start;
+  }
+
+  /* Overlay gradient บนรูป ให้ข้อความอ่านง่าย */
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(10, 30, 80, 0.52) 0%,
+      rgba(10, 30, 80, 0.18) 45%,
+      rgba(10, 30, 80, 0.0) 65%,
+      rgba(10, 30, 80, 0.45) 100%
+    );
+    z-index: 1;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 0 20px;
+    z-index: 2;
+    position: relative;
+  }
+
+  /* ซ่อน instructor card บนมือถือ — รูป illustration พูดแทนได้เลย */
+  .hero-instructor-wrap {
+    display: none !important;
+  }
+
+  /* ข้อความหลัก hero — ปรับให้อ่านง่ายบนรูป */
+  .hero-section h1 {
+    font-size: clamp(28px, 8vw, 38px) !important;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7) !important;
+  }
+
+  /* Stats bar — ย้ายลงมาใกล้ bottom */
+  .hero-stats-grid {
+    margin-top: 20px !important;
+    padding: 14px 16px !important;
+    background: rgba(255,255,255,0.18) !important;
+    border: 1.5px solid rgba(255,255,255,0.45) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    border-radius: 16px !important;
+  }
+}
+
+
+
 /* COURSE CARDS GRID */
 .courses-grid {
   display: grid;
