@@ -122,39 +122,39 @@
               
               <!-- Row: Full Name & Nickname -->
               <div>
-                <label style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">👤 ชื่อจริง - นามสกุล (Full Name)</label>
+                <label for="edit-fullname" style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">👤 ชื่อจริง - นามสกุล (Full Name)</label>
                 <input type="text" id="edit-fullname" required style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white" placeholder="เช่น นาย วิทศรุต สายตา" />
               </div>
 
               <div>
-                <label style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">😊 ชื่อเล่น (Nickname)</label>
+                <label for="edit-nickname" style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">😊 ชื่อเล่น (Nickname)</label>
                 <input type="text" id="edit-nickname" required style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white" placeholder="เช่น วิทศรุต, ภูมิ" />
               </div>
 
               <div>
-                <label style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">📱 เบอร์โทรศัพท์ (Phone)</label>
+                <label for="edit-phone" style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">📱 เบอร์โทรศัพท์ (Phone)</label>
                 <input type="tel" id="edit-phone" required style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white" placeholder="081-234-5678" />
               </div>
 
               <!-- Row: Birthdate & Age -->
               <div>
-                <label style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">🎂 วันเกิด (Birthdate)</label>
+                <label for="edit-birthdate" style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">🎂 วันเกิด (Birthdate)</label>
                 <input type="date" id="edit-birthdate" onchange="calcDashAge()" style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white" />
               </div>
 
               <div>
-                <label style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">⌛ อายุ (คำนวณอัตโนมัติ)</label>
+                <label for="edit-age" style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">⌛ อายุ (คำนวณอัตโนมัติ)</label>
                 <input type="text" id="edit-age" readonly style="width:100%;border:1px solid #E5E7EB;border-radius:10px;padding:10px 12px;font-size:13px;background:#F1F5F9;color:#1E3A8A;font-weight:700" />
               </div>
 
               <!-- Row: School & Grade -->
               <div>
-                <label style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">🏫 โรงเรียน (School)</label>
+                <label for="edit-school" style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">🏫 โรงเรียน (School)</label>
                 <input type="text" id="edit-school" required style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white" placeholder="เช่น โรงเรียนสตรีวิทยา" />
               </div>
 
               <div>
-                <label style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">🎓 ระดับชั้น (Level)</label>
+                <label for="edit-level" style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">🎓 ระดับชั้น (Level)</label>
                 <select id="edit-level" style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white">
                   <option value="มัธยมศึกษาปีที่ 4">มัธยมศึกษาปีที่ 4</option>
                   <option value="มัธยมศึกษาปีที่ 5">มัธยมศึกษาปีที่ 5</option>
@@ -165,17 +165,17 @@
 
               <!-- Row: Socials (IG, LINE, FB) -->
               <div>
-                <label style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">📸 Instagram</label>
+                <label for="edit-instagram" style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">📸 Instagram</label>
                 <input type="text" id="edit-instagram" style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white" placeholder="@username" />
               </div>
 
               <div>
-                <label style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">💬 LINE ID</label>
+                <label for="edit-line-id" style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">💬 LINE ID</label>
                 <input type="text" id="edit-line-id" style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white" placeholder="ไอดีไลน์" />
               </div>
 
               <div style="grid-column:span 2">
-                <label style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">📘 Facebook Link / Name</label>
+                <label for="edit-facebook" style="display:block;font-size:12px;font-weight:800;color:#374151;margin-bottom:6px">📘 Facebook Link / Name</label>
                 <input type="text" id="edit-facebook" style="width:100%;border:1px solid #D1D5DB;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white" placeholder="ชื่อหรือลิงก์ Facebook" />
               </div>
 

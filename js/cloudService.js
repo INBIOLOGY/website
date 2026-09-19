@@ -927,6 +927,36 @@ const CloudService = window.CloudService = {
       }
     }
 
+    // Secondary Cloud Path: Vercel Serverless Function Bridge (/api/orders)
+    try {
+      const bridgeRes = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userEmail,
+          userName,
+          userId,
+          courseIds,
+          courseTitles,
+          totalAmount,
+          couponCode,
+          discountAmount,
+          slipBase64,
+          userNote
+        })
+      });
+      if (bridgeRes.ok) {
+        const data = await bridgeRes.json();
+        if (data && data.success && data.orderId) {
+          console.log('☁️ [/api/orders Bridge] Order saved:', data.orderId);
+          this._saveOrderLocally({ ...orderData, id: data.orderId, user_note: userNote || null, created_at: new Date().toISOString() });
+          return { success: true, orderId: data.orderId };
+        }
+      }
+    } catch(err) {
+      console.warn('[/api/orders Bridge Network]:', err);
+    }
+
     // Fallback: localStorage only
     const localId = (typeof crypto !== 'undefined' && crypto.randomUUID) 
       ? crypto.randomUUID() 
@@ -968,6 +998,19 @@ const CloudService = window.CloudService = {
       }
     }
 
+    // Fallback to /api/orders if needed
+    if (cloudOrders.length === 0) {
+      try {
+        const apiRes = await fetch(`/api/orders?email=${encodeURIComponent(cleanEmail)}`);
+        if (apiRes.ok) {
+          const apiData = await apiRes.json();
+          if (apiData && Array.isArray(apiData.orders) && apiData.orders.length > 0) {
+            cloudOrders = apiData.orders;
+          }
+        }
+      } catch(e) {}
+    }
+
     // Merge with local fallback orders (deduplicated by id)
     try {
       const localAll = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
@@ -992,12 +1035,32 @@ const CloudService = window.CloudService = {
     let endpoint = '/orders?order=created_at.desc&limit=200';
     if (status) endpoint += `&status=eq.${status}`;
 
+    // 1. Try Supabase REST Direct
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
         const result = await this._supabaseFetch(endpoint);
-        if (result && Array.isArray(result)) cloudOrders = result;
+        if (result && Array.isArray(result) && result.length > 0) {
+          cloudOrders = result;
+        }
       } catch(err) {
         console.warn('[getAllOrders Supabase Error]:', err);
+      }
+    }
+
+    // 2. Try /api/orders serverless bridge
+    if (cloudOrders.length === 0) {
+      try {
+        let apiEndpoint = '/api/orders?limit=200';
+        if (status) apiEndpoint += `&status=${encodeURIComponent(status)}`;
+        const apiRes = await fetch(apiEndpoint);
+        if (apiRes.ok) {
+          const apiData = await apiRes.json();
+          if (apiData && Array.isArray(apiData.orders) && apiData.orders.length > 0) {
+            cloudOrders = apiData.orders;
+          }
+        }
+      } catch(e) {
+        console.warn('[/api/orders GET Error]:', e);
       }
     }
 

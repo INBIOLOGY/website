@@ -174,6 +174,20 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      cursor: pointer;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+    }
+    .form-section-title,
+    .auth-title,
+    .auth-subtitle {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
     .form-label .required-dot {
       color: #EF4444;
@@ -330,13 +344,37 @@
 
     @media (max-width: 600px) {
       .auth-card-body {
-        padding: 28px 20px;
+        padding: 24px 16px;
       }
       .auth-wrapper {
-        padding: 20px 14px;
+        padding: 16px 10px;
       }
       .grid-2-col, .grid-3-col {
         grid-template-columns: 1fr;
+      }
+      .auth-title {
+        font-size: 20px !important;
+      }
+      .auth-subtitle {
+        font-size: 12.5px !important;
+      }
+      .tab-btn {
+        font-size: 12px !important;
+        padding: 9px 6px !important;
+      }
+      .otp-row {
+        flex-direction: column !important;
+        align-items: stretch !important;
+      }
+      .otp-row input {
+        width: 100% !important;
+      }
+      .form-input {
+        font-size: 14px !important;
+      }
+      .btn-submit {
+        font-size: 14px !important;
+        padding: 13px !important;
       }
     }
   </style>
@@ -407,14 +445,14 @@
           <!-- ─────────────────────────────────────────────────────────────── -->
           <div id="login-fields-container" style="display:flex;flex-direction:column;gap:14px">
             <div class="form-group">
-              <label class="form-label">
+              <label class="form-label" for="input-login-identifier">
                 <span style="color:#1E3A8A">✉️</span> อีเมล หรือ 📱 เบอร์โทรศัพท์
               </label>
               <input type="text" id="input-login-identifier" placeholder="เช่น student@gmail.com หรือ 0812345678" class="form-input" autocomplete="username" />
             </div>
 
             <div class="form-group">
-              <label class="form-label">
+              <label class="form-label" for="input-login-password">
                 <span style="color:#B91C1C">🔒</span> รหัสผ่าน
               </label>
               <div style="position:relative">
@@ -447,7 +485,7 @@
               <div style="display:flex;flex-direction:column;gap:12px;margin-top:10px">
                 <!-- Email + In-page OTP Verification -->
                 <div class="form-group">
-                  <label class="form-label">
+                  <label class="form-label" for="input-reg-email">
                     <span style="color:#1E3A8A">✉️</span> อีเมล (Email) สำหรับเข้าสู่ระบบ <span class="required-dot">*</span>
                   </label>
                   <div class="otp-row">
@@ -459,7 +497,7 @@
 
                   <!-- OTP Input Sub-Row -->
                   <div id="otp-input-box" style="display:none;margin-top:8px">
-                    <label style="font-size:11.5px;color:#475569;font-weight:600;display:block;margin-bottom:4px">
+                    <label class="form-label" for="input-reg-otp" style="font-size:11.5px;color:#475569;font-weight:600;display:block;margin-bottom:4px">
                       🔑 กรอกรหัส OTP 6 หลักที่ได้รับทางอีเมล:
                     </label>
                     <div class="otp-row">
@@ -479,7 +517,7 @@
                 <!-- Password & Confirm Password (2-cols) -->
                 <div class="grid-2-col">
                   <div class="form-group">
-                    <label class="form-label">
+                    <label class="form-label" for="input-reg-password">
                       <span style="color:#B91C1C">🔒</span> รหัสผ่าน (อย่างน้อย 6 ตัว) <span class="required-dot">*</span>
                     </label>
                     <div style="position:relative">
@@ -491,7 +529,7 @@
                   </div>
 
                   <div class="form-group">
-                    <label class="form-label">
+                    <label class="form-label" for="input-reg-confirm-password">
                       <span style="color:#B91C1C">🔑</span> ยืนยันรหัสผ่าน <span class="required-dot">*</span>
                     </label>
                     <div style="position:relative">
@@ -515,11 +553,11 @@
                 <!-- Full Name & Nickname -->
                 <div class="grid-2-col">
                   <div class="form-group">
-                    <label class="form-label"><span>👤</span> ชื่อจริง - นามสกุล <span class="required-dot">*</span></label>
+                    <label class="form-label" for="input-reg-fullname"><span>👤</span> ชื่อจริง - นามสกุล <span class="required-dot">*</span></label>
                     <input type="text" id="input-reg-fullname" placeholder="โปรดใส่ชื่อ-นามสกุล" class="form-input" />
                   </div>
                   <div class="form-group">
-                    <label class="form-label"><span>😊</span> ชื่อเล่น <span class="required-dot">*</span></label>
+                    <label class="form-label" for="input-reg-nickname"><span>😊</span> ชื่อเล่น <span class="required-dot">*</span></label>
                     <input type="text" id="input-reg-nickname" placeholder="เช่น ต้น, ภูมิ, แจน" class="form-input" />
                   </div>
                 </div>
@@ -527,11 +565,11 @@
                 <!-- Birthdate & Real-time Auto-Calculated Age -->
                 <div class="grid-2-col">
                   <div class="form-group">
-                    <label class="form-label"><span>🎂</span> วันเกิด (วัน/เดือน/ปี ค.ศ.) <span class="required-dot">*</span></label>
+                    <label class="form-label" for="input-reg-birthdate"><span>🎂</span> วันเกิด (วัน/เดือน/ปี ค.ศ.) <span class="required-dot">*</span></label>
                     <input type="date" id="input-reg-birthdate" onchange="calculateAgeFromBirthdate()" class="form-input" />
                   </div>
                   <div class="form-group">
-                    <label class="form-label">
+                    <label class="form-label" for="input-reg-age">
                       <span>⌛</span> อายุ (คำนวณอัตโนมัติ)
                     </label>
                     <input type="text" id="input-reg-age" readonly placeholder="ระบุวันเกิดเพื่อคำนวณอายุ" class="form-input" style="background:#F1F5F9;color:#1E3A8A;font-weight:700" />
@@ -540,7 +578,7 @@
 
                 <!-- Phone -->
                 <div class="form-group">
-                  <label class="form-label"><span>📱</span> เบอร์โทรศัพท์ (ใช้เข้าสู่ระบบ & ติดต่อ) <span class="required-dot">*</span></label>
+                  <label class="form-label" for="input-reg-phone"><span>📱</span> เบอร์โทรศัพท์ (ใช้เข้าสู่ระบบ & ติดต่อ) <span class="required-dot">*</span></label>
                   <input type="tel" id="input-reg-phone" placeholder="081-234-5678" class="form-input" />
                 </div>
               </div>
@@ -554,7 +592,7 @@
 
               <div class="grid-2-col" style="margin-top:10px">
                 <div class="form-group">
-                  <label class="form-label"><span>🎓</span> ระดับชั้น <span class="required-dot">*</span></label>
+                  <label class="form-label" for="input-reg-grade"><span>🎓</span> ระดับชั้น <span class="required-dot">*</span></label>
                   <select id="input-reg-grade" class="form-input" style="background:white">
                     <option value="" disabled selected>-- กรุณาเลือกระดับชั้น --</option>
                     <option value="มัธยมศึกษาปีที่ 4">มัธยมศึกษาปีที่ 4</option>
@@ -564,7 +602,7 @@
                   </select>
                 </div>
                 <div class="form-group">
-                  <label class="form-label"><span>🏫</span> โรงเรียน <span class="required-dot">*</span></label>
+                  <label class="form-label" for="input-reg-school"><span>🏫</span> โรงเรียน <span class="required-dot">*</span></label>
                   <input type="text" id="input-reg-school" placeholder="เช่น สตรีวิทยา, สวนกุหลาบ" class="form-input" />
                 </div>
               </div>
@@ -578,15 +616,15 @@
 
               <div class="grid-3-col" style="margin-top:10px">
                 <div class="form-group">
-                  <label class="form-label"><span>📸</span> Instagram</label>
+                  <label class="form-label" for="input-reg-ig"><span>📸</span> Instagram</label>
                   <input type="text" id="input-reg-ig" placeholder="@username" class="form-input" />
                 </div>
                 <div class="form-group">
-                  <label class="form-label"><span>💬</span> LINE ID</label>
+                  <label class="form-label" for="input-reg-line"><span>💬</span> LINE ID</label>
                   <input type="text" id="input-reg-line" placeholder="ไอดีไลน์" class="form-input" />
                 </div>
                 <div class="form-group">
-                  <label class="form-label"><span>📘</span> Facebook</label>
+                  <label class="form-label" for="input-reg-facebook"><span>📘</span> Facebook</label>
                   <input type="text" id="input-reg-facebook" placeholder="ชื่อหรือลิงก์" class="form-input" />
                 </div>
               </div>

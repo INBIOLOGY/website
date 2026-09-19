@@ -43,7 +43,47 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
+  width: 100%;
+  max-width: 100vw;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   GLOBAL UI CHROME & LABEL CARET PROTECTION
+   Prevents text cursor / selection caret on labels, buttons, badges, tabs, etc.
+   ───────────────────────────────────────────────────────────────────────────── */
+label,
+.form-label,
+.form-section-title,
+button,
+.btn,
+.btn-login,
+.btn-submit,
+.btn-otp-action,
+.nav-link,
+.dropdown-item,
+.tab-btn,
+.badge,
+.status-badge,
+.card-duration-badge,
+.cart-icon-btn,
+.logo-btn,
+summary,
+.course-tag,
+.section-tag,
+.stat-label,
+.table-header,
+.dash-tabs-scroll button {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+label,
+.form-label {
+  cursor: pointer;
 }
 
 a {
@@ -58,6 +98,8 @@ button, input, select, textarea {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   letter-spacing: -0.01em;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Ambient Background Glows */
@@ -368,6 +410,7 @@ h1, h2, h3, h4, h5, h6 {
   min-height: 700px;
   display: flex;
   align-items: center;
+  border-bottom: none !important;
 }
 
 .hero-grid {
@@ -1333,6 +1376,199 @@ input, select, textarea {
   align-items: flex-start;
   line-height: 1.6;
   font-size: 14px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   MOBILE-FIRST PROFESSIONAL RESPONSIVE DESIGN (PHONES 360px - 430px & TABLETS)
+   Tailored specifically for mobile screens to eliminate overflow and wrapping bugs
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  /* Prevent any element from exceeding phone screen width */
+  *, *::before, *::after {
+    max-width: 100%;
+  }
+
+  /* Page container paddings */
+  .header-container {
+    padding: 0 12px !important;
+    height: 56px !important;
+  }
+
+  .logo-img {
+    height: 32px !important;
+  }
+
+  .cart-icon-btn {
+    padding: 6px 8px !important;
+  }
+
+  /* Compact User Controls in Header */
+  .header-user-actions {
+    gap: 4px !important;
+  }
+
+  .header-user-badge {
+    max-width: 82px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+    font-weight: 700 !important;
+  }
+
+  .header-logout-btn {
+    display: none !important;
+  }
+
+  /* Dropdown Menu Mobile Placement */
+  .dropdown-menu {
+    width: min(320px, 92vw) !important;
+    right: 8px !important;
+    top: 60px !important;
+    padding: 12px 8px !important;
+    border-radius: 16px !important;
+  }
+
+  /* Student Dashboard Mobile Layout */
+  .student-dashboard-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    padding: 0 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .student-dashboard-layout aside {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 18px 14px !important;
+    border-radius: 16px !important;
+  }
+
+  .student-dashboard-layout aside > div:first-child {
+    width: 64px !important;
+    height: 64px !important;
+    font-size: 28px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .enrolled-courses-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  .dash-tabs-scroll {
+    gap: 6px !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .dash-tabs-scroll button {
+    font-size: 11.5px !important;
+    padding: 7px 12px !important;
+    border-radius: 8px !important;
+  }
+
+  /* Checkout Mobile Layout */
+  .checkout-grid-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    padding: 0 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .checkout-grid-layout > div {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 20px 16px !important;
+    border-radius: 18px !important;
+  }
+
+  /* Courses Catalog Layout */
+  .courses-page-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    padding: 0 12px !important;
+  }
+
+  .courses-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* Hero Section Responsiveness */
+  .hero-container {
+    padding: 24px 14px !important;
+  }
+
+  .hero-buttons-row {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+
+  .hero-buttons-row a,
+  .hero-buttons-row button {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Modal Dialogs on Phone */
+  .modal-dialog,
+  .modal-content,
+  #admin-approval-modal > div,
+  #admin-reject-modal > div {
+    width: min(94vw, 480px) !important;
+    margin: 16px auto !important;
+    padding: 20px 16px !important;
+    border-radius: 18px !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+  }
+
+  /* Form Inputs on Mobile: Prevent iOS zoom and improve tap targets */
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  input[type="number"],
+  select,
+  textarea {
+    font-size: 14px !important;
+    min-height: 44px;
+    box-sizing: border-box !important;
+  }
+
+  /* Buttons on Mobile: Comfortable 44px+ tap target */
+  button,
+  .btn,
+  .btn-submit,
+  .btn-login {
+    min-height: 44px;
+  }
+
+  /* Typography Adjustments */
+  h1 {
+    font-size: 24px !important;
+    line-height: 1.3 !important;
+  }
+  h2 {
+    font-size: 18px !important;
+    line-height: 1.35 !important;
+  }
+  h3 {
+    font-size: 15px !important;
+    line-height: 1.4 !important;
+  }
 }
 
 

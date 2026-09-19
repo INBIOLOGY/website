@@ -99,13 +99,13 @@
   <header class="site-header"></header>
 
   <main style="min-height:80vh;background:var(--c-page);padding-top:40px;padding-bottom:60px">
-    <div class="checkout-grid-layout" style="max-width:960px;margin:0 auto;padding:0 20px">
+    <div id="checkout-grid-container" class="checkout-grid-layout" style="max-width:960px;margin:0 auto;padding:0 20px">
 
       <!-- ══ LEFT: Payment Instructions ══ -->
       <div data-reveal
         style="background:white;border:1px solid #E2E8F0;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:20px;box-shadow:0 4px 16px rgba(0,0,0,0.02)">
 
-        <!-- Form panel (hidden after success) -->
+        <!-- Form panel -->
         <div id="checkout-form-panel">
           <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
             <h2 style="font-size:18px;font-weight:900;color:var(--c-navy);margin:0">💳 ชำระเงินผ่าน PromptPay</h2>
@@ -173,7 +173,7 @@
 
           <!-- Note to admin -->
           <div>
-            <label style="display:block;font-size:12px;font-weight:700;color:#374151;margin-bottom:6px">💬
+            <label for="order-note" style="display:block;font-size:12px;font-weight:700;color:#374151;margin-bottom:6px;cursor:pointer;user-select:none">💬
               หมายเหตุเพิ่มเติม (ไม่บังคับ)</label>
             <textarea id="order-note" rows="2" placeholder="เช่น โอนเงินวันนี้เวลา 14:30 น. จากธนาคาร SCB"
               style="width:100%;border:1px solid #E2E8F0;border-radius:10px;padding:10px 12px;font-size:12px;font-family:inherit;outline:none;resize:vertical;box-sizing:border-box"></textarea>
@@ -189,26 +189,6 @@
               • ติดต่อสอบถาม LINE: <a href="https://line.me" target="_blank" rel="noopener"
                 style="color:#1E3A8A;font-weight:700">@inbiology</a>
             </div>
-          </div>
-        </div>
-
-        <!-- Success screen (shown after submit) -->
-        <div id="order-success-screen">
-          <div
-            style="width:72px;height:72px;background:#D1FAE5;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 16px">
-            ✅</div>
-          <h3 style="font-size:20px;font-weight:900;color:var(--c-navy);margin:0 0 8px">ส่งคำสั่งซื้อเรียบร้อยแล้ว!</h3>
-          <p style="font-size:13px;color:#6B7280;margin:0 0 4px">หมายเลขคำสั่งซื้อของคุณ:</p>
-          <div class="order-id-box" id="success-order-id">—</div>
-          <p style="font-size:12.5px;color:#6B7280;margin:16px 0">Admin จะตรวจสลิปและเปิดสิทธิ์คอร์สให้ภายใน <strong>24
-              ชั่วโมง</strong><br>ติดตามสถานะได้ในแดชบอร์ดของคุณ</p>
-          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
-            <a href="dashboard.html"
-              style="background:var(--c-navy);color:white;font-weight:800;font-size:13px;padding:12px 24px;border-radius:12px;text-decoration:none">📊
-              ไปยังแดชบอร์ด</a>
-            <a href="courses.html"
-              style="background:#F3F4F6;color:#374151;font-weight:800;font-size:13px;padding:12px 24px;border-radius:12px;text-decoration:none">📚
-              ดูคอร์สเพิ่มเติม</a>
           </div>
         </div>
 
@@ -263,6 +243,68 @@
         </p>
       </div>
 
+    </div>
+
+    <!-- Dedicated Full-Width Success Screen (Clean Flow) -->
+    <div id="checkout-success-container" style="display:none;max-width:680px;margin:0 auto;padding:0 16px">
+      <div style="background:white;border:1px solid #E2E8F0;border-radius:24px;padding:36px 28px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.04);display:flex;flex-direction:column;align-items:center;gap:18px">
+        
+        <div style="width:76px;height:76px;background:#DCFCE7;border:2px solid #86EFAC;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:38px">
+          ✅
+        </div>
+
+        <div>
+          <h2 style="font-size:22px;font-weight:900;color:var(--c-navy);margin:0 0 6px">ส่งหลักฐานคำสั่งซื้อเรียบร้อยแล้ว!</h2>
+          <p style="font-size:13.5px;color:#64748B;margin:0">ขอบคุณสำหรับการสั่งซื้อคอร์สเรียนกับ INBIOLOGY Academy</p>
+        </div>
+
+        <!-- 24-hr Pending Approval Badge (Amber / Blue) -->
+        <div style="width:100%;background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:16px;padding:16px 20px;text-align:left;display:flex;gap:14px;align-items:center;box-sizing:border-box">
+          <span style="font-size:26px;flex-shrink:0">⏳</span>
+          <div style="font-size:13px;line-height:1.6;color:#92400E">
+            <strong style="font-size:14px;color:#78350F;display:block;margin-bottom:2px">รอเจ้าหน้าที่ตรวจสอบสลิปและอนุมัติภายใน 24 ชม.</strong>
+            เมื่ออนุมัติเรียบร้อย ระบบจะเปิดสิทธิ์การเรียนให้อัตโนมัติ สามารถเข้าเรียนได้ทันทีที่เมนู <strong>"คอร์สเรียนของฉัน"</strong>
+          </div>
+        </div>
+
+        <!-- Order Summary Receipt Box -->
+        <div style="width:100%;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:18px;padding:20px;text-align:left;box-sizing:border-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px dashed #CBD5E1;padding-bottom:12px;margin-bottom:12px">
+            <span style="font-size:12px;font-weight:700;color:#64748B">หมายเลขคำสั่งซื้อ (Order ID)</span>
+            <span id="success-order-id" style="font-family:monospace;font-size:14px;font-weight:800;color:#1E3A8A;background:#EFF6FF;padding:4px 10px;border-radius:8px">—</span>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:12.5px;color:#64748B">ผู้สั่งซื้อ</span>
+            <span id="success-user-name" style="font-size:13px;font-weight:700;color:#0F172A">—</span>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:12.5px;color:#64748B">คอร์สที่สั่งซื้อ</span>
+            <span id="success-course-titles" style="font-size:12.5px;font-weight:700;color:#0F172A;text-align:right;max-width:60%">—</span>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px dashed #CBD5E1;padding-top:10px;margin-top:10px">
+            <span style="font-size:13.5px;font-weight:800;color:#0F172A">ยอดชำระสุทธิ</span>
+            <span id="success-total-amount" style="font-size:18px;font-weight:950;color:#B91C1C">฿0</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display:flex;gap:12px;justify-content:center;width:100%;flex-wrap:wrap">
+          <a href="dashboard.html" style="flex:1;min-width:180px;background:var(--c-navy);color:white;font-weight:800;font-size:13.5px;padding:14px 20px;border-radius:12px;text-align:center;text-decoration:none;box-shadow:0 4px 14px rgba(185,28,28,0.25)">
+            📊 ไปยังแดชบอร์ด (ดูคำสั่งซื้อ)
+          </a>
+          <a href="courses.html" style="flex:1;min-width:160px;background:#F1F5F9;color:#334155;font-weight:800;font-size:13.5px;padding:14px 20px;border-radius:12px;text-align:center;text-decoration:none">
+            📚 ดูคอร์สเรียนอื่นๆ
+          </a>
+        </div>
+
+        <p style="font-size:11.5px;color:#94A3B8;margin:0">
+          หากมีข้อสงสัยหรือต้องการสอบถามสถานะด่วน ทัก LINE: <a href="https://line.me" target="_blank" style="color:#1E3A8A;font-weight:700;text-decoration:underline">@inbiology</a>
+        </p>
+
+      </div>
     </div>
   </main>
 
@@ -506,14 +548,32 @@
           // Clear cart
           AppState.cart = [];
           AppState.saveCart();
+          if (typeof CartService !== 'undefined' && CartService.clearCart) {
+            CartService.clearCart();
+          }
+          const cartBadges = document.querySelectorAll('.cart-badge');
+          cartBadges.forEach(b => { b.textContent = '0'; b.style.display = 'none'; });
 
-          // Show success screen
-          document.getElementById('checkout-form-panel').style.display = 'none';
-          const successScreen = document.getElementById('order-success-screen');
-          successScreen.style.display = 'block';
-          document.getElementById('success-order-id').textContent = result.orderId;
+          // Hide the entire checkout grid (removes spinning button and order summary)
+          const grid = document.getElementById('checkout-grid-container');
+          if (grid) grid.style.display = 'none';
 
-          showToast('🎉 ส่งคำสั่งซื้อเรียบร้อยแล้ว! รอ Admin ตรวจสลิปภายใน 24 ชั่วโมง', 'success');
+          // Show dedicated full-width success screen
+          const successContainer = document.getElementById('checkout-success-container');
+          if (successContainer) {
+            successContainer.style.display = 'block';
+            const orderIdEl = document.getElementById('success-order-id');
+            if (orderIdEl) orderIdEl.textContent = result.orderId;
+            const userNameEl = document.getElementById('success-user-name');
+            if (userNameEl) userNameEl.textContent = profile.fullName || profile.nickname || profile.email;
+            const courseTitlesEl = document.getElementById('success-course-titles');
+            if (courseTitlesEl) courseTitlesEl.textContent = courseTitles;
+            const totalEl = document.getElementById('success-total-amount');
+            if (totalEl) totalEl.textContent = `฿${formatPrice(finalTotal)}`;
+          }
+
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          showToast('🎉 ส่งคำสั่งซื้อเรียบร้อยแล้ว! เจ้าหน้าที่จะตรวจสอบสลิปภายใน 24 ชม.', 'success');
         } else {
           throw new Error('ไม่สามารถบันทึกคำสั่งซื้อได้');
         }
