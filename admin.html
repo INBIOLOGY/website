@@ -351,10 +351,14 @@
             <span style="background:#EFF6FF;color:var(--c-sky);font-size:11px;font-weight:900;padding:3px 10px;border-radius:6px">+ NEW LESSON</span>
             <span style="font-weight:900;color:var(--c-navy);font-size:13.5px">เพิ่มบทเรียน (EP) ใหม่ในคอร์สนี้</span>
           </div>
-          <div style="display:grid;grid-template-columns:2fr 100px 3fr auto;gap:10px;align-items:end">
+          <div style="display:grid;grid-template-columns:85px 2fr 90px 3fr auto;gap:10px;align-items:end">
+            <div>
+              <label style="display:block;font-size:11px;font-weight:800;color:#475569;margin-bottom:4px">รหัส EP</label>
+              <input type="text" id="cms-new-ep" placeholder="EP.1" style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 10px;font-size:12px;outline:none;font-weight:900;color:var(--c-sky);text-align:center" />
+            </div>
             <div>
               <label style="display:block;font-size:11px;font-weight:800;color:#475569;margin-bottom:4px">ชื่อบทเรียน / หัวข้อตอน</label>
-              <input type="text" id="cms-new-title" placeholder="เช่น EP 7: ตะลุยโจทย์แนวข้อสอบ A-Level..." style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:12px;outline:none" />
+              <input type="text" id="cms-new-title" oninput="autoSuggestEpForNewLesson(this.value)" placeholder="เช่น EP 7: ตะลุยโจทย์แนวข้อสอบ A-Level..." style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:12px;outline:none" />
             </div>
             <div>
               <label style="display:block;font-size:11px;font-weight:800;color:#475569;margin-bottom:4px">ความยาว (นาที)</label>
@@ -419,7 +423,7 @@
   <script src="./js/mockData.js?v=20260919_v9"></script>
   <script src="./js/supabaseConfig.js?v=20260919_v9"></script>
   <script src="./js/cloudService.js?v=20260919_v11"></script>
-  <script src="./js/app.js?v=20260919_v12"></script>
+  <script src="./js/app.js?v=20260920_v1"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // 🔒 AUTH GUARD: Only admin can access admin dashboard
@@ -947,7 +951,14 @@
                 <span style="width:28px;height:28px;border-radius:50%;background:var(--c-navy);color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0">
                   ${idx + 1}
                 </span>
-                <span style="font-size:11px;font-weight:800;color:var(--c-sky);background:#EFF6FF;padding:2px 8px;border-radius:6px">EP.${idx + 1}</span>
+                <div style="display:inline-flex;align-items:center;gap:3px;background:#EFF6FF;border:1.5px solid #BFDBFE;padding:2px 6px;border-radius:8px" title="พิมพ์แก้ไขรหัส EP ได้โดยตรง เช่น EP.1, EP.2, Intro, Bonus">
+                  <input type="text"
+                         id="cms-ep-input-${idx}"
+                         value="${l.ep || extractEpFromTitle(l.title) || `EP.${idx + 1}`}"
+                         oninput="updateLessonField(${idx}, 'ep', this.value)"
+                         placeholder="EP.${idx + 1}"
+                         style="width:58px;border:none;background:transparent;color:var(--c-sky);font-weight:900;font-size:11.5px;text-align:center;outline:none;padding:0" />
+                </div>
                 ${isYT ? `<span style="background:#FEE2E2;color:#DC2626;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:4px">🔴 YouTube (${ytId})</span>` : (isMP4 ? `<span style="background:#E0F2FE;color:#0369A1;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:6px">🎬 MP4 Video</span>` : `<span style="background:#FEF3C7;color:#92400E;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:6px">⚠️ ยังไม่มีวิดีโอ</span>`)}
               </div>
 
@@ -988,6 +999,25 @@
     function updateLessonField(idx, field, value) {
       if (!_editingLessons[idx]) return;
       _editingLessons[idx][field] = field === 'duration' ? (+value || 0) : value;
+
+      // When user edits title, auto-sync EP if title contains EP.X or EP X
+      if (field === 'title') {
+        const detectedEp = extractEpFromTitle(value);
+        if (detectedEp) {
+          _editingLessons[idx].ep = detectedEp;
+          const epInput = document.getElementById(`cms-ep-input-${idx}`);
+          if (epInput) epInput.value = detectedEp;
+        }
+      }
+    }
+
+    function autoSuggestEpForNewLesson(title) {
+      const epInput = document.getElementById('cms-new-ep');
+      if (!epInput) return;
+      const detected = extractEpFromTitle(title);
+      if (detected) {
+        epInput.value = detected;
+      }
     }
 
     function moveLessonOrder(idx, direction) {
@@ -1011,10 +1041,12 @@
       const titleInput = document.getElementById('cms-new-title');
       const durationInput = document.getElementById('cms-new-duration');
       const urlInput = document.getElementById('cms-new-url');
+      const epInput = document.getElementById('cms-new-ep');
 
       const title = (titleInput.value || '').trim();
       const duration = +(durationInput.value || 45);
       const videoUrl = (urlInput.value || '').trim();
+      const ep = (epInput ? epInput.value : '').trim() || extractEpFromTitle(title) || `EP.${_editingLessons.length + 1}`;
 
       if (!title) {
         showToast('กรุณากรอกชื่อบทเรียน', 'warning');
@@ -1024,6 +1056,7 @@
 
       _editingLessons.push({
         id: 'l-' + Date.now(),
+        ep,
         title,
         duration,
         videoUrl
@@ -1032,6 +1065,7 @@
       titleInput.value = '';
       urlInput.value = '';
       durationInput.value = 45;
+      if (epInput) epInput.value = '';
 
       renderLessonEditorList();
       showToast('✅ เพิ่มบทเรียนใหม่แล้ว อย่าลืมกด "บันทึกการเปลี่ยนแปลงทั้งหมด"', 'success');

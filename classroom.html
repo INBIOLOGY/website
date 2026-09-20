@@ -228,7 +228,7 @@
   <script src="./js/mockData.js?v=20260919_v9"></script>
   <script src="./js/supabaseConfig.js?v=20260919_v9"></script>
   <script src="./js/cloudService.js?v=20260919_v11"></script>
-  <script src="./js/app.js?v=20260919_v12"></script>
+  <script src="./js/app.js?v=20260920_v1"></script>
   <script>
     let currentCourse = COURSES[0];
     let currentLesson = currentCourse.lessons && currentCourse.lessons.length > 0 ? currentCourse.lessons[0] : null;
@@ -455,7 +455,8 @@
       const icon = document.getElementById('completion-status-icon');
       const text = document.getElementById('completion-status-text');
 
-      if (badge) badge.textContent = `EP.${idx + 1}`;
+      const epLabel = currentLesson.ep || extractEpFromTitle(currentLesson.title) || `EP.${idx + 1}`;
+      if (badge) badge.textContent = epLabel;
       if (title) title.textContent = currentLesson.title;
 
       if (btn) {
@@ -506,6 +507,7 @@
       list.innerHTML = currentCourse.lessons.map((l, idx) => {
         const isActive = currentLesson && l.id === currentLesson.id;
         const isDone = prog.completedLessonIds.includes(l.id);
+        const epLabel = l.ep || extractEpFromTitle(l.title) || `EP.${idx + 1}`;
 
         return `
           <div onclick="selectLesson('${l.id}')" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;border-bottom:1px solid #F3F4F6;background:${isActive ? '#EFF6FF' : 'white'};transition:background 0.2s">
@@ -516,6 +518,7 @@
               <div style="overflow:hidden">
                 <p style="font-size:12px;font-weight:700;color:${isActive ? 'var(--c-navy)' : '#374151'};margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.title}</p>
                 <div style="display:flex;align-items:center;gap:6px;margin-top:2px">
+                  <span style="font-size:9.5px;font-weight:800;color:var(--c-sky);background:#EFF6FF;padding:1px 6px;border-radius:4px">${epLabel}</span>
                   <span style="font-size:10px;color:#9CA3AF">${l.duration} นาที</span>
                   ${isDone ? `<span style="font-size:9.5px;font-weight:800;color:#10B981;background:#ECFDF5;padding:1px 6px;border-radius:4px">✓ จบแล้ว</span>` : ''}
                 </div>

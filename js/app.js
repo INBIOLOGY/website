@@ -23,6 +23,16 @@ function extractYouTubeId(urlOrId) {
   return match ? match[1] : null;
 }
 
+// Extract EP prefix or number from lesson title e.g. "EP 2: ...", "EP.3 - ...", "EP: 2", "ตอนที่ 1"
+function extractEpFromTitle(title) {
+  if (!title || typeof title !== 'string') return null;
+  const m = title.match(/^(?:EP|Ep|ep)[\.\s:_\-]*([0-9]+(?:\.[0-9]+)?)/i);
+  if (m) return `EP.${m[1]}`;
+  const mThai = title.match(/^(?:ตอนที่|บทที่)[\.\s:_\-]*([0-9]+(?:\.[0-9]+)?)/);
+  if (mThai) return `EP.${mThai[1]}`;
+  return null;
+}
+
 // Hydrate stored custom lessons to in-memory COURSES on script load
 try {
   const storedLessons = localStorage.getItem('inbiology_course_lessons');
