@@ -89,10 +89,12 @@ const CloudService = window.CloudService = {
       'apikey': cfg.publishableKey,
       'Authorization': `Bearer ${cfg.publishableKey}`,
       'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
       ...(options.headers || {})
     };
     try {
-      const res = await fetch(url, { ...options, headers });
+      const res = await fetch(url, { cache: 'no-store', ...options, headers });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         console.warn(`[Supabase REST API Error] ${res.status}:`, err);
@@ -1425,11 +1427,10 @@ const CloudService = window.CloudService = {
    */
   async fetchCourseLessonsFromCloud() {
     if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return null;
-    const cacheBuster = `_t=${Date.now()}`;
     try {
       // 1. Try dedicated site_content table first
       try {
-        const scRows = await this._supabaseFetch(`/site_content?key=eq.course_lessons&${cacheBuster}&limit=1`);
+        const scRows = await this._supabaseFetch('/site_content?key=eq.course_lessons&limit=1');
         if (scRows && Array.isArray(scRows) && scRows.length > 0 && scRows[0].content) {
           const data = typeof scRows[0].content === 'string' ? JSON.parse(scRows[0].content) : scRows[0].content;
           if (data && typeof data === 'object') return data;
@@ -1438,7 +1439,7 @@ const CloudService = window.CloudService = {
 
       // 2. Fallback bridge via orders table
       const rows = await this._supabaseFetch(
-        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.course_lessons_v1&${cacheBuster}&limit=1`
+        '/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.course_lessons_v1&limit=1'
       );
       if (rows && Array.isArray(rows) && rows.length > 0 && rows[0].slip_image) {
         return JSON.parse(rows[0].slip_image);
@@ -1528,11 +1529,10 @@ const CloudService = window.CloudService = {
    */
   async fetchCourseMaterialsFromCloud() {
     if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return null;
-    const cacheBuster = `_t=${Date.now()}`;
     try {
       // 1. Try dedicated site_content table first
       try {
-        const scRows = await this._supabaseFetch(`/site_content?key=eq.course_materials&${cacheBuster}&limit=1`);
+        const scRows = await this._supabaseFetch('/site_content?key=eq.course_materials&limit=1');
         if (scRows && Array.isArray(scRows) && scRows.length > 0 && scRows[0].content) {
           return typeof scRows[0].content === 'string' ? JSON.parse(scRows[0].content) : scRows[0].content;
         }
@@ -1540,7 +1540,7 @@ const CloudService = window.CloudService = {
 
       // 2. Fallback bridge via orders table
       const rows = await this._supabaseFetch(
-        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.course_materials_v1&${cacheBuster}&limit=1`
+        '/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.course_materials_v1&limit=1'
       );
       if (rows && Array.isArray(rows) && rows.length > 0 && rows[0].slip_image) {
         return JSON.parse(rows[0].slip_image);
