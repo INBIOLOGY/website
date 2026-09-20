@@ -1343,16 +1343,29 @@ const CloudService = window.CloudService = {
       return { error: { message: 'Supabase URL หรือ Publishable Key ยังไม่ได้ตั้งค่าใน supabaseConfig.js' } };
     }
     try {
-      // 1. Try dedicated site_content table first
-      const scRes = await this._supabaseFetch('/site_content', {
-        method: 'POST',
-        headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
-        body: JSON.stringify({
-          key: 'course_lessons',
-          content: lessonsMap,
-          updated_at: new Date().toISOString()
-        })
-      });
+      // 1. Try dedicated site_content table (Check if row exists -> PATCH, else POST)
+      const checkRows = await this._supabaseFetch('/site_content?key=eq.course_lessons&limit=1');
+      let scRes = null;
+      if (checkRows && Array.isArray(checkRows) && checkRows.length > 0) {
+        scRes = await this._supabaseFetch('/site_content?key=eq.course_lessons', {
+          method: 'PATCH',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({
+            content: lessonsMap,
+            updated_at: new Date().toISOString()
+          })
+        });
+      } else {
+        scRes = await this._supabaseFetch('/site_content', {
+          method: 'POST',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({
+            key: 'course_lessons',
+            content: lessonsMap,
+            updated_at: new Date().toISOString()
+          })
+        });
+      }
 
       if (scRes && !scRes.error) {
         console.log('☁️ [Supabase Cloud] บันทึกคอร์สลงตาราง site_content สำเร็จ!');
@@ -1446,16 +1459,29 @@ const CloudService = window.CloudService = {
       return { error: { message: 'Supabase URL หรือ Publishable Key ยังไม่ได้ตั้งค่า' } };
     }
     try {
-      // 1. Try dedicated site_content table first
-      const scRes = await this._supabaseFetch('/site_content', {
-        method: 'POST',
-        headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
-        body: JSON.stringify({
-          key: 'course_materials',
-          content: materialsMap,
-          updated_at: new Date().toISOString()
-        })
-      });
+      // 1. Try dedicated site_content table (Check if row exists -> PATCH, else POST)
+      const checkRows = await this._supabaseFetch('/site_content?key=eq.course_materials&limit=1');
+      let scRes = null;
+      if (checkRows && Array.isArray(checkRows) && checkRows.length > 0) {
+        scRes = await this._supabaseFetch('/site_content?key=eq.course_materials', {
+          method: 'PATCH',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({
+            content: materialsMap,
+            updated_at: new Date().toISOString()
+          })
+        });
+      } else {
+        scRes = await this._supabaseFetch('/site_content', {
+          method: 'POST',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({
+            key: 'course_materials',
+            content: materialsMap,
+            updated_at: new Date().toISOString()
+          })
+        });
+      }
       if (scRes && !scRes.error) return { success: true, table: 'site_content' };
 
       // 2. Fallback bridge via orders table
@@ -1533,19 +1559,30 @@ const CloudService = window.CloudService = {
   async saveCourseOverridesToCloud(overridesMap) {
     if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return false;
     try {
-      // 1. Try dedicated site_content table first
-      try {
-        const scRes = await this._supabaseFetch('/site_content', {
+      // 1. Try dedicated site_content table (Check if row exists -> PATCH, else POST)
+      const checkRows = await this._supabaseFetch('/site_content?key=eq.course_overrides&limit=1');
+      let scRes = null;
+      if (checkRows && Array.isArray(checkRows) && checkRows.length > 0) {
+        scRes = await this._supabaseFetch('/site_content?key=eq.course_overrides', {
+          method: 'PATCH',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({
+            content: overridesMap,
+            updated_at: new Date().toISOString()
+          })
+        });
+      } else {
+        scRes = await this._supabaseFetch('/site_content', {
           method: 'POST',
-          headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
+          headers: { 'Prefer': 'return=representation' },
           body: JSON.stringify({
             key: 'course_overrides',
             content: overridesMap,
             updated_at: new Date().toISOString()
           })
         });
-        if (scRes) return true;
-      } catch(e) {}
+      }
+      if (scRes && !scRes.error) return true;
 
       // 2. Fallback bridge via orders table
       const payload = JSON.stringify(overridesMap);

@@ -1987,8 +1987,9 @@
 
         if (syncOk) {
           showToast('🎉 ซิงก์ทุกคอร์ส, วิดีโอคลิป และเอกสารขึ้น Supabase Cloud สำเร็จ 100%! มือถือและทุกเครื่องเห็นทันที', 'success');
+          alert('🎉 ซิงก์ข้อมูลคอร์สเรียนและคลิปวิดีโอทั้งหมดขึ้น Supabase Cloud สำเร็จ 100% แล้ว!\n\nขณะนี้ข้อมูลถูกบันทึกลงในตาราง site_content เรียบร้อยแล้ว ทุกเครื่องและแท็บเล็ตนักเรียนจะเห็นคลิปทันทีครับ');
         } else {
-          showToast('⚠️ การซิงก์ Cloud ไม่สมบูรณ์ (อาจติดสิทธิ์ RLS ใน Supabase)', 'warning');
+          showToast('⚠️ การซิงก์ Cloud ไม่สมบูรณ์ (ติดสิทธิ์ RLS ใน Supabase)', 'error');
         }
       } catch(err) {
         console.error('Error during full cloud sync:', err);
