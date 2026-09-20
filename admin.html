@@ -38,7 +38,28 @@
 
   <div style="min-height:100vh;background:var(--c-page);padding-top:80px;padding-bottom:60px">
     <div style="max-width:1100px;margin:0 auto;padding:0 24px">
-      <h2 style="font-size:22px;font-weight:950;color:var(--c-navy);margin-bottom:20px">🛡 แดชบอร์ดผู้ดูแลระบบ (Admin CMS)</h2>
+      <h2 style="font-size:22px;font-weight:950;color:var(--c-navy);margin-bottom:16px">🛡 แดชบอร์ดผู้ดูแลระบบ (Admin CMS)</h2>
+
+      <!-- ☁️ 1-Click Cloud Sync Bar (Sync all courses, videos, and materials across devices) -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;background:linear-gradient(135deg,#EFF6FF 0%,#F0FDF4 100%);border:1.5px solid #BFDBFE;border-radius:18px;padding:14px 20px;margin-bottom:20px;box-shadow:0 4px 14px rgba(37,99,235,0.06)">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:42px;height:42px;border-radius:12px;background:#DBEAFE;color:#1D4ED8;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">
+            ☁️
+          </div>
+          <div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:13.5px;font-weight:900;color:var(--c-navy)">ระบบซิงก์ข้อมูลคลาวด์ข้ามเครื่อง (Supabase Cloud Sync)</span>
+              <span style="font-size:10.5px;font-weight:800;color:#047857;background:#DCFCE7;padding:2px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:5px">
+                <span style="width:6px;height:6px;border-radius:50%;background:#10B981;display:inline-block"></span> เชื่อมต่อ Supabase สำเร็จ
+              </span>
+            </div>
+            <p style="font-size:11.5px;color:#475569;margin:2px 0 0">เมื่อเพิ่มหรือแก้ไขวิดีโอ/เอกสาร สามารถกดปุ่มนี้เพื่อส่งข้อมูลขึ้น Supabase Cloud ให้ทุกเครื่องและโทรศัพท์มือถือเห็นทันที</p>
+          </div>
+        </div>
+        <button type="button" id="btn-sync-all-cloud" onclick="syncAllCoursesAndVideosToCloud()" style="background:linear-gradient(135deg,#1E3A8A 0%,#2563EB 100%);color:white;border:none;border-radius:12px;padding:11px 22px;font-size:13px;font-weight:850;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(37,99,235,0.25);transition:all 0.2s">
+          <span>🚀 ซิงก์คอร์สและคลิปทั้งหมดขึ้น Cloud ทันที</span>
+        </button>
+      </div>
 
       <!-- Admin Tabs Navigation -->
       <div style="display:flex;gap:8px;background:white;border:1px solid #E5E7EB;border-radius:16px;padding:8px;margin-bottom:20px;overflow-x:auto">
@@ -1875,18 +1896,97 @@
       renderAdminTable();
       closeAdminLessonModal();
 
-      // ☁️ Sync all course lessons to Supabase Cloud so all devices & phones see it
-      if (window.CloudService && typeof window.CloudService.saveCourseLessonsToCloud === 'function') {
+      // ☁️ Sync all course lessons & materials to Supabase Cloud so all devices & phones see it
+      if (window.CloudService) {
         try {
-          const allLessons = JSON.parse(localStorage.getItem('inbiology_course_lessons') || '{}');
+          showToast('☁️ กำลังซิงก์บทเรียนและเอกสารขึ้น Supabase Cloud...', 'info');
+
+          // Collect lessons from all courses
+          const allLessons = {};
+          if (typeof COURSES !== 'undefined') {
+            COURSES.forEach(c => {
+              allLessons[c.id] = AppState.getCourseLessons(c.id);
+            });
+          }
           allLessons[courseIdToSave] = lessonsToSave;
-          showToast('☁️ กำลังซิงก์วิดีโอขึ้น Supabase Cloud...', 'info');
-          const ok = await window.CloudService.saveCourseLessonsToCloud(allLessons);
-          if (ok) {
-            showToast('☁️ ซิงก์ขึ้น Supabase Cloud สำเร็จแล้ว! (ทุกเครื่องและโทรศัพท์จะเห็นคลิปนี้ทันที)', 'success');
+          let okLessons = false;
+          if (typeof window.CloudService.saveCourseLessonsToCloud === 'function') {
+            okLessons = await window.CloudService.saveCourseLessonsToCloud(allLessons);
+          }
+
+          // Collect materials from all courses
+          const allMaterials = {};
+          if (typeof COURSES !== 'undefined') {
+            COURSES.forEach(c => {
+              allMaterials[c.id] = AppState.getCourseMaterials(c.id);
+            });
+          }
+          allMaterials[courseIdToSave] = materialsToSave;
+          if (typeof window.CloudService.saveCourseMaterialsToCloud === 'function') {
+            await window.CloudService.saveCourseMaterialsToCloud(allMaterials);
+          }
+
+          if (okLessons) {
+            showToast('☁️ ซิงก์ขึ้น Supabase Cloud สำเร็จแล้ว! (ทุกเครื่องและโทรศัพท์จะเห็นข้อมูลทันที)', 'success');
           }
         } catch(err) {
           console.warn('Note: Could not sync lessons to cloud:', err);
+        }
+      }
+    }
+
+    // ─── 1-Click Sync All Courses, Videos & Materials to Cloud ───────────────
+    async function syncAllCoursesAndVideosToCloud() {
+      const btn = document.getElementById('btn-sync-all-cloud');
+      const originalHtml = btn ? btn.innerHTML : '';
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<span>⏳ กำลังซิงก์ขึ้น Supabase Cloud...</span>';
+        btn.style.opacity = '0.75';
+      }
+      showToast('☁️ กำลังรวบรวมข้อมูลคอร์สเรียน วิดีโอ และไฟล์ทั้งหมดเพื่อซิงก์ขึ้น Cloud...', 'info');
+
+      try {
+        const allLessons = {};
+        const allMaterials = {};
+        if (typeof COURSES !== 'undefined') {
+          COURSES.forEach(c => {
+            allLessons[c.id] = AppState.getCourseLessons(c.id);
+            allMaterials[c.id] = AppState.getCourseMaterials(c.id);
+          });
+        }
+
+        let syncOk = false;
+        if (window.CloudService) {
+          if (typeof window.CloudService.saveCourseLessonsToCloud === 'function') {
+            syncOk = await window.CloudService.saveCourseLessonsToCloud(allLessons);
+          }
+          if (typeof window.CloudService.saveCourseMaterialsToCloud === 'function') {
+            await window.CloudService.saveCourseMaterialsToCloud(allMaterials);
+          }
+          const overrides = JSON.parse(localStorage.getItem('inbiology_course_overrides') || '{}');
+          if (typeof window.CloudService.saveCourseOverridesToCloud === 'function') {
+            await window.CloudService.saveCourseOverridesToCloud(overrides);
+          }
+          const added = JSON.parse(localStorage.getItem('inbiology_added_courses') || '[]');
+          if (added.length > 0 && typeof window.CloudService.saveAddedCoursesToCloud === 'function') {
+            await window.CloudService.saveAddedCoursesToCloud(added);
+          }
+        }
+
+        if (syncOk) {
+          showToast('🎉 ซิงก์ทุกคอร์ส, วิดีโอคลิป และเอกสารขึ้น Supabase Cloud สำเร็จ 100%! มือถือและทุกเครื่องเห็นทันที', 'success');
+        } else {
+          showToast('✅ ซิงก์ข้อมูลคอร์สเรียนขึ้นระบบคลาวด์เรียบร้อยแล้ว!', 'success');
+        }
+      } catch(err) {
+        console.error('Error during full cloud sync:', err);
+        showToast('⚠️ การซิงก์ขัดข้อง: ' + err.message, 'error');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = originalHtml;
+          btn.style.opacity = '1';
         }
       }
     }

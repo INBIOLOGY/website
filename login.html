@@ -875,6 +875,27 @@
       if (!cfg || !cfg.googleClientId || !cfg.googleClientId.trim()) {
         return;
       }
+
+      const btnContainer = document.getElementById('google-btn-container');
+      const gsiDiv = document.getElementById('gsi-button-div');
+      const fallbackBtn = document.getElementById('btn-google-login');
+
+      // Google Identity Services strictly prohibits file:/// protocol.
+      // If running offline or via file://, display graceful demo login to avoid Google's "invalid_request" error
+      if (window.location.protocol === 'file:') {
+        if (btnContainer) btnContainer.style.display = 'block';
+        if (gsiDiv) gsiDiv.style.display = 'none';
+        if (fallbackBtn) {
+          fallbackBtn.style.display = 'flex';
+          fallbackBtn.innerHTML = `
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="width:18px;height:18px">
+            <span>เข้าสู่ระบบด้วย Google (โหมด Local Demo)</span>
+          `;
+          fallbackBtn.setAttribute('title', 'Google OAuth ต้องรันบน http:// หรือ https:// — ขณะนี้เปิดผ่าน file:// จึงใช้โหมด Demo ให้ทดสอบได้ทันที');
+        }
+        return;
+      }
+
       if (typeof google === 'undefined' || !google.accounts) {
         setTimeout(initGoogleSignIn, 500);
         return;
@@ -887,10 +908,6 @@
         cancel_on_tap_outside: true,
         ux_mode: 'popup'
       });
-
-      const btnContainer = document.getElementById('google-btn-container');
-      const gsiDiv = document.getElementById('gsi-button-div');
-      const fallbackBtn = document.getElementById('btn-google-login');
 
       btnContainer.style.display = 'block';
       fallbackBtn.style.display = 'none';

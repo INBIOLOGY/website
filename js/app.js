@@ -428,7 +428,25 @@ const AppState = {
         console.log('☁️ [Supabase Cloud] Real-time course lessons synced to this device');
       }
 
-      // 2. Fetch real-time course info overrides from Supabase cloud
+      // 2. Fetch real-time course study materials from Supabase cloud
+      if (typeof window.CloudService.fetchCourseMaterialsFromCloud === 'function') {
+        const cloudMaterials = await window.CloudService.fetchCourseMaterialsFromCloud();
+        if (cloudMaterials && typeof cloudMaterials === 'object') {
+          const localMaterials = JSON.parse(localStorage.getItem('inbiology_course_materials') || '{}');
+          const mergedMaterials = { ...localMaterials, ...cloudMaterials };
+          localStorage.setItem('inbiology_course_materials', JSON.stringify(mergedMaterials));
+          if (typeof COURSES !== 'undefined') {
+            COURSES.forEach(c => {
+              if (mergedMaterials[c.id] && Array.isArray(mergedMaterials[c.id])) {
+                c.materials = mergedMaterials[c.id];
+              }
+            });
+          }
+          console.log('☁️ [Supabase Cloud] Real-time study materials synced to this device');
+        }
+      }
+
+      // 3. Fetch real-time course info overrides from Supabase cloud
       const cloudOverrides = await window.CloudService.fetchCourseOverridesFromCloud();
       if (cloudOverrides && typeof cloudOverrides === 'object') {
         const localOverrides = JSON.parse(localStorage.getItem('inbiology_course_overrides') || '{}');

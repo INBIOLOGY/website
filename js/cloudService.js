@@ -1423,6 +1423,92 @@ const CloudService = window.CloudService = {
   },
 
   /**
+   * Save course study materials map to Supabase Cloud
+   * @param {Object} materialsMap - { [courseId]: Array<Material> }
+   */
+  async saveCourseMaterialsToCloud(materialsMap) {
+    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return false;
+    try {
+      // 1. Try dedicated site_content table first
+      try {
+        const scRes = await this._supabaseFetch('/site_content', {
+          method: 'POST',
+          headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
+          body: JSON.stringify({
+            key: 'course_materials',
+            content: materialsMap,
+            updated_at: new Date().toISOString()
+          })
+        });
+        if (scRes) return true;
+      } catch(e) {}
+
+      // 2. Fallback bridge via orders table
+      const payload = JSON.stringify(materialsMap);
+      const existing = await this._supabaseFetch(
+        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.course_materials_v1&limit=1`
+      );
+      if (existing && existing.length > 0) {
+        await this._supabaseFetch(`/orders?id=eq.${existing[0].id}`, {
+          method: 'PATCH',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({
+            slip_image: payload,
+            updated_at: new Date().toISOString()
+          })
+        });
+      } else {
+        await this._supabaseFetch('/orders', {
+          method: 'POST',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({
+            user_email: 'cms_sync@inbiology.com',
+            user_name: 'CMS Cloud Sync',
+            course_ids: ['cms_materials'],
+            total_amount: 0,
+            status: 'system_cms',
+            admin_note: 'course_materials_v1',
+            slip_image: payload
+          })
+        });
+      }
+      return true;
+    } catch(err) {
+      console.warn('Could not sync materials to Supabase cloud:', err);
+      return false;
+    }
+  },
+
+  /**
+   * Fetch course study materials map from Supabase Cloud
+   * @returns {Promise<Object|null>}
+   */
+  async fetchCourseMaterialsFromCloud() {
+    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return null;
+    try {
+      // 1. Try dedicated site_content table first
+      try {
+        const scRows = await this._supabaseFetch('/site_content?key=eq.course_materials&limit=1');
+        if (scRows && scRows.length > 0 && scRows[0].content) {
+          return typeof scRows[0].content === 'string' ? JSON.parse(scRows[0].content) : scRows[0].content;
+        }
+      } catch(e) {}
+
+      // 2. Fallback bridge via orders table
+      const rows = await this._supabaseFetch(
+        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.course_materials_v1&limit=1`
+      );
+      if (rows && rows.length > 0 && rows[0].slip_image) {
+        return JSON.parse(rows[0].slip_image);
+      }
+      return null;
+    } catch(err) {
+      console.warn('Could not fetch materials from Supabase cloud:', err);
+      return null;
+    }
+  },
+
+  /**
    * Save course overrides to Supabase Cloud
    * @param {Object} overridesMap - { [courseId]: { title, price, ... } }
    */
