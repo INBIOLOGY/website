@@ -2,7 +2,7 @@
    INBIOLOGY ACADEMY - ORIGINAL COMPLETE VANILLA STYLESHEET
    ───────────────────────────────────────────────────────────────────────────── */
 
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&family=Mitr:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap');
+/* Font imported via preconnected <link> in HTML for 3x faster parallel loading */
 
 :root {
   --font-body: 'IBM Plex Sans Thai', sans-serif;
@@ -216,6 +216,8 @@ h6 {
   border-bottom: 1px solid rgba(226, 232, 240, 0.8);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 

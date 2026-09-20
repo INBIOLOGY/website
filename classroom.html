@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,10 @@
   <meta name="description" content="ห้องเรียนออนไลน์ชีววิทยา ระบบบันทึกบทเรียน โน้ตย่อส่วนตัว และถามตอบตรงกับพี่ต้น">
   <meta name="robots" content="noindex, follow">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
-  <link rel="stylesheet" href="./css/style.css?v=20260919_v21">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Mitr:wght@500;700&display=swap">
+  <link rel="stylesheet" href="./css/style.css?v=20260921_v36">
   <style>
     /* Smooth mouse scrollable lessons sidebar */
     #lesson-list::-webkit-scrollbar {
@@ -157,7 +160,11 @@
             <!-- Video Room (Supports YouTube Cloud Streaming & Direct Video) -->
             <div id="main-video-container" style="background:#0F172A;border-radius:24px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;box-shadow:0 12px 36px rgba(0,0,0,0.18)">
               <div id="video-embed-wrapper" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center">
-                <video id="main-video-player" src="https://www.w3schools.com/html/mov_bbb.mp4" controls style="width:100%;height:100%;object-fit:contain;border-radius:24px"></video>
+                <div style="text-align:center;padding:24px;color:#94A3B8">
+                  <span style="font-size:40px;display:block;margin-bottom:8px">🎬</span>
+                  <p style="font-size:15px;color:white;font-weight:800;margin:0 0 4px">กำลังโหลดบทเรียน...</p>
+                  <p style="font-size:12px;color:#64748B;margin:0">INBIOLOGY Classroom</p>
+                </div>
               </div>
             </div>
 
@@ -293,10 +300,10 @@
   <!-- Universal Rich Multi-Column Footer -->
   <footer id="footer-container"></footer>
 
-  <script src="./js/mockData.js?v=20260920_v35"></script>
-  <script src="./js/supabaseConfig.js?v=20260920_v35"></script>
-  <script src="./js/cloudService.js?v=20260920_v35"></script>
-  <script src="./js/app.js?v=20260920_v35"></script>
+  <script src="./js/mockData.js?v=20260921_v36"></script>
+  <script src="./js/supabaseConfig.js?v=20260921_v36"></script>
+  <script src="./js/cloudService.js?v=20260921_v36"></script>
+  <script src="./js/app.js?v=20260921_v36"></script>
   <script>
     let currentCourse = COURSES[0];
     let currentLesson = currentCourse.lessons && currentCourse.lessons.length > 0 ? currentCourse.lessons[0] : null;
@@ -384,7 +391,7 @@
           <div class="course-card" data-reveal data-delay="${(idx % 4) * 0.08}s" style="background:white;border-radius:20px;border:1px solid #E5E7EB;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.02);display:flex;flex-direction:column">
             <!-- Thumbnail Container matching standard approved UI pattern -->
             <div style="position:relative;overflow:hidden;height:200px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;padding:14px">
-              <img src="${c.imageUrl}" alt="${c.title}" style="height:155px;max-width:85%;object-fit:contain;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.12)" />
+              <img src="${c.imageUrl}" alt="${c.title}" loading="lazy" decoding="async" style="height:155px;max-width:85%;object-fit:contain;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.12)" />
               <span style="position:absolute;top:12px;left:12px;background:${c.badgeBg};color:white;font-size:10px;font-weight:800;padding:4px 10px;border-radius:999px;z-index:2">
                 ${c.badge}
               </span>
@@ -488,7 +495,7 @@
         `;
       } else if (videoUrl) {
         wrapper.innerHTML = `
-          <video id="main-video-player" src="${videoUrl}" controls autoplay style="width:100%;height:100%;object-fit:contain;border-radius:24px"></video>
+          <video id="main-video-player" src="${videoUrl}" controls preload="metadata" playsinline autoplay style="width:100%;height:100%;object-fit:contain;border-radius:24px"></video>
         `;
       } else {
         wrapper.innerHTML = `
@@ -848,3 +855,4 @@
   </script>
 </body>
 </html>
+

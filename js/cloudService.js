@@ -1297,43 +1297,68 @@ const CloudService = window.CloudService = {
   },
 
   /**
-   * Sync enrolled courses from approved Supabase orders (call on login/dashboard load)
+   * Sync enrolled courses from Supabase Cloud (users.enrolled + approved orders)
+   * Call on classroom/dashboard page load so the student sees all purchased courses
    */
   async syncEnrolledFromCloud(userEmail) {
     if (!userEmail) return;
+    const cleanEmail = userEmail.toLowerCase().trim();
 
-    // Fetch user's enrolled column from Supabase users table
+    const collectedIds = new Set(
+      Array.isArray(AppState.enrolled) ? AppState.enrolled : []
+    );
+
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
+        // 1. Fetch user's enrolled column from Supabase users table
         const userRows = await this._supabaseFetch(
-          `/users?email=eq.${encodeURIComponent(userEmail.toLowerCase().trim())}&select=enrolled`
+          `/users?email=eq.${encodeURIComponent(cleanEmail)}&select=enrolled&limit=1`
         );
-        if (userRows && userRows[0] && Array.isArray(userRows[0].enrolled) && userRows[0].enrolled.length > 0) {
-          AppState.enrolled = userRows[0].enrolled;
-          localStorage.setItem('inbiology_enrolled', JSON.stringify(AppState.enrolled));
-          console.log('☁️ [Supabase Cloud] Enrolled synced:', AppState.enrolled);
-          return;
+        if (userRows && userRows[0] && Array.isArray(userRows[0].enrolled)) {
+          userRows[0].enrolled.forEach(id => id && collectedIds.add(id));
         }
       } catch(err) {
-        console.warn('[syncEnrolledFromCloud Supabase Error]:', err);
+        console.warn('[syncEnrolledFromCloud users query]:', err);
+      }
+
+      try {
+        // 2. Fetch course_ids from all approved orders for this student
+        const orderRows = await this._supabaseFetch(
+          `/orders?user_email=eq.${encodeURIComponent(cleanEmail)}&status=eq.approved&select=course_ids`
+        );
+        if (orderRows && Array.isArray(orderRows)) {
+          orderRows.forEach(row => {
+            if (row.course_ids && Array.isArray(row.course_ids)) {
+              row.course_ids.forEach(id => id && collectedIds.add(id));
+            }
+          });
+        }
+      } catch(err) {
+        console.warn('[syncEnrolledFromCloud orders query]:', err);
       }
     }
 
-    // Fallback: derive from local approved orders
+    // 3. Fallback: derive from local approved orders saved in localStorage
     try {
       const orders = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
-      const approved = orders.filter(o => o.user_email === userEmail.toLowerCase().trim() && o.status === 'approved');
-      const courseIds = [...new Set(approved.flatMap(o => o.course_ids || []))];
-      if (courseIds.length > 0) {
-        if (typeof AppState.setEnrolledCourses === 'function') {
-          AppState.setEnrolledCourses(courseIds);
-        } else {
-          AppState.enrolled = courseIds;
-          localStorage.setItem('inbiology_enrolled', JSON.stringify(AppState.enrolled));
-        }
-      }
+      orders
+        .filter(o => o.user_email === cleanEmail && o.status === 'approved')
+        .forEach(o => (o.course_ids || []).forEach(id => id && collectedIds.add(id)));
     } catch(e) {}
+
+    // Apply merged result if we collected anything new
+    const merged = [...collectedIds];
+    if (merged.length > 0) {
+      if (typeof AppState.setEnrolledCourses === 'function') {
+        AppState.setEnrolledCourses(merged);
+      } else {
+        AppState.enrolled = merged;
+        localStorage.setItem('inbiology_enrolled', JSON.stringify(merged));
+      }
+      console.log('☁️ [Supabase Cloud] Enrolled synced:', merged);
+    }
   },
+
 
   // ─── 8. CLOUD CMS: CROSS-DEVICE LESSONS & COURSES SYNC ─────────────────────
   /**
