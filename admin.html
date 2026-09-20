@@ -663,7 +663,7 @@
       // 🔒 AUTH GUARD: Only admin can access admin dashboard
       if (AppState.userRole !== 'admin') {
         alert('⛔ เฉพาะแอดมินผู้ดูแลระบบเท่านั้นที่สามารถเข้าถึงหน้านี้ได้');
-        window.location.replace('login.html?redirect=admin.html');
+        window.location.replace('login.html?redirect=admin.html&switch=1');
         return;
       }
 
@@ -693,6 +693,9 @@
           const list = JSON.parse(stored);
           list.push(newCourse);
           localStorage.setItem('inbiology_added_courses', JSON.stringify(list));
+          if (window.CloudService && typeof window.CloudService.saveAddedCoursesToCloud === 'function') {
+            window.CloudService.saveAddedCoursesToCloud(list);
+          }
         } catch(err) {}
 
         showToast('✅ เพิ่มคอร์สเรียบร้อยแล้ว', 'success');
@@ -1071,23 +1074,40 @@
       `).join('');
     }
 
-    let studentListCache = [
-      { id: 99, ...AppState.getStudentProfile() },
-      ...MOCK_STUDENTS.map(s => ({ id: s.id, nickname: s.name.split(' ')[1] || 'นักเรียน', fullName: s.name, school: s.school, level: s.level || 'ม.5', email: s.email, password: '••••••••' }))
-    ];
+    let studentListCache = [];
 
-    function renderStudentsTable() {
-      const currentP = AppState.getStudentProfile();
-      studentListCache[0] = { id: 99, ...currentP };
+    async function renderStudentsTable() {
+      const tableEl = document.getElementById('admin-students-table');
+      if (!tableEl) return;
 
-      document.getElementById('admin-students-table').innerHTML = studentListCache.map(s => `
+      if (window.CloudService && typeof window.CloudService.getRegisteredStudents === 'function') {
+        const students = await window.CloudService.getRegisteredStudents();
+        studentListCache = students || [];
+      } else {
+        studentListCache = (typeof MOCK_STUDENTS !== 'undefined' ? MOCK_STUDENTS : []).map(s => ({
+          id: s.id,
+          fullName: s.name,
+          nickname: s.name.split(' ')[1] || 'นักเรียน',
+          email: s.email,
+          phone: s.phone || '08X-XXX-XXXX',
+          school: s.school,
+          level: s.level || 'ม.5'
+        }));
+      }
+
+      if (studentListCache.length === 0) {
+        tableEl.innerHTML = `<tr><td colspan="5" style="padding:24px;text-align:center;color:#94A3B8">ยังไม่มีข้อมูลนักเรียน</td></tr>`;
+        return;
+      }
+
+      tableEl.innerHTML = studentListCache.map(s => `
         <tr style="border-bottom:1px solid #F3F4F6">
           <td style="padding:12px 16px;font-weight:700;color:var(--c-navy)">${s.fullName}</td>
           <td style="padding:12px 16px;font-weight:800;color:var(--c-sky)">น้อง${s.nickname}</td>
           <td style="padding:12px 16px;color:#6B7280">${s.email}</td>
           <td style="padding:12px 16px">${s.school} • ${s.level}</td>
           <td style="padding:12px 16px;text-align:center">
-            <button onclick="openAdminEditStudentModal(${s.id})" style="background:#FEF2F2;color:#DC2626;border:1px solid #FCA5A5;padding:6px 12px;border-radius:8px;font-weight:800;font-size:11px;cursor:pointer">
+            <button onclick="openAdminEditStudentModal('${s.id}')" style="background:#FEF2F2;color:#DC2626;border:1px solid #FCA5A5;padding:6px 12px;border-radius:8px;font-weight:800;font-size:11px;cursor:pointer">
               ✏️ แก้ไข (แอดมิน)
             </button>
           </td>
@@ -1193,6 +1213,14 @@
       renderAdminTable();
       closeCourseInfoModal();
       showToast(`✅ บันทึกข้อมูลคอร์ส "${updated.title}" เรียบร้อยแล้ว!`, 'success');
+
+      // ☁️ Sync course overrides to Supabase Cloud
+      if (window.CloudService && typeof window.CloudService.saveCourseOverridesToCloud === 'function') {
+        const overrides = JSON.parse(localStorage.getItem('inbiology_course_overrides') || '{}');
+        window.CloudService.saveCourseOverridesToCloud(overrides).then(ok => {
+          if (ok) showToast('☁️ ซิงก์ข้อมูลคอร์สขึ้น Supabase Cloud สำเร็จ (ทุกเครื่องจะเห็นข้อมูลใหม่ทันที)', 'info');
+        });
+      }
     }
 
     function deleteCourse(id) {
@@ -1835,13 +1863,28 @@
       showToast('✅ เพิ่มไฟล์เอกสารใหม่แล้ว อย่าลืมกด "บันทึกการเปลี่ยนแปลงทั้งหมด"', 'success');
     }
 
-    function saveAllLessonsForCourse() {
+    async function saveAllLessonsForCourse() {
       if (!_editingCourseId) return;
       AppState.saveCourseLessons(_editingCourseId, _editingLessons);
       AppState.saveCourseMaterials(_editingCourseId, _editingMaterials);
       showToast('🎉 บันทึกบทเรียนและไฟล์เอกสารของคอร์สนี้เรียบร้อยแล้ว!', 'success');
       renderAdminTable();
       closeAdminLessonModal();
+
+      // ☁️ Sync all course lessons to Supabase Cloud so all devices & phones see it
+      if (window.CloudService && typeof window.CloudService.saveCourseLessonsToCloud === 'function') {
+        try {
+          const allLessons = JSON.parse(localStorage.getItem('inbiology_course_lessons') || '{}');
+          allLessons[_editingCourseId] = _editingLessons;
+          showToast('☁️ กำลังซิงก์วิดีโอขึ้น Supabase Cloud...', 'info');
+          const ok = await window.CloudService.saveCourseLessonsToCloud(allLessons);
+          if (ok) {
+            showToast('☁️ ซิงก์ขึ้น Supabase Cloud สำเร็จแล้ว! (ทุกเครื่องและโทรศัพท์จะเห็นคลิปนี้ทันที)', 'success');
+          }
+        } catch(err) {
+          console.warn('Note: Could not sync lessons to cloud:', err);
+        }
+      }
     }
 
     function resetLessonsToDefault() {

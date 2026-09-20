@@ -314,6 +314,13 @@
         } catch(e) { console.warn('Sync enrolled note:', e); }
       }
 
+      // Sync real-time courses and video lessons from Supabase Cloud
+      if (typeof AppState.syncCoursesAndLessonsFromCloud === 'function') {
+        try {
+          await AppState.syncCoursesAndLessonsFromCloud();
+        } catch(e) { console.warn('Sync cloud lessons note:', e); }
+      }
+
       // Check deep link URL parameter e.g. classroom.html?course=bio-intensive-2
       const urlParams = new URLSearchParams(window.location.search);
       const courseParam = urlParams.get('course');
@@ -770,19 +777,28 @@
       box.innerHTML = `💬 **ตอบกลับจากพี่ต้น**: ได้รับคำถามเรื่อง "${q}" เรียบร้อยแล้วครับ! เดี๋ยวพี่ต้นจะมาตอบคลายข้อสงสัยให้น้องทางกล่องข้อความอย่างละเอียดแน่นอนครับ ✌️`;
     }
 
+    function getNotesStorageKey() {
+      const userKey = (typeof AppState !== 'undefined' && typeof AppState.getUserStorageKey === 'function') 
+        ? AppState.getUserStorageKey() 
+        : 'guest';
+      return 'inbiology_notes_' + userKey;
+    }
+
     function saveNote() {
       const text = document.getElementById('note-input').value.trim();
       if (!text) return;
-      const notes = JSON.parse(localStorage.getItem('inbiology_notes') || '[]');
+      const key = getNotesStorageKey();
+      const notes = JSON.parse(localStorage.getItem(key) || '[]');
       notes.push({ id: Date.now(), courseTitle: currentCourse.title, lessonTitle: currentLesson ? currentLesson.title : currentCourse.title, text });
-      localStorage.setItem('inbiology_notes', JSON.stringify(notes));
+      localStorage.setItem(key, JSON.stringify(notes));
       document.getElementById('note-input').value = '';
       showToast('📝 บันทึกโน้ตย่อสำเร็จ', 'success');
       renderNotes();
     }
 
     function renderNotes() {
-      const notes = JSON.parse(localStorage.getItem('inbiology_notes') || '[]');
+      const key = getNotesStorageKey();
+      const notes = JSON.parse(localStorage.getItem(key) || '[]');
       const container = document.getElementById('saved-notes-list');
       if (!container) return;
       if (notes.length === 0) {

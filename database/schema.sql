@@ -169,3 +169,14 @@ ALTER TABLE public.orders DISABLE ROW LEVEL SECURITY;
 -- CREATE POLICY "Allow anon insert orders" ON public.orders FOR INSERT TO anon, authenticated WITH CHECK (true);
 -- CREATE POLICY "Allow anon select orders" ON public.orders FOR SELECT TO anon, authenticated USING (true);
 -- CREATE POLICY "Allow anon update orders" ON public.orders FOR UPDATE TO anon, authenticated USING (true);
+
+-- =============================================================================
+-- 6. TABLE: site_content (Cross-Device Course & Lesson CMS Synchronization)
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS public.site_content (
+    key VARCHAR(100) PRIMARY KEY,
+    content JSONB NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+ALTER TABLE public.site_content DISABLE ROW LEVEL SECURITY;
+

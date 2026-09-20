@@ -548,9 +548,11 @@ const CloudService = window.CloudService = {
           sessionStorage.setItem('inbiology_session_active', 'true');
           localStorage.setItem('inbiology_role', AppState.userRole);
           AppState.saveStudentProfile(userProfile);
-          if (userProfile.enrolled.length > 0) {
-            AppState.enrolled = userProfile.enrolled;
-            localStorage.setItem('inbiology_enrolled', JSON.stringify(userProfile.enrolled));
+          if (typeof AppState.setEnrolledCourses === 'function') {
+            AppState.setEnrolledCourses(userProfile.enrolled || []);
+          } else {
+            AppState.enrolled = userProfile.enrolled || [];
+            localStorage.setItem('inbiology_enrolled', JSON.stringify(AppState.enrolled));
           }
           return userProfile;
         }
@@ -588,9 +590,11 @@ const CloudService = window.CloudService = {
     localStorage.setItem('inbiology_role', AppState.userRole);
     AppState.saveStudentProfile(user);
 
-    if (user.enrolled && Array.isArray(user.enrolled)) {
-      AppState.enrolled = user.enrolled;
-      localStorage.setItem('inbiology_enrolled', JSON.stringify(user.enrolled));
+    if (typeof AppState.setEnrolledCourses === 'function') {
+      AppState.setEnrolledCourses(user.enrolled || []);
+    } else {
+      AppState.enrolled = user.enrolled || [];
+      localStorage.setItem('inbiology_enrolled', JSON.stringify(AppState.enrolled));
     }
 
     return user;
@@ -1317,10 +1321,238 @@ const CloudService = window.CloudService = {
       const approved = orders.filter(o => o.user_email === userEmail.toLowerCase().trim() && o.status === 'approved');
       const courseIds = [...new Set(approved.flatMap(o => o.course_ids || []))];
       if (courseIds.length > 0) {
-        AppState.enrolled = courseIds;
-        localStorage.setItem('inbiology_enrolled', JSON.stringify(AppState.enrolled));
+        if (typeof AppState.setEnrolledCourses === 'function') {
+          AppState.setEnrolledCourses(courseIds);
+        } else {
+          AppState.enrolled = courseIds;
+          localStorage.setItem('inbiology_enrolled', JSON.stringify(AppState.enrolled));
+        }
       }
     } catch(e) {}
+  },
+
+  // ─── 8. CLOUD CMS: CROSS-DEVICE LESSONS & COURSES SYNC ─────────────────────
+  /**
+   * Save course lessons map to Supabase Cloud
+   * @param {Object} lessonsMap - { [courseId]: Array<Lesson> }
+   */
+  async saveCourseLessonsToCloud(lessonsMap) {
+    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return false;
+    try {
+      const payload = JSON.stringify(lessonsMap);
+      const existing = await this._supabaseFetch(
+        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.course_lessons_v1&limit=1`
+      );
+      if (existing && existing.length > 0) {
+        await this._supabaseFetch(`/orders?id=eq.${existing[0].id}`, {
+          method: 'PATCH',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({
+            slip_image: payload,
+            updated_at: new Date().toISOString()
+          })
+        });
+      } else {
+        await this._supabaseFetch('/orders', {
+          method: 'POST',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({
+            user_email: 'cms_sync@inbiology.com',
+            user_name: 'CMS Cloud Sync',
+            course_ids: ['cms_lessons'],
+            total_amount: 0,
+            status: 'system_cms',
+            admin_note: 'course_lessons_v1',
+            slip_image: payload
+          })
+        });
+      }
+      console.log('☁️ [Supabase Cloud] Course lessons successfully synced to cloud!');
+      return true;
+    } catch(err) {
+      console.warn('Could not sync lessons to Supabase cloud:', err);
+      return false;
+    }
+  },
+
+  /**
+   * Fetch course lessons map from Supabase Cloud
+   * @returns {Promise<Object|null>}
+   */
+  async fetchCourseLessonsFromCloud() {
+    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return null;
+    try {
+      const rows = await this._supabaseFetch(
+        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.course_lessons_v1&limit=1`
+      );
+      if (rows && rows.length > 0 && rows[0].slip_image) {
+        return JSON.parse(rows[0].slip_image);
+      }
+      return null;
+    } catch(err) {
+      console.warn('Could not fetch lessons from Supabase cloud:', err);
+      return null;
+    }
+  },
+
+  /**
+   * Save course overrides to Supabase Cloud
+   * @param {Object} overridesMap - { [courseId]: { title, price, ... } }
+   */
+  async saveCourseOverridesToCloud(overridesMap) {
+    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return false;
+    try {
+      const payload = JSON.stringify(overridesMap);
+      const existing = await this._supabaseFetch(
+        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.course_overrides_v1&limit=1`
+      );
+      if (existing && existing.length > 0) {
+        await this._supabaseFetch(`/orders?id=eq.${existing[0].id}`, {
+          method: 'PATCH',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({
+            slip_image: payload,
+            updated_at: new Date().toISOString()
+          })
+        });
+      } else {
+        await this._supabaseFetch('/orders', {
+          method: 'POST',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({
+            user_email: 'cms_sync@inbiology.com',
+            user_name: 'CMS Cloud Sync',
+            course_ids: ['cms_overrides'],
+            total_amount: 0,
+            status: 'system_cms',
+            admin_note: 'course_overrides_v1',
+            slip_image: payload
+          })
+        });
+      }
+      console.log('☁️ [Supabase Cloud] Course overrides successfully synced to cloud!');
+      return true;
+    } catch(err) {
+      console.warn('Could not sync course overrides to Supabase cloud:', err);
+      return false;
+    }
+  },
+
+  /**
+   * Fetch course overrides from Supabase Cloud
+   * @returns {Promise<Object|null>}
+   */
+  async fetchCourseOverridesFromCloud() {
+    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return null;
+    try {
+      const rows = await this._supabaseFetch(
+        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.course_overrides_v1&limit=1`
+      );
+      if (rows && rows.length > 0 && rows[0].slip_image) {
+        return JSON.parse(rows[0].slip_image);
+      }
+      return null;
+    } catch(err) {
+      console.warn('Could not fetch course overrides from Supabase cloud:', err);
+      return null;
+    }
+  },
+
+  /**
+   * Save added courses to Supabase Cloud
+   */
+  async saveAddedCoursesToCloud(addedCourses) {
+    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return false;
+    try {
+      const payload = JSON.stringify(addedCourses);
+      const existing = await this._supabaseFetch(
+        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.added_courses_v1&limit=1`
+      );
+      if (existing && existing.length > 0) {
+        await this._supabaseFetch(`/orders?id=eq.${existing[0].id}`, {
+          method: 'PATCH',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({
+            slip_image: payload,
+            updated_at: new Date().toISOString()
+          })
+        });
+      } else {
+        await this._supabaseFetch('/orders', {
+          method: 'POST',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({
+            user_email: 'cms_sync@inbiology.com',
+            user_name: 'CMS Cloud Sync',
+            course_ids: ['cms_added'],
+            total_amount: 0,
+            status: 'system_cms',
+            admin_note: 'added_courses_v1',
+            slip_image: payload
+          })
+        });
+      }
+      return true;
+    } catch(err) {
+      console.warn('Could not sync added courses to cloud:', err);
+      return false;
+    }
+  },
+
+  /**
+   * Fetch added courses from Supabase Cloud
+   */
+  async fetchAddedCoursesFromCloud() {
+    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return null;
+    try {
+      const rows = await this._supabaseFetch(
+        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.added_courses_v1&limit=1`
+      );
+      if (rows && rows.length > 0 && rows[0].slip_image) {
+        return JSON.parse(rows[0].slip_image);
+      }
+      return null;
+    } catch(err) {
+      console.warn('Could not fetch added courses from cloud:', err);
+      return null;
+    }
+  },
+
+  /**
+   * Fetch real registered students from Supabase Cloud
+   */
+  async getRegisteredStudents() {
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        const rows = await this._supabaseFetch(
+          `/users?role=neq.admin&select=id,full_name,nickname,email,phone_number,school,grade_level,created_at&order=created_at.desc`
+        );
+        if (rows && Array.isArray(rows) && rows.length > 0) {
+          return rows.map(r => ({
+            id: r.id,
+            fullName: r.full_name || '-',
+            nickname: r.nickname || (r.full_name ? r.full_name.split(' ')[0] : 'นักเรียน'),
+            email: r.email || '-',
+            phone: r.phone_number || '-',
+            school: r.school || '-',
+            level: r.grade_level || 'ม.5',
+            createdAt: r.created_at
+          }));
+        }
+      } catch(e) {
+        console.warn('Could not fetch students from Supabase:', e);
+      }
+    }
+    // Fallback: Return MOCK_STUDENTS without injecting current logged in profile
+    return (typeof MOCK_STUDENTS !== 'undefined' ? MOCK_STUDENTS : []).map(s => ({
+      id: s.id,
+      fullName: s.name,
+      nickname: (s.name.split(' ')[1] || 'นักเรียน'),
+      email: s.email,
+      phone: s.phone || '08X-XXX-XXXX',
+      school: s.school,
+      level: s.level || 'ม.5'
+    }));
   }
 };
 

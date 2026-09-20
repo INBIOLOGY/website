@@ -1064,10 +1064,40 @@
     });
 
     document.addEventListener('DOMContentLoaded', () => {
-      // If already logged in, redirect away from login page
+      const urlParams = new URLSearchParams(window.location.search);
+      const isSwitch = urlParams.get('switch') === '1' || urlParams.get('action') === 'switch';
+      const redirectUrl = urlParams.get('redirect');
+
+      // 1. If explicit switch account requested, allow entering new credentials without auto-redirecting
+      if (isSwitch) {
+        const profile = AppState.getStudentProfile();
+        if (profile) {
+          const switchBanner = document.createElement('div');
+          switchBanner.style.cssText = 'background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:10px 14px;font-size:12px;color:#1E3A8A;margin-bottom:16px;text-align:center;font-weight:700';
+          switchBanner.innerHTML = `👤 เข้าสู่ระบบบัญชีอื่น (ปัจจุบันอยู่ในระบบ: <strong>${profile.nickname || profile.fullName || profile.email}</strong>) <a href="#" onclick="AppState.logout();return false;" style="color:#DC2626;margin-left:8px;text-decoration:underline">ออกจากระบบเดิม</a>`;
+          const formCard = document.querySelector('.auth-card');
+          if (formCard) {
+            formCard.insertBefore(switchBanner, formCard.firstChild);
+          }
+        }
+        initGoogleSignIn();
+        return;
+      }
+
+      // 2. If already logged in, redirect away safely
       if (AppState.isLoggedIn()) {
-        const redirectUrl = new URLSearchParams(window.location.search).get('redirect');
         if (redirectUrl) {
+          // 🛡️ CRITICAL INFINITE LOOP PREVENTION:
+          // If destination is admin.html, but current user is NOT an admin,
+          // NEVER redirect to admin.html! That triggers the ping-pong reload loop!
+          if (redirectUrl.includes('admin') && AppState.userRole !== 'admin') {
+            console.warn('[Auth Guard] Blocked ping-pong loop: user is not admin.');
+            showToast('⚠️ บัญชีปัจจุบันของคุณไม่ได้รับสิทธิ์แอดมิน กรุณาเข้าสู่ระบบด้วยบัญชีแอดมิน หรือเข้าสู่หน้าแดชบอร์ดนักเรียน', 'warning');
+            setTimeout(() => {
+              location.replace('dashboard.html');
+            }, 1200);
+            return;
+          }
           location.replace(redirectUrl);
         } else if (AppState.userRole === 'admin') {
           location.replace('admin.html');

@@ -128,17 +128,13 @@ try {
 } catch(e) { console.warn('Note: Could not hydrate stored course data:', e); }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// TAB SESSION SECURITY GUARD
-// Enforce session-only authentication: When the browser tab/window is closed,
-// the login session automatically expires so users must log in again for security.
+// SESSION SYNCHRONIZATION
+// Keeps active authentication status synchronized across tabs and windows
 // ─────────────────────────────────────────────────────────────────────────────
-(function enforceTabSessionSecurity() {
-  const isSessionActive = sessionStorage.getItem('inbiology_session_active');
-  if (!isSessionActive) {
-    // Tab was closed and reopened, or user opened in a new tab -> Invalidate credentials
-    localStorage.removeItem('inbiology_role');
-    localStorage.removeItem('inbiology_student_profile');
-    localStorage.removeItem('inbiology_enrolled');
+(function initSessionState() {
+  const role = localStorage.getItem('inbiology_role');
+  if (role && !sessionStorage.getItem('inbiology_session_active')) {
+    sessionStorage.setItem('inbiology_session_active', 'true');
   }
 })();
 
@@ -148,7 +144,7 @@ const AppState = {
   enrolled: [],
   lang: localStorage.getItem('inbiology_lang') || 'TH',
   appliedCoupon: null,
-  userRole: (sessionStorage.getItem('inbiology_session_active') ? localStorage.getItem('inbiology_role') : null),
+  userRole: localStorage.getItem('inbiology_role') || null,
 
   setSessionActive(active = true) {
     if (active) {
@@ -159,12 +155,10 @@ const AppState = {
   },
 
   isLoggedIn() {
-    const isSessionActive = Boolean(sessionStorage.getItem('inbiology_session_active'));
-    return Boolean(isSessionActive && this.userRole && this.userRole !== 'guest');
+    return Boolean(this.userRole && this.userRole !== 'guest');
   },
   
   getStudentProfile() {
-    if (!sessionStorage.getItem('inbiology_session_active')) return null;
     const saved = localStorage.getItem('inbiology_student_profile');
     if (saved) {
       try { return JSON.parse(saved); } catch(e){}
@@ -175,10 +169,58 @@ const AppState = {
   saveStudentProfile(profile) {
     sessionStorage.setItem('inbiology_session_active', 'true');
     localStorage.setItem('inbiology_student_profile', JSON.stringify(profile));
+    if (profile && profile.role) {
+      this.userRole = profile.role;
+      localStorage.setItem('inbiology_role', profile.role);
+    }
+  },
+
+  // ─── Scoped Account Isolation Helpers (Fix Data Bleed across accounts) ───
+  getUserStorageKey() {
+    const profile = this.getStudentProfile();
+    if (!profile) return 'guest';
+    const raw = (profile.id || profile.email || 'guest').toLowerCase();
+    return raw.replace(/[^a-z0-9]/g, '_');
+  },
+
+  getEnrolledCourses() {
+    const userKey = this.getUserStorageKey();
+    if (userKey === 'guest') return [];
+    // 1. Check user-scoped key first
+    const scoped = localStorage.getItem('inbiology_enrolled_' + userKey);
+    if (scoped) {
+      try {
+        const arr = JSON.parse(scoped);
+        if (Array.isArray(arr)) return arr;
+      } catch(e){}
+    }
+    // 2. Check general key
+    const general = localStorage.getItem('inbiology_enrolled');
+    if (general) {
+      try {
+        const arr = JSON.parse(general);
+        if (Array.isArray(arr)) {
+          this.setEnrolledCourses(arr); // migrate to scoped
+          return arr;
+        }
+      } catch(e){}
+    }
+    return [];
+  },
+
+  setEnrolledCourses(courseIds) {
+    const userKey = this.getUserStorageKey();
+    this.enrolled = Array.isArray(courseIds) ? courseIds : [];
+    if (userKey !== 'guest') {
+      localStorage.setItem('inbiology_enrolled_' + userKey, JSON.stringify(this.enrolled));
+    }
+    localStorage.setItem('inbiology_enrolled', JSON.stringify(this.enrolled));
   },
 
   getCourseProgress(courseId) {
-    const saved = localStorage.getItem('inbiology_progress_' + courseId);
+    const userKey = this.getUserStorageKey();
+    const saved = localStorage.getItem(`inbiology_progress_${userKey}_${courseId}`) || 
+                  (userKey !== 'guest' ? null : localStorage.getItem('inbiology_progress_' + courseId));
     let completed = [];
     if (saved) {
       try { completed = JSON.parse(saved); } catch(e){}
@@ -347,7 +389,9 @@ const AppState = {
   },
 
   toggleLessonProgress(courseId, lessonId) {
-    const saved = localStorage.getItem('inbiology_progress_' + courseId);
+    const userKey = this.getUserStorageKey();
+    const storageKey = `inbiology_progress_${userKey}_${courseId}`;
+    const saved = localStorage.getItem(storageKey) || (userKey !== 'guest' ? null : localStorage.getItem('inbiology_progress_' + courseId));
     let completed = [];
     if (saved) {
       try { completed = JSON.parse(saved); } catch(e){}
@@ -358,8 +402,59 @@ const AppState = {
     } else {
       completed.push(lessonId);
     }
+    localStorage.setItem(storageKey, JSON.stringify(completed));
     localStorage.setItem('inbiology_progress_' + courseId, JSON.stringify(completed));
     return this.getCourseProgress(courseId);
+  },
+
+  async syncCoursesAndLessonsFromCloud() {
+    if (!window.CloudService) return;
+    try {
+      // 1. Fetch real-time lessons from Supabase cloud
+      const cloudLessons = await window.CloudService.fetchCourseLessonsFromCloud();
+      if (cloudLessons && typeof cloudLessons === 'object') {
+        const localLessons = JSON.parse(localStorage.getItem('inbiology_course_lessons') || '{}');
+        const merged = { ...localLessons, ...cloudLessons };
+        localStorage.setItem('inbiology_course_lessons', JSON.stringify(merged));
+        if (typeof COURSES !== 'undefined') {
+          COURSES.forEach(c => {
+            if (merged[c.id] && Array.isArray(merged[c.id])) {
+              c.lessons = merged[c.id];
+              const totalMins = c.lessons.reduce((acc, l) => acc + (parseInt(l.duration) || 0), 0);
+              if (totalMins > 0) c.hours = Math.max(1, Math.round(totalMins / 60));
+            }
+          });
+        }
+        console.log('☁️ [Supabase Cloud] Real-time course lessons synced to this device');
+      }
+
+      // 2. Fetch real-time course info overrides from Supabase cloud
+      const cloudOverrides = await window.CloudService.fetchCourseOverridesFromCloud();
+      if (cloudOverrides && typeof cloudOverrides === 'object') {
+        const localOverrides = JSON.parse(localStorage.getItem('inbiology_course_overrides') || '{}');
+        const mergedOverrides = { ...localOverrides, ...cloudOverrides };
+        localStorage.setItem('inbiology_course_overrides', JSON.stringify(mergedOverrides));
+        if (typeof COURSES !== 'undefined') {
+          COURSES.forEach(c => {
+            if (mergedOverrides[c.id]) {
+              Object.assign(c, mergedOverrides[c.id]);
+            }
+          });
+        }
+      }
+
+      // 3. Fetch newly added courses from Supabase cloud
+      const cloudAdded = await window.CloudService.fetchAddedCoursesFromCloud();
+      if (cloudAdded && Array.isArray(cloudAdded) && cloudAdded.length > 0) {
+        cloudAdded.forEach(ac => {
+          if (!COURSES.find(x => x.id === ac.id)) {
+            COURSES.push(ac);
+          }
+        });
+      }
+    } catch(err) {
+      console.warn('Note: Cloud CMS background sync error:', err);
+    }
   },
   
   saveCart() {
@@ -438,14 +533,13 @@ const AppState = {
 // Strict Enrollment & State Synchronization
 if (AppState.isLoggedIn()) {
   try {
-    AppState.enrolled = JSON.parse(localStorage.getItem('inbiology_enrolled') || '[]');
+    AppState.enrolled = AppState.getEnrolledCourses();
   } catch(e) {
     AppState.enrolled = [];
   }
 } else {
   // Guests & unauthenticated visitors strictly have 0 enrolled courses
   AppState.enrolled = [];
-  localStorage.removeItem('inbiology_enrolled');
 }
 
 // Coupon Discount Validator Engine
@@ -1257,6 +1351,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (document.getElementById('faq-list-container')) {
     initFaqPage();
+  }
+
+  // ☁️ Sync latest real-time courses and video lessons from Supabase cloud
+  if (typeof AppState !== 'undefined' && typeof AppState.syncCoursesAndLessonsFromCloud === 'function') {
+    AppState.syncCoursesAndLessonsFromCloud();
   }
 });
 
