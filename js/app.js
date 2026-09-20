@@ -33,20 +33,69 @@ function extractEpFromTitle(title) {
   return null;
 }
 
-// Hydrate stored custom lessons to in-memory COURSES on script load
+// Default Study Materials Generator
+function getDefaultMaterialsForCourse(course) {
+  if (!course) return [];
+  const eb = course.ebookInfo || {};
+  return [
+    {
+      id: 'mat-main-' + course.id,
+      title: eb.title || `e-Book ชีทสรุปเนื้อหาและโจทย์: ${course.title}`,
+      category: 'e-Book PDF',
+      fileSize: eb.fileSize || '24.5 MB',
+      pages: eb.pages ? `${eb.pages} หน้า` : '140 หน้า',
+      url: eb.downloadUrl || '',
+      filename: eb.filename || `${course.id}-handout.pdf`,
+      description: 'เอกสารประกอบการเรียนฉบับสมบูรณ์ พิมพ์ 4 สี พร้อมแผนภาพสีและสรุปเข้ม',
+      isPrimary: true
+    },
+    {
+      id: 'mat-extra-1-' + course.id,
+      title: `แบบฝึกหัดท้ายบท & ข้อสอบจำลอง A-Level (${course.badge || course.title})`,
+      category: 'แบบฝึกหัด & เฉลย',
+      fileSize: '8.5 MB',
+      pages: '45 หน้า',
+      url: '',
+      filename: `${course.id}-exercises.pdf`,
+      description: 'โจทย์ฝึกฝนทบทวนความเข้าใจพร้อมเฉลยละเอียดและวิเคราะห์จุดหลอก',
+      isPrimary: false
+    }
+  ];
+}
+
+// Hydrate stored custom lessons and materials to in-memory COURSES on script load
 try {
-  const storedLessons = localStorage.getItem('inbiology_course_lessons');
-  if (storedLessons && typeof COURSES !== 'undefined') {
-    const parsed = JSON.parse(storedLessons);
+  if (typeof COURSES !== 'undefined') {
+    const storedLessons = localStorage.getItem('inbiology_course_lessons');
+    if (storedLessons) {
+      const parsed = JSON.parse(storedLessons);
+      COURSES.forEach(c => {
+        if (parsed[c.id] && Array.isArray(parsed[c.id])) {
+          c.lessons = parsed[c.id];
+          const totalMins = c.lessons.reduce((acc, l) => acc + (parseInt(l.duration) || 0), 0);
+          if (totalMins > 0) c.hours = Math.max(1, Math.round(totalMins / 60));
+        }
+      });
+    }
+
+    const storedMaterials = localStorage.getItem('inbiology_course_materials');
+    const parsedMaterials = storedMaterials ? JSON.parse(storedMaterials) : {};
     COURSES.forEach(c => {
-      if (parsed[c.id] && Array.isArray(parsed[c.id])) {
-        c.lessons = parsed[c.id];
-        const totalMins = c.lessons.reduce((acc, l) => acc + (parseInt(l.duration) || 0), 0);
-        if (totalMins > 0) c.hours = Math.max(1, Math.round(totalMins / 60));
+      if (parsedMaterials[c.id] && Array.isArray(parsedMaterials[c.id])) {
+        c.materials = parsedMaterials[c.id];
+      } else if (!c.materials) {
+        c.materials = getDefaultMaterialsForCourse(c);
+      }
+      const primary = c.materials.find(m => m.isPrimary) || c.materials[0];
+      if (primary && c.ebookInfo) {
+        c.ebookInfo.title = primary.title || c.ebookInfo.title;
+        if (primary.url) c.ebookInfo.downloadUrl = primary.url;
+        if (primary.fileSize) c.ebookInfo.fileSize = primary.fileSize;
+        if (primary.pages) c.ebookInfo.pages = parseInt(primary.pages) || c.ebookInfo.pages;
       }
     });
   }
-} catch(e) { console.warn('Note: Could not hydrate stored lessons:', e); }
+} catch(e) { console.warn('Note: Could not hydrate stored lessons/materials:', e); }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TAB SESSION SECURITY GUARD
@@ -167,6 +216,76 @@ const AppState = {
         let stored = JSON.parse(raw);
         delete stored[courseId];
         localStorage.setItem('inbiology_course_lessons', JSON.stringify(stored));
+      }
+      return true;
+    } catch(e) {
+      return false;
+    }
+  },
+
+  // ─── Course Study Materials & Documents Management ───
+  getCourseMaterials(courseId) {
+    try {
+      const stored = localStorage.getItem('inbiology_course_materials');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && parsed[courseId] && Array.isArray(parsed[courseId])) {
+          return parsed[courseId];
+        }
+      }
+    } catch(e) { console.warn('Error reading stored course materials:', e); }
+
+    const course = typeof COURSES !== 'undefined' ? COURSES.find(c => c.id === courseId) : null;
+    if (course && course.materials && Array.isArray(course.materials)) {
+      return [...course.materials];
+    }
+    return course ? getDefaultMaterialsForCourse(course) : [];
+  },
+
+  saveCourseMaterials(courseId, materials) {
+    try {
+      let stored = {};
+      const raw = localStorage.getItem('inbiology_course_materials');
+      if (raw) {
+        try { stored = JSON.parse(raw); } catch(e){}
+      }
+      stored[courseId] = materials;
+      localStorage.setItem('inbiology_course_materials', JSON.stringify(stored));
+
+      // Mirror to in-memory COURSES and synchronize primary e-book metadata
+      if (typeof COURSES !== 'undefined') {
+        const c = COURSES.find(x => x.id === courseId);
+        if (c) {
+          c.materials = materials;
+          const primary = materials.find(m => m.isPrimary) || materials[0];
+          if (primary && c.ebookInfo) {
+            c.ebookInfo.title = primary.title || c.ebookInfo.title;
+            if (primary.url) c.ebookInfo.downloadUrl = primary.url;
+            if (primary.fileSize) c.ebookInfo.fileSize = primary.fileSize;
+            if (primary.pages) c.ebookInfo.pages = parseInt(primary.pages) || c.ebookInfo.pages;
+          }
+        }
+      }
+      return true;
+    } catch(e) {
+      console.error('Failed to save course materials:', e);
+      return false;
+    }
+  },
+
+  resetCourseMaterials(courseId) {
+    try {
+      const raw = localStorage.getItem('inbiology_course_materials');
+      if (raw) {
+        let stored = JSON.parse(raw);
+        delete stored[courseId];
+        localStorage.setItem('inbiology_course_materials', JSON.stringify(stored));
+      }
+      if (typeof COURSES !== 'undefined') {
+        const c = COURSES.find(x => x.id === courseId);
+        if (c) {
+          c.materials = getDefaultMaterialsForCourse(c);
+        }
       }
       return true;
     } catch(e) {
