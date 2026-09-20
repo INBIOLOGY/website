@@ -63,9 +63,38 @@ function getDefaultMaterialsForCourse(course) {
   ];
 }
 
-// Hydrate stored custom lessons and materials to in-memory COURSES on script load
+// Hydrate stored custom courses, course details overrides, lessons and materials on script load
 try {
   if (typeof COURSES !== 'undefined') {
+    // 1. Hydrate newly added courses created by admin
+    const storedAdded = localStorage.getItem('inbiology_added_courses');
+    if (storedAdded) {
+      try {
+        const addedList = JSON.parse(storedAdded);
+        if (Array.isArray(addedList)) {
+          addedList.forEach(ac => {
+            if (!COURSES.some(c => c.id === ac.id)) {
+              COURSES.push(ac);
+            }
+          });
+        }
+      } catch(e) {}
+    }
+
+    // 2. Hydrate edited course information overrides (title, price, level, image, badge, etc.)
+    const storedOverrides = localStorage.getItem('inbiology_course_overrides');
+    if (storedOverrides) {
+      try {
+        const overrides = JSON.parse(storedOverrides);
+        COURSES.forEach(c => {
+          if (overrides[c.id]) {
+            Object.assign(c, overrides[c.id]);
+          }
+        });
+      } catch(e) {}
+    }
+
+    // 3. Hydrate custom lessons
     const storedLessons = localStorage.getItem('inbiology_course_lessons');
     if (storedLessons) {
       const parsed = JSON.parse(storedLessons);
@@ -78,6 +107,7 @@ try {
       });
     }
 
+    // 4. Hydrate custom study materials
     const storedMaterials = localStorage.getItem('inbiology_course_materials');
     const parsedMaterials = storedMaterials ? JSON.parse(storedMaterials) : {};
     COURSES.forEach(c => {
@@ -95,7 +125,7 @@ try {
       }
     });
   }
-} catch(e) { console.warn('Note: Could not hydrate stored lessons/materials:', e); }
+} catch(e) { console.warn('Note: Could not hydrate stored course data:', e); }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TAB SESSION SECURITY GUARD
@@ -289,6 +319,29 @@ const AppState = {
       }
       return true;
     } catch(e) {
+      return false;
+    }
+  },
+
+  // ─── Course Information & Metadata Management ───
+  updateCourse(courseId, updatedFields) {
+    try {
+      if (typeof COURSES !== 'undefined') {
+        const c = COURSES.find(x => x.id === courseId);
+        if (c) {
+          Object.assign(c, updatedFields);
+        }
+      }
+      let overrides = {};
+      const raw = localStorage.getItem('inbiology_course_overrides');
+      if (raw) {
+        try { overrides = JSON.parse(raw); } catch(e) {}
+      }
+      overrides[courseId] = { ...(overrides[courseId] || {}), ...updatedFields };
+      localStorage.setItem('inbiology_course_overrides', JSON.stringify(overrides));
+      return true;
+    } catch(e) {
+      console.error('Failed to update course info:', e);
       return false;
     }
   },

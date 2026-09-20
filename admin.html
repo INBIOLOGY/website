@@ -534,6 +534,118 @@
         <span>✅ ลิงก์ถูกต้อง พร้อมสตรีมในระบบห้องเรียนของนักเรียน</span>
         <button type="button" onclick="closeAdminVideoTestModal()" style="background:white;color:#0F172A;border:none;font-weight:800;font-size:11.5px;padding:6px 14px;border-radius:8px;cursor:pointer">ปิดหน้าต่างทดสอบ</button>
       </div>
+  <!-- Edit Course Information Modal -->
+  <div id="admin-course-info-modal" class="modal-overlay" style="display:none;z-index:9999;align-items:center;justify-content:center;padding:16px">
+    <div class="modal-backdrop" onclick="closeCourseInfoModal()"></div>
+    <div class="modal-box" style="position:relative;background:#FFFFFF;border-radius:24px;box-shadow:0 25px 60px rgba(0,0,0,0.25);width:100%;max-width:680px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;z-index:1000">
+      <!-- Modal Header -->
+      <div style="padding:16px 24px;background:var(--c-navy);color:white;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:24px">✏️</span>
+          <div>
+            <h3 style="font-size:16px;font-weight:900;margin:0;color:white">แก้ไขข้อมูลคอร์สเรียน</h3>
+            <span style="font-size:11.5px;color:rgba(255,255,255,0.8)">แก้ไขชื่อ ระดับชั้น ราคา รูปภาพหน้าปก และรายละเอียดคอร์ส</span>
+          </div>
+        </div>
+        <button type="button" onclick="closeCourseInfoModal()" style="background:rgba(255,255,255,0.15);border:none;color:white;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+      </div>
+
+      <!-- Modal Body Form -->
+      <form id="edit-course-info-form" onsubmit="saveCourseInfo(event)" style="padding:22px 26px;overflow-y:auto;flex:1;min-height:0;display:flex;flex-direction:column;gap:16px;background:#F8FAFC">
+        <input type="hidden" id="edit-course-id" />
+
+        <!-- Title & Level Row -->
+        <div style="display:grid;grid-template-columns:2.5fr 1fr;gap:14px">
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">ชื่อคอร์สเรียน <span style="color:#EF4444">*</span></label>
+            <input type="text" id="edit-course-title" required style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:13px;outline:none;background:white;font-weight:700" />
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">ระดับชั้น <span style="color:#EF4444">*</span></label>
+            <select id="edit-course-level" style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 10px;font-size:12.5px;outline:none;background:white;font-weight:700">
+              <option value="ม.4">ม.4</option>
+              <option value="ม.5">ม.5</option>
+              <option value="ม.6">ม.6</option>
+              <option value="ม.ปลาย">ม.ปลาย</option>
+              <option value="ม.4-ม.6 & ติวสอบ">ม.4-ม.6 & ติวสอบ</option>
+              <option value="สอวน.">สอวน. ชีววิทยา</option>
+              <option value="A-Level">A-Level / TPAT3</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Prices & Hours Row -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">ราคาขายจริง (฿) <span style="color:#EF4444">*</span></label>
+            <input type="number" id="edit-course-price" min="0" required style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:13px;outline:none;background:white;font-weight:900;color:#DC2626" />
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">ราคาเต็มเดิม (฿) (ขีดฆ่า)</label>
+            <input type="number" id="edit-course-orig-price" min="0" style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:13px;outline:none;background:white;font-weight:700;color:#64748B" />
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">ชั่วโมงเรียน (ชม.)</label>
+            <input type="number" id="edit-course-hours" min="1" style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:13px;outline:none;background:white;font-weight:800;color:var(--c-navy)" />
+          </div>
+        </div>
+
+        <!-- Badge & Badge Color Row -->
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px">
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">ป้ายกำกับคอร์ส (Badge)</label>
+            <input type="text" id="edit-course-badge" placeholder="เช่น Bio Intensive III" style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:12.5px;outline:none;background:white;font-weight:800" />
+          </div>
+          <div>
+            <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">สีป้ายกำกับ</label>
+            <div style="display:flex;align-items:center;gap:8px">
+              <input type="color" id="edit-course-badge-bg" value="#1E3A8A" oninput="document.getElementById('badge-color-preview').textContent = this.value" style="width:40px;height:38px;padding:2px;border:1px solid #CBD5E1;border-radius:8px;cursor:pointer;background:white" />
+              <span id="badge-color-preview" style="font-size:11px;font-weight:800;color:#64748B">#1E3A8A</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Course Cover Image Row with Live Preview & Presets -->
+        <div>
+          <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">รูปภาพหน้าปกคอร์ส (Cover Image)</label>
+          <div style="display:flex;gap:14px;align-items:flex-start">
+            <div style="width:80px;height:105px;background:#F1F5F9;border:1.5px solid #CBD5E1;border-radius:10px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.08)">
+              <img id="edit-course-img-preview" src="./course-cover-1.png" alt="Cover Preview" style="width:100%;height:100%;object-fit:contain" onerror="this.src='./course-cover-1.png'" />
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+              <input type="text" id="edit-course-image" oninput="document.getElementById('edit-course-img-preview').src = this.value" placeholder="./course-cover-1.png หรือใส่ลิงก์รูป URL" style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:8px 12px;font-size:12px;outline:none;background:white" />
+              <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+                <span style="font-size:10.5px;color:#64748B;font-weight:700">เลือกปกสำเร็จรูป:</span>
+                <button type="button" onclick="setCourseCoverPreset('./course-cover-1.png')" style="background:#EFF6FF;color:#1E3A8A;border:1px solid #BFDBFE;font-size:10px;font-weight:800;padding:2px 8px;border-radius:6px;cursor:pointer">ปก 1 (ม.4)</button>
+                <button type="button" onclick="setCourseCoverPreset('./course-cover-2.jpg')" style="background:#EFF6FF;color:#1E3A8A;border:1px solid #BFDBFE;font-size:10px;font-weight:800;padding:2px 8px;border-radius:6px;cursor:pointer">ปก 2 (ม.4)</button>
+                <button type="button" onclick="setCourseCoverPreset('./course-cover-3.jpg')" style="background:#EFF6FF;color:#1E3A8A;border:1px solid #BFDBFE;font-size:10px;font-weight:800;padding:2px 8px;border-radius:6px;cursor:pointer">ปก 3 (ม.5)</button>
+                <button type="button" onclick="setCourseCoverPreset('./course-cover-4.jpg')" style="background:#EFF6FF;color:#1E3A8A;border:1px solid #BFDBFE;font-size:10px;font-weight:800;padding:2px 8px;border-radius:6px;cursor:pointer">ปก 4 (ม.6)</button>
+                <button type="button" onclick="setCourseCoverPreset('./course-cover-5.jpg')" style="background:#EFF6FF;color:#1E3A8A;border:1px solid #BFDBFE;font-size:10px;font-weight:800;padding:2px 8px;border-radius:6px;cursor:pointer">ปก 5 (พันธุฯ)</button>
+                <button type="button" onclick="setCourseCoverPreset('./course-cover-6.jpg')" style="background:#EFF6FF;color:#1E3A8A;border:1px solid #BFDBFE;font-size:10px;font-weight:800;padding:2px 8px;border-radius:6px;cursor:pointer">ปก 6 (นิเวศฯ)</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Instructor & Description -->
+        <div>
+          <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">อาจารย์ผู้สอน</label>
+          <input type="text" id="edit-course-instructor" value="พี่ต้น (เกียรตินิยมอันดับ 1)" style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:12.5px;outline:none;background:white" />
+        </div>
+
+        <div>
+          <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">คำอธิบายคอร์สเรียน</label>
+          <textarea id="edit-course-desc" rows="3" placeholder="อธิบายเนื้อหาและจุดเด่นของคอร์สนี้..." style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:12px;outline:none;background:white;resize:vertical"></textarea>
+        </div>
+
+        <!-- Footer Action Buttons -->
+        <div style="display:flex;align-items:center;justify-content:flex-end;gap:10px;padding-top:10px;border-top:1px solid #E2E8F0">
+          <button type="button" onclick="closeCourseInfoModal()" style="background:#F1F5F9;color:#475569;border:1px solid #CBD5E1;font-weight:800;font-size:12px;padding:9px 18px;border-radius:10px;cursor:pointer">ยกเลิก</button>
+          <button type="submit" style="background:#10B981;color:white;border:none;font-weight:900;font-size:13px;padding:10px 24px;border-radius:10px;cursor:pointer;box-shadow:0 4px 12px rgba(16,185,129,0.3)">
+            💾 บันทึกข้อมูลคอร์ส
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -565,15 +677,23 @@
         e.preventDefault();
         const title = document.getElementById('new-title').value;
         const price = +document.getElementById('new-price').value;
-        const badge = document.getElementById('new-badge').value;
+        const badge = document.getElementById('new-badge').value.trim();
         const level = document.getElementById('new-level').value;
 
-        COURSES.push({
+        const newCourse = {
           id: 'c-' + Date.now(), title, price, originalPrice: price * 1.8,
-          badge, badgeBg: BRAND_COLORS.navy, tag: level, tagBg: '#FEF2F2', tagColor: '#991B1B',
+          badge, badgeBg: BRAND_COLORS.navy, tag: level + ' & ติวสอบ', tagBg: '#FEF2F2', tagColor: '#991B1B',
           instructor: 'พี่ต้น (เกียรตินิยมอันดับ 1)', hours: 30, validity: 365,
           description: title, imageUrl: './course-cover-1.png', Level: level, lessons: []
-        });
+        };
+        COURSES.push(newCourse);
+
+        try {
+          const stored = localStorage.getItem('inbiology_added_courses') || '[]';
+          const list = JSON.parse(stored);
+          list.push(newCourse);
+          localStorage.setItem('inbiology_added_courses', JSON.stringify(list));
+        } catch(err) {}
 
         showToast('✅ เพิ่มคอร์สเรียบร้อยแล้ว', 'success');
         document.getElementById('add-course-form').reset();
@@ -637,6 +757,9 @@
               </div>
             </td>
             <td style="padding:12px 16px;white-space:nowrap">
+              <button onclick="openCourseInfoModal('${c.id}')" style="background:#F1F5F9;color:var(--c-navy);border:1px solid #CBD5E1;padding:7px 11px;border-radius:8px;font-weight:800;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;margin-right:5px;box-shadow:0 1px 3px rgba(0,0,0,0.05);transition:all 0.2s">
+                ✏️ แก้ไขคอร์ส
+              </button>
               <button onclick="openLessonManagerModal('${c.id}', 'lessons')" style="background:#1E3A8A;color:white;border:none;padding:7px 11px;border-radius:8px;font-weight:800;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;margin-right:5px;box-shadow:0 2px 6px rgba(30,58,138,0.2)">
                 🎬 จัดการวิดีโอ
               </button>
@@ -1012,10 +1135,78 @@
       showToast('✅ แอดมินแก้ไขข้อมูลนักเรียนเรียบร้อยแล้ว (อัปเดตอีเมล/รหัสผ่านสำเร็จ)', 'success');
     }
 
+    // ─────────────────────────────────────────────────────────────────────────────
+    // COURSE INFORMATION CMS (EDIT COURSE TITLE, PRICE, LEVEL, COVER IMAGE, ETC.)
+    // ─────────────────────────────────────────────────────────────────────────────
+    function openCourseInfoModal(courseId) {
+      const c = COURSES.find(x => x.id === courseId);
+      if (!c) return;
+
+      document.getElementById('edit-course-id').value = c.id;
+      document.getElementById('edit-course-title').value = c.title || '';
+      document.getElementById('edit-course-level').value = c.Level || 'ม.4';
+      document.getElementById('edit-course-price').value = c.price || 0;
+      document.getElementById('edit-course-orig-price').value = c.originalPrice || Math.round((c.price || 1000) * 1.8);
+      document.getElementById('edit-course-hours').value = c.hours || 30;
+      document.getElementById('edit-course-badge').value = c.badge || '';
+      document.getElementById('edit-course-badge-bg').value = c.badgeBg || '#1E3A8A';
+      document.getElementById('badge-color-preview').textContent = c.badgeBg || '#1E3A8A';
+      document.getElementById('edit-course-image').value = c.imageUrl || './course-cover-1.png';
+      document.getElementById('edit-course-img-preview').src = c.imageUrl || './course-cover-1.png';
+      document.getElementById('edit-course-instructor').value = c.instructor || 'พี่ต้น (เกียรตินิยมอันดับ 1)';
+      document.getElementById('edit-course-desc').value = c.description || '';
+
+      document.getElementById('admin-course-info-modal').style.display = 'flex';
+    }
+
+    function closeCourseInfoModal() {
+      document.getElementById('admin-course-info-modal').style.display = 'none';
+    }
+
+    function setCourseCoverPreset(url) {
+      document.getElementById('edit-course-image').value = url;
+      document.getElementById('edit-course-img-preview').src = url;
+    }
+
+    function saveCourseInfo(e) {
+      e.preventDefault();
+      const id = document.getElementById('edit-course-id').value;
+      const c = COURSES.find(x => x.id === id);
+      if (!c) return;
+
+      const levelVal = document.getElementById('edit-course-level').value;
+      const updated = {
+        title: document.getElementById('edit-course-title').value.trim(),
+        Level: levelVal,
+        tag: levelVal + ' & ติวสอบ',
+        price: +document.getElementById('edit-course-price').value,
+        originalPrice: +document.getElementById('edit-course-orig-price').value || Math.round((+document.getElementById('edit-course-price').value) * 1.8),
+        hours: +document.getElementById('edit-course-hours').value || 30,
+        badge: document.getElementById('edit-course-badge').value.trim() || c.badge,
+        badgeBg: document.getElementById('edit-course-badge-bg').value,
+        imageUrl: document.getElementById('edit-course-image').value.trim() || c.imageUrl,
+        instructor: document.getElementById('edit-course-instructor').value.trim() || 'พี่ต้น (เกียรตินิยมอันดับ 1)',
+        description: document.getElementById('edit-course-desc').value.trim()
+      };
+
+      AppState.updateCourse(id, updated);
+      renderAdminTable();
+      closeCourseInfoModal();
+      showToast(`✅ บันทึกข้อมูลคอร์ส "${updated.title}" เรียบร้อยแล้ว!`, 'success');
+    }
+
     function deleteCourse(id) {
       if (confirm('ยืนยันลบคอร์สนี้หรือไม่?')) {
         const idx = COURSES.findIndex(c => c.id === id);
         if (idx > -1) COURSES.splice(idx, 1);
+        try {
+          const storedAdded = localStorage.getItem('inbiology_added_courses');
+          if (storedAdded) {
+            let list = JSON.parse(storedAdded);
+            list = list.filter(c => c.id !== id);
+            localStorage.setItem('inbiology_added_courses', JSON.stringify(list));
+          }
+        } catch(e) {}
         showToast('🗑 ลบคอร์สแล้ว', 'info');
         renderAdminTable();
       }
