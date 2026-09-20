@@ -1339,6 +1339,24 @@ const CloudService = window.CloudService = {
   async saveCourseLessonsToCloud(lessonsMap) {
     if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return false;
     try {
+      // 1. Try dedicated site_content table first (Cleanest Supabase table)
+      try {
+        const scRes = await this._supabaseFetch('/site_content', {
+          method: 'POST',
+          headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
+          body: JSON.stringify({
+            key: 'course_lessons',
+            content: lessonsMap,
+            updated_at: new Date().toISOString()
+          })
+        });
+        if (scRes) {
+          console.log('☁️ [Supabase Cloud] Saved to site_content table!');
+          return true;
+        }
+      } catch(e) {}
+
+      // 2. Fallback bridge via orders table
       const payload = JSON.stringify(lessonsMap);
       const existing = await this._supabaseFetch(
         `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.course_lessons_v1&limit=1`
@@ -1382,6 +1400,15 @@ const CloudService = window.CloudService = {
   async fetchCourseLessonsFromCloud() {
     if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return null;
     try {
+      // 1. Try dedicated site_content table first
+      try {
+        const scRows = await this._supabaseFetch('/site_content?key=eq.course_lessons&limit=1');
+        if (scRows && scRows.length > 0 && scRows[0].content) {
+          return typeof scRows[0].content === 'string' ? JSON.parse(scRows[0].content) : scRows[0].content;
+        }
+      } catch(e) {}
+
+      // 2. Fallback bridge via orders table
       const rows = await this._supabaseFetch(
         `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.course_lessons_v1&limit=1`
       );
@@ -1402,6 +1429,21 @@ const CloudService = window.CloudService = {
   async saveCourseOverridesToCloud(overridesMap) {
     if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return false;
     try {
+      // 1. Try dedicated site_content table first
+      try {
+        const scRes = await this._supabaseFetch('/site_content', {
+          method: 'POST',
+          headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
+          body: JSON.stringify({
+            key: 'course_overrides',
+            content: overridesMap,
+            updated_at: new Date().toISOString()
+          })
+        });
+        if (scRes) return true;
+      } catch(e) {}
+
+      // 2. Fallback bridge via orders table
       const payload = JSON.stringify(overridesMap);
       const existing = await this._supabaseFetch(
         `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.course_overrides_v1&limit=1`
@@ -1430,7 +1472,6 @@ const CloudService = window.CloudService = {
           })
         });
       }
-      console.log('☁️ [Supabase Cloud] Course overrides successfully synced to cloud!');
       return true;
     } catch(err) {
       console.warn('Could not sync course overrides to Supabase cloud:', err);
@@ -1445,6 +1486,15 @@ const CloudService = window.CloudService = {
   async fetchCourseOverridesFromCloud() {
     if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return null;
     try {
+      // 1. Try dedicated site_content table first
+      try {
+        const scRows = await this._supabaseFetch('/site_content?key=eq.course_overrides&limit=1');
+        if (scRows && scRows.length > 0 && scRows[0].content) {
+          return typeof scRows[0].content === 'string' ? JSON.parse(scRows[0].content) : scRows[0].content;
+        }
+      } catch(e) {}
+
+      // 2. Fallback bridge via orders table
       const rows = await this._supabaseFetch(
         `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.course_overrides_v1&limit=1`
       );
