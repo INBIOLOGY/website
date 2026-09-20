@@ -75,6 +75,7 @@
                   <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ชื่อวิชา</th>
                   <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ระดับชั้น</th>
                   <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ราคา</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">วิดีโอบทเรียน (YouTube Cloud)</th>
                   <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">การจัดการ</th>
                 </tr>
               </thead>
@@ -295,6 +296,126 @@
     </div>
   </div>
 
+  <!-- Course Lessons & YouTube Video Cloud CMS Modal -->
+  <div id="admin-lesson-modal" class="modal-overlay" style="display:none;z-index:9999;align-items:center;justify-content:center;padding:16px">
+    <div class="modal-backdrop" onclick="closeAdminLessonModal()"></div>
+    <div class="modal-box" style="position:relative;background:#FFFFFF;border-radius:24px;box-shadow:0 25px 60px rgba(0,0,0,0.25);width:100%;max-width:980px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;z-index:1000">
+      <!-- Modal Header -->
+      <div style="padding:18px 24px;background:var(--c-navy);color:white;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:24px">🎬</span>
+          <div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span id="cms-course-badge" style="background:#EF4444;color:white;font-size:10px;font-weight:900;padding:2px 8px;border-radius:6px">Bio Intensive I</span>
+              <span id="cms-course-level" style="background:rgba(255,255,255,0.2);color:white;font-size:10px;font-weight:800;padding:2px 8px;border-radius:6px">ม.4</span>
+            </div>
+            <h3 id="cms-course-title" style="font-size:16px;font-weight:900;margin:4px 0 0;color:white">จัดการบทเรียนและวิดีโอคลาวด์</h3>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span id="cms-lesson-count-badge" style="background:rgba(255,255,255,0.18);padding:4px 12px;border-radius:999px;font-size:11.5px;font-weight:800">6 ตอน • รวม 285 นาที</span>
+          <button type="button" onclick="closeAdminLessonModal()" style="background:rgba(255,255,255,0.15);border:none;color:white;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center" title="ปิดหน้าต่าง">✕</button>
+        </div>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div style="padding:22px 24px;overflow-y:auto;flex:1;background:#F8FAFC;display:flex;flex-direction:column;gap:18px">
+        
+        <!-- YouTube Cloud Guidance Banner -->
+        <div style="background:linear-gradient(135deg, #FEF2F2 0%, #EFF6FF 100%);border:1.5px solid #FECACA;border-radius:18px;padding:16px 20px;display:flex;gap:14px;align-items:flex-start">
+          <div style="width:40px;height:40px;border-radius:10px;background:#DC2626;color:white;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;box-shadow:0 4px 10px rgba(220,38,38,0.25)">
+            🔴
+          </div>
+          <div style="font-size:12.5px;color:#1E293B;line-height:1.6">
+            <strong style="color:#991B1B;font-size:13.5px;display:block;margin-bottom:3px">☁️ ระบบคลาวด์วิดีโอผ่าน YouTube (Unlisted Cloud Streaming)</strong>
+            <span>
+              <strong>คำแนะนำสำหรับพี่ต้น:</strong> อัปโหลดคลิปบทเรียนขึ้นช่อง YouTube ของคุณ แล้วตั้งค่าสถานะการแชร์เป็น <strong>"ไม่เป็นสาธารณะ (Unlisted)"</strong> เพื่อไม่ให้คนอื่นค้นหาเจอ จากนั้นคัดลอกลิงก์ (เช่น <code>https://youtu.be/...</code> หรือ <code>https://www.youtube.com/watch?v=...</code>) มาวางในช่องของแต่ละตอนได้เลย ระบบจะสตรีมเล่นบนเว็บห้องเรียน INBIOLOGY โดยตรง โดยที่นักเรียนไม่ต้องเปิด YouTube!
+            </span>
+          </div>
+        </div>
+
+        <!-- Lessons Table / Cards Container -->
+        <div style="background:white;border:1px solid #E2E8F0;border-radius:18px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.02)">
+          <div style="padding:14px 20px;background:#F1F5F9;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-weight:900;color:var(--c-navy);font-size:13px">📋 รายชื่อตอนและลิงก์วิดีโอในคอร์สนี้</span>
+            <span style="font-size:11.5px;color:#64748B">แก้ไขชื่อ ความยาว หรือลิงก์ได้แบบเรียลไทม์</span>
+          </div>
+          <div id="cms-lessons-list" style="display:flex;flex-direction:column">
+            <!-- Dynamic rows rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Add New Lesson Form Box -->
+        <div style="background:white;border:1.5px dashed #CBD5E1;border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="background:#EFF6FF;color:var(--c-sky);font-size:11px;font-weight:900;padding:3px 10px;border-radius:6px">+ NEW LESSON</span>
+            <span style="font-weight:900;color:var(--c-navy);font-size:13.5px">เพิ่มบทเรียน (EP) ใหม่ในคอร์สนี้</span>
+          </div>
+          <div style="display:grid;grid-template-columns:2fr 100px 3fr auto;gap:10px;align-items:end">
+            <div>
+              <label style="display:block;font-size:11px;font-weight:800;color:#475569;margin-bottom:4px">ชื่อบทเรียน / หัวข้อตอน</label>
+              <input type="text" id="cms-new-title" placeholder="เช่น EP 7: ตะลุยโจทย์แนวข้อสอบ A-Level..." style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:12px;outline:none" />
+            </div>
+            <div>
+              <label style="display:block;font-size:11px;font-weight:800;color:#475569;margin-bottom:4px">ความยาว (นาที)</label>
+              <input type="number" id="cms-new-duration" value="45" min="1" style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:12px;outline:none" />
+            </div>
+            <div>
+              <label style="display:block;font-size:11px;font-weight:800;color:#475569;margin-bottom:4px">ลิงก์ YouTube / วิดีโอ URL</label>
+              <input type="text" id="cms-new-url" placeholder="https://youtu.be/... หรือ https://www.youtube.com/watch?v=..." style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:12px;outline:none" />
+            </div>
+            <button type="button" onclick="addNewLessonToCourse()" style="background:#1E3A8A;color:white;border:none;font-weight:850;font-size:12px;padding:10px 18px;border-radius:10px;cursor:pointer;white-space:nowrap;box-shadow:0 2px 6px rgba(30,58,138,0.25)">
+              + เพิ่มตอนนี้
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer Action Bar -->
+      <div style="padding:16px 24px;background:white;border-top:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;flex-shrink:0">
+        <button type="button" onclick="resetLessonsToDefault()" style="background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;font-weight:800;font-size:12px;padding:9px 16px;border-radius:10px;cursor:pointer">
+          🔄 คืนค่าบทเรียนเริ่มต้น
+        </button>
+
+        <div style="display:flex;align-items:center;gap:10px">
+          <button type="button" id="cms-preview-classroom-btn" onclick="openClassroomPreviewFromAdmin()" style="background:#F1F5F9;color:#334155;border:1px solid #CBD5E1;font-weight:800;font-size:12px;padding:9px 16px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+            👁️ ดูในห้องเรียนจริง
+          </button>
+          <button type="button" onclick="saveAllLessonsForCourse()" style="background:#10B981;color:white;border:none;font-weight:900;font-size:13px;padding:10px 22px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(16,185,129,0.3)">
+            💾 บันทึกการเปลี่ยนแปลงทั้งหมด
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Video Test Player Modal -->
+  <div id="admin-video-test-modal" class="modal-overlay" style="display:none;z-index:10000;align-items:center;justify-content:center;padding:16px">
+    <div class="modal-backdrop" onclick="closeAdminVideoTestModal()"></div>
+    <div class="modal-box" style="position:relative;background:#0F172A;border-radius:24px;box-shadow:0 25px 60px rgba(0,0,0,0.5);width:100%;max-width:820px;overflow:hidden;z-index:10001;border:1px solid rgba(255,255,255,0.1)">
+      <div style="padding:14px 20px;background:rgba(255,255,255,0.05);color:white;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.1)">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:18px">▶</span>
+          <div>
+            <h4 id="test-video-title" style="font-size:14px;font-weight:800;margin:0;color:white">ทดสอบเล่นวิดีโอบทเรียน</h4>
+            <span id="test-video-meta" style="font-size:11px;color:#94A3B8">ระบบทดสอบสตรีมมิ่งบนเว็บ INBIOLOGY</span>
+          </div>
+        </div>
+        <button type="button" onclick="closeAdminVideoTestModal()" style="background:rgba(255,255,255,0.1);border:none;color:white;width:30px;height:30px;border-radius:50%;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+      </div>
+      <div style="padding:16px">
+        <div id="test-video-player-container" style="background:black;border-radius:16px;aspect-ratio:16/9;overflow:hidden;display:flex;align-items:center;justify-content:center">
+          <!-- Video or Iframe rendered dynamically -->
+        </div>
+      </div>
+      <div style="padding:12px 20px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#A7F3D0">
+        <span>✅ ลิงก์ถูกต้อง พร้อมสตรีมในระบบห้องเรียนของนักเรียน</span>
+        <button type="button" onclick="closeAdminVideoTestModal()" style="background:white;color:#0F172A;border:none;font-weight:800;font-size:11.5px;padding:6px 14px;border-radius:8px;cursor:pointer">ปิดหน้าต่างทดสอบ</button>
+      </div>
+    </div>
+  </div>
+
   <script src="./js/mockData.js?v=20260919_v9"></script>
   <script src="./js/supabaseConfig.js?v=20260919_v9"></script>
   <script src="./js/cloudService.js?v=20260919_v11"></script>
@@ -362,16 +483,36 @@
 
     function renderAdminTable() {
       document.getElementById('admin-course-count').textContent = COURSES.length;
-      document.getElementById('admin-course-table').innerHTML = COURSES.map(c => `
-        <tr style="border-bottom:1px solid #F3F4F6">
-          <td style="padding:12px 16px;font-weight:700;color:var(--c-navy)">${c.title}</td>
-          <td style="padding:12px 16px;font-weight:700">${c.Level}</td>
-          <td style="padding:12px 16px;font-weight:800;color:var(--c-red)">฿${formatPrice(c.price)}</td>
-          <td style="padding:12px 16px">
-            <button onclick="deleteCourse('${c.id}')" style="background:#FEF2F2;color:var(--c-red);border:none;padding:6px 10px;border-radius:6px;font-weight:800;cursor:pointer">ลบ</button>
-          </td>
-        </tr>
-      `).join('');
+      document.getElementById('admin-course-table').innerHTML = COURSES.map(c => {
+        const lessons = AppState.getCourseLessons(c.id);
+        const ytCount = lessons.filter(l => Boolean(extractYouTubeId(l.videoUrl))).length;
+        return `
+          <tr style="border-bottom:1px solid #F3F4F6">
+            <td style="padding:12px 16px;font-weight:700;color:var(--c-navy)">
+              <div style="display:flex;align-items:center;gap:10px">
+                <img src="${c.imageUrl}" alt="" style="width:36px;height:36px;border-radius:6px;object-fit:cover;box-shadow:0 2px 6px rgba(0,0,0,0.1)" />
+                <div>
+                  <span style="display:block;line-height:1.3">${c.title}</span>
+                  <span style="font-size:10px;color:#9CA3AF">${c.badge} • ${c.hours} ชม.</span>
+                </div>
+              </div>
+            </td>
+            <td style="padding:12px 16px;font-weight:700">${c.Level}</td>
+            <td style="padding:12px 16px;font-weight:800;color:var(--c-red)">฿${formatPrice(c.price)}</td>
+            <td style="padding:12px 16px">
+              <span style="display:inline-flex;align-items:center;gap:6px;background:#EFF6FF;color:#1E3A8A;padding:4px 10px;border-radius:8px;font-weight:800;font-size:11px">
+                🎬 ${lessons.length} ตอน ${ytCount > 0 ? `<span style="background:#FEE2E2;color:#DC2626;padding:1px 6px;border-radius:4px;font-size:10px">🔴 YouTube ${ytCount}</span>` : ''}
+              </span>
+            </td>
+            <td style="padding:12px 16px;white-space:nowrap">
+              <button onclick="openLessonManagerModal('${c.id}')" style="background:#1E3A8A;color:white;border:none;padding:7px 12px;border-radius:8px;font-weight:800;font-size:11.5px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;margin-right:6px;box-shadow:0 2px 6px rgba(30,58,138,0.25)">
+                🎬 จัดการวิดีโอบทเรียน
+              </button>
+              <button onclick="deleteCourse('${c.id}')" style="background:#FEF2F2;color:var(--c-red);border:1px solid #FECACA;padding:7px 10px;border-radius:8px;font-weight:800;font-size:11.5px;cursor:pointer">ลบ</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
     // ─── REAL ORDERS from Supabase ───────────────────────────────────────────
@@ -743,6 +884,218 @@
         showToast('🗑 ลบคอร์สแล้ว', 'info');
         renderAdminTable();
       }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────────
+    // COURSE LESSONS & YOUTUBE CLOUD VIDEO CMS LOGIC
+    // ─────────────────────────────────────────────────────────────────────────────
+    let _editingCourseId = null;
+    let _editingLessons = [];
+
+    function openLessonManagerModal(courseId) {
+      _editingCourseId = courseId;
+      const course = COURSES.find(c => c.id === courseId);
+      if (!course) return;
+
+      _editingLessons = JSON.parse(JSON.stringify(AppState.getCourseLessons(courseId)));
+
+      document.getElementById('cms-course-title').textContent = course.title;
+      document.getElementById('cms-course-badge').textContent = course.badge;
+      document.getElementById('cms-course-badge').style.background = course.badgeBg || '#1E3A8A';
+      document.getElementById('cms-course-level').textContent = course.Level;
+
+      renderLessonEditorList();
+      document.getElementById('admin-lesson-modal').style.display = 'flex';
+    }
+
+    function closeAdminLessonModal() {
+      document.getElementById('admin-lesson-modal').style.display = 'none';
+      _editingCourseId = null;
+      _editingLessons = [];
+    }
+
+    function renderLessonEditorList() {
+      const container = document.getElementById('cms-lessons-list');
+      const totalMinutes = _editingLessons.reduce((acc, l) => acc + (parseInt(l.duration) || 0), 0);
+      const ytCount = _editingLessons.filter(l => Boolean(extractYouTubeId(l.videoUrl))).length;
+
+      const badge = document.getElementById('cms-lesson-count-badge');
+      if (badge) {
+        badge.textContent = `${_editingLessons.length} ตอน • 🔴 YouTube ${ytCount} ตอน • รวม ${totalMinutes} นาที (~${Math.round(totalMinutes/60*10)/10} ชม.)`;
+      }
+
+      if (_editingLessons.length === 0) {
+        container.innerHTML = `
+          <div style="padding:32px;text-align:center;color:#94A3B8">
+            <span style="font-size:36px;display:block;margin-bottom:8px">📭</span>
+            <p style="margin:0 0 6px;font-weight:700;color:#64748B">ยังไม่มีบทเรียนในคอร์สนี้</p>
+            <p style="margin:0;font-size:12px">ใช้แบบฟอร์มด้านล่างเพื่อเพิ่มตอนและใส่ลิงก์ YouTube ได้เลย</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = _editingLessons.map((l, idx) => {
+        const ytId = extractYouTubeId(l.videoUrl);
+        const isYT = Boolean(ytId);
+        const isMP4 = Boolean(l.videoUrl && !isYT);
+
+        return `
+          <div style="padding:16px 20px;border-bottom:1px solid #F1F5F9;display:flex;flex-direction:column;gap:10px;background:${idx % 2 === 0 ? 'white' : '#FAFAFA'};transition:background 0.2s">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="width:28px;height:28px;border-radius:50%;background:var(--c-navy);color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0">
+                  ${idx + 1}
+                </span>
+                <span style="font-size:11px;font-weight:800;color:var(--c-sky);background:#EFF6FF;padding:2px 8px;border-radius:6px">EP.${idx + 1}</span>
+                ${isYT ? `<span style="background:#FEE2E2;color:#DC2626;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:4px">🔴 YouTube (${ytId})</span>` : (isMP4 ? `<span style="background:#E0F2FE;color:#0369A1;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:6px">🎬 MP4 Video</span>` : `<span style="background:#FEF3C7;color:#92400E;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:6px">⚠️ ยังไม่มีวิดีโอ</span>`)}
+              </div>
+
+              <!-- Reorder, Preview, and Delete Buttons -->
+              <div style="display:flex;align-items:center;gap:6px">
+                <button type="button" onclick="moveLessonOrder(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} style="background:${idx === 0 ? '#F1F5F9' : '#E2E8F0'};color:${idx === 0 ? '#CBD5E1' : '#334155'};border:none;width:28px;height:28px;border-radius:6px;font-size:12px;cursor:${idx === 0 ? 'not-allowed' : 'pointer'}" title="เลื่อนขึ้น">⬆️</button>
+                <button type="button" onclick="moveLessonOrder(${idx}, 1)" ${idx === _editingLessons.length - 1 ? 'disabled' : ''} style="background:${idx === _editingLessons.length - 1 ? '#F1F5F9' : '#E2E8F0'};color:${idx === _editingLessons.length - 1 ? '#CBD5E1' : '#334155'};border:none;width:28px;height:28px;border-radius:6px;font-size:12px;cursor:${idx === _editingLessons.length - 1 ? 'not-allowed' : 'pointer'}" title="เลื่อนลง">⬇️</button>
+                ${(l.videoUrl && l.videoUrl.trim()) ? `
+                  <button type="button" onclick="testPlayVideoModal('${encodeURIComponent(l.videoUrl)}', '${l.title.replace(/'/g, "\\'")}')" style="background:#EFF6FF;color:#1E3A8A;border:1px solid #BFDBFE;font-weight:800;font-size:11px;padding:5px 10px;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
+                    ▶ ทดสอบเล่น
+                  </button>
+                ` : ''}
+                <button type="button" onclick="deleteLessonFromCourse(${idx})" style="background:#FEF2F2;color:#DC2626;border:none;width:28px;height:28px;border-radius:6px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center" title="ลบตอนนี้">🗑️</button>
+              </div>
+            </div>
+
+            <!-- Inputs for Title, Duration, and Video URL -->
+            <div style="display:grid;grid-template-columns:2fr 90px 3fr;gap:10px;align-items:center">
+              <div>
+                <input type="text" value="${l.title.replace(/"/g, '&quot;')}" oninput="updateLessonField(${idx}, 'title', this.value)" placeholder="ชื่อบทเรียน..." style="width:100%;border:1px solid #E2E8F0;border-radius:8px;padding:7px 10px;font-size:12px;outline:none" />
+              </div>
+              <div style="position:relative">
+                <input type="number" value="${l.duration || 45}" min="1" oninput="updateLessonField(${idx}, 'duration', this.value)" style="width:100%;border:1px solid #E2E8F0;border-radius:8px;padding:7px 22px 7px 8px;font-size:12px;outline:none" />
+                <span style="position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:10px;color:#94A3B8;pointer-events:none">น.</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <input type="text" value="${(l.videoUrl || '').replace(/"/g, '&quot;')}" onchange="updateLessonField(${idx}, 'videoUrl', this.value);renderLessonEditorList()" onblur="updateLessonField(${idx}, 'videoUrl', this.value);renderLessonEditorList()" placeholder="วางลิงก์ YouTube (เช่น https://youtu.be/... หรือรหัส)" style="width:100%;border:1px solid ${isYT ? '#FCA5A5' : '#E2E8F0'};border-radius:8px;padding:7px 10px;font-size:12px;outline:none;background:${isYT ? '#FFFDFD' : 'white'}" />
+                ${isYT ? `
+                  <a href="https://www.youtube.com/watch?v=${ytId}" target="_blank" title="เปิดดูบน YouTube" style="color:#DC2626;font-size:14px;text-decoration:none;flex-shrink:0">🔗</a>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateLessonField(idx, field, value) {
+      if (!_editingLessons[idx]) return;
+      _editingLessons[idx][field] = field === 'duration' ? (+value || 0) : value;
+    }
+
+    function moveLessonOrder(idx, direction) {
+      const targetIdx = idx + direction;
+      if (targetIdx < 0 || targetIdx >= _editingLessons.length) return;
+      const temp = _editingLessons[idx];
+      _editingLessons[idx] = _editingLessons[targetIdx];
+      _editingLessons[targetIdx] = temp;
+      renderLessonEditorList();
+    }
+
+    function deleteLessonFromCourse(idx) {
+      if (confirm(`ลบ "${_editingLessons[idx].title}" หรือไม่?`)) {
+        _editingLessons.splice(idx, 1);
+        renderLessonEditorList();
+        showToast('🗑️ ลบตอนเรียนแล้ว', 'info');
+      }
+    }
+
+    function addNewLessonToCourse() {
+      const titleInput = document.getElementById('cms-new-title');
+      const durationInput = document.getElementById('cms-new-duration');
+      const urlInput = document.getElementById('cms-new-url');
+
+      const title = (titleInput.value || '').trim();
+      const duration = +(durationInput.value || 45);
+      const videoUrl = (urlInput.value || '').trim();
+
+      if (!title) {
+        showToast('กรุณากรอกชื่อบทเรียน', 'warning');
+        titleInput.focus();
+        return;
+      }
+
+      _editingLessons.push({
+        id: 'l-' + Date.now(),
+        title,
+        duration,
+        videoUrl
+      });
+
+      titleInput.value = '';
+      urlInput.value = '';
+      durationInput.value = 45;
+
+      renderLessonEditorList();
+      showToast('✅ เพิ่มบทเรียนใหม่แล้ว อย่าลืมกด "บันทึกการเปลี่ยนแปลงทั้งหมด"', 'success');
+    }
+
+    function saveAllLessonsForCourse() {
+      if (!_editingCourseId) return;
+      AppState.saveCourseLessons(_editingCourseId, _editingLessons);
+      showToast('🎉 บันทึกวิดีโอบทเรียนของคอร์สนี้เรียบร้อยแล้ว!', 'success');
+      renderAdminTable();
+      closeAdminLessonModal();
+    }
+
+    function resetLessonsToDefault() {
+      if (!_editingCourseId) return;
+      if (confirm('คุณแน่ใจหรือไม่ว่าต้องการคืนค่าบทเรียนของคอร์สนี้กลับเป็นค่าเริ่มต้น?')) {
+        AppState.resetCourseLessons(_editingCourseId);
+        _editingLessons = JSON.parse(JSON.stringify(AppState.getCourseLessons(_editingCourseId)));
+        renderLessonEditorList();
+        renderAdminTable();
+        showToast('🔄 คืนค่าบทเรียนกลับสู่ค่าเริ่มต้นแล้ว', 'info');
+      }
+    }
+
+    function openClassroomPreviewFromAdmin() {
+      if (!_editingCourseId) return;
+      window.open(`classroom.html?course=${_editingCourseId}`, '_blank');
+    }
+
+    // ─── Live Video Test Player Modal ──────────────────────────────────────
+    function testPlayVideoModal(encodedUrl, title) {
+      const videoUrl = decodeURIComponent(encodedUrl);
+      const ytId = extractYouTubeId(videoUrl);
+      const modal = document.getElementById('admin-video-test-modal');
+      const container = document.getElementById('test-video-player-container');
+      const titleEl = document.getElementById('test-video-title');
+      const metaEl = document.getElementById('test-video-meta');
+
+      if (titleEl) titleEl.textContent = title || 'ทดสอบเล่นวิดีโอ';
+      if (metaEl) metaEl.textContent = ytId ? `🔴 YouTube Embed (ID: ${ytId})` : `🎬 Direct Video (${videoUrl.slice(0, 40)}...)`;
+
+      if (ytId) {
+        container.innerHTML = `
+          <iframe src="https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen
+                  style="width:100%;height:100%;border:none;border-radius:16px">
+          </iframe>
+        `;
+      } else {
+        container.innerHTML = `
+          <video src="${videoUrl}" controls autoplay style="width:100%;height:100%;object-fit:contain;border-radius:16px"></video>
+        `;
+      }
+
+      modal.style.display = 'flex';
+    }
+
+    function closeAdminVideoTestModal() {
+      const modal = document.getElementById('admin-video-test-modal');
+      const container = document.getElementById('test-video-player-container');
+      if (container) container.innerHTML = ''; // Stop video playback
+      if (modal) modal.style.display = 'none';
     }
   </script>
 </body>

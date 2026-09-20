@@ -123,9 +123,11 @@
               </div>
             </div>
 
-            <!-- Video Room -->
-            <div style="background:black;border-radius:24px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;box-shadow:0 12px 36px rgba(0,0,0,0.18)">
-              <video id="main-video-player" src="https://www.w3schools.com/html/mov_bbb.mp4" controls style="width:100%;height:100%;object-fit:contain"></video>
+            <!-- Video Room (Supports YouTube Cloud Streaming & Direct Video) -->
+            <div id="main-video-container" style="background:#0F172A;border-radius:24px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;box-shadow:0 12px 36px rgba(0,0,0,0.18)">
+              <div id="video-embed-wrapper" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center">
+                <video id="main-video-player" src="https://www.w3schools.com/html/mov_bbb.mp4" controls style="width:100%;height:100%;object-fit:contain;border-radius:24px"></video>
+              </div>
             </div>
 
             <!-- Active Lesson Info Bar & Mark as Complete -->
@@ -363,7 +365,10 @@
       }
 
       const found = COURSES.find(c => c.id === courseId);
-      if (found) currentCourse = found;
+      if (found) {
+        currentCourse = { ...found };
+        currentCourse.lessons = AppState.getCourseLessons(courseId);
+      }
       
       if (lessonId && currentCourse.lessons) {
         const targetLesson = currentCourse.lessons.find(l => l.id === lessonId);
@@ -382,10 +387,43 @@
       updateActiveLessonBar();
       renderLessonList();
 
-      if (currentLesson && currentLesson.videoUrl) {
-        document.getElementById('main-video-player').src = currentLesson.videoUrl;
+      if (currentLesson) {
+        playLessonVideo(currentLesson);
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function playLessonVideo(lesson) {
+      const wrapper = document.getElementById('video-embed-wrapper');
+      if (!wrapper) return;
+
+      const videoUrl = lesson && lesson.videoUrl ? lesson.videoUrl.trim() : '';
+      const ytId = extractYouTubeId(videoUrl);
+
+      if (ytId) {
+        wrapper.innerHTML = `
+          <iframe id="main-youtube-iframe"
+                  src="https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
+                  title="${lesson.title ? lesson.title.replace(/"/g, '&quot;') : 'INBIOLOGY Lesson'}"
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen
+                  style="width:100%;height:100%;border:none;border-radius:24px">
+          </iframe>
+        `;
+      } else if (videoUrl) {
+        wrapper.innerHTML = `
+          <video id="main-video-player" src="${videoUrl}" controls autoplay style="width:100%;height:100%;object-fit:contain;border-radius:24px"></video>
+        `;
+      } else {
+        wrapper.innerHTML = `
+          <div style="text-align:center;padding:24px;color:#94A3B8">
+            <span style="font-size:48px;display:block;margin-bottom:12px">🎬</span>
+            <p style="font-size:16px;color:white;font-weight:800;margin:0 0 6px">วิดีโอบทเรียนกำลังเตรียมพร้อม</p>
+            <p style="font-size:12.5px;color:#94A3B8;margin:0">อาจารย์ผู้สอนสามารถเพิ่มลิงก์ YouTube สำหรับตอนนี้ได้ผ่านระบบแอดมิน</p>
+          </div>
+        `;
+      }
     }
 
     function updateEbookBanner() {
@@ -496,7 +534,7 @@
     function selectLesson(id) {
       currentLesson = currentCourse.lessons.find(l => l.id === id);
       if (!currentLesson) return;
-      document.getElementById('main-video-player').src = currentLesson.videoUrl || 'https://www.w3schools.com/html/mov_bbb.mp4';
+      playLessonVideo(currentLesson);
       history.replaceState(null, '', `?course=${currentCourse.id}&lesson=${currentLesson.id}`);
       updateActiveLessonBar();
       renderLessonList();

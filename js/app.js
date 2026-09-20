@@ -12,6 +12,32 @@ function pct(orig, cur) {
   return Math.round((1 - cur / orig) * 100);
 }
 
+// Extract YouTube Video ID from any YouTube URL or raw 11-char ID
+function extractYouTubeId(urlOrId) {
+  if (!urlOrId || typeof urlOrId !== 'string') return null;
+  const trimmed = urlOrId.trim();
+  if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) {
+    return trimmed;
+  }
+  const match = trimmed.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/);
+  return match ? match[1] : null;
+}
+
+// Hydrate stored custom lessons to in-memory COURSES on script load
+try {
+  const storedLessons = localStorage.getItem('inbiology_course_lessons');
+  if (storedLessons && typeof COURSES !== 'undefined') {
+    const parsed = JSON.parse(storedLessons);
+    COURSES.forEach(c => {
+      if (parsed[c.id] && Array.isArray(parsed[c.id])) {
+        c.lessons = parsed[c.id];
+        const totalMins = c.lessons.reduce((acc, l) => acc + (parseInt(l.duration) || 0), 0);
+        if (totalMins > 0) c.hours = Math.max(1, Math.round(totalMins / 60));
+      }
+    });
+  }
+} catch(e) { console.warn('Note: Could not hydrate stored lessons:', e); }
+
 // ─────────────────────────────────────────────────────────────────────────────
 // TAB SESSION SECURITY GUARD
 // Enforce session-only authentication: When the browser tab/window is closed,
@@ -69,7 +95,8 @@ const AppState = {
       try { completed = JSON.parse(saved); } catch(e){}
     }
     const course = typeof COURSES !== 'undefined' ? COURSES.find(c => c.id === courseId) : null;
-    const total = course && course.lessons && course.lessons.length ? course.lessons.length : 1;
+    const lessons = this.getCourseLessons(courseId);
+    const total = lessons && lessons.length ? lessons.length : (course && course.lessons && course.lessons.length ? course.lessons.length : 1);
     const count = completed.length;
     const percentage = Math.min(100, Math.round((count / total) * 100));
     return {
@@ -78,6 +105,63 @@ const AppState = {
       totalCount: total,
       percentage: percentage
     };
+  },
+
+  // ─── Custom Course Lessons & YouTube Cloud Integration ───
+  getCourseLessons(courseId) {
+    try {
+      const stored = localStorage.getItem('inbiology_course_lessons');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && parsed[courseId] && Array.isArray(parsed[courseId])) {
+          return parsed[courseId];
+        }
+      }
+    } catch(e) { console.warn('Error reading stored course lessons:', e); }
+    const course = typeof COURSES !== 'undefined' ? COURSES.find(c => c.id === courseId) : null;
+    return (course && course.lessons) ? [...course.lessons] : [];
+  },
+
+  saveCourseLessons(courseId, lessons) {
+    try {
+      let stored = {};
+      const raw = localStorage.getItem('inbiology_course_lessons');
+      if (raw) {
+        try { stored = JSON.parse(raw); } catch(e){}
+      }
+      stored[courseId] = lessons;
+      localStorage.setItem('inbiology_course_lessons', JSON.stringify(stored));
+
+      // Mirror to in-memory COURSES
+      if (typeof COURSES !== 'undefined') {
+        const c = COURSES.find(x => x.id === courseId);
+        if (c) {
+          c.lessons = lessons;
+          const totalMins = lessons.reduce((acc, l) => acc + (parseInt(l.duration) || 0), 0);
+          if (totalMins > 0) {
+            c.hours = Math.max(1, Math.round(totalMins / 60));
+          }
+        }
+      }
+      return true;
+    } catch(e) {
+      console.error('Failed to save course lessons:', e);
+      return false;
+    }
+  },
+
+  resetCourseLessons(courseId) {
+    try {
+      const raw = localStorage.getItem('inbiology_course_lessons');
+      if (raw) {
+        let stored = JSON.parse(raw);
+        delete stored[courseId];
+        localStorage.setItem('inbiology_course_lessons', JSON.stringify(stored));
+      }
+      return true;
+    } catch(e) {
+      return false;
+    }
   },
 
   toggleLessonProgress(courseId, lessonId) {
@@ -535,6 +619,18 @@ function openTrialModal(trialItem) {
     document.body.appendChild(modal);
   }
 
+  const ytId = extractYouTubeId(trialItem.videoUrl);
+  let playerHtml = '';
+  if (ytId) {
+    playerHtml = `
+      <iframe src="https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&playsinline=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:100%;border:none;border-radius:16px"></iframe>
+    `;
+  } else {
+    playerHtml = `
+      <video src="${trialItem.videoUrl || 'https://www.w3schools.com/html/mov_bbb.mp4'}" controls autoplay style="width:100%;height:100%;object-fit:contain"></video>
+    `;
+  }
+
   modal.innerHTML = `
     <div class="modal-backdrop"></div>
     <div class="modal-box wide animate-fade-in-up" onclick="event.stopPropagation()">
@@ -543,8 +639,8 @@ function openTrialModal(trialItem) {
         <button onclick="document.getElementById('trial-video-modal').classList.remove('show')" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none">✕</button>
       </div>
       <div class="modal-body">
-        <div style="background:black;border-radius:16px;aspect-ratio:16/9;overflow:hidden;margin-bottom:16px">
-          <video src="${trialItem.videoUrl || 'https://www.w3schools.com/html/mov_bbb.mp4'}" controls autoplay style="width:100%;height:100%;object-fit:contain"></video>
+        <div style="background:black;border-radius:16px;aspect-ratio:16/9;overflow:hidden;margin-bottom:16px;display:flex;align-items:center;justify-content:center">
+          ${playerHtml}
         </div>
         <h4 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 4px">${trialItem.title}</h4>
         <p style="font-size:12px;color:var(--c-sky);font-weight:700;margin:0">${trialItem.course} • ความยาว ${trialItem.duration}</p>
