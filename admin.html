@@ -1909,7 +1909,7 @@
             });
           }
           allLessons[courseIdToSave] = lessonsToSave;
-          let okLessons = false;
+          let okLessons = null;
           if (typeof window.CloudService.saveCourseLessonsToCloud === 'function') {
             okLessons = await window.CloudService.saveCourseLessonsToCloud(allLessons);
           }
@@ -1926,8 +1926,14 @@
             await window.CloudService.saveCourseMaterialsToCloud(allMaterials);
           }
 
-          if (okLessons) {
+          const isSuccess = okLessons && (okLessons === true || okLessons.success);
+          if (isSuccess) {
             showToast('☁️ ซิงก์ขึ้น Supabase Cloud สำเร็จแล้ว! (ทุกเครื่องและโทรศัพท์จะเห็นข้อมูลทันที)', 'success');
+          } else {
+            const errMsg = (okLessons && okLessons.error && (okLessons.error.message || okLessons.error.details)) || 'Supabase ปฏิเสธคำขอ (ติดสิทธิ์ RLS Policy)';
+            showToast('⚠️ ส่งขึ้น Cloud ไม่สำเร็จ: ' + errMsg, 'error');
+            console.error('Cloud Sync Error:', okLessons ? okLessons.error : 'Unknown');
+            alert('⚠️ บันทึกลงเครื่อง Admin แล้ว แต่ "ส่งขึ้น Supabase Cloud ไม่สำเร็จ"!\n\nสาเหตุ: ' + errMsg + '\n\nผลกระทบ: เครื่องของลูกค้า/นักเรียนจะไม่เห็นคลิป YouTube นี้จนกว่าจะเปิดสิทธิ์ RLS ใน Supabase Dashboard หรือกดปุ่มซิงก์อีกครั้ง');
           }
         } catch(err) {
           console.warn('Note: Could not sync lessons to cloud:', err);
@@ -1959,7 +1965,12 @@
         let syncOk = false;
         if (window.CloudService) {
           if (typeof window.CloudService.saveCourseLessonsToCloud === 'function') {
-            syncOk = await window.CloudService.saveCourseLessonsToCloud(allLessons);
+            const res = await window.CloudService.saveCourseLessonsToCloud(allLessons);
+            syncOk = res && (res === true || res.success);
+            if (res && res.error) {
+              console.error('Supabase save error:', res.error);
+              alert('⚠️ ตรวจพบข้อผิดพลาดจาก Supabase Cloud:\n\n' + (res.error.message || 'Row Level Security violation') + '\n\nกรุณาตรวจสอบสิทธิ์ RLS ของตาราง site_content หรือ orders ใน Supabase Dashboard');
+            }
           }
           if (typeof window.CloudService.saveCourseMaterialsToCloud === 'function') {
             await window.CloudService.saveCourseMaterialsToCloud(allMaterials);
@@ -1977,7 +1988,7 @@
         if (syncOk) {
           showToast('🎉 ซิงก์ทุกคอร์ส, วิดีโอคลิป และเอกสารขึ้น Supabase Cloud สำเร็จ 100%! มือถือและทุกเครื่องเห็นทันที', 'success');
         } else {
-          showToast('✅ ซิงก์ข้อมูลคอร์สเรียนขึ้นระบบคลาวด์เรียบร้อยแล้ว!', 'success');
+          showToast('⚠️ การซิงก์ Cloud ไม่สมบูรณ์ (อาจติดสิทธิ์ RLS ใน Supabase)', 'warning');
         }
       } catch(err) {
         console.error('Error during full cloud sync:', err);

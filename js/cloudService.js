@@ -80,7 +80,9 @@ const CloudService = window.CloudService = {
 
   // ─── SUPABASE REST API CLIENT HELPER ─────────────────────────────────────
   async _supabaseFetch(endpoint, options = {}) {
-    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return null;
+    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) {
+      return { error: { message: 'Supabase URL หรือ Publishable Key ยังไม่ได้ตั้งค่า' } };
+    }
     const cfg = window.SUPABASE_CONFIG;
     const url = `${cfg.url}/rest/v1${endpoint}`;
     const headers = {
@@ -93,14 +95,14 @@ const CloudService = window.CloudService = {
       const res = await fetch(url, { ...options, headers });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        console.warn(`[Supabase REST API] ${res.status}:`, err);
-        return null;
+        console.warn(`[Supabase REST API Error] ${res.status}:`, err);
+        return { error: err, status: res.status };
       }
       if (res.status === 204) return true;
-      return await res.json().catch(() => null);
+      return await res.json().catch(() => true);
     } catch(err) {
-      console.warn('[Supabase Fetch Network]:', err);
-      return null;
+      console.warn('[Supabase Fetch Network Error]:', err);
+      return { error: err, networkError: true };
     }
   },
 
@@ -1337,32 +1339,33 @@ const CloudService = window.CloudService = {
    * @param {Object} lessonsMap - { [courseId]: Array<Lesson> }
    */
   async saveCourseLessonsToCloud(lessonsMap) {
-    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return false;
+    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) {
+      return { error: { message: 'Supabase URL หรือ Publishable Key ยังไม่ได้ตั้งค่าใน supabaseConfig.js' } };
+    }
     try {
-      // 1. Try dedicated site_content table first (Cleanest Supabase table)
-      try {
-        const scRes = await this._supabaseFetch('/site_content', {
-          method: 'POST',
-          headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
-          body: JSON.stringify({
-            key: 'course_lessons',
-            content: lessonsMap,
-            updated_at: new Date().toISOString()
-          })
-        });
-        if (scRes) {
-          console.log('☁️ [Supabase Cloud] Saved to site_content table!');
-          return true;
-        }
-      } catch(e) {}
+      // 1. Try dedicated site_content table first
+      const scRes = await this._supabaseFetch('/site_content', {
+        method: 'POST',
+        headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
+        body: JSON.stringify({
+          key: 'course_lessons',
+          content: lessonsMap,
+          updated_at: new Date().toISOString()
+        })
+      });
 
-      // 2. Fallback bridge via orders table
+      if (scRes && !scRes.error) {
+        console.log('☁️ [Supabase Cloud] บันทึกคอร์สลงตาราง site_content สำเร็จ!');
+        return { success: true, table: 'site_content' };
+      }
+
+      // 2. Fallback bridge via orders table if site_content was blocked by RLS
       const payload = JSON.stringify(lessonsMap);
       const existing = await this._supabaseFetch(
         `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.course_lessons_v1&limit=1`
       );
-      if (existing && existing.length > 0) {
-        await this._supabaseFetch(`/orders?id=eq.${existing[0].id}`, {
+      if (existing && Array.isArray(existing) && existing.length > 0) {
+        const patchRes = await this._supabaseFetch(`/orders?id=eq.${existing[0].id}`, {
           method: 'PATCH',
           headers: { 'Prefer': 'return=representation' },
           body: JSON.stringify({
@@ -1370,8 +1373,12 @@ const CloudService = window.CloudService = {
             updated_at: new Date().toISOString()
           })
         });
+        if (patchRes && !patchRes.error) {
+          console.log('☁️ [Supabase Cloud] บันทึกคอร์สลงระบบสำรอง (orders table) สำเร็จ!');
+          return { success: true, table: 'orders' };
+        }
       } else {
-        await this._supabaseFetch('/orders', {
+        const postRes = await this._supabaseFetch('/orders', {
           method: 'POST',
           headers: { 'Prefer': 'return=representation' },
           body: JSON.stringify({
@@ -1384,12 +1391,18 @@ const CloudService = window.CloudService = {
             slip_image: payload
           })
         });
+        if (postRes && !postRes.error) {
+          console.log('☁️ [Supabase Cloud] บันทึกคอร์สลงระบบสำรอง (orders table) แถวใหม่สำเร็จ!');
+          return { success: true, table: 'orders' };
+        }
       }
-      console.log('☁️ [Supabase Cloud] Course lessons successfully synced to cloud!');
-      return true;
+
+      const err = (scRes && scRes.error) || { message: 'Supabase ปฏิเสธการบันทึก (ติดระบบความปลอดภัย RLS)' };
+      console.warn('⚠️ [Supabase Cloud Write Error]:', err);
+      return { error: err };
     } catch(err) {
       console.warn('Could not sync lessons to Supabase cloud:', err);
-      return false;
+      return { error: err };
     }
   },
 
@@ -1399,20 +1412,22 @@ const CloudService = window.CloudService = {
    */
   async fetchCourseLessonsFromCloud() {
     if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return null;
+    const cacheBuster = `_t=${Date.now()}`;
     try {
       // 1. Try dedicated site_content table first
       try {
-        const scRows = await this._supabaseFetch('/site_content?key=eq.course_lessons&limit=1');
-        if (scRows && scRows.length > 0 && scRows[0].content) {
-          return typeof scRows[0].content === 'string' ? JSON.parse(scRows[0].content) : scRows[0].content;
+        const scRows = await this._supabaseFetch(`/site_content?key=eq.course_lessons&${cacheBuster}&limit=1`);
+        if (scRows && Array.isArray(scRows) && scRows.length > 0 && scRows[0].content) {
+          const data = typeof scRows[0].content === 'string' ? JSON.parse(scRows[0].content) : scRows[0].content;
+          if (data && typeof data === 'object') return data;
         }
       } catch(e) {}
 
       // 2. Fallback bridge via orders table
       const rows = await this._supabaseFetch(
-        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.course_lessons_v1&limit=1`
+        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.course_lessons_v1&${cacheBuster}&limit=1`
       );
-      if (rows && rows.length > 0 && rows[0].slip_image) {
+      if (rows && Array.isArray(rows) && rows.length > 0 && rows[0].slip_image) {
         return JSON.parse(rows[0].slip_image);
       }
       return null;
@@ -1427,29 +1442,29 @@ const CloudService = window.CloudService = {
    * @param {Object} materialsMap - { [courseId]: Array<Material> }
    */
   async saveCourseMaterialsToCloud(materialsMap) {
-    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return false;
+    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) {
+      return { error: { message: 'Supabase URL หรือ Publishable Key ยังไม่ได้ตั้งค่า' } };
+    }
     try {
       // 1. Try dedicated site_content table first
-      try {
-        const scRes = await this._supabaseFetch('/site_content', {
-          method: 'POST',
-          headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
-          body: JSON.stringify({
-            key: 'course_materials',
-            content: materialsMap,
-            updated_at: new Date().toISOString()
-          })
-        });
-        if (scRes) return true;
-      } catch(e) {}
+      const scRes = await this._supabaseFetch('/site_content', {
+        method: 'POST',
+        headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
+        body: JSON.stringify({
+          key: 'course_materials',
+          content: materialsMap,
+          updated_at: new Date().toISOString()
+        })
+      });
+      if (scRes && !scRes.error) return { success: true, table: 'site_content' };
 
       // 2. Fallback bridge via orders table
       const payload = JSON.stringify(materialsMap);
       const existing = await this._supabaseFetch(
         `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.course_materials_v1&limit=1`
       );
-      if (existing && existing.length > 0) {
-        await this._supabaseFetch(`/orders?id=eq.${existing[0].id}`, {
+      if (existing && Array.isArray(existing) && existing.length > 0) {
+        const patchRes = await this._supabaseFetch(`/orders?id=eq.${existing[0].id}`, {
           method: 'PATCH',
           headers: { 'Prefer': 'return=representation' },
           body: JSON.stringify({
@@ -1457,8 +1472,9 @@ const CloudService = window.CloudService = {
             updated_at: new Date().toISOString()
           })
         });
+        if (patchRes && !patchRes.error) return { success: true, table: 'orders' };
       } else {
-        await this._supabaseFetch('/orders', {
+        const postRes = await this._supabaseFetch('/orders', {
           method: 'POST',
           headers: { 'Prefer': 'return=representation' },
           body: JSON.stringify({
@@ -1471,11 +1487,12 @@ const CloudService = window.CloudService = {
             slip_image: payload
           })
         });
+        if (postRes && !postRes.error) return { success: true, table: 'orders' };
       }
-      return true;
+      return (scRes && scRes.error) || { error: { message: 'ไม่สามารถบันทึกเอกสารลง Supabase ได้' } };
     } catch(err) {
       console.warn('Could not sync materials to Supabase cloud:', err);
-      return false;
+      return { error: err };
     }
   },
 
@@ -1485,20 +1502,21 @@ const CloudService = window.CloudService = {
    */
   async fetchCourseMaterialsFromCloud() {
     if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return null;
+    const cacheBuster = `_t=${Date.now()}`;
     try {
       // 1. Try dedicated site_content table first
       try {
-        const scRows = await this._supabaseFetch('/site_content?key=eq.course_materials&limit=1');
-        if (scRows && scRows.length > 0 && scRows[0].content) {
+        const scRows = await this._supabaseFetch(`/site_content?key=eq.course_materials&${cacheBuster}&limit=1`);
+        if (scRows && Array.isArray(scRows) && scRows.length > 0 && scRows[0].content) {
           return typeof scRows[0].content === 'string' ? JSON.parse(scRows[0].content) : scRows[0].content;
         }
       } catch(e) {}
 
       // 2. Fallback bridge via orders table
       const rows = await this._supabaseFetch(
-        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.course_materials_v1&limit=1`
+        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.course_materials_v1&${cacheBuster}&limit=1`
       );
-      if (rows && rows.length > 0 && rows[0].slip_image) {
+      if (rows && Array.isArray(rows) && rows.length > 0 && rows[0].slip_image) {
         return JSON.parse(rows[0].slip_image);
       }
       return null;

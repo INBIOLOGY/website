@@ -110,7 +110,12 @@
           <aside style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,0.03);position:sticky;top:90px;max-height:calc(100vh - 110px);display:flex;flex-direction:column">
             <div style="padding:16px 18px;background:var(--c-navy);color:white;flex-shrink:0">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-                <h3 style="font-weight:900;font-size:14px;margin:0">📚 บทเรียนทั้งหมด</h3>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <h3 style="font-weight:900;font-size:14px;margin:0">📚 บทเรียนทั้งหมด</h3>
+                  <button type="button" onclick="refreshClassroomLessonsFromCloud()" title="ดึงคลิปและบทเรียนล่าสุดจาก Cloud" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:white;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:3px;transition:background 0.2s">
+                    🔄 รีเฟรชคลิป
+                  </button>
+                </div>
                 <span id="course-progress-badge" style="background:rgba(255,255,255,0.2);font-size:11px;font-weight:900;padding:2px 8px;border-radius:6px">0%</span>
               </div>
               <p id="course-title" style="font-size:11.5px;color:rgba(255,255,255,0.85);margin:0 0 10px;font-weight:700">Bio Intensive I</p>
@@ -811,6 +816,34 @@
           <p style="margin:4px 0 0;color:#374151">${n.text}</p>
         </div>
       `).join('');
+    }
+
+    async function refreshClassroomLessonsFromCloud() {
+      showToast('☁️ กำลังตรวจสอบคลิปวิดีโอล่าสุดจาก Cloud...', 'info');
+      try {
+        if (typeof AppState.syncCoursesAndLessonsFromCloud === 'function') {
+          await AppState.syncCoursesAndLessonsFromCloud();
+        }
+        if (currentCourse) {
+          const found = COURSES.find(c => c.id === currentCourse.id);
+          if (found) {
+            currentCourse = { ...found };
+            currentCourse.lessons = AppState.getCourseLessons(currentCourse.id);
+          }
+          if (currentLesson && currentCourse.lessons) {
+            const stillThere = currentCourse.lessons.find(l => l.id === currentLesson.id);
+            if (!stillThere) currentLesson = currentCourse.lessons[0] || null;
+          }
+          renderLessonList();
+          updateEbookBanner();
+          updateActiveLessonBar();
+          if (currentLesson) playLessonVideo(currentLesson);
+          showToast('✅ อัปเดตรายการคลิปวิดีโอล่าสุดเรียบร้อยแล้ว!', 'success');
+        }
+      } catch(e) {
+        console.warn('Error refreshing classroom lessons:', e);
+        showToast('⚠️ ไม่สามารถเชื่อมต่อคลาวด์ได้ในขณะนี้', 'warning');
+      }
     }
   </script>
 </body>
