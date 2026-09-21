@@ -220,6 +220,76 @@ const AppState = {
     }
   },
 
+  async syncUserProfileWithCloud() {
+    const profile = this.getStudentProfile();
+    if (!profile || !profile.email) return;
+    const email = profile.email.toLowerCase().trim();
+
+    // 1. Super Admin Check
+    const isSuper = (window.CloudService && typeof window.CloudService.isSuperAdminEmail === 'function')
+      ? window.CloudService.isSuperAdminEmail(email)
+      : (email === 'witsarut.cha@pccpl.ac.th' || email === 'witsarutcha@pccpl.ac.th' || email.replace(/\./g, '').startsWith('witsarutcha@pccpl'));
+
+    if (isSuper) {
+      if (this.userRole !== 'admin') {
+        this.userRole = 'admin';
+        localStorage.setItem('inbiology_role', 'admin');
+        profile.role = 'admin';
+        this.saveStudentProfile(profile);
+        if (typeof renderHeader === 'function') renderHeader();
+      }
+      return;
+    }
+
+    // 2. Fetch authoritative cloud role from Supabase & site_content bridge
+    if (window.CloudService && typeof window.CloudService.fetchUserRole === 'function') {
+      try {
+        const cloudRole = await window.CloudService.fetchUserRole(email);
+        if (cloudRole && cloudRole !== this.userRole) {
+          console.log(`🔄 [Role Sync] Role updated from cloud: ${this.userRole} -> ${cloudRole}`);
+          this.userRole = cloudRole;
+          localStorage.setItem('inbiology_role', cloudRole);
+          profile.role = cloudRole;
+          this.saveStudentProfile(profile);
+          if (typeof renderHeader === 'function') renderHeader();
+        }
+      } catch(e) {}
+    }
+
+    // 3. Hydrate profile fields if local profile is incomplete
+    if (window.CloudService && typeof window.CloudService.fetchUserProfileByEmail === 'function') {
+      try {
+        const cloudUser = await window.CloudService.fetchUserProfileByEmail(email);
+        if (cloudUser) {
+          let updated = false;
+          if (cloudUser.phone_number && cloudUser.phone_number !== '0000000000' && (!profile.phone || profile.phone === '0000000000')) {
+            profile.phone = cloudUser.phone_number;
+            updated = true;
+          }
+          if (cloudUser.school && cloudUser.school !== 'ยังไม่ได้ระบุ' && (!profile.school || profile.school === 'ยังไม่ได้ระบุ')) {
+            profile.school = cloudUser.school;
+            updated = true;
+          }
+          if (cloudUser.full_name && (!profile.fullName || profile.fullName === 'ผู้ใช้งาน Google')) {
+            profile.fullName = cloudUser.full_name;
+            updated = true;
+          }
+          if (cloudUser.nickname && (!profile.nickname || profile.nickname === 'นักเรียน')) {
+            profile.nickname = cloudUser.nickname;
+            updated = true;
+          }
+          if (cloudUser.grade_level && !profile.level) {
+            profile.level = cloudUser.grade_level;
+            updated = true;
+          }
+          if (updated) {
+            this.saveStudentProfile(profile);
+          }
+        }
+      } catch(e) {}
+    }
+  },
+
   // ─── Scoped Account Isolation Helpers (Fix Data Bleed across accounts) ───
   getUserStorageKey() {
     const profile = this.getStudentProfile();
@@ -976,6 +1046,7 @@ async function handleCompleteProfileSubmit(e) {
 
 // Video Trial Modal Popup Player
 function openTrialModal(trialItem) {
+  if (!trialItem) return;
   let modal = document.getElementById('trial-video-modal');
   if (!modal) {
     modal = document.createElement('div');
@@ -994,31 +1065,169 @@ function openTrialModal(trialItem) {
     playerHtml = `
       <iframe src="https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&playsinline=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="width:100%;height:100%;border:none;border-radius:16px"></iframe>
     `;
+  } else if (trialItem.videoUrl) {
+    playerHtml = `
+      <video src="${trialItem.videoUrl}" controls autoplay style="width:100%;height:100%;object-fit:contain;border-radius:16px"></video>
+    `;
   } else {
     playerHtml = `
-      <video src="${trialItem.videoUrl || 'https://www.w3schools.com/html/mov_bbb.mp4'}" controls autoplay style="width:100%;height:100%;object-fit:contain"></video>
+      <div style="color:#94A3B8;display:flex;align-items:center;justify-content:center;height:100%;font-size:13px">ไม่พบลิงก์วิดีโอสำหรับบทเรียนนี้</div>
     `;
   }
 
+  const sheetSectionHtml = trialItem.sheetUrl ? `
+    <div style="margin-top:16px;padding:14px 18px;background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:#DCFCE7;color:#166534">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </span>
+        <div>
+          <div style="font-size:13.5px;font-weight:900;color:#166534">${trialItem.sheetTitle || 'ชีทสรุปประกอบการเรียนฟรี (PDF)'}</div>
+          <div style="font-size:11.5px;color:#15803D;margin-top:2px">ดาวน์โหลดเอกสารทบทวนไปพร้อมกับคลิปวิดีโอ</div>
+        </div>
+      </div>
+      <a href="${trialItem.sheetUrl}" target="_blank" rel="noopener noreferrer" style="background:#166534;color:white;font-weight:850;font-size:12px;padding:8px 18px;border-radius:10px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;box-shadow:0 3px 8px rgba(22,101,52,0.25)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        ดาวน์โหลดชีท (PDF)
+      </a>
+    </div>
+  ` : '';
+
   modal.innerHTML = `
     <div class="modal-backdrop" onclick="const m=document.getElementById('trial-video-modal');if(m){m.classList.remove('show');m.innerHTML='';}"></div>
-    <div class="modal-box wide animate-fade-in-up" onclick="event.stopPropagation()">
-      <div class="modal-header">
-        <h3 style="font-weight:800;color:var(--c-navy);font-size:14px;margin:0">▶ วิดีโอตัวอย่างทดลองเรียนฟรี</h3>
-        <button onclick="const m=document.getElementById('trial-video-modal');if(m){m.classList.remove('show');m.innerHTML='';}" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none;font-size:18px;color:#64748B">✕</button>
+    <div class="modal-box wide animate-fade-in-up" onclick="event.stopPropagation()" style="max-width:760px">
+      <div class="modal-header" style="padding:16px 20px;border-bottom:1px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:6px;background:#EFF6FF;color:#1E3A8A">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </span>
+          <h3 style="font-weight:900;color:var(--c-navy);font-size:15px;margin:0">วิดีโอตัวอย่างทดลองเรียนฟรี</h3>
+        </div>
+        <button onclick="const m=document.getElementById('trial-video-modal');if(m){m.classList.remove('show');m.innerHTML='';}" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#F8FAFC;border:none;font-size:16px;color:#64748B">✕</button>
       </div>
-      <div class="modal-body">
-        <div style="background:black;border-radius:16px;aspect-ratio:16/9;overflow:hidden;margin-bottom:16px;display:flex;align-items:center;justify-content:center">
+      <div class="modal-body" style="padding:20px">
+        <div style="background:black;border-radius:16px;aspect-ratio:16/9;overflow:hidden;margin-bottom:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 25px rgba(0,0,0,0.15)">
           ${playerHtml}
         </div>
-        <h4 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 4px">${trialItem.title}</h4>
-        <p style="font-size:12px;color:var(--c-sky);font-weight:700;margin:0">${trialItem.course} • ความยาว ${trialItem.duration}</p>
+        <h4 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 6px;line-height:1.4">${trialItem.title}</h4>
+        <div style="display:flex;align-items:center;gap:12px;font-size:12px;color:var(--c-sky);font-weight:700">
+          <span style="background:#EFF6FF;padding:3px 10px;border-radius:6px;border:1px solid #DBEAFE">${trialItem.course}</span>
+          <span>ความยาว ${trialItem.duration}</span>
+        </div>
+        ${sheetSectionHtml}
       </div>
     </div>
   `;
 
   modal.classList.add('show');
 }
+
+// Full Article Reader Modal Popup
+function openArticleModal(article) {
+  if (!article) return;
+  let modal = document.getElementById('article-reader-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'article-reader-modal';
+    modal.className = 'modal-overlay';
+    modal.onclick = () => modal.classList.remove('show');
+    document.body.appendChild(modal);
+  }
+
+  const rawContent = article.content || article.summary || 'ไม่มีเนื้อหาเพิ่มเติมสำหรับบทความนี้';
+  const paragraphs = rawContent
+    .split('\n\n')
+    .filter(p => p.trim().length > 0)
+    .map(p => `<p style="font-size:14px;line-height:1.8;color:#374151;margin:0 0 16px">${p.trim().replace(/\n/g, '<br/>')}</p>`)
+    .join('');
+
+  const docBoxHtml = article.documentUrl ? `
+    <div style="margin:20px 0;padding:16px 20px;background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:16px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;background:#DCFCE7;color:#166534">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </span>
+        <div>
+          <div style="font-size:14px;font-weight:900;color:#166534">${article.documentName || 'เอกสารประกอบบทความ (PDF)'}</div>
+          <div style="font-size:12px;color:#15803D;margin-top:2px">เอกสารและชีทสรุปสำหรับอ่านทบทวน ดาวน์โหลดได้ฟรี</div>
+        </div>
+      </div>
+      <a href="${article.documentUrl}" target="_blank" rel="noopener noreferrer" style="background:#166534;color:white;font-weight:850;font-size:12.5px;padding:9px 20px;border-radius:10px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;box-shadow:0 3px 10px rgba(22,101,52,0.25)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        ดาวน์โหลดเอกสาร (PDF)
+      </a>
+    </div>
+  ` : '';
+
+  const extLinkHtml = article.articleUrl ? `
+    <div style="margin-top:16px;text-align:right">
+      <a href="${article.articleUrl}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#1E40AF;text-decoration:none;background:#EFF6FF;border:1px solid #BFDBFE;padding:8px 16px;border-radius:8px">
+        <span>อ่านบทความต้นฉบับ / แหล่งอ้างอิง</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      </a>
+    </div>
+  ` : '';
+
+  modal.innerHTML = `
+    <div class="modal-backdrop" onclick="document.getElementById('article-reader-modal').classList.remove('show')"></div>
+    <div class="modal-box wide animate-fade-in-up" onclick="event.stopPropagation()" style="max-width:720px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden">
+      <div class="modal-header" style="padding:18px 24px;border-bottom:1px solid #F1F5F9;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;font-weight:900;background:#EFF6FF;color:#1E40AF;padding:4px 10px;border-radius:6px;border:1px solid #DBEAFE">
+            ${article.category || 'บทความชีววิทยา'}
+          </span>
+          <span style="font-size:12px;color:#64748B;font-weight:600">${article.date}</span>
+        </div>
+        <button onclick="document.getElementById('article-reader-modal').classList.remove('show')" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#F8FAFC;border:none;font-size:16px;color:#64748B">✕</button>
+      </div>
+      <div class="modal-body" style="padding:24px;overflow-y:auto">
+        <h2 style="font-size:20px;font-weight:900;color:var(--c-navy);margin:0 0 12px;line-height:1.4">${article.title}</h2>
+        <div style="display:flex;align-items:center;gap:14px;font-size:12px;color:#64748B;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid #F1F5F9;flex-wrap:wrap">
+          <span style="font-weight:800;color:#1E3A8A">โดย ${article.author || 'พี่ต้น INBIOLOGY'}</span>
+          <span>ยอดอ่าน ${article.views || 0} ครั้ง</span>
+          <span>เวลาอ่าน ${article.readTime || '5 นาที'}</span>
+        </div>
+
+        ${article.imageUrl ? `
+          <div style="margin-bottom:20px;border-radius:16px;overflow:hidden;max-height:240px;background:#F1F5F9;display:flex;align-items:center;justify-content:center">
+            <img src="${article.imageUrl}" alt="" style="width:100%;height:100%;object-fit:cover" />
+          </div>
+        ` : ''}
+
+        ${docBoxHtml}
+
+        <div style="color:#374151;margin-top:16px">
+          ${paragraphs}
+        </div>
+
+        ${extLinkHtml}
+      </div>
+    </div>
+  `;
+
+  modal.classList.add('show');
+}
+
+// Helpers to find item by ID
+window.findArticleItem = function(id) {
+  let articles = [];
+  try {
+    const s = localStorage.getItem('inbiology_articles');
+    if (s) articles = JSON.parse(s);
+  } catch(e) {}
+  if (!articles.length && typeof ARTICLES !== 'undefined') articles = ARTICLES;
+  return articles.find(a => String(a.id) === String(id));
+};
+
+window.findTrialItem = function(id) {
+  let trials = [];
+  try {
+    const s = localStorage.getItem('inbiology_free_trials');
+    if (s) trials = JSON.parse(s);
+  } catch(e) {}
+  if (!trials.length && typeof FREE_TRIALS !== 'undefined') trials = FREE_TRIALS;
+  return trials.find(t => String(t.id) === String(id));
+};
 
 // Review Detail Modal Helper
 function openReviewModal(studentName) {
@@ -1548,6 +1757,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // ☁️ Sync latest real-time courses and video lessons from Supabase cloud
   if (typeof AppState !== 'undefined' && typeof AppState.syncCoursesAndLessonsFromCloud === 'function') {
     AppState.syncCoursesAndLessonsFromCloud();
+  }
+
+  // 🔄 Multi-Device Cloud Sync: Sync user role and profile from Supabase cloud
+  if (typeof AppState !== 'undefined' && typeof AppState.syncUserProfileWithCloud === 'function') {
+    AppState.syncUserProfileWithCloud();
   }
 });
 

@@ -659,11 +659,11 @@
     </div>
   </div>
 
-  <script src="./js/mockData.js?v=20260921_v36"></script>
-  <script src="./js/supabaseConfig.js?v=20260921_v36"></script>
-  <script src="./js/googleConfig.js?v=20260921_v36"></script>
-  <script src="./js/cloudService.js?v=20260921_v36"></script>
-  <script src="./js/app.js?v=20260921_v36"></script>
+  <script src="./js/mockData.js?v=20260921_v38"></script>
+  <script src="./js/supabaseConfig.js?v=20260921_v38"></script>
+  <script src="./js/googleConfig.js?v=20260921_v38"></script>
+  <script src="./js/cloudService.js?v=20260921_v38"></script>
+  <script src="./js/app.js?v=20260921_v38"></script>
   <script>
     let currentAuthTab = 'login';
     let otpCooldownTimer = null;
@@ -865,7 +865,8 @@
           showToast('เข้าสู่ระบบสำเร็จ กรุณาระบุข้อมูลส่วนตัวให้ครบถ้วนเพื่อเปิดใช้งานระบบ', 'info');
           setTimeout(() => location.href = 'dashboard.html?tab=profile&incomplete=1', 900);
         } else {
-          setTimeout(() => location.href = redirectUrl, 800);
+          const dest = (res.user && res.user.role === 'admin' && (redirectUrl === 'dashboard.html' || !redirectUrl)) ? 'admin.html' : redirectUrl;
+          setTimeout(() => location.href = dest, 800);
         }
       } catch(err) {
         console.error('GSI credential error:', err);
@@ -944,7 +945,8 @@
           showToast('เข้าสู่ระบบด้วย Google สำเร็จ กรุณาระบุข้อมูลส่วนตัวให้ครบถ้วนเพื่อเปิดใช้งานระบบ', 'info');
           setTimeout(() => location.href = 'dashboard.html?tab=profile&incomplete=1', 900);
         } else {
-          setTimeout(() => location.href = redirectUrl, 800);
+          const dest = (res.user && res.user.role === 'admin' && (redirectUrl === 'dashboard.html' || !redirectUrl)) ? 'admin.html' : redirectUrl;
+          setTimeout(() => location.href = dest, 800);
         }
       } catch(e) {
         showToast(e.message, 'error');

@@ -503,9 +503,22 @@
       if (!trials) {
         try {
           const stored = localStorage.getItem('inbiology_free_trials');
-          trials = stored !== null ? JSON.parse(stored) : (window.FREE_TRIALS || []);
-        } catch(e) {
-          trials = window.FREE_TRIALS || [];
+          if (stored !== null) {
+            const list = JSON.parse(stored);
+            if (Array.isArray(list) && list.length > 0) {
+              const hasDummy = list.some(x => x.videoUrl && x.videoUrl.includes('w3schools'));
+              if (!hasDummy) {
+                const defs = (typeof FREE_TRIALS !== 'undefined' ? FREE_TRIALS : (window.FREE_TRIALS || []));
+                trials = list.map(item => {
+                  const def = defs.find(d => String(d.id) === String(item.id));
+                  return def ? { ...def, ...item, sheetUrl: item.sheetUrl || def.sheetUrl, sheetTitle: item.sheetTitle || def.sheetTitle } : item;
+                });
+              }
+            }
+          }
+        } catch(e) {}
+        if (!trials) {
+          trials = (typeof FREE_TRIALS !== 'undefined' ? FREE_TRIALS : (window.FREE_TRIALS || []));
         }
       }
       const section = document.getElementById('trial');
@@ -530,7 +543,12 @@
             ` : ''}
           </div>
           <div style="padding:16px">
-            <span style="font-size:10px;font-weight:800;color:var(--c-sky);display:block;margin-bottom:4px">${ft.course}</span>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+              <span style="font-size:10px;font-weight:800;color:var(--c-sky)">${ft.course}</span>
+              ${ft.sheetUrl ? `
+                <span style="font-size:9.5px;font-weight:800;color:#166534;background:#DCFCE7;padding:2px 6px;border-radius:4px">ชีทฟรี</span>
+              ` : ''}
+            </div>
             <h4 style="font-weight:850;color:var(--c-navy);font-size:13px;margin:0;line-height:1.4">${ft.title}</h4>
           </div>
         </div>
@@ -543,9 +561,19 @@
       if (!articles) {
         try {
           const stored = localStorage.getItem('inbiology_articles');
-          articles = stored !== null ? JSON.parse(stored) : (window.ARTICLES || []);
-        } catch(e) {
-          articles = window.ARTICLES || [];
+          if (stored !== null) {
+            const list = JSON.parse(stored);
+            if (Array.isArray(list) && list.length > 0) {
+              const defs = (typeof ARTICLES !== 'undefined' ? ARTICLES : (window.ARTICLES || []));
+              articles = list.map(art => {
+                const def = defs.find(d => String(d.id) === String(art.id));
+                return def ? { ...def, ...art, documentUrl: art.documentUrl || def.documentUrl, documentName: art.documentName || def.documentName, articleUrl: art.articleUrl || def.articleUrl, summary: art.summary || def.summary, category: art.category || def.category, content: art.content || def.content } : art;
+              });
+            }
+          }
+        } catch(e) {}
+        if (!articles) {
+          articles = (typeof ARTICLES !== 'undefined' ? ARTICLES : (window.ARTICLES || []));
         }
       }
       const section = document.getElementById('articles-section');
@@ -559,23 +587,40 @@
       section.style.display = 'block';
 
       container.innerHTML = articles.map((art, idx) => `
-        <div data-reveal data-delay="${(idx % 3) * 0.08}s" style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:20px;padding:24px;cursor:pointer;position:relative;transition:all 0.25s cubic-bezier(0.16,1,0.3,1)" onmouseenter="this.style.background='white';this.style.borderColor='#CBD5E1';this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 24px rgba(0,0,0,0.06)'" onmouseleave="this.style.background='#F9FAFB';this.style.borderColor='#E5E7EB';this.style.transform='none';this.style.boxShadow='none'">
+        <div data-reveal data-delay="${(idx % 3) * 0.08}s" onclick="openArticleModal(window.findArticleItem ? window.findArticleItem('${art.id}') : ${JSON.stringify(art).replace(/"/g, '&quot;')})" style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:20px;padding:24px;cursor:pointer;position:relative;transition:all 0.25s cubic-bezier(0.16,1,0.3,1);display:flex;flex-direction:column;justify-content:space-between" onmouseenter="this.style.background='white';this.style.borderColor='#CBD5E1';this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 24px rgba(0,0,0,0.06)'" onmouseleave="this.style.background='#F9FAFB';this.style.borderColor='#E5E7EB';this.style.transform='none';this.style.boxShadow='none'">
           ${(typeof AppState !== 'undefined' && AppState.userRole === 'admin') ? `
             <a href="admin.html?edit_article=${art.id}" onclick="event.stopPropagation()" style="position:absolute;top:16px;right:16px;background:rgba(30,58,138,0.92);color:white;font-size:10px;font-weight:800;padding:4px 10px;border-radius:8px;text-decoration:none;z-index:3;display:inline-flex;align-items:center;gap:4px;box-shadow:0 4px 10px rgba(0,0,0,0.15)">
               แก้ไข
             </a>
           ` : ''}
-          <span style="font-size:11px;font-weight:800;color:var(--c-sky);display:block;margin-bottom:6px">${art.date}</span>
-          <h4 style="font-size:14px;font-weight:850;color:var(--c-navy);margin:0 0 14px;line-height:1.45;padding-right:36px">${art.title}</h4>
-          <div style="display:flex;justify-content:space-between;font-size:11px;color:#94A3B8;font-weight:700">
-            <span style="display:inline-flex;align-items:center;gap:5px">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-              ${art.views} ยอดอ่าน
-            </span>
-            <span style="display:inline-flex;align-items:center;gap:5px">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              ใช้เวลาอ่าน ${art.readTime}
-            </span>
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <span style="font-size:10.5px;font-weight:900;background:#EFF6FF;color:#1E40AF;padding:3px 8px;border-radius:6px;border:1px solid #DBEAFE">${art.category || 'สรุปเนื้อหา'}</span>
+              <span style="font-size:11px;font-weight:700;color:#64748B">${art.date}</span>
+            </div>
+            <h4 style="font-size:15px;font-weight:850;color:var(--c-navy);margin:0 0 8px;line-height:1.45;padding-right:36px">${art.title}</h4>
+            <p style="font-size:12.5px;color:#4B5563;line-height:1.6;margin:0 0 16px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${art.summary || 'คลิกเพื่ออ่านบทความสรุปชีววิทยาและดาวน์โหลดเอกสารประกอบ'}</p>
+          </div>
+
+          <div>
+            ${art.documentUrl ? `
+              <div style="margin-bottom:12px">
+                <a href="${art.documentUrl}" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;background:#F0FDF4;color:#166534;border:1px solid #BBF7D0;padding:6px 12px;border-radius:8px;text-decoration:none">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  <span>ดาวน์โหลดชีท (PDF)</span>
+                </a>
+              </div>
+            ` : ''}
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:#94A3B8;font-weight:700;border-top:1px solid #F1F5F9;padding-top:12px">
+              <span style="display:inline-flex;align-items:center;gap:5px">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                ${art.views || 0} ยอดอ่าน
+              </span>
+              <span style="display:inline-flex;align-items:center;gap:5px">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                ใช้เวลาอ่าน ${art.readTime || '5 นาที'}
+              </span>
+            </div>
           </div>
         </div>
       `).join('');
@@ -684,16 +729,24 @@
         (async () => {
           try {
             const cloudTrials = await window.CloudService.fetchSiteContent('free_trials');
-            if (cloudTrials && Array.isArray(cloudTrials)) {
-              localStorage.setItem('inbiology_free_trials', JSON.stringify(cloudTrials));
-              window.renderFreeTrials(cloudTrials);
+            if (cloudTrials && Array.isArray(cloudTrials) && cloudTrials.length > 0) {
+              const hasDummy = cloudTrials.some(x => x.videoUrl && x.videoUrl.includes('w3schools'));
+              if (!hasDummy) {
+                localStorage.setItem('inbiology_free_trials', JSON.stringify(cloudTrials));
+                window.renderFreeTrials(cloudTrials);
+              }
             }
           } catch(e) {}
           try {
             const cloudArticles = await window.CloudService.fetchSiteContent('articles');
-            if (cloudArticles && Array.isArray(cloudArticles)) {
-              localStorage.setItem('inbiology_articles', JSON.stringify(cloudArticles));
-              window.renderArticles(cloudArticles);
+            if (cloudArticles && Array.isArray(cloudArticles) && cloudArticles.length > 0) {
+              const defs = (typeof ARTICLES !== 'undefined' ? ARTICLES : (window.ARTICLES || []));
+              const mergedArticles = cloudArticles.map(art => {
+                const def = defs.find(d => String(d.id) === String(art.id));
+                return def ? { ...def, ...art, documentUrl: art.documentUrl || def.documentUrl, documentName: art.documentName || def.documentName, articleUrl: art.articleUrl || def.articleUrl, summary: art.summary || def.summary, category: art.category || def.category, content: art.content || def.content } : art;
+              });
+              localStorage.setItem('inbiology_articles', JSON.stringify(mergedArticles));
+              window.renderArticles(mergedArticles);
             }
           } catch(e) {}
         })();

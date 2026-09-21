@@ -410,22 +410,27 @@
             </div>
             <p style="font-size:12.5px;color:#64748B;margin:0">กำหนดคลิปตัวอย่างและบทเรียนทดลองเรียนฟรีบนหน้าแรก หากลบจนหมด (0 รายการ) ส่วนนี้จะถูกซ่อนจากหน้าแรกโดยอัตโนมัติ</p>
           </div>
-          <button type="button" onclick="openAddTrialModal()" style="background:#1E3A8A;color:white;border:none;border-radius:12px;padding:10px 18px;font-size:13px;font-weight:850;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(30,58,138,0.2)">
-            + เพิ่มวิดีโอทดลองเรียน
-          </button>
+          <div style="display:flex;align-items:center;gap:10px">
+            <button type="button" onclick="resetDefaultTrials()" style="background:#F1F5F9;color:#475569;border:1px solid #CBD5E1;border-radius:12px;padding:10px 16px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+              🔄 คืนค่าวิดีโอทดลองเรียนมาตรฐาน
+            </button>
+            <button type="button" onclick="openAddTrialModal()" style="background:#1E3A8A;color:white;border:none;border-radius:12px;padding:10px 18px;font-size:13px;font-weight:850;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(30,58,138,0.2)">
+              + เพิ่มวิดีโอทดลองเรียน
+            </button>
+          </div>
         </div>
 
         <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden">
           <div class="admin-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%">
-            <table style="width:100%;min-width:760px;border-collapse:collapse;font-size:12px">
+            <table style="width:100%;min-width:860px;border-collapse:collapse;font-size:12px">
               <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
                 <tr>
-                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280;width:70px">ปก</th>
-                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ชื่อคลิปทดลองเรียน</th>
-                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">คอร์สที่เกี่ยวข้อง</th>
+                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280;width:60px">ปก</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ชื่อคลิปทดลองเรียน & คอร์ส</th>
                   <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280;width:90px">ความยาว</th>
-                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ลิงก์วิดีโอ</th>
-                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280;width:150px">การจัดการ</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280;width:240px">วิดีโอ & เล่นทดสอบ</th>
+                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280;width:130px">ชีทเรียนฟรี</th>
+                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280;width:140px">การจัดการ</th>
                 </tr>
               </thead>
               <tbody id="admin-trials-table"></tbody>
@@ -444,23 +449,29 @@
               </span>
               <h3 style="font-size:17px;font-weight:900;color:var(--c-navy);margin:0">จัดการคลังความรู้และบทความชีวะ</h3>
             </div>
-            <p style="font-size:12.5px;color:#64748B;margin:0">สร้างและปรับปรุงบทความวิชาการบนหน้าแรก หากลบจนหมด (0 รายการ) ส่วนนี้จะถูกซ่อนจากหน้าแรกโดยอัตโนมัติ</p>
+            <p style="font-size:12.5px;color:#64748B;margin:0">สร้างและปรับปรุงบทความวิชาการ แนบไฟล์เอกสาร/ชีทสรุป PDF และลิงก์อ้างอิงภายนอก</p>
           </div>
-          <button type="button" onclick="openAddArticleModal()" style="background:#1E3A8A;color:white;border:none;border-radius:12px;padding:10px 18px;font-size:13px;font-weight:850;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(30,58,138,0.2)">
-            + เพิ่มบทความใหม่
-          </button>
+          <div style="display:flex;align-items:center;gap:10px">
+            <button type="button" onclick="resetDefaultArticles()" style="background:#F1F5F9;color:#475569;border:1px solid #CBD5E1;border-radius:12px;padding:10px 16px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+              🔄 คืนค่าบทความมาตรฐาน
+            </button>
+            <button type="button" onclick="openAddArticleModal()" style="background:#1E3A8A;color:white;border:none;border-radius:12px;padding:10px 18px;font-size:13px;font-weight:850;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(30,58,138,0.2)">
+              + เพิ่มบทความใหม่
+            </button>
+          </div>
         </div>
 
         <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden">
           <div class="admin-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%">
-            <table style="width:100%;min-width:700px;border-collapse:collapse;font-size:12px">
+            <table style="width:100%;min-width:880px;border-collapse:collapse;font-size:12px">
               <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
                 <tr>
-                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280;width:120px">วันที่</th>
-                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">หัวข้อบทความ</th>
-                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280;width:110px">ยอดอ่าน</th>
-                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280;width:120px">เวลาอ่าน</th>
-                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280;width:150px">การจัดการ</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280;width:110px">วันที่</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">หัวข้อบทความ & หมวดหมู่</th>
+                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280;width:130px">เอกสารแนบ</th>
+                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280;width:120px">ลิงก์ภายนอก</th>
+                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280;width:140px">ยอดอ่าน / เวลา</th>
+                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280;width:170px">การจัดการ</th>
                 </tr>
               </thead>
               <tbody id="admin-articles-table"></tbody>
@@ -878,7 +889,7 @@
 
   <!-- Admin Free Trial Video Modal -->
   <div id="admin-trial-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;padding:16px;box-sizing:border-box">
-    <div style="background:white;border-radius:24px;width:100%;max-width:min(540px,calc(100vw - 32px));padding:28px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);position:relative;box-sizing:border-box">
+    <div style="background:white;border-radius:24px;width:100%;max-width:min(600px,calc(100vw - 32px));max-height:90vh;overflow-y:auto;padding:28px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);position:relative;box-sizing:border-box">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border-bottom:1px solid #F3F4F6;padding-bottom:12px">
         <h3 id="admin-trial-modal-title" style="font-size:18px;font-weight:900;color:var(--c-navy);margin:0">เพิ่มวิดีโอทดลองเรียนฟรี</h3>
         <button type="button" onclick="closeTrialModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#9CA3AF">✕</button>
@@ -888,13 +899,13 @@
         <input type="hidden" id="admin-trial-id" />
 
         <div>
-          <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">ชื่อคลิปทดลองเรียน</label>
+          <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">ชื่อคลิปทดลองเรียน <span style="color:#EF4444">*</span></label>
           <input type="text" id="admin-trial-title" placeholder="เช่น คลิปทดลองเรียน Bio Intensive I: โครงสร้างเซลล์" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
           <div>
-            <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">คอร์สที่เกี่ยวข้อง</label>
+            <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">คอร์สที่เกี่ยวข้อง <span style="color:#EF4444">*</span></label>
             <input type="text" id="admin-trial-course" placeholder="เช่น Bio Intensive I" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
           </div>
           <div>
@@ -913,8 +924,32 @@
         </div>
 
         <div>
-          <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">ลิงก์วิดีโอ (YouTube URL หรือไฟล์ MP4)</label>
-          <input type="text" id="admin-trial-videourl" placeholder="https://www.youtube.com/watch?v=... หรือ https://...mp4" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <label style="font-size:11px;font-weight:800;color:#374151">ลิงก์วิดีโอ (YouTube URL หรือไฟล์ MP4) <span style="color:#EF4444">*</span></label>
+            <button type="button" onclick="testPlayCurrentTrialInput()" style="background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE;padding:3px 8px;border-radius:6px;font-size:10.5px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
+              ▶ ทดสอบเล่นคลิปนี้
+            </button>
+          </div>
+          <input type="text" id="admin-trial-videourl" placeholder="เช่น https://www.youtube.com/watch?v=URUJD5NEXC8" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
+          <span style="display:block;font-size:10.5px;color:#64748B;margin-top:3px">รองรับทั้ง YouTube (watch/embed/short) และลิงก์ไฟล์ตรง (.mp4)</span>
+        </div>
+
+        <!-- Attached Free Study Sheet -->
+        <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:14px">📄</span>
+            <strong style="font-size:12px;color:#166534">เอกสาร / ชีทสรุปประกอบคลิปฟรี (Study Sheet)</strong>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div>
+              <label style="display:block;font-size:10.5px;font-weight:800;color:#166534;margin-bottom:3px">ลิงก์ดาวน์โหลดชีท (PDF / Google Drive)</label>
+              <input type="text" id="admin-trial-sheet-url" placeholder="https://drive.google.com/..." style="width:100%;border:1px solid #86EFAC;border-radius:8px;padding:8px 10px;font-size:11.5px;outline:none;background:white" />
+            </div>
+            <div>
+              <label style="display:block;font-size:10.5px;font-weight:800;color:#166534;margin-bottom:3px">ชื่อไฟล์ชีทเรียน</label>
+              <input type="text" id="admin-trial-sheet-title" placeholder="เช่น ชีทสรุปโครงสร้างเซลล์.pdf" style="width:100%;border:1px solid #86EFAC;border-radius:8px;padding:8px 10px;font-size:11.5px;outline:none;background:white" />
+            </div>
+          </div>
         </div>
 
         <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:10px">
@@ -927,9 +962,9 @@
 
   <!-- Admin Article Modal -->
   <div id="admin-article-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;padding:16px;box-sizing:border-box">
-    <div style="background:white;border-radius:24px;width:100%;max-width:min(540px,calc(100vw - 32px));padding:28px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);position:relative;box-sizing:border-box">
+    <div style="background:white;border-radius:24px;width:100%;max-width:min(660px,calc(100vw - 32px));max-height:90vh;overflow-y:auto;padding:28px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);position:relative;box-sizing:border-box">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border-bottom:1px solid #F3F4F6;padding-bottom:12px">
-        <h3 id="admin-article-modal-title" style="font-size:18px;font-weight:900;color:var(--c-navy);margin:0">เพิ่มบทความใหม่</h3>
+        <h3 id="admin-article-modal-title" style="font-size:18px;font-weight:900;color:var(--c-navy);margin:0">เพิ่มบทความชีวะใหม่</h3>
         <button type="button" onclick="closeArticleModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#9CA3AF">✕</button>
       </div>
 
@@ -937,11 +972,28 @@
         <input type="hidden" id="admin-article-id" />
 
         <div>
-          <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">หัวข้อบทความ</label>
-          <input type="text" id="admin-article-title" placeholder="เช่น สรุป 10 จุดสำคัญเรื่องการสังเคราะห์ด้วยแสง" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
+          <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">หัวข้อบทความ <span style="color:#EF4444">*</span></label>
+          <input type="text" id="admin-article-title" placeholder="เช่น สรุป 10 จุดสำคัญเรื่องการสังเคราะห์ด้วยแสง (Photosynthesis)" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">หมวดหมู่บทความ</label>
+            <select id="admin-article-category" style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none;background:white">
+              <option value="สรุปเนื้อหา">สรุปเนื้อหา</option>
+              <option value="ข้อสอบชีวะ">ข้อสอบชีวะ</option>
+              <option value="เทคนิค Mind Map">เทคนิค Mind Map</option>
+              <option value="แล็บชีววิทยา">แล็บชีววิทยา</option>
+              <option value="แนะแนวสอบ">แนะแนวสอบ</option>
+            </select>
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">ผู้เขียน / ผู้เรียบเรียง</label>
+            <input type="text" id="admin-article-author" placeholder="พี่ต้น INBIOLOGY" style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
           <div>
             <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">วันที่เผยแพร่</label>
             <input type="text" id="admin-article-date" placeholder="เช่น 21 ก.ย. 2026" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
@@ -950,11 +1002,50 @@
             <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">เวลาในการอ่าน</label>
             <input type="text" id="admin-article-readtime" placeholder="เช่น 5 นาที" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
           </div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">ยอดอ่าน (ครั้ง)</label>
+            <input type="number" id="admin-article-views" placeholder="1250" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
+          </div>
         </div>
 
         <div>
-          <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">ยอดอ่าน (ครั้ง)</label>
-          <input type="number" id="admin-article-views" placeholder="1250" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
+          <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">สรุปย่อบทความ (แสดงบนการ์ดหน้าแรก)</label>
+          <textarea id="admin-article-summary" rows="2" placeholder="สรุปเนื้อหาคร่าวๆ 2-3 บรรทัด เพื่อให้นักเรียนเข้าใจภาพรวมก่อนกดอ่าน..." style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none;resize:vertical"></textarea>
+        </div>
+
+        <div>
+          <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">เนื้อหาบทความฉบับเต็ม</label>
+          <textarea id="admin-article-content" rows="4" placeholder="เขียนเนื้อหาบทความ รายละเอียดวิชาการ ข้อควรระวัง หรือประเด็นออกสอบ..." style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none;resize:vertical"></textarea>
+        </div>
+
+        <!-- Document Attachment Section -->
+        <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:14px">📥</span>
+            <strong style="font-size:12px;color:#166534">เอกสารแนบ / ชีทสรุป PDF (เปิดให้นักเรียนดาวน์โหลดฟรี)</strong>
+          </div>
+          <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:10px">
+            <div>
+              <label style="display:block;font-size:10.5px;font-weight:800;color:#166534;margin-bottom:3px">ลิงก์ดาวน์โหลดเอกสาร (Google Drive / OneDrive / Cloud)</label>
+              <input type="text" id="admin-article-doc-url" placeholder="https://drive.google.com/file/d/.../view" style="width:100%;border:1px solid #86EFAC;border-radius:8px;padding:8px 10px;font-size:11.5px;outline:none;background:white" />
+            </div>
+            <div>
+              <label style="display:block;font-size:10.5px;font-weight:800;color:#166534;margin-bottom:3px">ชื่อไฟล์เอกสาร</label>
+              <input type="text" id="admin-article-doc-name" placeholder="เช่น ชีทสรุป_Photosynthesis.pdf" style="width:100%;border:1px solid #86EFAC;border-radius:8px;padding:8px 10px;font-size:11.5px;outline:none;background:white" />
+            </div>
+          </div>
+        </div>
+
+        <!-- External Link & Image Section -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">ลิงก์บทความภายนอก / แหล่งอ้างอิง</label>
+            <input type="text" id="admin-article-url" placeholder="https://... หรือ courses.html" style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">ลิงก์รูปภาพประกอบ (Image URL)</label>
+            <input type="text" id="admin-article-image" placeholder="./course-cover-3.jpg หรือ https://..." style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
+          </div>
         </div>
 
         <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:10px">
@@ -1341,14 +1432,36 @@
     <div id="yt-duration-detector-player"></div>
   </div>
 
-  <script src="./js/mockData.js?v=20260921_v37"></script>
-  <script src="./js/supabaseConfig.js?v=20260921_v37"></script>
-  <script src="./js/cloudService.js?v=20260921_v37"></script>
-  <script src="./js/app.js?v=20260921_v37"></script>
+  <script src="./js/mockData.js?v=20260921_v38"></script>
+  <script src="./js/supabaseConfig.js?v=20260921_v38"></script>
+  <script src="./js/cloudService.js?v=20260921_v38"></script>
+  <script src="./js/app.js?v=20260921_v38"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // 🔒 AUTH GUARD: Only admin can access admin dashboard
-      if (AppState.userRole !== 'admin') {
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 🔒 AUTH GUARD: Only admin can access admin dashboard (with real-time Cloud Verification)
+      let currentRole = AppState.userRole;
+      const profile = AppState.getStudentProfile();
+      const currentEmail = profile ? profile.email : (localStorage.getItem('inbiology_user_email') || '');
+
+      if (currentRole !== 'admin' && currentEmail && window.CloudService && typeof window.CloudService.fetchUserRole === 'function') {
+        try {
+          const verifiedRole = await window.CloudService.fetchUserRole(currentEmail);
+          if (verifiedRole === 'admin') {
+            AppState.userRole = 'admin';
+            localStorage.setItem('inbiology_role', 'admin');
+            if (profile) {
+              profile.role = 'admin';
+              AppState.saveStudentProfile(profile);
+            }
+            currentRole = 'admin';
+            console.log('🛡️ [Admin Access Granted] Verified admin role from Cloud for:', currentEmail);
+          }
+        } catch(e) {
+          console.warn('Realtime role check note:', e);
+        }
+      }
+
+      if (currentRole !== 'admin') {
         alert('⛔ เฉพาะแอดมินผู้ดูแลระบบเท่านั้นที่สามารถเข้าถึงหน้านี้ได้');
         window.location.replace('login.html?redirect=admin.html&switch=1');
         return;
@@ -1591,9 +1704,35 @@
     function getTrialsData() {
       try {
         const stored = localStorage.getItem('inbiology_free_trials');
-        if (stored !== null) return JSON.parse(stored);
+        if (stored !== null) {
+          const list = JSON.parse(stored);
+          if (Array.isArray(list) && list.length > 0) {
+            // Auto-upgrade if old items use dummy w3schools or lack sheet attachments
+            const hasDummy = list.some(x => x.videoUrl && x.videoUrl.includes('w3schools'));
+            if (!hasDummy) {
+              const defs = (typeof FREE_TRIALS !== 'undefined' ? FREE_TRIALS : (window.FREE_TRIALS || []));
+              return list.map(item => {
+                const def = defs.find(d => String(d.id) === String(item.id));
+                return def ? { ...def, ...item, sheetUrl: item.sheetUrl || def.sheetUrl, sheetTitle: item.sheetTitle || def.sheetTitle } : item;
+              });
+            }
+          }
+        }
       } catch(e) {}
-      return (typeof FREE_TRIALS !== 'undefined' ? FREE_TRIALS : (window.FREE_TRIALS || []));
+      const defs = (typeof FREE_TRIALS !== 'undefined' ? FREE_TRIALS : (window.FREE_TRIALS || []));
+      try { localStorage.setItem('inbiology_free_trials', JSON.stringify(defs)); } catch(e){}
+      return defs;
+    }
+
+    function resetDefaultTrials() {
+      if (!confirm('คุณต้องการรีเซ็ตวิดีโอทดลองเรียนกลับเป็นชุดมาตรฐานของพี่ต้น (วิดีโอ YouTube ตรวจสอบแล้ว พร้อมชีทเรียน) ใช่หรือไม่?')) return;
+      const defs = (typeof FREE_TRIALS !== 'undefined' ? FREE_TRIALS : (window.FREE_TRIALS || []));
+      localStorage.setItem('inbiology_free_trials', JSON.stringify(defs));
+      if (window.CloudService && typeof window.CloudService.saveSiteContent === 'function') {
+        window.CloudService.saveSiteContent('free_trials', defs).catch(err => console.warn(err));
+      }
+      renderAdminTrials();
+      showToast('🔄 คืนค่าวิดีโอทดลองเรียนมาตรฐานเรียบร้อยแล้ว', 'success');
     }
 
     async function renderAdminTrials() {
@@ -1607,28 +1746,49 @@
         return;
       }
 
-      tableEl.innerHTML = adminTrialsCache.map(ft => `
-        <tr style="border-bottom:1px solid #F3F4F6">
-          <td style="padding:12px 16px;text-align:center">
-            <img src="${ft.imageUrl || './course-cover-1.png'}" style="width:42px;height:42px;object-fit:cover;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.1)" alt="" />
-          </td>
-          <td style="padding:12px 16px;font-weight:700;color:var(--c-navy)">${ft.title}</td>
-          <td style="padding:12px 16px"><span style="background:#EFF6FF;color:#1E40AF;padding:3px 8px;border-radius:6px;font-weight:800;font-size:11px">${ft.course}</span></td>
-          <td style="padding:12px 16px;text-align:center;font-weight:800;color:#1E3A8A">${ft.duration}</td>
-          <td style="padding:12px 16px">
-            <a href="${ft.videoUrl}" target="_blank" style="color:#2563EB;text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:4px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${ft.videoUrl}">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-              ${ft.videoUrl}
-            </a>
-          </td>
-          <td style="padding:12px 16px;text-align:center">
-            <div style="display:flex;align-items:center;justify-content:center;gap:6px">
-              <button type="button" onclick="openEditTrialModal('${ft.id}')" style="background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE;padding:5px 10px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer">แก้ไข</button>
-              <button type="button" onclick="deleteTrialItem('${ft.id}')" style="background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;padding:5px 10px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer">ลบ</button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
+      tableEl.innerHTML = adminTrialsCache.map(ft => {
+        const safeTitle = (ft.title || '').replace(/'/g, "\\'");
+        const encodedUrl = encodeURIComponent(ft.videoUrl || '');
+        const sheetBadge = ft.sheetUrl ? `
+          <a href="${ft.sheetUrl}" target="_blank" rel="noopener noreferrer" style="background:#F0FDF4;color:#166534;border:1px solid #BBF7D0;padding:4px 8px;border-radius:6px;font-weight:800;font-size:10.5px;text-decoration:none;display:inline-flex;align-items:center;gap:4px" title="${ft.sheetTitle || 'ชีทเรียน'}">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span>มีชีทเรียน</span>
+          </a>
+        ` : `<span style="color:#94A3B8;font-size:11px">-</span>`;
+
+        return `
+          <tr style="border-bottom:1px solid #F3F4F6">
+            <td style="padding:12px 16px;text-align:center">
+              <img src="${ft.imageUrl || './course-cover-1.png'}" style="width:44px;height:44px;object-fit:cover;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.1)" alt="" />
+            </td>
+            <td style="padding:12px 16px">
+              <div style="font-weight:800;color:var(--c-navy);line-height:1.35">${ft.title}</div>
+              <span style="background:#EFF6FF;color:#1E40AF;padding:2px 8px;border-radius:5px;font-weight:800;font-size:10px;display:inline-block;margin-top:4px">${ft.course}</span>
+            </td>
+            <td style="padding:12px 16px;text-align:center;font-weight:800;color:#1E3A8A">${ft.duration}</td>
+            <td style="padding:12px 16px">
+              <div style="display:flex;align-items:center;gap:8px">
+                <button type="button" onclick="testPlayVideoModal('${encodedUrl}', '${safeTitle}')" style="background:#1E3A8A;color:white;border:none;padding:5px 10px;border-radius:6px;font-weight:850;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;box-shadow:0 2px 6px rgba(30,58,138,0.2)">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                  <span>ทดสอบเล่น</span>
+                </button>
+                <a href="${ft.videoUrl}" target="_blank" style="color:#64748B;text-decoration:none;font-size:11px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block" title="${ft.videoUrl}">
+                  ${ft.videoUrl}
+                </a>
+              </div>
+            </td>
+            <td style="padding:12px 16px;text-align:center">
+              ${sheetBadge}
+            </td>
+            <td style="padding:12px 16px;text-align:center">
+              <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+                <button type="button" onclick="openEditTrialModal('${ft.id}')" style="background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE;padding:5px 10px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer">แก้ไข</button>
+                <button type="button" onclick="deleteTrialItem('${ft.id}')" style="background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;padding:5px 10px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer">ลบ</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
     function openAddTrialModal() {
@@ -1639,6 +1799,8 @@
       document.getElementById('admin-trial-duration').value = '40 นาที';
       document.getElementById('admin-trial-image').value = './course-cover-1.png';
       document.getElementById('admin-trial-videourl').value = '';
+      document.getElementById('admin-trial-sheet-url').value = '';
+      document.getElementById('admin-trial-sheet-title').value = '';
       document.getElementById('admin-trial-modal').style.display = 'flex';
     }
 
@@ -1652,7 +1814,20 @@
       document.getElementById('admin-trial-duration').value = item.duration;
       document.getElementById('admin-trial-image').value = item.imageUrl || './course-cover-1.png';
       document.getElementById('admin-trial-videourl').value = item.videoUrl || '';
+      document.getElementById('admin-trial-sheet-url').value = item.sheetUrl || '';
+      document.getElementById('admin-trial-sheet-title').value = item.sheetTitle || '';
       document.getElementById('admin-trial-modal').style.display = 'flex';
+    }
+
+    function testPlayCurrentTrialInput() {
+      const url = document.getElementById('admin-trial-videourl').value.trim();
+      const title = document.getElementById('admin-trial-title').value.trim() || 'ตัวอย่างคลิปทดลองเรียน';
+      if (!url) {
+        alert('กรุณากรอกลิงก์วิดีโอ YouTube หรือไฟล์ MP4 ก่อนทดสอบเล่น');
+        document.getElementById('admin-trial-videourl').focus();
+        return;
+      }
+      testPlayVideoModal(encodeURIComponent(url), title);
     }
 
     function closeTrialModal() {
@@ -1677,16 +1852,18 @@
       const duration = document.getElementById('admin-trial-duration').value.trim();
       const imageUrl = document.getElementById('admin-trial-image').value.trim() || './course-cover-1.png';
       const videoUrl = document.getElementById('admin-trial-videourl').value.trim();
+      const sheetUrl = document.getElementById('admin-trial-sheet-url').value.trim();
+      const sheetTitle = document.getElementById('admin-trial-sheet-title').value.trim();
 
       let trials = getTrialsData();
       if (id) {
         const idx = trials.findIndex(x => String(x.id) === String(id));
         if (idx >= 0) {
-          trials[idx] = { ...trials[idx], title, course, duration, imageUrl, videoUrl };
+          trials[idx] = { ...trials[idx], title, course, duration, imageUrl, videoUrl, sheetUrl, sheetTitle };
         }
       } else {
         const newId = 'ft_' + Date.now();
-        trials.push({ id: newId, title, course, duration, imageUrl, videoUrl });
+        trials.push({ id: newId, title, course, duration, imageUrl, videoUrl, sheetUrl, sheetTitle });
       }
 
       localStorage.setItem('inbiology_free_trials', JSON.stringify(trials));
@@ -1716,9 +1893,31 @@
     function getArticlesData() {
       try {
         const stored = localStorage.getItem('inbiology_articles');
-        if (stored !== null) return JSON.parse(stored);
+        if (stored !== null) {
+          const list = JSON.parse(stored);
+          if (Array.isArray(list) && list.length > 0) {
+            const defs = (typeof ARTICLES !== 'undefined' ? ARTICLES : (window.ARTICLES || []));
+            return list.map(art => {
+              const def = defs.find(d => String(d.id) === String(art.id));
+              return def ? { ...def, ...art, documentUrl: art.documentUrl || def.documentUrl, documentName: art.documentName || def.documentName, articleUrl: art.articleUrl || def.articleUrl, summary: art.summary || def.summary, category: art.category || def.category, content: art.content || def.content } : art;
+            });
+          }
+        }
       } catch(e) {}
-      return (typeof ARTICLES !== 'undefined' ? ARTICLES : (window.ARTICLES || []));
+      const defs = (typeof ARTICLES !== 'undefined' ? ARTICLES : (window.ARTICLES || []));
+      try { localStorage.setItem('inbiology_articles', JSON.stringify(defs)); } catch(e){}
+      return defs;
+    }
+
+    function resetDefaultArticles() {
+      if (!confirm('คุณต้องการรีเซ็ตบทความกลับเป็นชุดมาตรฐาน (พร้อมเอกสารชีท PDF ดาวน์โหลดฟรี) ใช่หรือไม่?')) return;
+      const defs = (typeof ARTICLES !== 'undefined' ? ARTICLES : (window.ARTICLES || []));
+      localStorage.setItem('inbiology_articles', JSON.stringify(defs));
+      if (window.CloudService && typeof window.CloudService.saveSiteContent === 'function') {
+        window.CloudService.saveSiteContent('articles', defs).catch(err => console.warn(err));
+      }
+      renderAdminArticles();
+      showToast('🔄 คืนค่าบทความมาตรฐานเรียบร้อยแล้ว', 'success');
     }
 
     async function renderAdminArticles() {
@@ -1728,36 +1927,71 @@
       adminArticlesCache = getArticlesData();
 
       if (!adminArticlesCache || adminArticlesCache.length === 0) {
-        tableEl.innerHTML = `<tr><td colspan="5" style="padding:28px;text-align:center;color:#94A3B8;font-size:13px">ยังไม่มีบทความชีวะในระบบ (ระบบจะซ่อนส่วนนี้จากหน้าแรกโดยอัตโนมัติเมื่อไม่มีข้อมูล)</td></tr>`;
+        tableEl.innerHTML = `<tr><td colspan="6" style="padding:28px;text-align:center;color:#94A3B8;font-size:13px">ยังไม่มีบทความชีวะในระบบ (ระบบจะซ่อนส่วนนี้จากหน้าแรกโดยอัตโนมัติเมื่อไม่มีข้อมูล)</td></tr>`;
         return;
       }
 
-      tableEl.innerHTML = adminArticlesCache.map(art => `
-        <tr style="border-bottom:1px solid #F3F4F6">
-          <td style="padding:12px 16px;color:#64748B;font-weight:600">${art.date}</td>
-          <td style="padding:12px 16px;font-weight:700;color:var(--c-navy)">${art.title}</td>
-          <td style="padding:12px 16px;text-align:center;font-weight:800;color:#1E40AF">${art.views || 0} ครั้ง</td>
-          <td style="padding:12px 16px;text-align:center;color:#64748B">${art.readTime}</td>
-          <td style="padding:12px 16px;text-align:center">
-            <div style="display:flex;align-items:center;justify-content:center;gap:6px">
-              <button type="button" onclick="openEditArticleModal('${art.id}')" style="background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE;padding:5px 10px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer">แก้ไข</button>
-              <button type="button" onclick="deleteArticleItem('${art.id}')" style="background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;padding:5px 10px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer">ลบ</button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
+      tableEl.innerHTML = adminArticlesCache.map(art => {
+        const docBadge = art.documentUrl ? `
+          <a href="${art.documentUrl}" target="_blank" rel="noopener noreferrer" style="background:#F0FDF4;color:#166534;border:1px solid #BBF7D0;padding:4px 8px;border-radius:6px;font-weight:800;font-size:10.5px;text-decoration:none;display:inline-flex;align-items:center;gap:4px" title="${art.documentName || 'เอกสารประกอบ'}">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span>มีเอกสาร PDF</span>
+          </a>
+        ` : `<span style="color:#94A3B8;font-size:11px">-</span>`;
+
+        const extBadge = art.articleUrl ? `
+          <a href="${art.articleUrl}" target="_blank" rel="noopener noreferrer" style="background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE;padding:4px 8px;border-radius:6px;font-weight:800;font-size:10.5px;text-decoration:none;display:inline-flex;align-items:center;gap:4px" title="${art.articleUrl}">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            <span>มีลิงก์</span>
+          </a>
+        ` : `<span style="color:#94A3B8;font-size:11px">-</span>`;
+
+        return `
+          <tr style="border-bottom:1px solid #F3F4F6">
+            <td style="padding:12px 16px;color:#64748B;font-weight:600">${art.date}</td>
+            <td style="padding:12px 16px">
+              <div style="font-weight:800;color:var(--c-navy);line-height:1.4">${art.title}</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+                <span style="background:#EFF6FF;color:#1E40AF;padding:2px 7px;border-radius:5px;font-weight:800;font-size:10px">${art.category || 'สรุปเนื้อหา'}</span>
+                <span style="font-size:11px;color:#64748B">${art.author || 'พี่ต้น INBIOLOGY'}</span>
+              </div>
+            </td>
+            <td style="padding:12px 16px;text-align:center">${docBadge}</td>
+            <td style="padding:12px 16px;text-align:center">${extBadge}</td>
+            <td style="padding:12px 16px;text-align:center">
+              <div style="font-weight:800;color:#1E40AF">${art.views || 0} ครั้ง</div>
+              <div style="font-size:11px;color:#64748B">${art.readTime || '5 นาที'}</div>
+            </td>
+            <td style="padding:12px 16px;text-align:center">
+              <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+                <button type="button" onclick="openArticleModal(window.findArticleItem ? window.findArticleItem('${art.id}') : ${JSON.stringify(art).replace(/"/g, '&quot;')})" style="background:#F8FAFC;color:#334155;border:1px solid #CBD5E1;padding:5px 9px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer" title="ดูตัวอย่างบทความ">👁 ดูตัวอย่าง</button>
+                <button type="button" onclick="openEditArticleModal('${art.id}')" style="background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE;padding:5px 9px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer">แก้ไข</button>
+                <button type="button" onclick="deleteArticleItem('${art.id}')" style="background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;padding:5px 9px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer">ลบ</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
     function openAddArticleModal() {
       document.getElementById('admin-article-modal-title').textContent = 'เพิ่มบทความชีวะใหม่';
       document.getElementById('admin-article-id').value = '';
       document.getElementById('admin-article-title').value = '';
+      document.getElementById('admin-article-category').value = 'สรุปเนื้อหา';
+      document.getElementById('admin-article-author').value = 'พี่ต้น INBIOLOGY';
       const now = new Date();
       const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
       const dateStr = `${now.getDate()} ${thaiMonths[now.getMonth()]} ${now.getFullYear() + 543}`;
       document.getElementById('admin-article-date').value = dateStr;
       document.getElementById('admin-article-readtime').value = '5 นาที';
       document.getElementById('admin-article-views').value = '100';
+      document.getElementById('admin-article-summary').value = '';
+      document.getElementById('admin-article-content').value = '';
+      document.getElementById('admin-article-doc-url').value = '';
+      document.getElementById('admin-article-doc-name').value = '';
+      document.getElementById('admin-article-url').value = '';
+      document.getElementById('admin-article-image').value = '';
       document.getElementById('admin-article-modal').style.display = 'flex';
     }
 
@@ -1767,9 +2001,17 @@
       document.getElementById('admin-article-modal-title').textContent = 'แก้ไขบทความชีวะ';
       document.getElementById('admin-article-id').value = item.id;
       document.getElementById('admin-article-title').value = item.title;
+      document.getElementById('admin-article-category').value = item.category || 'สรุปเนื้อหา';
+      document.getElementById('admin-article-author').value = item.author || 'พี่ต้น INBIOLOGY';
       document.getElementById('admin-article-date').value = item.date;
       document.getElementById('admin-article-readtime').value = item.readTime;
       document.getElementById('admin-article-views').value = item.views || 0;
+      document.getElementById('admin-article-summary').value = item.summary || '';
+      document.getElementById('admin-article-content').value = item.content || '';
+      document.getElementById('admin-article-doc-url').value = item.documentUrl || '';
+      document.getElementById('admin-article-doc-name').value = item.documentName || '';
+      document.getElementById('admin-article-url').value = item.articleUrl || '';
+      document.getElementById('admin-article-image').value = item.imageUrl || '';
       document.getElementById('admin-article-modal').style.display = 'flex';
     }
 
@@ -1781,19 +2023,27 @@
       e.preventDefault();
       const id = document.getElementById('admin-article-id').value;
       const title = document.getElementById('admin-article-title').value.trim();
+      const category = document.getElementById('admin-article-category').value.trim() || 'สรุปเนื้อหา';
+      const author = document.getElementById('admin-article-author').value.trim() || 'พี่ต้น INBIOLOGY';
       const date = document.getElementById('admin-article-date').value.trim();
       const readTime = document.getElementById('admin-article-readtime').value.trim();
       const views = parseInt(document.getElementById('admin-article-views').value, 10) || 0;
+      const summary = document.getElementById('admin-article-summary').value.trim();
+      const content = document.getElementById('admin-article-content').value.trim();
+      const documentUrl = document.getElementById('admin-article-doc-url').value.trim();
+      const documentName = document.getElementById('admin-article-doc-name').value.trim() || (documentUrl ? 'ชีทสรุปบทความ_INBIOLOGY.pdf' : '');
+      const articleUrl = document.getElementById('admin-article-url').value.trim();
+      const imageUrl = document.getElementById('admin-article-image').value.trim();
 
       let articles = getArticlesData();
       if (id) {
         const idx = articles.findIndex(x => String(x.id) === String(id));
         if (idx >= 0) {
-          articles[idx] = { ...articles[idx], title, date, readTime, views };
+          articles[idx] = { ...articles[idx], title, category, author, date, readTime, views, summary, content, documentUrl, documentName, articleUrl, imageUrl };
         }
       } else {
         const newId = 'art_' + Date.now();
-        articles.push({ id: newId, title, date, readTime, views });
+        articles.push({ id: newId, title, category, author, date, readTime, views, summary, content, documentUrl, documentName, articleUrl, imageUrl });
       }
 
       localStorage.setItem('inbiology_articles', JSON.stringify(articles));

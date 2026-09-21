@@ -655,6 +655,7 @@ const CloudService = window.CloudService = {
   /**
    * Handle Google Login from GSI Token or Fallback
    * Automatically links Google account if an existing user matches the verified Google Email
+   * Queries Supabase Cloud first so that profile & admin role persist across devices.
    */
   async loginWithGooglePayload(payload) {
     if (!payload || !payload.email) {
@@ -663,48 +664,121 @@ const CloudService = window.CloudService = {
 
     const googleSub = payload.sub || ('google_' + Date.now());
     const googleEmail = payload.email.toLowerCase().trim();
-    const users = this._getUsersDb();
+    const isSuper = this.isSuperAdminEmail(googleEmail);
 
-    // 1. Check if an account already has this Google Sub linked
-    let user = users.find(u => 
-      u.linkedProviders && u.linkedProviders.some(p => p.provider === 'google' && p.sub === googleSub)
-    );
-
-    if (user) {
-      // Direct OAuth login match
-      AppState.userRole = this.isSuperAdminEmail(user.email) ? 'admin' : (user.role || 'student');
-      sessionStorage.setItem('inbiology_session_active', 'true');
-      localStorage.setItem('inbiology_role', AppState.userRole);
-      AppState.saveStudentProfile(user);
-      return { user, isNew: false, isAutoLinked: false };
+    // 0. FIRST: Query Supabase Cloud for latest authoritative user record
+    let sbUser = null;
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        const rows = await this._supabaseFetch(`/users?email=ilike.${encodeURIComponent(googleEmail)}&limit=1`);
+        if (rows && Array.isArray(rows) && rows.length > 0) {
+          sbUser = rows[0];
+          console.log('☁️ [Supabase Cloud] Found existing Google user in Cloud:', sbUser.email, 'Role:', sbUser.role);
+        }
+      } catch(err) {
+        console.warn('Supabase check for Google user note:', err);
+      }
     }
 
-    // 2. Check if a user with this email already exists -> Auto-Link
-    user = users.find(u => u.email.toLowerCase() === googleEmail);
-    if (user) {
-      // Auto-link Google Account!
-      if (!user.linkedProviders) user.linkedProviders = [];
-      user.linkedProviders.push({
-        provider: 'google',
-        sub: googleSub,
+    // Check user_roles_map from site_content as multi-device bridge
+    let cloudRoleOverride = null;
+    try {
+      const rolesMap = await this.fetchSiteContent('user_roles_map');
+      if (rolesMap && typeof rolesMap === 'object' && rolesMap[googleEmail]) {
+        cloudRoleOverride = rolesMap[googleEmail];
+      }
+    } catch(e){}
+
+    const users = this._getUsersDb();
+
+    // 1. Check if user exists in local DB or in Supabase
+    let localUser = users.find(u => 
+      (u.email && u.email.toLowerCase() === googleEmail) ||
+      (u.linkedProviders && u.linkedProviders.some(p => p.provider === 'google' && p.sub === googleSub))
+    );
+
+    if (sbUser || localUser) {
+      // User exists! Hydrate latest data from Supabase & Cloud Roles Map
+      const finalRole = isSuper ? 'admin' : (cloudRoleOverride || (sbUser && sbUser.role) || (localUser && localUser.role) || 'student');
+      const finalId = (sbUser && sbUser.id) || (localUser && localUser.id) || ('user-google-' + Date.now().toString(36));
+      const finalFullName = (localUser && localUser.fullName && localUser.fullName !== 'ผู้ใช้งาน Google') 
+        ? localUser.fullName 
+        : ((sbUser && sbUser.full_name) || payload.name || 'ผู้ใช้งาน Google');
+      const finalNickname = (localUser && localUser.nickname && localUser.nickname !== 'นักเรียน') 
+        ? localUser.nickname 
+        : ((sbUser && sbUser.nickname) || (payload.given_name || payload.name || 'นักเรียน').split(' ')[0]);
+      const finalPhone = (localUser && localUser.phone && localUser.phone !== '0000000000') 
+        ? localUser.phone 
+        : ((sbUser && sbUser.phone_number && sbUser.phone_number !== '0000000000') ? sbUser.phone_number : '');
+      const finalSchool = (localUser && localUser.school && localUser.school !== 'ยังไม่ได้ระบุ') 
+        ? localUser.school 
+        : ((sbUser && sbUser.school && sbUser.school !== 'ยังไม่ได้ระบุ') ? sbUser.school : '');
+      const finalLevel = (localUser && localUser.level) ? localUser.level : ((sbUser && sbUser.grade_level) || 'ม.5');
+      const finalBirthdate = (localUser && localUser.birthdate) ? localUser.birthdate : ((sbUser && sbUser.birthdate) || '2008-01-01');
+      const finalAvatar = payload.picture || (localUser && localUser.avatar) || (sbUser && sbUser.avatar_url) || '';
+
+      const isComplete = Boolean(
+        finalPhone && finalPhone.replace(/[^0-9]/g, '').length >= 9 && finalPhone !== '0000000000' &&
+        finalSchool && finalSchool !== 'ยังไม่ได้ระบุ' &&
+        finalNickname &&
+        finalFullName && finalFullName !== 'ผู้ใช้งาน Google'
+      );
+
+      const mergedUser = {
+        ...(localUser || {}),
+        id: finalId,
+        username: (localUser && localUser.username) || (sbUser && sbUser.username) || (googleEmail.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '') + Math.floor(100 + Math.random() * 900)),
         email: googleEmail,
-        linkedAt: new Date().toISOString()
-      });
-      if (payload.picture && !user.avatar) {
-        user.avatar = payload.picture;
+        fullName: finalFullName,
+        nickname: finalNickname,
+        phone: finalPhone,
+        birthdate: finalBirthdate,
+        school: finalSchool || 'ยังไม่ได้ระบุ',
+        level: finalLevel,
+        role: finalRole,
+        avatar: finalAvatar,
+        profileCompleted: isComplete,
+        emailVerified: true,
+        emailVerifiedAt: (localUser && localUser.emailVerifiedAt) || new Date().toISOString(),
+        linkedProviders: [{
+          provider: 'google',
+          sub: googleSub,
+          email: googleEmail,
+          linkedAt: new Date().toISOString()
+        }],
+        enrolled: (localUser && Array.isArray(localUser.enrolled)) ? localUser.enrolled : ((sbUser && Array.isArray(sbUser.enrolled)) ? sbUser.enrolled : [])
+      };
+
+      // Save/update in local users DB
+      const existingIdx = users.findIndex(u => u.email && u.email.toLowerCase() === googleEmail);
+      if (existingIdx >= 0) {
+        users[existingIdx] = mergedUser;
+      } else {
+        users.push(mergedUser);
       }
       this._saveUsersDb(users);
 
-      AppState.userRole = this.isSuperAdminEmail(user.email) ? 'admin' : (user.role || 'student');
+      // Set global application state & session
+      AppState.userRole = finalRole;
       sessionStorage.setItem('inbiology_session_active', 'true');
-      localStorage.setItem('inbiology_role', AppState.userRole);
-      AppState.saveStudentProfile(user);
-      return { user, isNew: false, isAutoLinked: true };
+      localStorage.setItem('inbiology_role', finalRole);
+      AppState.saveStudentProfile(mergedUser);
+
+      // Auto update avatar in Supabase if missing
+      if (window.isSupabaseConfigured && window.isSupabaseConfigured() && payload.picture && (!sbUser || !sbUser.avatar_url)) {
+        this._supabaseFetch(`/users?email=ilike.${encodeURIComponent(googleEmail)}`, {
+          method: 'PATCH',
+          body: JSON.stringify({ avatar_url: payload.picture })
+        }).catch(() => {});
+      }
+
+      return { user: mergedUser, isNew: false, isAutoLinked: true };
     }
 
-    // 3. New User entirely via Google
+    // 2. New User entirely via Google (does NOT exist in Supabase and NOT in local DB)
     const derivedNickname = (payload.given_name || payload.name || 'นักเรียน').split(' ')[0];
     const derivedUsername = googleEmail.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_') + Math.floor(100 + Math.random() * 900);
+    const initialRole = isSuper ? 'admin' : (cloudRoleOverride || 'student');
 
     const newUser = {
       id: 'user-google-' + Date.now().toString(36),
@@ -721,7 +795,7 @@ const CloudService = window.CloudService = {
       instagram: '',
       lineId: '',
       facebook: '',
-      role: this.isSuperAdminEmail(googleEmail) ? 'admin' : 'student',
+      role: initialRole,
       avatar: payload.picture || '',
       emailVerified: true,
       emailVerifiedAt: new Date().toISOString(),
@@ -750,7 +824,7 @@ const CloudService = window.CloudService = {
           phone_number: '0000000000',
           school: 'ยังไม่ได้ระบุ',
           grade_level: 'ม.5',
-          role: 'student',
+          role: initialRole,
           avatar_url: payload.picture || null,
           is_active: true
         };
@@ -769,7 +843,7 @@ const CloudService = window.CloudService = {
               provider_user_id: googleSub,
               provider_email: googleEmail
             })
-          });
+          }).catch(() => {});
           console.log('☁️ [Supabase Cloud] Google Student & OAuth Account synced:', newUser.id);
         }
       } catch (err) {
@@ -780,39 +854,111 @@ const CloudService = window.CloudService = {
     users.push(newUser);
     this._saveUsersDb(users);
 
-    AppState.userRole = 'student';
+    AppState.userRole = initialRole;
     sessionStorage.setItem('inbiology_session_active', 'true');
-    localStorage.setItem('inbiology_role', 'student');
+    localStorage.setItem('inbiology_role', initialRole);
     AppState.saveStudentProfile(newUser);
     return { user: newUser, isNew: true, isAutoLinked: false };
   },
 
   /**
-   * Update Student Profile in Supabase Cloud
+   * Update Student Profile in Supabase Cloud and Local State
    */
-  async saveUserProfile(uid, updated) {
-    if (window.isSupabaseConfigured && window.isSupabaseConfigured() && updated && updated.email) {
+  async saveUserProfile(uid, data) {
+    if (!data) return;
+    const email = (data.email || '').toLowerCase().trim();
+
+    // 1. Update in local DB
+    const users = this._getUsersDb();
+    const idx = users.findIndex(u => (u.email && u.email.toLowerCase() === email) || (uid && String(u.id) === String(uid)));
+    if (idx !== -1) {
+      users[idx] = { ...users[idx], ...data };
+      this._saveUsersDb(users);
+    }
+    AppState.saveStudentProfile(data);
+
+    // 2. Update Supabase Cloud (/users table)
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured() && email) {
       try {
-        await this._supabaseFetch(`/users?email=eq.${encodeURIComponent(updated.email.trim().toLowerCase())}`, {
+        const patchPayload = {
+          full_name: data.fullName || data.full_name || null,
+          nickname: data.nickname || null,
+          phone_number: data.phone || data.phone_number || null,
+          birthdate: data.birthdate || null,
+          school: data.school || null,
+          grade_level: data.level || data.grade_level || 'ม.5',
+          instagram: data.instagram || null,
+          line_id: data.lineId || data.line_id || null,
+          facebook: data.facebook || null,
+          avatar_url: data.avatar || data.avatar_url || null,
+          updated_at: new Date().toISOString()
+        };
+        // Clean out undefined
+        Object.keys(patchPayload).forEach(k => patchPayload[k] === undefined && delete patchPayload[k]);
+
+        await this._supabaseFetch(`/users?email=ilike.${encodeURIComponent(email)}`, {
           method: 'PATCH',
-          body: JSON.stringify({
-            full_name: updated.fullName,
-            nickname: updated.nickname,
-            phone_number: updated.phone,
-            birthdate: updated.birthdate,
-            school: updated.school,
-            grade_level: updated.level,
-            instagram: updated.instagram || null,
-            line_id: updated.lineId || null,
-            facebook: updated.facebook || null,
-            updated_at: new Date().toISOString()
-          })
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify(patchPayload)
         });
-        console.log('☁️ [Supabase Cloud] Profile updated successfully');
+        console.log('☁️ [Supabase Cloud] Profile saved successfully to /users for:', email);
       } catch (e) {
-        console.warn('Supabase update note:', e);
+        console.warn('Supabase profile update note:', e);
       }
     }
+
+    // 3. Fallback for Firebase if configured
+    if (this.isLive && this.db && uid) {
+      try { await this.db.collection('users').doc(uid).update(data); } catch(e){}
+    }
+  },
+
+  /**
+   * Fetch latest profile from Supabase Cloud by email
+   * @param {string} email
+   */
+  async fetchUserProfileByEmail(email) {
+    if (!email) return null;
+    const clean = email.toLowerCase().trim();
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        const rows = await this._supabaseFetch(`/users?email=ilike.${encodeURIComponent(clean)}&limit=1`);
+        if (rows && Array.isArray(rows) && rows.length > 0) return rows[0];
+      } catch(e) {
+        console.warn('Could not fetch user profile from cloud:', e);
+      }
+    }
+    const users = this._getUsersDb();
+    return users.find(u => u.email && u.email.toLowerCase() === clean) || null;
+  },
+
+  /**
+   * Fetch current user role with multi-tier cloud validation
+   * @param {string} email
+   */
+  async fetchUserRole(email) {
+    if (!email) return 'student';
+    const clean = email.toLowerCase().trim();
+    if (this.isSuperAdminEmail(clean)) return 'admin';
+
+    // 1. Check user_roles_map in site_content (Fastest & multi-device bridge)
+    try {
+      const map = await this.fetchSiteContent('user_roles_map');
+      if (map && typeof map === 'object' && map[clean]) return map[clean];
+    } catch(e){}
+
+    // 2. Query /users table
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        const rows = await this._supabaseFetch(`/users?email=ilike.${encodeURIComponent(clean)}&select=role&limit=1`);
+        if (rows && Array.isArray(rows) && rows.length > 0 && rows[0].role) return rows[0].role;
+      } catch(e){}
+    }
+
+    // 3. Fallback to local DB
+    const users = this._getUsersDb();
+    const u = users.find(x => x.email && x.email.toLowerCase() === clean);
+    return (u && u.role) ? u.role : 'student';
   },
 
   // ─── 5. ACCOUNT LINKING IN DASHBOARD ───────────────────────────────────────
@@ -933,20 +1079,6 @@ const CloudService = window.CloudService = {
       if (doc.exists) return doc.data();
     }
     return AppState.getStudentProfile();
-  },
-
-  async saveUserProfile(uid, data) {
-    const users = this._getUsersDb();
-    const idx = users.findIndex(u => u.email && data.email && u.email.toLowerCase() === data.email.toLowerCase());
-    if (idx !== -1) {
-      users[idx] = { ...users[idx], ...data };
-      this._saveUsersDb(users);
-    }
-    AppState.saveStudentProfile(data);
-
-    if (this.isLive && this.db && uid) {
-      try { await this.db.collection('users').doc(uid).update(data); } catch(e){}
-    }
   },
 
   async getEnrolledCourses(uid) {
@@ -1790,23 +1922,33 @@ const CloudService = window.CloudService = {
    * Fetch real registered students & admins from Supabase Cloud / Local DB
    */
   async getRegisteredStudents() {
+    let rolesMap = {};
+    try {
+      rolesMap = (await this.fetchSiteContent('user_roles_map')) || {};
+      if (typeof rolesMap !== 'object' || Array.isArray(rolesMap)) rolesMap = {};
+    } catch(e) {}
+
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
         const rows = await this._supabaseFetch(
           `/users?select=id,full_name,nickname,email,phone_number,school,grade_level,role,created_at&order=created_at.desc`
         );
         if (rows && Array.isArray(rows) && rows.length > 0) {
-          return rows.map(r => ({
-            id: r.id,
-            fullName: r.full_name || '-',
-            nickname: r.nickname || (r.full_name ? r.full_name.split(' ')[0] : 'นักเรียน'),
-            email: r.email || '-',
-            phone: r.phone_number || '-',
-            school: r.school || '-',
-            level: r.grade_level || 'ม.5',
-            role: (r.email && this.isSuperAdminEmail(r.email)) ? 'admin' : (r.role || 'student'),
-            createdAt: r.created_at
-          }));
+          return rows.map(r => {
+            const cleanEmail = (r.email || '').toLowerCase().trim();
+            const mappedRole = rolesMap[cleanEmail];
+            return {
+              id: r.id,
+              fullName: r.full_name || '-',
+              nickname: r.nickname || (r.full_name ? r.full_name.split(' ')[0] : 'นักเรียน'),
+              email: r.email || '-',
+              phone: r.phone_number || '-',
+              school: r.school || '-',
+              level: r.grade_level || 'ม.5',
+              role: (r.email && this.isSuperAdminEmail(r.email)) ? 'admin' : (mappedRole || r.role || 'student'),
+              createdAt: r.created_at
+            };
+          });
         }
       } catch(e) {
         console.warn('Could not fetch students from Supabase:', e);
@@ -1815,28 +1957,36 @@ const CloudService = window.CloudService = {
     // Fallback: Local database users
     const localUsers = this._getUsersDb();
     if (localUsers && localUsers.length > 0) {
-      return localUsers.map(s => ({
-        id: s.id,
-        fullName: s.fullName || s.name || '-',
-        nickname: s.nickname || (s.fullName ? s.fullName.split(' ')[0] : 'นักเรียน'),
-        email: s.email || '-',
-        phone: s.phone || '08X-XXX-XXXX',
-        school: s.school || '-',
-        level: s.level || 'ม.5',
-        role: (s.email && this.isSuperAdminEmail(s.email)) ? 'admin' : (s.role || 'student'),
-        password: s.password
-      }));
+      return localUsers.map(s => {
+        const cleanEmail = (s.email || '').toLowerCase().trim();
+        const mappedRole = rolesMap[cleanEmail];
+        return {
+          id: s.id,
+          fullName: s.fullName || s.name || '-',
+          nickname: s.nickname || (s.fullName ? s.fullName.split(' ')[0] : 'นักเรียน'),
+          email: s.email || '-',
+          phone: s.phone || '08X-XXX-XXXX',
+          school: s.school || '-',
+          level: s.level || 'ม.5',
+          role: (s.email && this.isSuperAdminEmail(s.email)) ? 'admin' : (mappedRole || s.role || 'student'),
+          password: s.password
+        };
+      });
     }
-    return (typeof MOCK_STUDENTS !== 'undefined' ? MOCK_STUDENTS : []).map(s => ({
-      id: s.id,
-      fullName: s.name,
-      nickname: (s.name.split(' ')[1] || 'นักเรียน'),
-      email: s.email,
-      phone: s.phone || '08X-XXX-XXXX',
-      school: s.school,
-      level: s.level || 'ม.5',
-      role: (s.email && this.isSuperAdminEmail(s.email)) ? 'admin' : (s.role || 'student')
-    }));
+    return (typeof MOCK_STUDENTS !== 'undefined' ? MOCK_STUDENTS : []).map(s => {
+      const cleanEmail = (s.email || '').toLowerCase().trim();
+      const mappedRole = rolesMap[cleanEmail];
+      return {
+        id: s.id,
+        fullName: s.name,
+        nickname: (s.name.split(' ')[1] || 'นักเรียน'),
+        email: s.email,
+        phone: s.phone || '08X-XXX-XXXX',
+        school: s.school,
+        level: s.level || 'ม.5',
+        role: (s.email && this.isSuperAdminEmail(s.email)) ? 'admin' : (mappedRole || s.role || 'student')
+      };
+    });
   },
 
   /**
@@ -1874,15 +2024,17 @@ const CloudService = window.CloudService = {
       this._saveUsersDb(users);
     }
 
-    // 2. Update in Supabase Cloud
+    const finalTargetEmail = emailToMatch || (targetUser && targetUser.email ? targetUser.email.toLowerCase().trim() : '');
+
+    // 2. Update in Supabase Cloud (/users table)
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
         const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(userId));
         let query = '';
         if (isUuid) {
           query = `/users?id=eq.${encodeURIComponent(userId)}`;
-        } else if (emailToMatch) {
-          query = `/users?email=ilike.${encodeURIComponent(emailToMatch)}`;
+        } else if (finalTargetEmail) {
+          query = `/users?email=ilike.${encodeURIComponent(finalTargetEmail)}`;
         } else if (targetUser && targetUser.email) {
           query = `/users?email=ilike.${encodeURIComponent(targetUser.email)}`;
         }
@@ -1893,23 +2045,40 @@ const CloudService = window.CloudService = {
             headers: { 'Prefer': 'return=representation' },
             body: JSON.stringify({ role: newRole, updated_at: new Date().toISOString() })
           });
+          console.log('☁️ [Supabase Cloud] Role updated in /users:', finalTargetEmail, '->', newRole);
         }
       } catch(e) {
-        console.warn('Could not update role in Supabase:', e);
+        console.warn('Could not update role in Supabase /users:', e);
+      }
+
+      // 3. ALSO update user_roles_map in site_content (Bridge for multi-device sync!)
+      if (finalTargetEmail) {
+        try {
+          let rolesMap = (await this.fetchSiteContent('user_roles_map')) || {};
+          if (typeof rolesMap !== 'object' || Array.isArray(rolesMap)) rolesMap = {};
+          rolesMap[finalTargetEmail] = newRole;
+          await this.saveSiteContent('user_roles_map', rolesMap);
+          console.log('☁️ [Supabase Cloud] user_roles_map synced:', finalTargetEmail, '->', newRole);
+        } catch(e) {
+          console.warn('Could not update user_roles_map bridge:', e);
+        }
       }
     }
 
-    // 3. Update active session if target is current profile
+    // 4. Update active session if target is current profile on this computer
     const curProfile = (typeof AppState !== 'undefined' && typeof AppState.getStudentProfile === 'function')
       ? AppState.getStudentProfile()
       : null;
     if (curProfile && (
       String(curProfile.id) === String(userId) || 
-      (curProfile.email && emailToMatch && curProfile.email.toLowerCase() === emailToMatch) ||
+      (curProfile.email && finalTargetEmail && curProfile.email.toLowerCase() === finalTargetEmail) ||
       (curProfile.email && targetUser && curProfile.email.toLowerCase() === targetUser.email.toLowerCase())
     )) {
       AppState.userRole = newRole;
       localStorage.setItem('inbiology_role', newRole);
+      curProfile.role = newRole;
+      AppState.saveStudentProfile(curProfile);
+      if (typeof renderHeader === 'function') renderHeader();
     }
 
     return true;

@@ -397,11 +397,11 @@
   <footer id="footer-container"></footer>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="./js/mockData.js?v=20260921_v36"></script>
-  <script src="./js/supabaseConfig.js?v=20260921_v36"></script>
-  <script src="./js/googleConfig.js?v=20260921_v36"></script>
-  <script src="./js/cloudService.js?v=20260921_v36"></script>
-  <script src="./js/app.js?v=20260921_v36"></script>
+  <script src="./js/mockData.js?v=20260921_v38"></script>
+  <script src="./js/supabaseConfig.js?v=20260921_v38"></script>
+  <script src="./js/googleConfig.js?v=20260921_v38"></script>
+  <script src="./js/cloudService.js?v=20260921_v38"></script>
+  <script src="./js/app.js?v=20260921_v38"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       // 🔒 AUTH GUARD: Must be logged in to view dashboard
@@ -414,12 +414,49 @@
       loadStudentProfileToUI();
       renderGoogleLinkStatus();
 
-      // Sync enrolled courses from Supabase cloud before rendering
+      // Sync enrolled courses & profile data from Supabase cloud before rendering
       const profile = AppState.getStudentProfile();
       if (profile && profile.email && window.CloudService) {
         try {
+          if (typeof window.CloudService.fetchUserProfileByEmail === 'function') {
+            const cloudUser = await window.CloudService.fetchUserProfileByEmail(profile.email);
+            if (cloudUser) {
+              let changed = false;
+              if (cloudUser.phone_number && cloudUser.phone_number !== '0000000000' && (!profile.phone || profile.phone === '0000000000')) {
+                profile.phone = cloudUser.phone_number;
+                changed = true;
+              }
+              if (cloudUser.school && cloudUser.school !== 'ยังไม่ได้ระบุ' && (!profile.school || profile.school === 'ยังไม่ได้ระบุ')) {
+                profile.school = cloudUser.school;
+                changed = true;
+              }
+              if (cloudUser.full_name && (!profile.fullName || profile.fullName === 'ผู้ใช้งาน Google')) {
+                profile.fullName = cloudUser.full_name;
+                changed = true;
+              }
+              if (cloudUser.nickname && (!profile.nickname || profile.nickname === 'นักเรียน')) {
+                profile.nickname = cloudUser.nickname;
+                changed = true;
+              }
+              if (cloudUser.grade_level && !profile.level) {
+                profile.level = cloudUser.grade_level;
+                changed = true;
+              }
+              if (cloudUser.role && cloudUser.role !== profile.role) {
+                profile.role = cloudUser.role;
+                AppState.userRole = cloudUser.role;
+                localStorage.setItem('inbiology_role', cloudUser.role);
+                changed = true;
+              }
+              if (changed) {
+                AppState.saveStudentProfile(profile);
+                loadStudentProfileToUI();
+                renderHeader('dashboard');
+              }
+            }
+          }
           await window.CloudService.syncEnrolledFromCloud(profile.email);
-        } catch (e) { console.warn('Sync enrolled note:', e); }
+        } catch (e) { console.warn('Sync profile/enrolled note:', e); }
       }
 
       renderEnrolled();
@@ -429,10 +466,11 @@
 
       // Check for direct tab link in URL (e.g. dashboard.html?tab=orders or incomplete=1)
       const urlParams = new URLSearchParams(window.location.search);
-      const targetTab = urlParams.get('tab') || (urlParams.get('incomplete') === '1' ? 'profile' : null);
+      const isActuallyIncomplete = !AppState.isProfileComplete();
+      const targetTab = urlParams.get('tab') || ((urlParams.get('incomplete') === '1' && isActuallyIncomplete) ? 'profile' : null);
       if (targetTab && ['courses', 'orders', 'profile', 'notes', 'faq'].includes(targetTab)) {
         switchDashTab(targetTab);
-        if (targetTab === 'profile' && urlParams.get('incomplete') === '1') {
+        if (targetTab === 'profile' && urlParams.get('incomplete') === '1' && isActuallyIncomplete) {
           setTimeout(() => {
             highlightIncompleteFields();
             showToast('กรุณากรอกเบอร์โทรศัพท์และโรงเรียนให้ครบถ้วนก่อนเลือกซื้อคอร์ส', 'warning');
@@ -599,16 +637,18 @@
       const instagram = document.getElementById('edit-instagram').value.trim();
       const lineId = document.getElementById('edit-line-id').value.trim();
       const facebook = document.getElementById('edit-facebook').value.trim();
-      const email = document.getElementById('edit-email').value;
+      const email = document.getElementById('edit-email').value.trim();
 
-      const current = AppState.getStudentProfile();
+      const current = AppState.getStudentProfile() || {};
 
-      // Calc age
-      let age = current.age;
+      // Safe age calculation
+      let age = current.age || 18;
       if (birthdate) {
         const bDate = new Date(birthdate);
-        const diff = Date.now() - bDate.getTime();
-        age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+        if (!isNaN(bDate.getTime())) {
+          const diff = Date.now() - bDate.getTime();
+          age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+        }
       }
 
       const isComplete = Boolean(
@@ -630,25 +670,44 @@
         instagram,
         lineId,
         facebook,
-        email,
+        email: email || current.email,
         profileCompleted: isComplete
       };
 
       AppState.saveStudentProfile(updated);
 
+      const saveBtn = document.querySelector('#edit-profile-form button[type="submit"]');
+      const origBtnText = saveBtn ? saveBtn.innerHTML : '';
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '⏳ กำลังบันทึกข้อมูลขึ้น Cloud...';
+      }
+
       if (window.CloudService && typeof window.CloudService.saveUserProfile === 'function') {
         try {
-          const uid = window.CloudService.currentUser ? window.CloudService.currentUser.uid : null;
+          const uid = updated.id || (window.CloudService.currentUser ? window.CloudService.currentUser.uid : null);
           await window.CloudService.saveUserProfile(uid, updated);
         } catch (err) {
           console.warn('Cloud sync note:', err);
         }
       }
 
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = origBtnText;
+      }
+
+      // Remove incomplete query param from URL so refresh doesn't trigger warnings
+      try {
+        const cleanUrl = new URL(window.location);
+        cleanUrl.searchParams.delete('incomplete');
+        window.history.replaceState({}, '', cleanUrl);
+      } catch(e){}
+
       loadStudentProfileToUI();
       renderHeader('dashboard');
       updateProfileIncompleteBanner();
-      showToast('บันทึกข้อมูลส่วนตัวเรียบร้อยแล้ว', 'success');
+      showToast('✅ บันทึกข้อมูลส่วนตัวเรียบร้อยแล้ว (ซิงก์ข้อมูลขึ้น Cloud สำเร็จ)', 'success');
     }
 
     function switchDashTab(tabName) {

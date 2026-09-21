@@ -265,10 +265,46 @@ const COURSES = [
 ];
 
 const FREE_TRIALS = [
-  { id: 'ft1', title: 'คลิปทดลองเรียน Bio Intensive I: โครงสร้างเซลล์และกลไกการลำเลียงสาร', duration: '45 นาที', course: 'Bio Intensive I', imageUrl: './course-cover-1.png', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-  { id: 'ft2', title: 'คลิปทดลองเรียน Bio Intensive II: เทคนิคคำนวณโจทย์พันธุศาสตร์เมนเดล', duration: '35 นาที', course: 'Bio Intensive II', imageUrl: './course-cover-2.png', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-  { id: 'ft3', title: 'คลิปทดลองเรียน คอร์สพิเศษ สอวน.: เจาะลึกข้อสอบคัดเลือกค่าย 1', duration: '40 นาที', course: 'คอร์ส ติวเข้ม สอวน.', imageUrl: './course-cover-5.jpg', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-  { id: 'ft4', title: 'คลิปทดลองเรียน คอร์ส 99 บาท: สรุปสกัดเข้ม Quick Review ม.ปลาย', duration: '30 นาที', course: 'คอร์ส 99 บาท', imageUrl: './course-cover-6.png', videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
+  {
+    id: 'ft1',
+    title: 'คลิปทดลองเรียน Bio Intensive I: โครงสร้างเซลล์และกลไกการลำเลียงสาร',
+    duration: '45 นาที',
+    course: 'Bio Intensive I',
+    imageUrl: './course-cover-1.png',
+    videoUrl: 'https://www.youtube.com/watch?v=URUJD5NEXC8',
+    sheetUrl: 'https://drive.google.com/file/d/1_Sample_Cell_Biology_Sheet/view?usp=sharing',
+    sheetTitle: 'ชีทสรุปโครงสร้างเซลล์และการลำเลียงสาร.pdf'
+  },
+  {
+    id: 'ft2',
+    title: 'คลิปทดลองเรียน Bio Intensive II: เทคนิคคำนวณโจทย์พันธุศาสตร์เมนเดล',
+    duration: '35 นาที',
+    course: 'Bio Intensive II',
+    imageUrl: './course-cover-2.png',
+    videoUrl: 'https://www.youtube.com/watch?v=8m6hHRlKwxY',
+    sheetUrl: 'https://drive.google.com/file/d/1_Sample_Mendel_Genetics_Sheet/view?usp=sharing',
+    sheetTitle: 'ชีทสรุปพันธุศาสตร์และการคำนวณสัดส่วนยีน.pdf'
+  },
+  {
+    id: 'ft3',
+    title: 'คลิปทดลองเรียน คอร์สพิเศษ สอวน.: เจาะลึกข้อสอบคัดเลือกค่าย 1',
+    duration: '40 นาที',
+    course: 'คอร์ส ติวเข้ม สอวน.',
+    imageUrl: './course-cover-5.jpg',
+    videoUrl: 'https://www.youtube.com/watch?v=fR3NxCR9z2U',
+    sheetUrl: 'https://drive.google.com/file/d/1_Sample_POSN_Biology_Exam/view?usp=sharing',
+    sheetTitle: 'แนวข้อสอบคัดเลือก_สอวน_ชีววิทยา_ค่าย1.pdf'
+  },
+  {
+    id: 'ft4',
+    title: 'คลิปทดลองเรียน คอร์ส 99 บาท: สรุปสกัดเข้ม Quick Review ม.ปลาย',
+    duration: '30 นาที',
+    course: 'คอร์ส 99 บาท',
+    imageUrl: './course-cover-6.png',
+    videoUrl: 'https://www.youtube.com/watch?v=00jbG_cfGuQ',
+    sheetUrl: 'https://drive.google.com/file/d/1_Sample_Quick_Review_99/view?usp=sharing',
+    sheetTitle: 'ชีทสรุปสกัดเข้มชีวะ_Quick_Review_99.pdf'
+  }
 ];
 
 const COUPONS = [
@@ -557,9 +593,51 @@ const REVIEWS = [
 ];
 
 const ARTICLES = [
-  { id: 1, title: 'สรุป 10 จุดสำคัญเรื่องการสังเคราะห์ด้วยแสง (Photosynthesis)', date: '10 มี.ค. 2026', views: 1250, readTime: '5 นาที' },
-  { id: 2, title: 'สกัด DNA ด้วยตนเองที่บ้าน! ขั้นตอนแล็บเสมือนง่ายๆ', date: '05 มี.ค. 2026', views: 890, readTime: '8 นาที' },
-  { id: 3, title: 'โครงสร้างหัวใจและการสูบฉีดเลือด: เข้าใจด้วยเทคนิค Mind Map', date: '28 ก.พ. 2026', views: 1650, readTime: '4 นาที' }
+  {
+    id: 1,
+    title: 'สรุป 10 จุดสำคัญเรื่องการสังเคราะห์ด้วยแสง (Photosynthesis)',
+    date: '10 มี.ค. 2026',
+    views: 1250,
+    readTime: '5 นาที',
+    category: 'สรุปเนื้อหา',
+    author: 'พี่ต้น INBIOLOGY',
+    summary: 'รวมจุดออกสอบบ่อยกระบวนการสังเคราะห์ด้วยแสง Light Reaction และ Calvin Cycle พร้อมสมการและตำแหน่งที่เกิดในคลอโรพลาสต์อย่างละเอียด',
+    content: 'การสังเคราะห์ด้วยแสงแบ่งออกเป็น 2 ขั้นตอนหลัก ได้แก่ ปฏิกิริยาแสง (Light Reaction) ที่เกิดขึ้นบริเวณ Thylakoid Membrane เพื่อผลิต ATP และ NADPH สำหรับนำไปใช้ในปฏิกิริยาตรึงคาร์บอน (Calvin Cycle) ที่เกิดใน Stroma ของคลอโรพลาสต์\n\nจุดที่มักสับสนในข้อสอบ A-Level คือตำแหน่งการสะสมโปรตอน (H+) ภายใน Thylakoid Lumen และกลไก Photophosphorylation ทั้งแบบเป็นวัฏจักรและไม่เป็นวัฏจักร',
+    documentUrl: 'https://drive.google.com/file/d/1_Sample_Biology_Photosynthesis_Summary/view?usp=sharing',
+    documentName: 'ชีทสรุปจุดออกสอบ_Photosynthesis_INBIOLOGY.pdf',
+    articleUrl: 'https://inbiology-official.vercel.app/courses.html',
+    imageUrl: './course-cover-3.jpg'
+  },
+  {
+    id: 2,
+    title: 'สกัด DNA ด้วยตนเองที่บ้าน! ขั้นตอนแล็บเสมือนง่ายๆ',
+    date: '05 มี.ค. 2026',
+    views: 890,
+    readTime: '8 นาที',
+    category: 'แล็บชีววิทยา',
+    author: 'พี่ต้น INBIOLOGY',
+    summary: 'ขั้นตอนการแยกสกัด DNA จากพืชผลไม้ เช่น กล้วยหรือสตรอว์เบอร์รี ด้วยน้ำยาล้างจาน เกลือแกง และเอทานอลเย็นจัด',
+    content: 'การสกัด DNA เบื้องต้นใช้หลักการทำลายเยื่อหุ้มเซลล์และเยื่อหุ้มนิวเคลียสด้วยสารซักฟอก (Detergent) เกลือแกงทำหน้าที่ปรับประจุของ DNA ให้เสถียร และแอลกอฮอล์เย็นจัด (Cold Ethanol) ช่วยตกตะกอนสาย DNA สีขาวขุ่นออกมาให้เห็นด้วยตาเปล่าเพื่อการศึกษาโครงสร้างพันธุกรรม',
+    documentUrl: 'https://drive.google.com/file/d/1_Sample_DNA_Extraction_Lab_Protocol/view?usp=sharing',
+    documentName: 'คู่มือการทดลอง_DNA_Extraction_Lab.pdf',
+    articleUrl: 'https://inbiology-official.vercel.app/courses.html',
+    imageUrl: './course-cover-2.png'
+  },
+  {
+    id: 3,
+    title: 'โครงสร้างหัวใจและการสูบฉีดเลือด: เข้าใจด้วยเทคนิค Mind Map',
+    date: '28 ก.พ. 2026',
+    views: 1650,
+    readTime: '4 นาที',
+    category: 'เทคนิค Mind Map',
+    author: 'พี่ต้น INBIOLOGY',
+    summary: 'แผนภาพเชื่อมโยงระบบหมุนเวียนเลือด หัวใจ 4 ห้อง ลิ้นหัวใจ และทิศทางการไหลของเลือดดำและเลือดแดง จำง่ายไม่สับสน',
+    content: 'เทคนิคจำระบบไหลเวียนเลือด: เลือดดำจากส่วนบนและล่างของร่างกายเข้าสู่หัวใจห้องบนขวา (Right Atrium) ผ่านลิ้น Tricuspid สู่ล่างขวา (Right Ventricle) ส่งไปฟอกที่ปอดผ่าน Pulmonary Artery จากนั้นเลือดแดงจากปอดกลับเข้าบนซ้าย (Left Atrium) ผ่านลิ้น Bicuspid (Mitral) สู่ล่างซ้าย (Left Ventricle) ซึ่งมีผนังกล้ามเนื้อหนาที่สุดเพื่อบีบเลือดออกทาง Aorta ไปเลี้ยงทั่วร่างกาย',
+    documentUrl: 'https://drive.google.com/file/d/1_Sample_Heart_Circulation_Mindmap/view?usp=sharing',
+    documentName: 'MindMap_ระบบหมุนเวียนโลหิตและหัวใจ_INBIOLOGY.pdf',
+    articleUrl: 'https://inbiology-official.vercel.app/courses.html',
+    imageUrl: './course-cover-4.png'
+  }
 ];
 
 const DEFAULT_SLIDES = [
