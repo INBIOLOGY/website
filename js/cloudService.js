@@ -1092,14 +1092,18 @@ const CloudService = window.CloudService = {
   async getAllOrders(status = null) {
     let cloudOrders = [];
     let endpoint = '/orders?order=created_at.desc&limit=200';
-    if (status) endpoint += `&status=eq.${status}`;
+    if (status) {
+      endpoint += `&status=eq.${status}`;
+    } else {
+      endpoint += '&status=neq.system_cms';
+    }
 
     // 1. Try Supabase REST Direct
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
         const result = await this._supabaseFetch(endpoint);
         if (result && Array.isArray(result) && result.length > 0) {
-          cloudOrders = result;
+          cloudOrders = result.filter(o => o.status !== 'system_cms');
         }
       } catch(err) {
         console.warn('[getAllOrders Supabase Error]:', err);
@@ -1115,7 +1119,7 @@ const CloudService = window.CloudService = {
         if (apiRes.ok) {
           const apiData = await apiRes.json();
           if (apiData && Array.isArray(apiData.orders) && apiData.orders.length > 0) {
-            cloudOrders = apiData.orders;
+            cloudOrders = apiData.orders.filter(o => o.status !== 'system_cms');
           }
         }
       } catch(e) {
@@ -1128,6 +1132,7 @@ const CloudService = window.CloudService = {
       const localAll = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
       const combined = [...cloudOrders];
       localAll.forEach(lo => {
+        if (lo.status === 'system_cms') return;
         const existing = combined.find(co => co.id === lo.id);
         if (!existing) {
           if (!status || lo.status === status) combined.push(lo);

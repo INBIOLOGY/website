@@ -30,7 +30,11 @@ export default async function handler(req, res) {
       let endpoint = `${supabaseUrl}/rest/v1/orders?order=created_at.desc`;
       if (limit) endpoint += `&limit=${encodeURIComponent(limit)}`;
       else endpoint += '&limit=200';
-      if (status) endpoint += `&status=eq.${encodeURIComponent(status)}`;
+      if (status) {
+        endpoint += `&status=eq.${encodeURIComponent(status)}`;
+      } else {
+        endpoint += '&status=neq.system_cms';
+      }
       if (email) endpoint += `&user_email=eq.${encodeURIComponent(email.toLowerCase().trim())}`;
 
       const response = await fetch(endpoint, {
@@ -44,7 +48,8 @@ export default async function handler(req, res) {
       }
 
       const orders = await response.json();
-      return res.status(200).json({ success: true, orders: Array.isArray(orders) ? orders : [] });
+      const filtered = (Array.isArray(orders) ? orders : []).filter(o => o.status !== 'system_cms');
+      return res.status(200).json({ success: true, orders: filtered });
     }
 
     // ── POST: Create new order ───────────────────────────────────────────────
