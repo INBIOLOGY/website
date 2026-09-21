@@ -584,7 +584,7 @@ const AppState = {
     }
     this.cart.push(course);
     this.saveCart();
-    showToast(`🛒 เพิ่ม "${course.title}" ลงตะกร้าแล้ว`, 'success');
+    showToast(`เพิ่ม "${course.title}" ลงในตะกร้าแล้ว`, 'success');
   },
   
   removeFromCart(courseId) {
@@ -603,7 +603,7 @@ const AppState = {
     localStorage.removeItem('inbiology_role');
     localStorage.removeItem('inbiology_student_profile');
     localStorage.removeItem('inbiology_enrolled');
-    showToast('👋 ออกจากระบบเรียบร้อยแล้ว', 'info');
+    showToast('ออกจากระบบเรียบร้อยแล้ว', 'info');
     setTimeout(() => { location.href = 'index.html'; }, 500);
   },
 
@@ -636,11 +636,11 @@ function applyCouponCode(codeStr) {
   }
   const found = COUPONS.find(c => c.code.toUpperCase() === codeStr.trim().toUpperCase());
   if (!found) {
-    showToast('❌ โค้ดส่วนลดไม่ถูกต้องหรือหมดอายุแล้ว', 'error');
+    showToast('โค้ดส่วนลดไม่ถูกต้องหรือหมดอายุแล้ว', 'error');
     return null;
   }
   AppState.appliedCoupon = found;
-  showToast(`🎉 ใช้โค้ด "${found.code}" สำเร็จ!`, 'success');
+  showToast(`ใช้ส่วนลด "${found.code}" สำเร็จ`, 'success');
   return found;
 }
 
@@ -700,7 +700,7 @@ function renderCartDrawer() {
     <div class="drawer-panel" onclick="event.stopPropagation()">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:20px;border-bottom:1px solid #E5E7EB">
         <h3 style="display:flex;align-items:center;gap:8px;font-weight:850;color:var(--c-navy);margin:0;font-size:15px">
-          🛒 ตะกร้าชำระเงิน
+          ตะกร้าสินค้า
           <span style="background:var(--c-red);color:white;font-size:10px;font-weight:900;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center">${AppState.cart.length}</span>
         </h3>
         <button onclick="closeCartDrawer()" style="padding:8px;border-radius:8px;cursor:pointer;background:none;border:none">✕</button>
@@ -757,15 +757,15 @@ function showLoginModal(message = 'กรุณาเข้าสู่ระบ
   modal.innerHTML = `
     <div class="modal-backdrop"></div>
     <div class="modal-box animate-fade-in-up" onclick="event.stopPropagation()" style="max-width:440px;width:90%;text-align:center;padding:32px 24px;border-radius:24px;background:white;margin:auto">
-      <div style="width:64px;height:64px;background:#FEF2F2;color:#DC2626;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 16px;box-shadow:0 6px 16px rgba(220,38,38,0.15)">
-        🔒
+      <div style="width:60px;height:60px;background:#EFF6FF;color:#1E3A8A;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 4px 12px rgba(30,58,138,0.12)">
+        <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
       </div>
       <h3 style="font-size:20px;font-weight:950;color:var(--c-navy);margin:0 0 8px">ต้องเข้าสู่ระบบก่อน</h3>
       <p style="font-size:13.5px;color:#6B7280;line-height:1.5;margin:0 0 24px">${message}</p>
       
       <div style="display:flex;flex-direction:column;gap:10px">
         <a href="${loginUrl}" style="background:#1E3A8A;color:white;font-weight:900;font-size:14px;padding:12px;border-radius:12px;text-decoration:none;display:block;box-shadow:0 4px 14px rgba(30,58,138,0.25)">
-          🔑 เข้าสู่ระบบ / สมัครสมาชิก ➔
+          เข้าสู่ระบบ / สมัครสมาชิก ➔
         </a>
         <button onclick="document.getElementById('login-required-modal').classList.remove('show')" style="background:none;border:1px solid #E5E7EB;color:#6B7280;font-weight:800;font-size:13px;padding:10px;border-radius:12px;cursor:pointer">
           ยกเลิก
@@ -802,7 +802,9 @@ function showCompleteProfileModal(courseToResume = null) {
       <!-- Header -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;border-bottom:1px solid #F1F5F9;padding-bottom:12px">
         <div style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:26px">📝</span>
+          <div style="width:36px;height:36px;border-radius:10px;background:#EFF6FF;color:#1E3A8A;display:flex;align-items:center;justify-content:center">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          </div>
           <div>
             <h3 style="font-size:16.5px;font-weight:900;color:var(--c-navy);margin:0">กรอกข้อมูลนักเรียนให้ครบถ้วน</h3>
             <p style="font-size:11.5px;color:#64748B;margin:2px 0 0">จำเป็นสำหรับการลงทะเบียนเรียนและตรวจสลิป</p>
@@ -813,7 +815,9 @@ function showCompleteProfileModal(courseToResume = null) {
 
       <!-- Info Banner -->
       <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;margin-bottom:16px">
-        <span style="font-size:20px;flex-shrink:0">💡</span>
+        <div style="width:20px;height:20px;color:#D97706;flex-shrink:0;margin-top:1px">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+        </div>
         <div style="font-size:12px;color:#92400E;line-height:1.5">
           คุณเข้าสู่ระบบด้วย Google เรียบร้อยแล้ว กรุณาระบุ <strong>เบอร์โทรศัพท์</strong> และ <strong>โรงเรียน</strong> ให้ครบถ้วนก่อนเลือกซื้อคอร์สเรียนครับ
         </div>
@@ -825,7 +829,7 @@ function showCompleteProfileModal(courseToResume = null) {
         <!-- Full Name -->
         <div>
           <label style="display:block;font-size:12px;font-weight:800;color:#334155;margin-bottom:4px">
-            👤 ชื่อจริง - นามสกุล <span style="color:#EF4444">*</span>
+            ชื่อจริง - นามสกุล <span style="color:#EF4444">*</span>
           </label>
           <input type="text" id="cprofile-fullname" required value="${initialName}" placeholder="เช่น นาย วิทศรุต สายตา"
             style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;box-sizing:border-box" />
@@ -835,14 +839,14 @@ function showCompleteProfileModal(courseToResume = null) {
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div>
             <label style="display:block;font-size:12px;font-weight:800;color:#334155;margin-bottom:4px">
-              😊 ชื่อเล่น <span style="color:#EF4444">*</span>
+              ชื่อเล่น <span style="color:#EF4444">*</span>
             </label>
             <input type="text" id="cprofile-nickname" required value="${initialNick}" placeholder="เช่น ต้น"
               style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;box-sizing:border-box" />
           </div>
           <div>
             <label style="display:block;font-size:12px;font-weight:800;color:#334155;margin-bottom:4px">
-              🎓 ระดับชั้น <span style="color:#EF4444">*</span>
+              ระดับชั้น <span style="color:#EF4444">*</span>
             </label>
             <select id="cprofile-level" required style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:white;box-sizing:border-box">
               <option value="ม.4" ${initialLevel === 'ม.4' ? 'selected' : ''}>มัธยมศึกษาปีที่ 4</option>
@@ -859,7 +863,7 @@ function showCompleteProfileModal(courseToResume = null) {
         <!-- Phone Number -->
         <div>
           <label style="display:block;font-size:12px;font-weight:800;color:#334155;margin-bottom:4px">
-            📱 เบอร์โทรศัพท์มือถือ (10 หลัก) <span style="color:#EF4444">*</span>
+            เบอร์โทรศัพท์มือถือ (10 หลัก) <span style="color:#EF4444">*</span>
           </label>
           <input type="tel" id="cprofile-phone" required maxlength="10" value="${initialPhone}" placeholder="เช่น 0812345678"
             style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;box-sizing:border-box" />
@@ -869,7 +873,7 @@ function showCompleteProfileModal(courseToResume = null) {
         <!-- School -->
         <div>
           <label style="display:block;font-size:12px;font-weight:800;color:#334155;margin-bottom:4px">
-            🏫 โรงเรียน / สถาบันการศึกษา <span style="color:#EF4444">*</span>
+            โรงเรียน / สถาบันการศึกษา <span style="color:#EF4444">*</span>
           </label>
           <input type="text" id="cprofile-school" required value="${initialSchool}" placeholder="เช่น สวนกุหลาบวิทยาลัย, เตรียมอุดมศึกษา"
             style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;box-sizing:border-box" />
@@ -878,7 +882,7 @@ function showCompleteProfileModal(courseToResume = null) {
         <!-- Birthdate -->
         <div>
           <label style="display:block;font-size:12px;font-weight:800;color:#334155;margin-bottom:4px">
-            🎂 วันเกิด
+            วันเกิด
           </label>
           <input type="date" id="cprofile-birthdate" value="${initialBirth}"
             style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:10px 12px;font-size:13px;outline:none;box-sizing:border-box" />
@@ -887,7 +891,7 @@ function showCompleteProfileModal(courseToResume = null) {
         <!-- Submit Button -->
         <button type="submit" id="btn-save-cprofile"
           style="margin-top:8px;background:var(--c-navy);color:white;font-weight:850;font-size:14px;padding:13px;border-radius:12px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 14px rgba(30,58,138,0.25)">
-          ✓ บันทึกข้อมูลและเลือกคอร์สต่อ ➔
+          บันทึกข้อมูลและดำเนินการต่อ ➔
         </button>
 
       </form>
@@ -952,7 +956,7 @@ async function handleCompleteProfileSubmit(e) {
     const modal = document.getElementById('complete-profile-modal');
     if (modal) modal.classList.remove('show');
 
-    showToast('🎉 บันทึกข้อมูลนักเรียนเรียบร้อยแล้ว!', 'success');
+    showToast('บันทึกข้อมูลเรียบร้อยแล้ว', 'success');
 
     if (typeof renderHeader === 'function') {
       renderHeader();
@@ -966,7 +970,7 @@ async function handleCompleteProfileSubmit(e) {
     }
   } catch(err) {
     showToast('เกิดข้อผิดพลาด: ' + (err.message || 'กรุณาลองใหม่อีกครั้ง'), 'error');
-    if (btn) { btn.disabled = false; btn.textContent = '✓ บันทึกข้อมูลและเลือกคอร์สต่อ ➔'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'บันทึกข้อมูลและดำเนินการต่อ ➔'; }
   }
 }
 
@@ -1051,7 +1055,7 @@ function openReviewModal(studentName) {
             <p style="color:#374151;font-size:13.5px;line-height:1.7;margin:0;white-space:pre-line">"${r.text}"</p>
           </div>
           <div style="align-self:flex-start;font-size:12px;color:#6B7280;font-weight:700">
-            <span>📚 คอร์สเรียน: </span><span style="color:#1E3A8A">${r.course}</span>
+            <span>คอร์สเรียน: </span><span style="color:#1E3A8A">${r.course}</span>
           </div>
         </div>
       </div>
@@ -1118,14 +1122,14 @@ function openCourseModal(course) {
                 </div>
               </div>
               <div style="display:flex;align-items:center;gap:8px">
-                <span style="font-size:20px">🎬</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
                 <div>
                   <div style="font-size:10px;color:#64748B;font-weight:700">จำนวนบทเรียน</div>
                   <div style="font-size:13px;font-weight:900;color:var(--c-navy)">${lessonCount} ตอน (${durationMinutes} น.)</div>
                 </div>
               </div>
               <div style="display:flex;align-items:center;gap:8px">
-                <span style="font-size:20px">📅</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                 <div>
                   <div style="font-size:10px;color:#64748B;font-weight:700">อายุการใช้งาน</div>
                   <div style="font-size:13px;font-weight:900;color:var(--c-navy)">${course.validityDays || 365} วัน</div>
@@ -1176,23 +1180,23 @@ function openCourseModal(course) {
             <div style="display:flex;flex-direction:column;gap:10px">
               ${isEnrolled ? `
                 <a href="classroom.html?course=${course.id}" style="width:100%;background:#D1FAE5;color:#065F46;border:1.5px solid #6EE7B7;font-weight:900;font-size:14px;padding:13px;border-radius:12px;cursor:pointer;text-align:center;text-decoration:none;display:block;box-sizing:border-box">
-                  ✓ คุณเป็นเจ้าของคอร์สนี้แล้ว (เข้าสู่ห้องเรียน ➔)
+                  เข้าสู่ห้องเรียน ➔
                 </a>
               ` : `
                 <button onclick="AppState.addToCart(COURSES.find(c=>c.id==='${course.id}'));document.getElementById('global-course-modal').classList.remove('show')" style="width:100%;background:var(--c-sky);color:white;font-weight:900;font-size:14px;padding:13px;border-radius:12px;cursor:pointer;border:none;box-shadow:0 4px 14px rgba(30,58,138,0.25);transition:transform 0.15s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
-                  🛒 ใส่ตะกร้าและชำระเงิน
+                  สมัครเรียนคอร์สนี้
                 </button>
               `}
 
               ${trial ? `
                 <button onclick="document.getElementById('global-course-modal').classList.remove('show');openTrialModal(TRIAL_LESSONS.find(t=>t.id==='${trial.id}') || TRIAL_LESSONS[0])" style="width:100%;background:#EFF6FF;color:#1E3A8A;border:1px solid #BFDBFE;font-weight:850;font-size:12.5px;padding:11px;border-radius:12px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px">
-                  ▶ ทดลองเรียนฟรี (วิดีโอตัวอย่าง)
+                  ทดลองเรียนฟรี
                 </button>
               ` : ''}
 
               ${AppState.userRole === 'admin' ? `
                 <a href="admin.html?edit=${course.id}" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;font-weight:800;font-size:11.5px;padding:9px 12px;border-radius:10px;text-decoration:none;box-sizing:border-box">
-                  ✏️ แก้ไขคอร์สนี้ในระบบแอดมิน
+                  แก้ไขคอร์สนี้ในระบบแอดมิน
                 </a>
               ` : ''}
             </div>
@@ -1241,7 +1245,7 @@ function renderHeader(activePage = 'home') {
 
       <div class="header-right-actions" style="display:flex;align-items:center;gap:8px">
         <button onclick="openCartDrawer()" class="cart-icon-btn" title="ตะกร้าสินค้า" aria-label="เปิดตะกร้าสินค้า">
-          <span style="font-size:18px;line-height:1">🛒</span>
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:block"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
           <span class="cart-badge" style="display:${AppState.cart.length > 0 ? 'flex' : 'none'}">${AppState.cart.length}</span>
         </button>
 
@@ -1416,20 +1420,20 @@ function toggleMyCoursesMenu(e) {
     menu.innerHTML = `
       <div style="padding:12px;text-align:center">
         <p style="font-size:11px;color:#6B7280;margin:0 0 8px">ยังไม่มีคอร์สเรียนที่ลงทะเบียน</p>
-        <a href="courses.html" style="background:var(--c-navy);color:white;font-weight:800;font-size:11px;padding:6px 12px;border-radius:8px;text-decoration:none;display:inline-block">🛒 เลือกซื้อคอร์สเรียน</a>
+        <a href="courses.html" style="background:var(--c-navy);color:white;font-weight:800;font-size:11px;padding:6px 12px;border-radius:8px;text-decoration:none;display:inline-block">เลือกดูคอร์สเรียนทั้งหมด</a>
       </div>
     `;
   } else {
     menu.innerHTML = `
       <div style="padding:4px 6px;border-bottom:1px solid #F3F4F6;margin-bottom:4px">
-        <span style="font-size:10px;font-weight:900;color:#9CA3AF">🎓 คอร์สของคุณที่พร้อมเรียน (${enrolledCourses.length})</span>
+        <span style="font-size:10px;font-weight:900;color:#9CA3AF">คอร์สที่พร้อมเรียน (${enrolledCourses.length})</span>
       </div>
       ${enrolledCourses.map(c => `
         <a href="classroom.html" style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px;text-decoration:none;transition:background 0.2s" onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='transparent'">
           <img src="${c.imageUrl}" style="width:36px;height:36px;object-fit:contain;border-radius:6px;background:#F1F5F9;padding:2px" alt="" />
           <div style="overflow:hidden">
             <h5 style="font-size:12px;font-weight:850;color:var(--c-navy);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.title}</h5>
-            <span style="font-size:10px;color:var(--c-sky);font-weight:700">▶ เข้าเรียนบทเรียนนี้</span>
+            <span style="font-size:10px;color:var(--c-sky);font-weight:700">เข้าเรียนบทเรียนนี้ ➔</span>
           </div>
         </a>
       `).join('')}

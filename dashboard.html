@@ -39,7 +39,7 @@
 
       <div style="display:flex;align-items:center;gap:12px">
         <button onclick="openCartDrawer()" class="cart-icon-btn" title="ตะกร้าสินค้า" aria-label="เปิดตะกร้าสินค้า">
-          <span style="font-size:20px">🛒</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
           <span class="cart-badge" style="display:none">0</span>
         </button>
 
@@ -53,13 +53,13 @@
         </button>
 
         <div id="nav-dropdown" class="dropdown-panel">
-          <a href="index.html" class="dropdown-item">👉 หน้าแรก</a>
-          <a href="courses.html" class="dropdown-item">📚 คอร์สเรียนทั้งหมด</a>
-          <a href="exam.html" class="dropdown-item">🏆 คลังข้อสอบ A-Level</a>
-          <a href="about.html" class="dropdown-item">🔬 เกี่ยวกับเรา (พี่ต้น)</a>
-          <a href="faq.html" class="dropdown-item">❓ คำถามพบบ่อย (FAQ)</a>
-          <a href="guide.html" class="dropdown-item">📖 คู่มือการใช้งาน</a>
-          <a href="login.html" class="dropdown-item" style="color:var(--c-sky);font-weight:800">🔑 เข้าสู่ระบบ</a>
+          <a href="index.html" class="dropdown-item">หน้าแรก</a>
+          <a href="courses.html" class="dropdown-item">คอร์สเรียนทั้งหมด</a>
+          <a href="exam.html" class="dropdown-item">คลังข้อสอบ A-Level</a>
+          <a href="about.html" class="dropdown-item">เกี่ยวกับเรา (พี่ต้น)</a>
+          <a href="faq.html" class="dropdown-item">คำถามพบบ่อย</a>
+          <a href="guide.html" class="dropdown-item">คู่มือการใช้งาน</a>
+          <a href="login.html" class="dropdown-item" style="color:var(--c-sky);font-weight:800">เข้าสู่ระบบ</a>
         </div>
       </div>
     </div>
@@ -71,8 +71,8 @@
       <aside
         style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:24px 20px;text-align:center;height:fit-content;display:flex;flex-direction:column;align-items:center">
         <div
-          style="width:84px;height:84px;min-width:84px;min-height:84px;aspect-ratio:1/1;border-radius:50%;background:var(--c-sky-light);color:var(--c-sky);font-size:36px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 4px 12px rgba(30,58,138,0.1);flex-shrink:0">
-          👨‍🎓
+          style="width:84px;height:84px;min-width:84px;min-height:84px;aspect-ratio:1/1;border-radius:50%;background:#EEF2F6;color:var(--c-navy);display:flex;align-items:center;justify-content:center;margin-bottom:14px;box-shadow:0 4px 12px rgba(30,58,138,0.08);flex-shrink:0">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </div>
         <!-- Line 1: น้อง(ชื่อเล่น) -->
         <h3 id="sidebar-nickname" style="font-weight:900;font-size:18px;color:var(--c-navy);margin:0 0 4px">น้องนักเรียน
@@ -87,16 +87,16 @@
         <div style="display:flex;flex-direction:column;gap:6px;width:100%;margin-top:6px">
           <button onclick="switchDashTab('courses')" id="sbtn-courses"
             style="width:100%;background:#F8FAFC;border:1px solid #E5E7EB;color:var(--c-navy);font-weight:800;font-size:11.5px;padding:9px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:8px;text-align:left">
-            📚 คอร์สเรียนของฉัน
+            คอร์สเรียนของฉัน
           </button>
           <button onclick="switchDashTab('orders')" id="sbtn-orders"
             style="width:100%;background:#EFF6FF;border:1px solid #BFDBFE;color:#1E3A8A;font-weight:800;font-size:11.5px;padding:9px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px">
-            <span style="display:flex;align-items:center;gap:8px">🧾 ประวัติการสั่งซื้อ</span>
+            <span style="display:flex;align-items:center;gap:8px">ประวัติการสั่งซื้อ</span>
             <span id="sidebar-order-badge" style="display:none;background:#EF4444;color:white;font-size:10px;font-weight:900;padding:2px 7px;border-radius:999px">0</span>
           </button>
           <button onclick="switchDashTab('profile')" id="sbtn-profile"
             style="width:100%;background:#F8FAFC;border:1px solid #E5E7EB;color:#475569;font-weight:800;font-size:11.5px;padding:9px 12px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:8px;text-align:left">
-            ⚙️ แก้ไขข้อมูลส่วนตัว
+            แก้ไขข้อมูลส่วนตัว
           </button>
         </div>
       </aside>
@@ -105,16 +105,16 @@
       <div data-reveal data-delay="0.1s" style="display:flex;flex-direction:column;gap:20px">
 
         <!-- Profile Incomplete Alert Banner -->
-        <div id="incomplete-profile-banner" style="display:none;background:linear-gradient(135deg, #FEF2F2, #FFF1F2);border:1.5px solid #F87171;border-radius:16px;padding:16px 20px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:0 4px 12px rgba(239, 68, 68, 0.08)">
+        <div id="incomplete-profile-banner" style="display:none;background:#FEF2F2;border:1.5px solid #FCA5A5;border-radius:16px;padding:16px 20px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
           <div style="display:flex;align-items:center;gap:12px">
-            <span style="font-size:24px;line-height:1">⚠️</span>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             <div>
               <div style="font-size:14px;font-weight:900;color:#991B1B">ข้อมูลโปรไฟล์นักเรียนยังไม่สมบูรณ์</div>
               <div style="font-size:12px;color:#7F1D1D;margin-top:2px">กรุณากรอกเบอร์โทรศัพท์และโรงเรียนให้ครบถ้วน เพื่อเปิดใช้งานการเพิ่มคอร์สลงตะกร้าและการสั่งซื้อ</div>
             </div>
           </div>
-          <button type="button" onclick="switchDashTab('profile')" style="background:#DC2626;color:white;border:none;border-radius:10px;padding:8px 16px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(220, 38, 38, 0.25)">
-            ✏️ กรอกข้อมูลทันที
+          <button type="button" onclick="switchDashTab('profile')" style="background:#DC2626;color:white;border:none;border-radius:10px;padding:8px 16px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+            กรอกข้อมูลโปรไฟล์
           </button>
         </div>
 
@@ -122,29 +122,29 @@
           <div class="dash-tabs-scroll">
             <button onclick="switchDashTab('courses')" id="dtab-courses"
               style="padding:8px 16px;border-radius:8px;border:none;background:var(--c-navy);color:white;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
-              📚 คอร์สเรียนของฉัน
+              คอร์สเรียนของฉัน
             </button>
             <button onclick="switchDashTab('orders')" id="dtab-orders"
               style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
-              🧾 ประวัติการสั่งซื้อ
+              ประวัติการสั่งซื้อ
             </button>
             <button onclick="switchDashTab('profile')" id="dtab-profile"
               style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
-              ⚙️ แก้ไขข้อมูลส่วนตัว
+              แก้ไขข้อมูลส่วนตัว
             </button>
             <button onclick="switchDashTab('notes')" id="dtab-notes"
               style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
-              📝 สมุดบันทึกโน้ตย่อ
+              สมุดบันทึกโน้ต
             </button>
             <button onclick="switchDashTab('faq')" id="dtab-faq"
               style="padding:8px 16px;border-radius:8px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">
-              ❓ ศูนย์ช่วยเหลือ FAQ
+              คำถามที่พบบ่อย
             </button>
           </div>
 
           <!-- Courses Panel -->
           <div id="dpanel-courses">
-            <h2 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 16px">📚 คอร์สเรียนของคุณ</h2>
+            <h2 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 16px">คอร์สเรียนของคุณ</h2>
             <div id="enrolled-list" class="enrolled-courses-grid"></div>
           </div>
 
@@ -154,17 +154,17 @@
             <!-- Header Row -->
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-bottom:1px solid #F1F5F9;padding-bottom:14px">
               <div>
-                <h2 style="font-size:18px;font-weight:900;color:var(--c-navy);margin:0 0 4px">🧾 ประวัติการสั่งซื้อ</h2>
+                <h2 style="font-size:18px;font-weight:900;color:var(--c-navy);margin:0 0 4px">ประวัติการสั่งซื้อ</h2>
                 <p style="font-size:12px;color:#64748B;margin:0">ติดตามสถานะการชำระเงิน การตรวจสลิป และประวัติคอร์สเรียนทั้งหมดของคุณ</p>
               </div>
               <div style="display:flex;gap:8px;align-items:center">
                 <button onclick="loadMyOrders(true)" id="refresh-orders-btn"
                   style="background:#F8FAFC;border:1px solid #E2E8F0;color:#334155;font-size:11.5px;font-weight:800;padding:7px 14px;border-radius:10px;cursor:pointer;display:flex;align-items:center;gap:6px">
-                  🔄 รีเฟรชข้อมูล
+                  รีเฟรชข้อมูล
                 </button>
                 <a href="courses.html"
                   style="background:var(--c-navy);color:white;font-size:11.5px;font-weight:800;padding:8px 14px;border-radius:10px;text-decoration:none;display:flex;align-items:center;gap:6px">
-                  🛒 สั่งซื้อคอร์สเพิ่ม
+                  ดูคอร์สเรียนเพิ่ม
                 </a>
               </div>
             </div>
@@ -172,19 +172,19 @@
             <!-- Order Stats Overview Cards (4 Stats) -->
             <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:10px" id="order-stats-container">
               <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:14px;padding:12px 14px">
-                <div style="font-size:11px;color:#64748B;font-weight:700">📦 ออเดอร์ทั้งหมด</div>
+                <div style="font-size:11px;color:#64748B;font-weight:700">คำสั่งซื้อทั้งหมด</div>
                 <div id="stat-total-orders" style="font-size:20px;font-weight:900;color:var(--c-navy);margin-top:2px">0</div>
               </div>
               <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:14px;padding:12px 14px">
-                <div style="font-size:11px;color:#B45309;font-weight:700">⏳ รอตรวจสอบสลิป</div>
+                <div style="font-size:11px;color:#B45309;font-weight:700">รอตรวจสอบสลิป</div>
                 <div id="stat-pending-orders" style="font-size:20px;font-weight:900;color:#B45309;margin-top:2px">0</div>
               </div>
               <div style="background:#ECFDF5;border:1px solid #A7F3D0;border-radius:14px;padding:12px 14px">
-                <div style="font-size:11px;color:#047857;font-weight:700">✅ อนุมัติสำเร็จ</div>
+                <div style="font-size:11px;color:#047857;font-weight:700">อนุมัติแล้ว</div>
                 <div id="stat-approved-orders" style="font-size:20px;font-weight:900;color:#047857;margin-top:2px">0</div>
               </div>
               <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:14px;padding:12px 14px">
-                <div style="font-size:11px;color:#B91C1C;font-weight:700">💰 ยอดชำระสะสม</div>
+                <div style="font-size:11px;color:#B91C1C;font-weight:700">ยอดชำระสะสม</div>
                 <div id="stat-total-spent" style="font-size:20px;font-weight:900;color:#B91C1C;margin-top:2px">฿0</div>
               </div>
             </div>
@@ -197,21 +197,21 @@
               </button>
               <button onclick="filterMyOrders('pending')" id="ofilter-pending"
                 style="padding:6px 14px;border-radius:999px;border:1px solid #E2E8F0;background:white;color:#334155;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap">
-                ⏳ รอตรวจสลิป (<span id="count-filter-pending">0</span>)
+                รอตรวจสอบ (<span id="count-filter-pending">0</span>)
               </button>
               <button onclick="filterMyOrders('approved')" id="ofilter-approved"
                 style="padding:6px 14px;border-radius:999px;border:1px solid #E2E8F0;background:white;color:#334155;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap">
-                ✅ อนุมัติแล้ว (<span id="count-filter-approved">0</span>)
+                อนุมัติแล้ว (<span id="count-filter-approved">0</span>)
               </button>
               <button onclick="filterMyOrders('rejected')" id="ofilter-rejected"
                 style="padding:6px 14px;border-radius:999px;border:1px solid #E2E8F0;background:white;color:#334155;font-size:11.5px;font-weight:800;cursor:pointer;white-space:nowrap">
-                ❌ ไม่ผ่าน (<span id="count-filter-rejected">0</span>)
+                ไม่ผ่าน (<span id="count-filter-rejected">0</span>)
               </button>
             </div>
 
             <!-- Orders List Container -->
             <div id="orders-list" style="display:flex;flex-direction:column;gap:14px">
-              <p style="color:#9CA3AF;font-size:13px;text-align:center;padding:30px">⏳ กำลังโหลดประวัติการสั่งซื้อ...</p>
+              <p style="color:#9CA3AF;font-size:13px;text-align:center;padding:30px">กำลังโหลดประวัติการสั่งซื้อ...</p>
             </div>
 
           </div>
@@ -219,7 +219,7 @@
           <!-- Profile Edit & Account Linking Panel -->
           <div id="dpanel-profile" style="display:none;flex-direction:column;gap:20px">
             <div>
-              <h2 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 4px">👤 ข้อมูลส่วนตัวนักเรียน
+              <h2 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 4px">ข้อมูลส่วนตัวนักเรียน
               </h2>
               <p style="font-size:12px;color:#6B7280;margin:0 0 12px">จัดการข้อมูลส่วนตัว ข้อมูลติดต่อสำหรับการเรียน
                 และการเชื่อมต่อบัญชี</p>
@@ -230,7 +230,7 @@
               <!-- Full Name -->
               <div class="profile-form-group">
                 <label for="edit-fullname" class="profile-label">
-                  👤 ชื่อจริง - นามสกุล (Full Name) <span style="color:#EF4444">*</span>
+                  ชื่อจริง - นามสกุล <span style="color:#EF4444">*</span>
                 </label>
                 <input type="text" id="edit-fullname" required class="profile-input"
                   placeholder="เช่น นาย วิทศรุต สายตา" />
@@ -239,7 +239,7 @@
               <!-- Nickname -->
               <div class="profile-form-group">
                 <label for="edit-nickname" class="profile-label">
-                  😊 ชื่อเล่น (Nickname) <span style="color:#EF4444">*</span>
+                  ชื่อเล่น <span style="color:#EF4444">*</span>
                 </label>
                 <input type="text" id="edit-nickname" required class="profile-input"
                   placeholder="เช่น วิทศรุต, ภูมิ" />
@@ -248,7 +248,7 @@
               <!-- Phone -->
               <div class="profile-form-group">
                 <label for="edit-phone" class="profile-label">
-                  📱 เบอร์โทรศัพท์ (Phone) <span style="color:#EF4444">*</span>
+                  เบอร์โทรศัพท์ <span style="color:#EF4444">*</span>
                 </label>
                 <input type="tel" id="edit-phone" required maxlength="12" class="profile-input"
                   placeholder="081-234-5678" />
@@ -257,7 +257,7 @@
               <!-- School -->
               <div class="profile-form-group">
                 <label for="edit-school" class="profile-label">
-                  🏫 โรงเรียน (School) <span style="color:#EF4444">*</span>
+                  โรงเรียน <span style="color:#EF4444">*</span>
                 </label>
                 <input type="text" id="edit-school" required class="profile-input"
                   placeholder="เช่น โรงเรียนสตรีวิทยา, สวนกุหลาบ" />
@@ -266,7 +266,7 @@
               <!-- Level -->
               <div class="profile-form-group">
                 <label for="edit-level" class="profile-label">
-                  🎓 ระดับชั้น (Level) <span style="color:#EF4444">*</span>
+                  ระดับชั้น <span style="color:#EF4444">*</span>
                 </label>
                 <select id="edit-level" class="profile-input profile-select">
                   <option value="มัธยมศึกษาปีที่ 4">มัธยมศึกษาปีที่ 4</option>
@@ -279,11 +279,11 @@
               <!-- Birthdate & Age -->
               <div class="profile-birthdate-age-row">
                 <div style="flex:1.3">
-                  <label for="edit-birthdate" class="profile-label">🎂 วันเกิด (Birthdate)</label>
+                  <label for="edit-birthdate" class="profile-label">วันเกิด</label>
                   <input type="date" id="edit-birthdate" onchange="calcDashAge()" class="profile-input" />
                 </div>
                 <div style="flex:0.9">
-                  <label for="edit-age" class="profile-label">⌛ อายุ</label>
+                  <label for="edit-age" class="profile-label">อายุ</label>
                   <input type="text" id="edit-age" readonly class="profile-input"
                     style="background:#F1F5F9;color:#1E3A8A;font-weight:700" />
                 </div>
@@ -291,27 +291,27 @@
 
               <!-- LINE ID -->
               <div class="profile-form-group">
-                <label for="edit-line-id" class="profile-label">💬 LINE ID</label>
+                <label for="edit-line-id" class="profile-label">LINE ID</label>
                 <input type="text" id="edit-line-id" class="profile-input" placeholder="ไอดีไลน์" />
               </div>
 
               <!-- Instagram -->
               <div class="profile-form-group">
-                <label for="edit-instagram" class="profile-label">📸 Instagram</label>
+                <label for="edit-instagram" class="profile-label">Instagram</label>
                 <input type="text" id="edit-instagram" class="profile-input" placeholder="@username" />
               </div>
 
               <!-- Facebook (Full Width on Desktop) -->
               <div class="profile-form-group profile-span-2">
-                <label for="edit-facebook" class="profile-label">📘 Facebook Link / Name</label>
+                <label for="edit-facebook" class="profile-label">Facebook</label>
                 <input type="text" id="edit-facebook" class="profile-input" placeholder="ชื่อหรือลิงก์ Facebook" />
               </div>
 
               <!-- Disabled Email Field -->
               <div class="profile-form-group">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-                  <label class="profile-label" style="margin-bottom:0">อีเมล (Email)</label>
-                  <span style="font-size:10px;font-weight:800;color:#059669;background:#D1FAE5;padding:2px 8px;border-radius:6px">✓ ยืนยัน OTP แล้ว</span>
+                  <label class="profile-label" style="margin-bottom:0">อีเมล</label>
+                  <span style="font-size:10px;font-weight:800;color:#059669;background:#D1FAE5;padding:2px 8px;border-radius:6px">✓ ยืนยันแล้ว</span>
                 </div>
                 <input type="email" id="edit-email" disabled class="profile-input"
                   style="background:#F3F4F6;color:#6B7280;cursor:not-allowed" />
@@ -320,8 +320,8 @@
               <!-- Password Placeholder Field -->
               <div class="profile-form-group">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-                  <label class="profile-label" style="margin-bottom:0">รหัสผ่าน (Password)</label>
-                  <span style="font-size:10px;font-weight:800;color:#DC2626;background:#FEE2E2;padding:2px 8px;border-radius:6px">🔒 ปลอดภัย</span>
+                  <label class="profile-label" style="margin-bottom:0">รหัสผ่าน</label>
+                  <span style="font-size:10px;font-weight:800;color:#DC2626;background:#FEE2E2;padding:2px 8px;border-radius:6px">เข้ารหัสความปลอดภัย</span>
                 </div>
                 <input type="password" id="edit-password" value="••••••••" disabled class="profile-input"
                   style="background:#F3F4F6;color:#6B7280;cursor:not-allowed" />
@@ -330,7 +330,7 @@
               <!-- Action Submit Button -->
               <div class="profile-submit-container profile-span-2">
                 <button type="submit" id="btn-save-profile" class="profile-submit-btn">
-                  💾 บันทึกการเปลี่ยนแปลงข้อมูล
+                  บันทึกข้อมูลส่วนตัว
                 </button>
               </div>
 
@@ -342,7 +342,7 @@
               <div>
                 <h3
                   style="font-size:15px;font-weight:900;color:var(--c-navy);margin:0 0 4px;display:flex;align-items:center;gap:8px">
-                  🔗 การเชื่อมต่อบัญชี (Account Linking)
+                  การเชื่อมต่อบัญชี (Account Linking)
                 </h3>
                 <p style="font-size:12px;color:#64748B;margin:0">
                   ผูกบัญชี INBIOLOGY กับ Google เพื่อให้คุณสามารถกดปุ่มเข้าสู่ระบบด้วย Google ได้ทันทีในครั้งถัดไป
@@ -351,7 +351,7 @@
 
               <!-- Google Link Item -->
               <div
-                style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;flex-wrap:wrap;gap:10px">
+                style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;flex-wrap:gap:10px">
                 <div style="display:flex;align-items:center;gap:12px">
                   <svg width="24" height="24" viewBox="0 0 24 24">
                     <path fill="#4285F4"
@@ -364,7 +364,7 @@
                       d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
                   </svg>
                   <div>
-                    <div style="font-size:13.5px;font-weight:700;color:#0F172A">บัญชี Google (OAuth)</div>
+                    <div style="font-size:13.5px;font-weight:700;color:#0F172A">บัญชี Google</div>
                     <div id="google-link-status-text" style="font-size:11.5px;color:#64748B">ตรวจสอบสถานะการเชื่อมต่อ...
                     </div>
                   </div>
@@ -379,13 +379,13 @@
 
           <!-- Notes Panel -->
           <div id="dpanel-notes" style="display:none;flex-direction:column;gap:10px">
-            <h2 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 16px">📝 โน้ตย่อสะสมย้อนหลัง</h2>
+            <h2 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 16px">สมุดบันทึกโน้ต</h2>
             <div id="notes-list" style="display:flex;flex-direction:column;gap:10px"></div>
           </div>
 
           <!-- FAQ Panel -->
           <div id="dpanel-faq" style="display:none;flex-direction:column;gap:12px">
-            <h2 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 12px">❓ คำถามที่พบบ่อย (FAQ)</h2>
+            <h2 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 12px">คำถามที่พบบ่อย</h2>
             <div id="faq-accordion-list" style="display:flex;flex-direction:column;gap:10px"></div>
           </div>
         </div>
@@ -435,7 +435,7 @@
         if (targetTab === 'profile' && urlParams.get('incomplete') === '1') {
           setTimeout(() => {
             highlightIncompleteFields();
-            showToast('⚠️ กรุณากรอกเบอร์โทรศัพท์และโรงเรียนให้ครบถ้วนก่อนเลือกซื้อคอร์ส', 'warning');
+            showToast('กรุณากรอกเบอร์โทรศัพท์และโรงเรียนให้ครบถ้วนก่อนเลือกซื้อคอร์ส', 'warning');
           }, 200);
         }
       } else {
@@ -520,17 +520,17 @@
       const actionContainer = document.getElementById('google-link-action-container');
 
       if (isGoogleLinked) {
-        statusText.innerHTML = `<span style="color:#059669;font-weight:700">✓ เชื่อมต่อแล้ว</span> (${googleData.email || p.email})`;
+        statusText.innerHTML = `<span style="color:#059669;font-weight:700">เชื่อมต่อแล้ว</span> (${googleData.email || p.email})`;
         actionContainer.innerHTML = `
           <button type="button" onclick="handleUnlinkGoogle()" style="background:#FEE2E2;color:#DC2626;border:1px solid #FECACA;font-size:12px;font-weight:700;padding:8px 14px;border-radius:10px;cursor:pointer">
-            ✕ ยกเลิกการเชื่อมต่อ
+            ยกเลิกการเชื่อมต่อ
           </button>
         `;
       } else {
         statusText.textContent = 'ยังไม่ได้เชื่อมต่อ (คลิกเพื่อผูกบัญชี)';
         actionContainer.innerHTML = `
           <button type="button" onclick="handleLinkGoogle()" style="background:#1E3A8A;color:white;border:none;font-size:12px;font-weight:700;padding:8px 16px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
-            🔗 เชื่อมต่อกับ Google
+            เชื่อมต่อกับ Google
           </button>
         `;
       }
@@ -551,10 +551,10 @@
               const payload = JSON.parse(json);
 
               await window.CloudService.linkGoogleAccount(payload);
-              showToast(`🎉 ผูกบัญชี Google (${payload.email}) สำเร็จเรียบร้อย!`, 'success');
+              showToast(`ผูกบัญชี Google (${payload.email}) สำเร็จเรียบร้อย`, 'success');
               renderGoogleLinkStatus();
             } catch (e) {
-              showToast(`❌ ${e.message}`, 'error');
+              showToast(e.message, 'error');
             }
           }
         });
@@ -569,10 +569,10 @@
         };
         try {
           await window.CloudService.linkGoogleAccount(demoPayload);
-          showToast(`🎉 ผูกบัญชี Google (${demoPayload.email}) สำเร็จเรียบร้อย! (Demo Mode)`, 'success');
+          showToast(`ผูกบัญชี Google (${demoPayload.email}) สำเร็จเรียบร้อย`, 'success');
           renderGoogleLinkStatus();
         } catch (e) {
-          showToast(`❌ ${e.message}`, 'error');
+          showToast(e.message, 'error');
         }
       }
     }
@@ -581,10 +581,10 @@
       if (!confirm('คุณต้องการยกเลิกการเชื่อมต่อบัญชี Google ใช่หรือไม่?')) return;
       try {
         await window.CloudService.unlinkProvider('google');
-        showToast('👋 ยกเลิกการเชื่อมต่อบัญชี Google เรียบร้อยแล้ว', 'info');
+        showToast('ยกเลิกการเชื่อมต่อบัญชี Google เรียบร้อยแล้ว', 'info');
         renderGoogleLinkStatus();
       } catch (err) {
-        showToast(`❌ ${err.message}`, 'error');
+        showToast(err.message, 'error');
       }
     }
 
@@ -648,7 +648,7 @@
       loadStudentProfileToUI();
       renderHeader('dashboard');
       updateProfileIncompleteBanner();
-      showToast('🎉 บันทึกข้อมูลส่วนตัวเรียบร้อยแล้ว', 'success');
+      showToast('บันทึกข้อมูลส่วนตัวเรียบร้อยแล้ว', 'success');
     }
 
     function switchDashTab(tabName) {
@@ -706,8 +706,8 @@
       if (enrolled.length === 0) {
         container.innerHTML = `
           <div style="grid-column:1/-1;background:#F8FAFC;border:1.5px dashed #CBD5E1;border-radius:16px;padding:36px 20px;text-align:center">
-            <p style="color:#6B7280;font-size:13.5px;margin:0 0 14px">ยังไม่มีคอร์สเรียนสะสมในบัญชีของคุณ</p>
-            <a href="courses.html" style="background:var(--c-navy);color:white;font-weight:800;font-size:12px;padding:10px 20px;border-radius:10px;text-decoration:none;display:inline-block">🛒 เลือกซื้อคอร์สเรียนชีววิทยา</a>
+            <p style="color:#6B7280;font-size:13.5px;margin:0 0 14px">ยังไม่มีคอร์สเรียนในบัญชีของคุณ</p>
+            <a href="courses.html" style="background:var(--c-navy);color:white;font-weight:800;font-size:12px;padding:10px 20px;border-radius:10px;text-decoration:none;display:inline-block">ดูคอร์สเรียนชีววิทยา</a>
           </div>
         `;
       } else {
@@ -731,7 +731,7 @@
                   <div style="width:${prog.percentage}%;height:100%;background:var(--c-sky);transition:width 0.3s ease"></div>
                 </div>
                 <a href="classroom.html?course=${c.id}" style="background:var(--c-sky);color:white;font-weight:850;font-size:12px;padding:9px;border-radius:10px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px">
-                  ▶ เข้าสู่ห้องเรียน
+                  เข้าสู่ห้องเรียน
                 </a>
               </div>
             </div>
@@ -752,18 +752,17 @@
       if (!backgroundOnly && container) {
         container.innerHTML = `
           <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:16px;padding:36px;text-align:center">
-            <div style="font-size:28px;margin-bottom:8px">⏳</div>
-            <p style="color:#64748B;font-size:13px;font-weight:700;margin:0">กำลังดึงข้อมูลประวัติคำสั่งซื้อจาก Cloud...</p>
+            <p style="color:#64748B;font-size:13px;font-weight:700;margin:0">กำลังดึงข้อมูลประวัติคำสั่งซื้อ...</p>
           </div>`;
       }
-      if (refreshBtn) refreshBtn.innerHTML = '⏳ กำลังโหลด...';
+      if (refreshBtn) refreshBtn.innerHTML = 'กำลังโหลด...';
 
       const profile = AppState.getStudentProfile();
       if (!profile || !profile.email) {
         if (!backgroundOnly && container) {
           container.innerHTML = `<p style="color:#9CA3AF;font-size:13px;text-align:center;padding:20px">ไม่พบข้อมูลบัญชีผู้ใช้</p>`;
         }
-        if (refreshBtn) refreshBtn.innerHTML = '🔄 รีเฟรชข้อมูล';
+        if (refreshBtn) refreshBtn.innerHTML = 'รีเฟรชข้อมูล';
         return;
       }
 
@@ -820,7 +819,7 @@
         }
       }
 
-      if (refreshBtn) refreshBtn.innerHTML = '🔄 รีเฟรชข้อมูล';
+      if (refreshBtn) refreshBtn.innerHTML = 'รีเฟรชข้อมูล';
 
       if (!backgroundOnly) {
         renderOrdersList(_currentOrderFilter);
@@ -864,10 +863,9 @@
         };
         container.innerHTML = `
           <div style="background:#F8FAFC;border:1.5px dashed #CBD5E1;border-radius:18px;padding:40px 20px;text-align:center">
-            <div style="font-size:36px;margin-bottom:10px">🛒</div>
             <p style="color:#64748B;font-size:14px;font-weight:700;margin:0 0 14px">${emptyLabels[filterStatus] || 'ไม่มีข้อมูลคำสั่งซื้อ'}</p>
-            <a href="courses.html" style="background:var(--c-navy);color:white;font-weight:800;font-size:12.5px;padding:10px 22px;border-radius:12px;text-decoration:none;display:inline-block;box-shadow:0 4px 12px rgba(185,28,28,0.2)">
-              📚 เลือกซื้อคอร์สเรียนชีววิทยา
+            <a href="courses.html" style="background:var(--c-navy);color:white;font-weight:800;font-size:12.5px;padding:10px 22px;border-radius:12px;text-decoration:none;display:inline-block">
+              ดูคอร์สเรียนชีววิทยา
             </a>
           </div>`;
         return;
@@ -876,15 +874,15 @@
       const statusBadgeMap = {
         pending: `
           <div style="display:flex;align-items:center;gap:6px;background:#FFFBEB;border:1px solid #FDE68A;color:#B45309;font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px">
-            <span>⏳</span> รอเจ้าหน้าที่ตรวจสลิป (ภายใน 24 ชม.)
+            รอเจ้าหน้าที่ตรวจสอบสลิป (ภายใน 24 ชม.)
           </div>`,
         approved: `
           <div style="display:flex;align-items:center;gap:6px;background:#ECFDF5;border:1px solid #A7F3D0;color:#047857;font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px">
-            <span>✅</span> อนุมัติเรียบร้อย — เข้าเรียนได้เลย
+            อนุมัติเรียบร้อย — เข้าเรียนได้เลย
           </div>`,
         rejected: `
           <div style="display:flex;align-items:center;gap:6px;background:#FEF2F2;border:1px solid #FECACA;color:#B91C1C;font-size:11px;font-weight:800;padding:5px 12px;border-radius:999px">
-            <span>❌</span> ไม่ผ่านการตรวจสอบ
+            ไม่ผ่านการตรวจสอบ
           </div>`
       };
 
@@ -910,10 +908,10 @@
                 <div style="display:flex;align-items:center;gap:8px">
                   <span style="font-family:monospace;font-size:13px;font-weight:850;color:#1E3A8A;background:#EFF6FF;padding:3px 8px;border-radius:6px">#${shortId}</span>
                   <button onclick="copyOrderId('${o.id}', this)" style="background:none;border:none;color:#64748B;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:2px" title="คัดลอกรหัสออเดอร์">
-                    📋 คัดลอก
+                    คัดลอก
                   </button>
                 </div>
-                <div style="font-size:11.5px;color:#64748B;margin-top:4px">📅 วันที่สั่งซื้อ: ${fullDate} น.</div>
+                <div style="font-size:11.5px;color:#64748B;margin-top:4px">วันที่สั่งซื้อ: ${fullDate} น.</div>
               </div>
               <div>
                 ${statusBadgeMap[o.status] || `<span class="status-badge status-pending">${o.status}</span>`}
@@ -924,11 +922,11 @@
             <div>
               <div style="font-size:10.5px;font-weight:800;color:#64748B;text-transform:uppercase;margin-bottom:3px">รายการคอร์สที่สั่งซื้อ</div>
               <div style="font-size:14px;font-weight:900;color:var(--c-navy);line-height:1.5">
-                📚 ${o.course_titles || (Array.isArray(o.course_ids) ? o.course_ids.join(', ') : o.course_ids)}
+                ${o.course_titles || (Array.isArray(o.course_ids) ? o.course_ids.join(', ') : o.course_ids)}
               </div>
               ${o.coupon_code ? `
                 <div style="font-size:11px;color:#059669;font-weight:700;margin-top:2px">
-                  🏷️ ใช้โค้ดส่วนลด: <strong>${o.coupon_code}</strong> (ลด ฿${Number(o.discount_amount || 0).toLocaleString('th-TH')})
+                  โค้ดส่วนลด: <strong>${o.coupon_code}</strong> (ลด ฿${Number(o.discount_amount || 0).toLocaleString('th-TH')})
                 </div>
               ` : ''}
             </div>
@@ -953,17 +951,17 @@
                          onclick="viewStudentOrderSlip('${o.id}')" 
                          title="คลิกเพื่อขยายดูสลิป" />
                     <div>
-                      <div style="font-size:11px;font-weight:800;color:var(--c-navy)">📸 หลักฐานการโอนเงิน</div>
-                      <div style="font-size:10.5px;color:#059669;font-weight:700">✓ แนบสลิปเรียบร้อยแล้ว</div>
+                      <div style="font-size:11px;font-weight:800;color:var(--c-navy)">หลักฐานการโอนเงิน</div>
+                      <div style="font-size:10.5px;color:#059669;font-weight:700">แนบสลิปเรียบร้อยแล้ว</div>
                     </div>
                   </div>
                   <button onclick="viewStudentOrderSlip('${o.id}')" 
                           style="background:white;color:#1E3A8A;border:1px solid #BFDBFE;padding:7px 12px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
-                    🔍 ขยายดูสลิป
+                    ดูสลิป
                   </button>
                 ` : `
                   <div style="font-size:11.5px;color:#94A3B8;display:flex;align-items:center;gap:6px">
-                    <span>⚠️</span> ไม่มีรูปสลิปแนบในระบบ
+                    ไม่มีรูปสลิปแนบในระบบ
                   </div>
                 `}
               </div>
@@ -973,7 +971,7 @@
             <!-- Admin Feedback Note (If Rejected or Note Attached) -->
             ${o.admin_note ? `
               <div style="background:#FEF2F2;border:1px solid #FEE2E2;border-radius:12px;padding:10px 14px;font-size:12px;color:#991B1B">
-                <strong>📢 ข้อความจากแอดมิน:</strong> ${o.admin_note}
+                <strong>ข้อความจากแอดมิน:</strong> ${o.admin_note}
               </div>
             ` : ''}
 
@@ -982,16 +980,16 @@
               ${o.status === 'approved' ? `
                 <a href="classroom.html?course=${firstCourseId || ''}" 
                    style="background:var(--c-sky);color:white;font-weight:850;font-size:12.5px;padding:10px 20px;border-radius:10px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(30,58,138,0.2)">
-                  ▶ เข้าสู่ห้องเรียนทันที
+                  เข้าสู่ห้องเรียน
                 </a>
               ` : (o.status === 'rejected' ? `
                 <a href="https://line.me" target="_blank" 
                    style="background:#F1F5F9;color:#0F172A;font-weight:800;font-size:11.5px;padding:8px 14px;border-radius:10px;text-decoration:none;display:inline-flex;align-items:center;gap:6px">
-                  💬 ติดต่อแอดมินทาง LINE
+                  ติดต่อแอดมินทาง LINE
                 </a>
               ` : `
                 <span style="font-size:11.5px;color:#64748B">
-                  💡 หากโอนเงินแล้ว สิทธิ์เรียนจะเปิดให้อัตโนมัติหลังแอดมินตรวจสลิปครับ
+                  หลังแจ้งชำระเงิน สิทธิ์เรียนจะเปิดให้อัตโนมัติหลังแอดมินตรวจสอบความถูกต้องครับ
                 </span>
               `)}
             </div>
@@ -1006,7 +1004,7 @@
       navigator.clipboard.writeText(orderId).then(() => {
         if (btn) {
           const oldText = btn.innerHTML;
-          btn.innerHTML = '✅ สำเร็จ';
+          btn.innerHTML = 'คัดลอกแล้ว';
           setTimeout(() => { btn.innerHTML = oldText; }, 1500);
         }
         showToast('คัดลอกรหัสออเดอร์เรียบร้อยแล้ว', 'success');
@@ -1027,7 +1025,7 @@
       overlay.innerHTML = `
         <div style="background:white;border-radius:20px;padding:20px;max-width:min(500px,calc(100vw - 32px));width:100%;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,0.3);box-sizing:border-box" onclick="event.stopPropagation()">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid #F1F5F9;padding-bottom:10px">
-            <span style="font-weight:850;color:var(--c-navy);font-size:15px">🖼️ สลิปที่แนบ (ออเดอร์ #${(o.id || '').substring(0, 8).toUpperCase()})</span>
+            <span style="font-weight:850;color:var(--c-navy);font-size:15px">สลิปที่แนบ (ออเดอร์ #${(o.id || '').substring(0, 8).toUpperCase()})</span>
             <button onclick="this.closest('[style*=fixed]').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#9CA3AF;font-weight:700">✕</button>
           </div>
           <div style="max-height:65vh;overflow-y:auto;border-radius:12px;background:#F8FAFC;padding:8px">

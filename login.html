@@ -449,19 +449,19 @@
           <div id="login-fields-container" style="display:flex;flex-direction:column;gap:14px">
             <div class="form-group">
               <label class="form-label" for="input-login-identifier">
-                <span style="color:#1E3A8A">✉️</span> อีเมล หรือ 📱 เบอร์โทรศัพท์
+                อีเมล หรือ เบอร์โทรศัพท์
               </label>
               <input type="text" id="input-login-identifier" placeholder="เช่น student@gmail.com หรือ 0812345678" class="form-input" autocomplete="username" />
             </div>
 
             <div class="form-group">
               <label class="form-label" for="input-login-password">
-                <span style="color:#B91C1C">🔒</span> รหัสผ่าน
+                รหัสผ่าน
               </label>
               <div style="position:relative">
                 <input type="password" id="input-login-password" placeholder="ระบุรหัสผ่านของคุณ" class="form-input" style="padding-right:44px" autocomplete="current-password" />
-                <button type="button" onclick="togglePasswordVisibility('input-login-password')" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:#94A3B8;cursor:pointer;font-size:15px" title="แสดง/ซ่อนรหัสผ่าน">
-                  👁
+                <button type="button" onclick="togglePasswordVisibility('input-login-password')" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:#94A3B8;cursor:pointer;font-size:13px;font-weight:700" title="แสดง/ซ่อนรหัสผ่าน">
+                  ดู
                 </button>
               </div>
             </div>
@@ -482,38 +482,38 @@
             <!-- SECTION 1: ACCOUNT CREDENTIALS & EMAIL OTP -->
             <div>
               <div class="form-section-title">
-                <span class="section-number">1</span> ข้อมูลบัญชีสำหรับเข้าใช้งาน (Credentials)
+                <span class="section-number">1</span> ข้อมูลบัญชีสำหรับเข้าใช้งาน
               </div>
 
               <div style="display:flex;flex-direction:column;gap:12px;margin-top:10px">
                 <!-- Email + In-page OTP Verification -->
                 <div class="form-group">
                   <label class="form-label" for="input-reg-email">
-                    <span style="color:#1E3A8A">✉️</span> อีเมล (Email) สำหรับเข้าสู่ระบบ <span class="required-dot">*</span>
+                    อีเมล (Email) สำหรับเข้าสู่ระบบ <span class="required-dot">*</span>
                   </label>
                   <div class="otp-row">
                     <input type="email" id="input-reg-email" placeholder="student@gmail.com" class="form-input" style="flex:1" />
                     <button type="button" id="btn-send-otp" onclick="handleSendOtp()" class="btn-otp-action">
-                      📩 ส่งรหัส OTP
+                      ส่งรหัส OTP
                     </button>
                   </div>
 
                   <!-- OTP Input Sub-Row -->
                   <div id="otp-input-box" style="display:none;margin-top:8px">
                     <label class="form-label" for="input-reg-otp" style="font-size:11.5px;color:#475569;font-weight:600;display:block;margin-bottom:4px">
-                      🔑 กรอกรหัส OTP 6 หลักที่ได้รับทางอีเมล:
+                      กรอกรหัส OTP 6 หลักที่ได้รับทางอีเมล:
                     </label>
                     <div class="otp-row">
                       <input type="text" id="input-reg-otp" maxlength="6" placeholder="849201" class="form-input" style="width:160px;letter-spacing:4px;font-family:monospace;font-size:16px;font-weight:700;text-align:center" />
                       <button type="button" id="btn-verify-otp" onclick="handleVerifyOtp()" class="btn-otp-action" style="background:#059669">
-                        ✓ ยืนยันรหัส OTP
+                        ยืนยันรหัส OTP
                       </button>
                     </div>
                   </div>
 
                   <!-- OTP Status Pill -->
                   <div id="otp-status-pill" class="otp-status-badge unverified">
-                    <span>⏳</span> ยังไม่ได้ยืนยันอีเมล (ระบบส่งรหัส 6 หลักเข้าอีเมลของคุณ)
+                    <span>•</span> ยังไม่ได้ยืนยันอีเมล (ระบบส่งรหัส 6 หลักเข้าอีเมลของคุณ)
                   </div>
                 </div>
 
@@ -521,24 +521,24 @@
                 <div class="grid-2-col">
                   <div class="form-group">
                     <label class="form-label" for="input-reg-password">
-                      <span style="color:#B91C1C">🔒</span> รหัสผ่าน (อย่างน้อย 6 ตัว) <span class="required-dot">*</span>
+                      รหัสผ่าน (อย่างน้อย 6 ตัว) <span class="required-dot">*</span>
                     </label>
                     <div style="position:relative">
                       <input type="password" id="input-reg-password" placeholder="ตั้งรหัสผ่าน 6 ตัวขึ้นไป" class="form-input" style="padding-right:40px" />
-                      <button type="button" onclick="togglePasswordVisibility('input-reg-password')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#94A3B8;cursor:pointer;font-size:14px">
-                        👁
+                      <button type="button" onclick="togglePasswordVisibility('input-reg-password')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#94A3B8;cursor:pointer;font-size:12px;font-weight:700">
+                        ดู
                       </button>
                     </div>
                   </div>
 
                   <div class="form-group">
                     <label class="form-label" for="input-reg-confirm-password">
-                      <span style="color:#B91C1C">🔑</span> ยืนยันรหัสผ่าน <span class="required-dot">*</span>
+                      ยืนยันรหัสผ่าน <span class="required-dot">*</span>
                     </label>
                     <div style="position:relative">
                       <input type="password" id="input-reg-confirm-password" placeholder="กรอกรหัสผ่านอีกครั้ง" class="form-input" style="padding-right:40px" />
-                      <button type="button" onclick="togglePasswordVisibility('input-reg-confirm-password')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#94A3B8;cursor:pointer;font-size:14px">
-                        👁
+                      <button type="button" onclick="togglePasswordVisibility('input-reg-confirm-password')" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#94A3B8;cursor:pointer;font-size:12px;font-weight:700">
+                        ดู
                       </button>
                     </div>
                   </div>
@@ -549,18 +549,18 @@
             <!-- SECTION 2: PERSONAL DETAILS -->
             <div>
               <div class="form-section-title">
-                <span class="section-number">2</span> ข้อมูลส่วนตัว (Personal Information)
+                <span class="section-number">2</span> ข้อมูลส่วนตัว
               </div>
 
               <div style="display:flex;flex-direction:column;gap:12px;margin-top:10px">
                 <!-- Full Name & Nickname -->
                 <div class="grid-2-col">
                   <div class="form-group">
-                    <label class="form-label" for="input-reg-fullname"><span>👤</span> ชื่อจริง - นามสกุล <span class="required-dot">*</span></label>
+                    <label class="form-label" for="input-reg-fullname">ชื่อจริง - นามสกุล <span class="required-dot">*</span></label>
                     <input type="text" id="input-reg-fullname" placeholder="โปรดใส่ชื่อ-นามสกุล" class="form-input" />
                   </div>
                   <div class="form-group">
-                    <label class="form-label" for="input-reg-nickname"><span>😊</span> ชื่อเล่น <span class="required-dot">*</span></label>
+                    <label class="form-label" for="input-reg-nickname">ชื่อเล่น <span class="required-dot">*</span></label>
                     <input type="text" id="input-reg-nickname" placeholder="เช่น ต้น, ภูมิ, แจน" class="form-input" />
                   </div>
                 </div>
@@ -568,12 +568,12 @@
                 <!-- Birthdate & Real-time Auto-Calculated Age -->
                 <div class="grid-2-col">
                   <div class="form-group">
-                    <label class="form-label" for="input-reg-birthdate"><span>🎂</span> วันเกิด (วัน/เดือน/ปี ค.ศ.) <span class="required-dot">*</span></label>
+                    <label class="form-label" for="input-reg-birthdate">วันเกิด (วัน/เดือน/ปี ค.ศ.) <span class="required-dot">*</span></label>
                     <input type="date" id="input-reg-birthdate" onchange="calculateAgeFromBirthdate()" class="form-input" />
                   </div>
                   <div class="form-group">
                     <label class="form-label" for="input-reg-age">
-                      <span>⌛</span> อายุ (คำนวณอัตโนมัติ)
+                      อายุ (คำนวณอัตโนมัติ)
                     </label>
                     <input type="text" id="input-reg-age" readonly placeholder="ระบุวันเกิดเพื่อคำนวณอายุ" class="form-input" style="background:#F1F5F9;color:#1E3A8A;font-weight:700" />
                   </div>
@@ -581,7 +581,7 @@
 
                 <!-- Phone -->
                 <div class="form-group">
-                  <label class="form-label" for="input-reg-phone"><span>📱</span> เบอร์โทรศัพท์ (ใช้เข้าสู่ระบบ & ติดต่อ) <span class="required-dot">*</span></label>
+                  <label class="form-label" for="input-reg-phone">เบอร์โทรศัพท์ (ใช้เข้าสู่ระบบ & ติดต่อ) <span class="required-dot">*</span></label>
                   <input type="tel" id="input-reg-phone" placeholder="081-234-5678" class="form-input" />
                 </div>
               </div>
@@ -590,12 +590,12 @@
             <!-- SECTION 3: EDUCATION DETAILS -->
             <div>
               <div class="form-section-title">
-                <span class="section-number">3</span> ข้อมูลการศึกษา (Education)
+                <span class="section-number">3</span> ข้อมูลการศึกษา
               </div>
 
               <div class="grid-2-col" style="margin-top:10px">
                 <div class="form-group">
-                  <label class="form-label" for="input-reg-grade"><span>🎓</span> ระดับชั้น <span class="required-dot">*</span></label>
+                  <label class="form-label" for="input-reg-grade">ระดับชั้น <span class="required-dot">*</span></label>
                   <select id="input-reg-grade" class="form-input" style="background:white">
                     <option value="" disabled selected>-- กรุณาเลือกระดับชั้น --</option>
                     <option value="มัธยมศึกษาปีที่ 4">มัธยมศึกษาปีที่ 4</option>
@@ -605,7 +605,7 @@
                   </select>
                 </div>
                 <div class="form-group">
-                  <label class="form-label" for="input-reg-school"><span>🏫</span> โรงเรียน <span class="required-dot">*</span></label>
+                  <label class="form-label" for="input-reg-school">โรงเรียน <span class="required-dot">*</span></label>
                   <input type="text" id="input-reg-school" placeholder="เช่น สตรีวิทยา, สวนกุหลาบ" class="form-input" />
                 </div>
               </div>
@@ -614,20 +614,20 @@
             <!-- SECTION 4: SOCIAL CONTACTS (OPTIONAL) -->
             <div>
               <div class="form-section-title">
-                <span class="section-number">4</span> ช่องทางติดต่ออื่นๆ (Social Media - ไม่บังคับ)
+                <span class="section-number">4</span> ช่องทางติดต่ออื่นๆ (ไม่บังคับ)
               </div>
 
               <div class="grid-3-col" style="margin-top:10px">
                 <div class="form-group">
-                  <label class="form-label" for="input-reg-ig"><span>📸</span> Instagram</label>
+                  <label class="form-label" for="input-reg-ig">Instagram</label>
                   <input type="text" id="input-reg-ig" placeholder="@username" class="form-input" />
                 </div>
                 <div class="form-group">
-                  <label class="form-label" for="input-reg-line"><span>💬</span> LINE ID</label>
+                  <label class="form-label" for="input-reg-line">LINE ID</label>
                   <input type="text" id="input-reg-line" placeholder="ไอดีไลน์" class="form-input" />
                 </div>
                 <div class="form-group">
-                  <label class="form-label" for="input-reg-facebook"><span>📘</span> Facebook</label>
+                  <label class="form-label" for="input-reg-facebook">Facebook</label>
                   <input type="text" id="input-reg-facebook" placeholder="ชื่อหรือลิงก์" class="form-input" />
                 </div>
               </div>
@@ -745,23 +745,23 @@
     async function handleSendOtp() {
       const email = document.getElementById('input-reg-email').value.trim();
       if (!email || !email.includes('@')) {
-        showToast('❌ กรุณากรอกอีเมลให้ถูกต้องก่อนกดส่งรหัส OTP', 'error');
+        showToast('กรุณากรอกอีเมลให้ถูกต้องก่อนกดส่งรหัส OTP', 'error');
         document.getElementById('input-reg-email').focus();
         return;
       }
 
       if (!window.CloudService || typeof window.CloudService.sendEmailOtp !== 'function') {
-        showToast('⚠️ กำลังเตรียมระบบความปลอดภัย กรุณากดรีเฟรชหน้าเว็บ (Ctrl+F5) อีกครั้ง', 'error');
+        showToast('ระบบกำลังเตรียมความพร้อม กรุณารีเฟรชหน้าเว็บ (Ctrl+F5) อีกครั้ง', 'error');
         return;
       }
 
       const btnSend = document.getElementById('btn-send-otp');
       btnSend.disabled = true;
-      btnSend.textContent = '⏳ กำลังส่ง...';
+      btnSend.textContent = 'กำลังส่ง OTP...';
 
       try {
         const res = await window.CloudService.sendEmailOtp(email);
-        showToast(`📩 ${res.message}`, 'success');
+        showToast(res.message, 'success');
 
         // Reveal OTP Input Row
         document.getElementById('otp-input-box').style.display = 'block';
@@ -772,9 +772,9 @@
         startOtpCooldown(res.cooldownSeconds || 60);
 
       } catch(err) {
-        showToast(`❌ ${err.message}`, 'error');
+        showToast(err.message, 'error');
         btnSend.disabled = false;
-        btnSend.textContent = '📩 ส่งรหัส OTP';
+        btnSend.textContent = 'ส่งรหัส OTP';
       }
     }
 
@@ -788,10 +788,10 @@
         if (otpCooldownRemaining <= 0) {
           clearInterval(otpCooldownTimer);
           btnSend.disabled = false;
-          btnSend.textContent = '📩 ส่งรหัสอีกครั้ง';
+          btnSend.textContent = 'ส่งรหัสอีกครั้ง';
         } else {
           btnSend.disabled = true;
-          btnSend.textContent = `⏳ ส่งอีกครั้งใน (${otpCooldownRemaining}s)`;
+          btnSend.textContent = `ส่งอีกครั้งใน (${otpCooldownRemaining}s)`;
         }
       }, 1000);
     }
@@ -801,7 +801,7 @@
       const code = document.getElementById('input-reg-otp').value.trim();
 
       if (!code || code.length !== 6) {
-        showToast('❌ กรุณากรอกรหัส OTP ให้ครบ 6 หลัก', 'error');
+        showToast('กรุณากรอกรหัส OTP ให้ครบ 6 หลัก', 'error');
         return;
       }
 
@@ -812,7 +812,7 @@
         // Update UI Badge
         const statusBadge = document.getElementById('otp-status-pill');
         statusBadge.className = 'otp-status-badge verified';
-        statusBadge.innerHTML = `<span>✅</span> ยืนยันอีเมลสำเร็จเรียบร้อย (${email})`;
+        statusBadge.innerHTML = `ยืนยันอีเมลเรียบร้อยแล้ว (${email})`;
 
         // Lock email and hide OTP box
         document.getElementById('input-reg-email').disabled = true;
@@ -820,10 +820,10 @@
         document.getElementById('btn-send-otp').style.display = 'none';
         document.getElementById('otp-demo-hint').style.display = 'none';
 
-        showToast('🎉 ยืนยันอีเมลสำเร็จ! กรุณากรอกข้อมูลส่วนตัวเพื่อบันทึกการสมัคร', 'success');
+        showToast('ยืนยันอีเมลสำเร็จ กรุณากรอกข้อมูลส่วนตัวเพื่อบันทึกการสมัคร', 'success');
 
       } catch(err) {
-        showToast(`❌ ${err.message}`, 'error');
+        showToast(err.message, 'error');
       }
     }
 
@@ -846,30 +846,30 @@
         if (!payload) throw new Error('ถอดรหัส Google ID Token ไม่สำเร็จ');
 
         if (!window.CloudService || typeof window.CloudService.loginWithGooglePayload !== 'function') {
-          showToast('⚠️ กำลังเตรียมระบบความปลอดภัย กรุณากดรีเฟรชหน้าเว็บ (Ctrl+F5) อีกครั้ง', 'error');
+          showToast('กำลังเตรียมระบบความปลอดภัย กรุณากดรีเฟรชหน้าเว็บอีกครั้ง', 'error');
           return;
         }
 
-        showToast('🔄 กำลังเข้าสู่ระบบด้วย Google...', 'info');
+        showToast('กำลังเข้าสู่ระบบด้วย Google...', 'info');
         const res = await window.CloudService.loginWithGooglePayload(payload);
 
         if (res.isAutoLinked) {
-          showToast(`🔗 บัญชี Google ถูกเชื่อมต่อกับอีเมล ${payload.email} เรียบร้อยแล้ว!`, 'success');
+          showToast(`เชื่อมต่อบัญชี Google กับอีเมล ${payload.email} เรียบร้อยแล้ว`, 'success');
         } else if (res.isNew) {
-          showToast(`🎉 ยินดีต้อนรับนักเรียนใหม่ ${payload.name}! สร้างบัญชีด้วย Google สำเร็จ`, 'success');
+          showToast(`ยินดีต้อนรับ ${payload.name}! สร้างบัญชีด้วย Google สำเร็จ`, 'success');
         } else {
-          showToast(`🎉 ยินดีต้อนรับกลับ ${payload.name}! เข้าสู่ระบบด้วย Google สำเร็จ`, 'success');
+          showToast(`ยินดีต้อนรับกลับ ${payload.name}! เข้าสู่ระบบด้วย Google สำเร็จ`, 'success');
         }
 
         if (!AppState.isProfileComplete()) {
-          showToast(`🎉 เข้าสู่ระบบด้วย Google สำเร็จ! กรุณาระบุเบอร์โทรและโรงเรียนเพื่อเปิดใช้งานการซื้อคอร์ส`, 'info');
+          showToast('เข้าสู่ระบบสำเร็จ กรุณาระบุข้อมูลส่วนตัวให้ครบถ้วนเพื่อเปิดใช้งานระบบ', 'info');
           setTimeout(() => location.href = 'dashboard.html?tab=profile&incomplete=1', 900);
         } else {
           setTimeout(() => location.href = redirectUrl, 800);
         }
       } catch(err) {
         console.error('GSI credential error:', err);
-        showToast(`❌ เข้าสู่ระบบด้วย Google ไม่สำเร็จ: ${err.message}`, 'error');
+        showToast(`เข้าสู่ระบบด้วย Google ไม่สำเร็จ: ${err.message}`, 'error');
       }
     }
 
@@ -938,16 +938,16 @@
       };
 
       try {
-        showToast('🔄 จำลองการเข้าสู่ระบบด้วย Google OAuth...', 'info');
+        showToast('จำลองการเข้าสู่ระบบด้วย Google...', 'info');
         const res = await window.CloudService.loginWithGooglePayload(demoPayload);
         if (!AppState.isProfileComplete()) {
-          showToast(`🎉 เข้าสู่ระบบด้วย Google สำเร็จ! กรุณาระบุเบอร์โทรและโรงเรียนเพื่อเปิดใช้งานการซื้อคอร์ส`, 'info');
+          showToast('เข้าสู่ระบบด้วย Google สำเร็จ กรุณาระบุข้อมูลส่วนตัวให้ครบถ้วนเพื่อเปิดใช้งานระบบ', 'info');
           setTimeout(() => location.href = 'dashboard.html?tab=profile&incomplete=1', 900);
         } else {
           setTimeout(() => location.href = redirectUrl, 800);
         }
       } catch(e) {
-        showToast(`❌ ${e.message}`, 'error');
+        showToast(e.message, 'error');
       }
     }
 
@@ -956,11 +956,11 @@
       if (!email) return;
 
       try {
-        showToast('🔄 กำลังส่งคำขอรีเซ็ตรหัสผ่าน...', 'info');
+        showToast('กำลังส่งคำขอรีเซ็ตรหัสผ่าน...', 'info');
         await window.CloudService.sendPasswordReset(email);
-        showToast(`📩 ส่งลิงก์รีเซ็ตรหัสผ่านไปยัง ${email} เรียบร้อยแล้ว กรุณาตรวจสอบกล่องจดหมายของคุณ`, 'success');
+        showToast(`ส่งลิงก์รีเซ็ตรหัสผ่านไปยัง ${email} เรียบร้อยแล้ว กรุณาตรวจสอบกล่องข้อความ`, 'success');
       } catch (err) {
-        showToast(`❌ ${err.message || 'ไม่สามารถส่งลิงก์ได้'}`, 'error');
+        showToast(err.message || 'ไม่สามารถส่งลิงก์ได้', 'error');
       }
     }
 
@@ -986,49 +986,49 @@
 
         // Validations
         if (!isEmailVerifiedState && !window.CloudService.isEmailVerified(email)) {
-          showToast('❌ กรุณายืนยันรหัส OTP ทางอีเมลก่อนกดสมัครสมาชิก', 'error');
+          showToast('กรุณายืนยันรหัส OTP ทางอีเมลก่อนกดสมัครสมาชิก', 'error');
           document.getElementById('btn-send-otp').focus();
           return;
         }
 
         if (pwd.length < 6) {
-          showToast('❌ รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร', 'error');
+          showToast('รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร', 'error');
           document.getElementById('input-reg-password').focus();
           return;
         }
 
         if (pwd !== confirmPwd) {
-          showToast('❌ รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน', 'error');
+          showToast('รหัสผ่านและการยืนยันรหัสผ่านไม่ตรงกัน', 'error');
           document.getElementById('input-reg-confirm-password').focus();
           return;
         }
 
         if (!fullName || !nickname) {
-          showToast('❌ กรุณากรอกชื่อจริงและชื่อเล่น', 'error');
+          showToast('กรุณากรอกชื่อจริงและชื่อเล่น', 'error');
           return;
         }
 
         if (!birthdate) {
-          showToast('❌ กรุณาระบุวันเกิดเพื่อคำนวณอายุ', 'error');
+          showToast('กรุณาระบุวันเกิดเพื่อคำนวณอายุ', 'error');
           document.getElementById('input-reg-birthdate').focus();
           return;
         }
 
         if (!phone) {
-          showToast('❌ กรุณากรอกเบอร์โทรศัพท์ติดต่อ', 'error');
+          showToast('กรุณากรอกเบอร์โทรศัพท์ติดต่อ', 'error');
           document.getElementById('input-reg-phone').focus();
           return;
         }
 
         if (!school) {
-          showToast('❌ กรุณากรอกชื่อโรงเรียนของคุณ', 'error');
+          showToast('กรุณากรอกชื่อโรงเรียนของคุณ', 'error');
           document.getElementById('input-reg-school').focus();
           return;
         }
 
         const termsAccepted = document.getElementById('reg-terms-check')?.checked;
         if (!termsAccepted) {
-          showToast('❌ กรุณายินยอมรับเงื่อนไขการใช้งานและนโยบายความเป็นส่วนตัว (PDPA)', 'error');
+          showToast('กรุณายินยอมรับเงื่อนไขการใช้งานและนโยบายความเป็นส่วนตัว (PDPA)', 'error');
           return;
         }
 
@@ -1038,7 +1038,7 @@
         const age = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
 
         try {
-          showToast('🔄 กำลังบันทึกข้อมูลและสร้างบัญชี...', 'info');
+          showToast('กำลังบันทึกข้อมูลและสร้างบัญชี...', 'info');
           const newUser = await window.CloudService.register({
             email,
             password: pwd,
@@ -1054,11 +1054,11 @@
             facebook
           });
 
-          showToast(`🎉 ยินดีต้อนรับน้อง${nickname}! สมัครสมาชิกสำเร็จเรียบร้อย`, 'success');
+          showToast(`ยินดีต้อนรับน้อง${nickname} สมัครสมาชิกสำเร็จเรียบร้อย`, 'success');
           setTimeout(() => location.href = redirectUrl, 800);
 
         } catch(err) {
-          showToast(`❌ ${err.message}`, 'error');
+          showToast(err.message, 'error');
         }
 
       // ─── 2. LOGIN FLOW (Email OR Phone + Password) ────────────────────────
@@ -1067,24 +1067,24 @@
         const pwd = document.getElementById('input-login-password').value;
 
         if (!identifier || !pwd) {
-          showToast('❌ กรุณากรอกอีเมล/เบอร์โทรศัพท์ และรหัสผ่าน', 'error');
+          showToast('กรุณากรอกอีเมล/เบอร์โทรศัพท์ และรหัสผ่าน', 'error');
           return;
         }
 
         try {
-          showToast('🔄 กำลังตรวจสอบข้อมูลเข้าสู่ระบบ...', 'info');
+          showToast('กำลังตรวจสอบข้อมูลเข้าสู่ระบบ...', 'info');
           const user = await window.CloudService.login(identifier, pwd);
 
           if (user.role === 'admin') {
-            showToast('🛡️ เข้าสู่ระบบในฐานะแอดมินผู้ดูแลระบบ', 'success');
+            showToast('เข้าสู่ระบบในฐานะผู้ดูแลระบบ', 'success');
             setTimeout(() => location.href = 'admin.html', 700);
           } else {
-            showToast(`🎓 เข้าสู่ระบบสำเร็จ ยินดีต้อนรับน้อง${user.nickname || user.fullName}!`, 'success');
+            showToast(`เข้าสู่ระบบสำเร็จ ยินดีต้อนรับน้อง${user.nickname || user.fullName}`, 'success');
             setTimeout(() => location.href = redirectUrl, 700);
           }
 
         } catch(err) {
-          showToast(`❌ ${err.message}`, 'error');
+          showToast(err.message, 'error');
         }
       }
     });
@@ -1100,7 +1100,7 @@
         if (profile) {
           const switchBanner = document.createElement('div');
           switchBanner.style.cssText = 'background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:10px 14px;font-size:12px;color:#1E3A8A;margin-bottom:16px;text-align:center;font-weight:700';
-          switchBanner.innerHTML = `👤 เข้าสู่ระบบบัญชีอื่น (ปัจจุบันอยู่ในระบบ: <strong>${profile.nickname || profile.fullName || profile.email}</strong>) <a href="#" onclick="AppState.logout();return false;" style="color:#DC2626;margin-left:8px;text-decoration:underline">ออกจากระบบเดิม</a>`;
+          switchBanner.innerHTML = `เข้าสู่ระบบบัญชีอื่น (ปัจจุบันอยู่ในระบบ: <strong>${profile.nickname || profile.fullName || profile.email}</strong>) <a href="#" onclick="AppState.logout();return false;" style="color:#DC2626;margin-left:8px;text-decoration:underline">ออกจากระบบเดิม</a>`;
           const formCard = document.querySelector('.auth-card');
           if (formCard) {
             formCard.insertBefore(switchBanner, formCard.firstChild);
@@ -1113,12 +1113,12 @@
       // 2. If already logged in, redirect away safely
       if (AppState.isLoggedIn()) {
         if (redirectUrl) {
-          // 🛡️ CRITICAL INFINITE LOOP PREVENTION:
+          // CRITICAL INFINITE LOOP PREVENTION:
           // If destination is admin.html, but current user is NOT an admin,
           // NEVER redirect to admin.html! That triggers the ping-pong reload loop!
           if (redirectUrl.includes('admin') && AppState.userRole !== 'admin') {
             console.warn('[Auth Guard] Blocked ping-pong loop: user is not admin.');
-            showToast('⚠️ บัญชีปัจจุบันของคุณไม่ได้รับสิทธิ์แอดมิน กรุณาเข้าสู่ระบบด้วยบัญชีแอดมิน หรือเข้าสู่หน้าแดชบอร์ดนักเรียน', 'warning');
+            showToast('บัญชีปัจจุบันของคุณไม่ได้รับสิทธิ์แอดมิน กรุณาเข้าสู่ระบบด้วยบัญชีแอดมิน หรือเข้าสู่หน้าแดชบอร์ดนักเรียน', 'warning');
             setTimeout(() => {
               location.replace('dashboard.html');
             }, 1200);

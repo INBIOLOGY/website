@@ -41,13 +41,13 @@
 
   <div style="min-height:100vh;background:var(--c-page);padding-top:80px;padding-bottom:60px">
     <div style="max-width:1100px;margin:0 auto;padding:0 24px">
-      <h2 style="font-size:22px;font-weight:950;color:var(--c-navy);margin-bottom:16px">🛡 แดชบอร์ดผู้ดูแลระบบ (Admin CMS)</h2>
+      <h2 style="font-size:22px;font-weight:950;color:var(--c-navy);margin-bottom:16px">แดชบอร์ดผู้ดูแลระบบ (Admin CMS)</h2>
 
-      <!-- ☁️ 1-Click Cloud Sync Bar (Sync all courses, videos, and materials across devices) -->
+      <!-- 1-Click Cloud Sync Bar (Sync all courses, videos, and materials across devices) -->
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;background:linear-gradient(135deg,#EFF6FF 0%,#F0FDF4 100%);border:1.5px solid #BFDBFE;border-radius:18px;padding:14px 20px;margin-bottom:20px;box-shadow:0 4px 14px rgba(37,99,235,0.06)">
         <div style="display:flex;align-items:center;gap:12px">
-          <div style="width:42px;height:42px;border-radius:12px;background:#DBEAFE;color:#1D4ED8;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">
-            ☁️
+          <div style="width:42px;height:42px;border-radius:12px;background:#DBEAFE;color:#1D4ED8;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path></svg>
           </div>
           <div>
             <div style="display:flex;align-items:center;gap:8px">
@@ -60,7 +60,7 @@
           </div>
         </div>
         <button type="button" id="btn-sync-all-cloud" onclick="syncAllCoursesAndVideosToCloud()" style="background:linear-gradient(135deg,#1E3A8A 0%,#2563EB 100%);color:white;border:none;border-radius:12px;padding:11px 22px;font-size:13px;font-weight:850;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(37,99,235,0.25);transition:all 0.2s">
-          <span>🚀 ซิงก์คอร์สและคลิปทั้งหมดขึ้น Cloud ทันที</span>
+          <span>ซิงก์คอร์สและคลิปทั้งหมดขึ้น Cloud ทันที</span>
         </button>
       </div>
 
@@ -83,7 +83,7 @@
           <!-- Card 1: Courses -->
           <div style="background:#EFF6FF;border-radius:16px;padding:18px;border:1.5px solid #BFDBFE;box-shadow:0 2px 8px rgba(37,99,235,0.05)">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-              <span style="font-size:11.5px;font-weight:850;color:#1E3A8A">📚 คอร์สเรียนทั้งหมด</span>
+              <span style="font-size:11.5px;font-weight:850;color:#1E3A8A">คอร์สเรียนทั้งหมด</span>
               <span style="font-size:10px;font-weight:800;background:#DBEAFE;color:#1E40AF;padding:2px 7px;border-radius:6px">Active</span>
             </div>
             <p id="admin-course-count" style="font-size:28px;font-weight:950;color:var(--c-navy);margin:0;line-height:1.2">0</p>
@@ -93,7 +93,7 @@
           <!-- Card 2: Registered Students -->
           <div style="background:#FEF2F2;border-radius:16px;padding:18px;border:1.5px solid #FECACA;box-shadow:0 2px 8px rgba(239,68,68,0.05)">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-              <span style="font-size:11.5px;font-weight:850;color:#991B1B">👥 นักเรียนสะสม</span>
+              <span style="font-size:11.5px;font-weight:850;color:#991B1B">นักเรียนสะสม</span>
               <span style="font-size:10px;font-weight:800;background:#FEE2E2;color:#991B1B;padding:2px 7px;border-radius:6px">Cloud</span>
             </div>
             <p id="admin-student-count" style="font-size:28px;font-weight:950;color:var(--c-red);margin:0;line-height:1.2">0 คน</p>
@@ -103,7 +103,7 @@
           <!-- Card 3: Total Approved Sales -->
           <div style="background:#F0FDF4;border-radius:16px;padding:18px;border:1.5px solid #BBF7D0;box-shadow:0 2px 8px rgba(16,185,129,0.05)">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-              <span style="font-size:11.5px;font-weight:850;color:#065F46">💰 ยอดขายสะสม</span>
+              <span style="font-size:11.5px;font-weight:850;color:#065F46">ยอดขายสะสม</span>
               <span style="font-size:10px;font-weight:800;background:#DCFCE7;color:#065F46;padding:2px 7px;border-radius:6px">อนุมัติแล้ว</span>
             </div>
             <p id="admin-sales-total" style="font-size:28px;font-weight:950;color:#10B981;margin:0;line-height:1.2">฿0</p>
@@ -113,7 +113,7 @@
           <!-- Card 4: Pending Verification -->
           <div style="background:#FFFBEB;border-radius:16px;padding:18px;border:1.5px solid #FDE68A;box-shadow:0 2px 8px rgba(245,158,11,0.05)">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-              <span style="font-size:11.5px;font-weight:850;color:#92400E">⏳ รอตรวจสอบสลิป</span>
+              <span style="font-size:11.5px;font-weight:850;color:#92400E">รอตรวจสอบสลิป</span>
               <span id="admin-pending-badge" style="font-size:10px;font-weight:800;background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:6px">0 รอตรวจ</span>
             </div>
             <p id="admin-pending-count" style="font-size:28px;font-weight:950;color:#D97706;margin:0;line-height:1.2">0 รายการ</p>
@@ -124,26 +124,22 @@
         <!-- Quick Shortcuts -->
         <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px 24px;box-shadow:0 4px 16px rgba(0,0,0,0.02)">
           <h4 style="font-size:14px;font-weight:900;color:var(--c-navy);margin:0 0 14px;display:flex;align-items:center;gap:8px">
-            ⚡ ทางลัดการจัดการระบบ (Quick Actions)
+            ทางลัดการจัดการระบบ (Quick Actions)
           </h4>
           <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px">
             <button type="button" onclick="switchAdminTab('courses')" style="background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:14px;padding:14px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px;transition:all 0.2s">
-              <span style="font-size:18px">📚</span>
               <span style="font-size:12.5px;font-weight:850;color:var(--c-navy)">จัดการคอร์สเรียน</span>
               <span style="font-size:11px;color:#64748B">เพิ่ม/แก้ไขคอร์ส, วิดีโอ, ชีท</span>
             </button>
             <button type="button" onclick="switchAdminTab('orders')" style="background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:14px;padding:14px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px;transition:all 0.2s">
-              <span style="font-size:18px">💳</span>
               <span style="font-size:12.5px;font-weight:850;color:var(--c-navy)">ตรวจสลิปออเดอร์</span>
               <span style="font-size:11px;color:#64748B">ดูสลิปโอนเงิน & อนุมัติคอร์ส</span>
             </button>
             <button type="button" onclick="switchAdminTab('students')" style="background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:14px;padding:14px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px;transition:all 0.2s">
-              <span style="font-size:18px">👥</span>
               <span style="font-size:12.5px;font-weight:850;color:var(--c-navy)">รายชื่อนักเรียน</span>
               <span style="font-size:11px;color:#64748B">ตรวจสอบ & แก้ไขข้อมูลนักเรียน</span>
             </button>
             <button type="button" onclick="switchAdminTab('coupons')" style="background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:14px;padding:14px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px;transition:all 0.2s">
-              <span style="font-size:18px">🎫</span>
               <span style="font-size:12.5px;font-weight:850;color:var(--c-navy)">จัดการคูปอง</span>
               <span style="font-size:11px;color:#64748B">สร้างโค้ดส่วนลดโปรโมชั่น</span>
             </button>
@@ -155,7 +151,7 @@
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
             <div>
               <h4 style="font-size:15px;font-weight:900;color:var(--c-navy);margin:0;display:flex;align-items:center;gap:8px">
-                📋 รายการสั่งซื้อล่าสุด (Latest Orders)
+                รายการสั่งซื้อล่าสุด (Latest Orders)
               </h4>
               <p style="font-size:11.5px;color:#64748B;margin:3px 0 0">ข้อมูลออเดอร์สดจากระบบ Cloud ตรวจสอบและอัปเดตแบบเรียลไทม์</p>
             </div>
@@ -176,7 +172,7 @@
                 </tr>
               </thead>
               <tbody id="overview-recent-orders-table">
-                <tr><td colspan="6" style="padding:20px;text-align:center;color:#94A3B8">⏳ กำลังโหลดข้อมูลออเดอร์ล่าสุด...</td></tr>
+                <tr><td colspan="6" style="padding:20px;text-align:center;color:#94A3B8">กำลังโหลดข้อมูลออเดอร์ล่าสุด...</td></tr>
               </tbody>
             </table>
           </div>
@@ -204,7 +200,7 @@
             <div class="admin-grid-3">
               <div>
                 <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">ชื่อคอร์สเรียน <span style="color:#EF4444">*</span></label>
-                <input type="text" id="new-title" placeholder="เช่น 🧬 Bio Intensive VII: สรีรวิทยาขั้นสูง" required style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:12.5px;outline:none;background:white;font-weight:700" />
+                <input type="text" id="new-title" placeholder="เช่น Bio Intensive VII: สรีรวิทยาขั้นสูง" required style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:12.5px;outline:none;background:white;font-weight:700" />
               </div>
               <div>
                 <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">ระดับชั้น <span style="color:#EF4444">*</span></label>
@@ -222,12 +218,12 @@
               <div>
                 <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">หมวดหมู่คอร์ส</label>
                 <select id="new-category" style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 10px;font-size:12.5px;outline:none;background:white;font-weight:700">
-                  <option value="🧬 Bio Intensive">🧬 Bio Intensive</option>
-                  <option value="📖 คอร์ส A-Level">📖 คอร์ส A-Level</option>
-                  <option value="🏅 คอร์ส สอวน.">🏅 คอร์ส สอวน.</option>
-                  <option value="⚡ คอร์ส 99 บาท">⚡ คอร์ส 99 บาท</option>
-                  <option value="🏅 คอร์สพิเศษ">🏅 คอร์สพิเศษ</option>
-                  <option value="📚 คอร์สชีววิทยาทั่วไป">📚 คอร์สชีววิทยาทั่วไป</option>
+                  <option value="Bio Intensive">Bio Intensive</option>
+                  <option value="คอร์ส A-Level">คอร์ส A-Level</option>
+                  <option value="คอร์ส สอวน.">คอร์ส สอวน.</option>
+                  <option value="คอร์ส 99 บาท">คอร์ส 99 บาท</option>
+                  <option value="คอร์สพิเศษ">คอร์สพิเศษ</option>
+                  <option value="คอร์สชีววิทยาทั่วไป">คอร์สชีววิทยาทั่วไป</option>
                 </select>
               </div>
             </div>
@@ -259,7 +255,7 @@
             <div class="admin-grid-2" style="align-items:end">
               <div>
                 <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">ป้ายกำกับคอร์ส (Badge)</label>
-                <input type="text" id="new-badge" placeholder="เช่น Bio Intensive VII หรือ A-Level ชีวะ 🏆" required style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:12.5px;outline:none;background:white;font-weight:800" />
+                <input type="text" id="new-badge" placeholder="เช่น Bio Intensive VII หรือ A-Level ชีวะ" required style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:12.5px;outline:none;background:white;font-weight:800" />
               </div>
               <div>
                 <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">สีป้ายกำกับ</label>
@@ -279,7 +275,7 @@
 
             <!-- Row 4: Cover Image with Upload & Presets & Live Preview -->
             <div style="background:#F8FAFC;border:1.5px dashed #CBD5E1;border-radius:14px;padding:14px">
-              <label style="display:block;font-size:12px;font-weight:900;color:#1E293B;margin-bottom:8px">🖼️ รูปภาพหน้าปกคอร์ส (Cover Image) — อัปโหลดรูปเอง หรือเลือกปกสำเร็จรูป</label>
+              <label style="display:block;font-size:12px;font-weight:900;color:#1E293B;margin-bottom:8px">รูปภาพหน้าปกคอร์ส (Cover Image) — อัปโหลดรูปเอง หรือเลือกปกสำเร็จรูป</label>
               <div style="display:flex;gap:16px;align-items:flex-start">
                 <div style="width:90px;height:120px;background:#FFFFFF;border:1.5px solid #CBD5E1;border-radius:10px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.08)">
                   <img id="new-course-img-preview" src="./course-cover-1.png" alt="Cover Preview" style="height:110px;max-width:85%;object-fit:contain;border-radius:6px;box-shadow:0 4px 10px rgba(0,0,0,0.12)" onerror="this.src='./course-cover-1.png'" />
@@ -288,7 +284,7 @@
                   <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
                     <input type="file" id="new-course-file-input" accept="image/*" style="display:none" onchange="handleCoverImageUpload(event, 'new')" />
                     <button type="button" onclick="document.getElementById('new-course-file-input').click()" style="background:#1E3A8A;color:white;border:none;padding:8px 16px;border-radius:8px;font-weight:800;font-size:11.5px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(30,58,138,0.2)">
-                      📁 เลือกรูปภาพจากเครื่อง / มือถือ
+                      เลือกรูปภาพจากเครื่อง / มือถือ
                     </button>
                     <span id="new-course-file-status" style="font-size:11px;color:#059669;font-weight:800"></span>
                   </div>

@@ -61,7 +61,7 @@
 
       <div style="display:flex;align-items:center;gap:12px">
         <button onclick="openCartDrawer()" class="cart-icon-btn" title="ตะกร้าสินค้า" aria-label="เปิดตะกร้าสินค้า">
-          <span style="font-size:20px">🛒</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
           <span class="cart-badge" style="display:none">0</span>
         </button>
 
@@ -74,13 +74,13 @@
         </button>
 
         <div id="nav-dropdown" class="dropdown-panel">
-          <a href="index.html" class="dropdown-item">👉 หน้าแรก</a>
-          <a href="courses.html" class="dropdown-item">📚 คอร์สเรียนทั้งหมด</a>
-          <a href="exam.html" class="dropdown-item">🏆 คลังข้อสอบ A-Level</a>
-          <a href="about.html" class="dropdown-item">🔬 เกี่ยวกับเรา (พี่ต้น)</a>
-          <a href="faq.html" class="dropdown-item">❓ คำถามพบบ่อย (FAQ)</a>
-          <a href="guide.html" class="dropdown-item">📖 คู่มือการใช้งาน</a>
-          <a href="login.html" class="dropdown-item" style="color:var(--c-sky);font-weight:800">🔑 เข้าสู่ระบบ</a>
+          <a href="index.html" class="dropdown-item">หน้าแรก</a>
+          <a href="courses.html" class="dropdown-item">คอร์สเรียนทั้งหมด</a>
+          <a href="exam.html" class="dropdown-item">คลังข้อสอบ A-Level</a>
+          <a href="about.html" class="dropdown-item">เกี่ยวกับเรา (พี่ต้น)</a>
+          <a href="faq.html" class="dropdown-item">คำถามพบบ่อย</a>
+          <a href="guide.html" class="dropdown-item">คู่มือการใช้งาน</a>
+          <a href="login.html" class="dropdown-item" style="color:var(--c-sky);font-weight:800">เข้าสู่ระบบ</a>
         </div>
       </div>
     </div>
@@ -93,7 +93,7 @@
       <div id="my-courses-grid-view">
         <div style="margin-bottom:32px">
           <span style="background:var(--c-navy);color:white;font-size:11px;font-weight:900;padding:4px 14px;border-radius:20px">MY ENROLLED COURSES</span>
-          <h1 style="font-size:28px;font-weight:950;color:var(--c-navy);margin:10px 0 6px">🎓 คอร์สเรียนของฉัน</h1>
+          <h1 style="font-size:28px;font-weight:950;color:var(--c-navy);margin:10px 0 6px">คอร์สเรียนของฉัน</h1>
           <p style="font-size:13px;color:#6B7280;margin:0">คอร์สเรียนชีววิทยาที่คุณลงทะเบียนไว้แล้ว สามารถกดเข้าสู่ห้องเรียนได้ทันที</p>
         </div>
 
@@ -104,7 +104,7 @@
       <div id="video-classroom-view" style="display:none">
         <div style="margin-bottom:20px">
           <button onclick="showMyCoursesCatalog()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;border:1px solid #E5E7EB;background:white;color:var(--c-navy);font-weight:800;font-size:12px;cursor:pointer">
-            ⬅ กลับไปหน้าคอร์สเรียนของฉัน
+            ← กลับไปหน้าคอร์สเรียนของฉัน
           </button>
         </div>
 
@@ -114,9 +114,9 @@
             <div style="padding:16px 18px;background:var(--c-navy);color:white;flex-shrink:0">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
                 <div style="display:flex;align-items:center;gap:8px">
-                  <h3 style="font-weight:900;font-size:14px;margin:0">📚 บทเรียนทั้งหมด</h3>
+                  <h3 style="font-weight:900;font-size:14px;margin:0">บทเรียนทั้งหมด</h3>
                   <button type="button" onclick="refreshClassroomLessonsFromCloud()" title="ดึงคลิปและบทเรียนล่าสุดจาก Cloud" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:white;border-radius:6px;padding:2px 8px;font-size:10px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:3px;transition:background 0.2s">
-                    🔄 รีเฟรชคลิป
+                    รีเฟรชคลิป
                   </button>
                 </div>
                 <span id="course-progress-badge" style="background:rgba(255,255,255,0.2);font-size:11px;font-weight:900;padding:2px 8px;border-radius:6px">0%</span>
@@ -134,8 +134,8 @@
             <!-- Official e-Book & Handout PDF Banner -->
             <div id="ebook-handout-banner" style="background:linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);border:1.5px solid #86EFAC;border-radius:20px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;box-shadow:0 4px 14px rgba(22,101,52,0.06)">
               <div style="display:flex;align-items:center;gap:14px">
-                <div style="width:46px;height:46px;border-radius:12px;background:#15803D;color:white;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 10px rgba(21,128,61,0.25);flex-shrink:0">
-                  📖
+                <div style="width:46px;height:46px;border-radius:12px;background:#15803D;color:white;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(21,128,61,0.25);flex-shrink:0">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
                 </div>
                 <div>
                   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
@@ -149,10 +149,10 @@
               </div>
               <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                 <button type="button" onclick="openEbookPreviewModal()" style="display:inline-flex;align-items:center;gap:6px;background:white;color:#15803D;border:1.5px solid #86EFAC;font-weight:850;font-size:12px;padding:9px 16px;border-radius:10px;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 6px rgba(0,0,0,0.04)">
-                  📂 เอกสารและชีทเรียน (<span id="ebook-btn-count">2</span>)
+                  เอกสารและชีทเรียน (<span id="ebook-btn-count">2</span>)
                 </button>
                 <button type="button" onclick="downloadEbookPdf()" style="display:inline-flex;align-items:center;gap:6px;background:#15803D;color:white;border:none;font-weight:850;font-size:12px;padding:9px 18px;border-radius:10px;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 12px rgba(21,128,61,0.3)">
-                  ⬇️ ดาวน์โหลดชีทหลัก
+                  ดาวน์โหลดชีทหลัก
                 </button>
               </div>
             </div>
@@ -161,7 +161,7 @@
             <div id="main-video-container" style="background:#0F172A;border-radius:24px;aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;box-shadow:0 12px 36px rgba(0,0,0,0.18)">
               <div id="video-embed-wrapper" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center">
                 <div style="text-align:center;padding:24px;color:#94A3B8">
-                  <span style="font-size:40px;display:block;margin-bottom:8px">🎬</span>
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 8px"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                   <p style="font-size:15px;color:white;font-weight:800;margin:0 0 4px">กำลังโหลดบทเรียน...</p>
                   <p style="font-size:12px;color:#64748B;margin:0">INBIOLOGY Classroom</p>
                 </div>
@@ -206,7 +206,7 @@
                 <textarea id="lesson-notes-input" placeholder="พิมพ์สรุปหรือจุดสำคัญในคลิปนี้ เช่น เอนไซม์ทำงานได้ดีที่ pH 7.4..." style="width:100%;height:140px;border:1px solid #E5E7EB;border-radius:12px;padding:14px;font-family:inherit;font-size:13px;resize:vertical;outline:none;line-height:1.6"></textarea>
                 <div style="display:flex;justify-content:flex-end;margin-top:10px">
                   <button onclick="saveCurrentLessonNotes()" style="background:var(--c-sky);color:white;border:none;padding:8px 18px;border-radius:8px;font-weight:850;font-size:12px;cursor:pointer">
-                    💾 บันทึกโน้ต
+                    บันทึกโน้ต
                   </button>
                 </div>
               </div>
@@ -246,9 +246,9 @@
     <div style="background:white;width:100%;max-width:min(840px,calc(100vw - 32px));max-height:90vh;border-radius:24px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 25px 60px rgba(0,0,0,0.3);box-sizing:border-box">
       <div style="padding:16px 24px;background:var(--c-navy);color:white;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
         <div style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:22px">📚</span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
           <div>
-            <h3 id="modal-ebook-title" style="font-size:15px;font-weight:900;margin:0">เอกสารประกอบการเรียนและชีทสรุป e-Book</h3>
+            <h3 id="modal-ebook-title" style="font-size:15px;font-weight:900;margin:0">เอกสารประกอบการเรียนและชีทสรุป</h3>
             <span id="modal-ebook-meta" style="font-size:11px;color:rgba(255,255,255,0.75)">INBIOLOGY Academy Official Student Resources</span>
           </div>
         </div>
@@ -263,9 +263,9 @@
             <h4 id="modal-ebook-heading" style="font-size:15px;font-weight:900;color:var(--c-navy);margin:0 0 6px">ชื่อหนังสือ</h4>
             <p id="modal-ebook-summary" style="font-size:12px;color:#4B5563;margin:0 0 10px;line-height:1.5">สรุปสาระสำคัญ แผนภาพสีช่วยจำ พร้อมแบบฝึกหัดโจทย์ท้ายบทและเฉลยละเอียด</p>
             <div style="display:flex;gap:12px;font-size:11px;color:#64748B;font-weight:700">
-              <span id="modal-ebook-pages">📄 150+ หน้า</span>
-              <span id="modal-ebook-size">💾 12.4 MB</span>
-              <span>🔒 ลิขสิทธิ์เฉพาะผู้เรียน</span>
+              <span id="modal-ebook-pages">150+ หน้า</span>
+              <span id="modal-ebook-size">12.4 MB</span>
+              <span>ลิขสิทธิ์เฉพาะผู้เรียน</span>
             </div>
           </div>
         </div>
@@ -273,7 +273,7 @@
         <!-- All Study Materials List -->
         <div style="background:white;border:1px solid #E2E8F0;border-radius:18px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.02)">
           <div style="padding:14px 20px;background:#F1F5F9;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between">
-            <span style="font-weight:900;color:#14532D;font-size:13px">📁 รายการไฟล์เอกสารและชีทดาวน์โหลดทั้งหมดในคอร์สนี้</span>
+            <span style="font-weight:900;color:#14532D;font-size:13px">รายการไฟล์เอกสารและชีทดาวน์โหลดในคอร์สนี้</span>
             <span id="modal-materials-count-badge" style="background:#DCFCE7;color:#15803D;font-size:11px;font-weight:900;padding:2px 8px;border-radius:6px">2 ไฟล์</span>
           </div>
           <div id="modal-materials-list" style="display:flex;flex-direction:column">
@@ -283,15 +283,15 @@
 
         <!-- Table of Contents -->
         <div style="background:white;border:1px solid #E2E8F0;border-radius:18px;padding:18px">
-          <h4 style="font-size:13px;font-weight:900;color:var(--c-navy);margin:0 0 10px">📑 สารบัญเนื้อหาในชีทสรุป (Table of Contents):</h4>
+          <h4 style="font-size:13px;font-weight:900;color:var(--c-navy);margin:0 0 10px">สารบัญเนื้อหาในชีทสรุป:</h4>
           <div id="modal-ebook-toc" style="display:flex;flex-direction:column;gap:8px"></div>
         </div>
       </div>
       <div style="padding:14px 24px;background:white;border-top:1px solid #E5E7EB;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-        <span style="font-size:11.5px;color:#6B7280">🔒 เอกสารสำหรับนักเรียน INBIOLOGY Academy ห้ามคัดลอกหรือจำหน่ายต่อ</span>
+        <span style="font-size:11.5px;color:#6B7280">เอกสารสำหรับนักเรียน INBIOLOGY Academy ห้ามคัดลอกหรือจำหน่ายต่อ</span>
         <div style="display:flex;gap:10px">
-          <button onclick="window.print()" style="padding:8px 14px;border:1px solid #E5E7EB;background:white;border-radius:10px;font-size:12px;font-weight:800;color:#374151;cursor:pointer">🖨️ พิมพ์เอกสาร</button>
-          <button onclick="downloadEbookPdf()" style="padding:8px 18px;background:#15803D;color:white;border:none;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer">⬇️ บันทึกไฟล์ PDF</button>
+          <button onclick="window.print()" style="padding:8px 14px;border:1px solid #E5E7EB;background:white;border-radius:10px;font-size:12px;font-weight:800;color:#374151;cursor:pointer">พิมพ์เอกสาร</button>
+          <button onclick="downloadEbookPdf()" style="padding:8px 18px;background:#15803D;color:white;border:none;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer">บันทึกไฟล์ PDF</button>
         </div>
       </div>
     </div>
@@ -359,13 +359,13 @@
       if (!isLoggedIn) {
         container.innerHTML = `
           <div style="grid-column:1/-1;background:white;border:1.5px solid #FCA5A5;border-radius:24px;padding:48px 24px;text-align:center;box-shadow:0 10px 30px rgba(185,28,28,0.08)">
-            <div style="width:64px;height:64px;background:#FEF2F2;color:#DC2626;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;box-shadow:0 6px 16px rgba(220,38,38,0.15)">
-              🔒
+            <div style="width:64px;height:64px;background:#FEF2F2;color:#DC2626;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 6px 16px rgba(220,38,38,0.15)">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             </div>
             <h3 style="font-size:20px;font-weight:950;color:var(--c-navy);margin:0 0 8px">กรุณาเข้าสู่ระบบเพื่อเข้าชมคอร์สเรียนของคุณ</h3>
             <p style="font-size:13.5px;color:#6B7280;max-width:480px;margin:0 auto 24px">เข้าสู่ระบบบัญชีนักเรียนเพื่อรับชมวิดีโอบทเรียน สรุปเนื้อหา e-Book และบันทึกโน้ตย่อส่วนตัว</p>
             <a href="login.html" style="background:#1E3A8A;color:white;font-weight:900;font-size:14px;padding:12px 28px;border-radius:12px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(30,58,138,0.3)">
-              🔑 เข้าสู่ระบบ / สมัครสมาชิก ➔
+              เข้าสู่ระบบ / สมัครสมาชิก ➔
             </a>
           </div>
         `;
@@ -379,7 +379,7 @@
           <div style="grid-column:1/-1;background:white;border:1px solid #E5E7EB;border-radius:24px;padding:48px;text-align:center">
             <h3 style="font-size:18px;font-weight:900;color:var(--c-navy);margin:0 0 8px">คุณยังไม่มีคอร์สเรียนที่ลงทะเบียน</h3>
             <p style="font-size:13px;color:#6B7280;margin:0 0 20px">เลือกซื้อคอร์สเรียนชีววิทยาพรีเมียมโดยพี่ต้นเพื่อเริ่มต้นเรียนทันที</p>
-            <a href="courses.html" style="background:var(--c-navy);color:white;font-weight:850;font-size:13px;padding:12px 24px;border-radius:12px;text-decoration:none;display:inline-block">🛒 เลือกซื้อคอร์สเรียนเลย</a>
+            <a href="courses.html" style="background:var(--c-navy);color:white;font-weight:850;font-size:13px;padding:12px 24px;border-radius:12px;text-decoration:none;display:inline-block">ดูคอร์สเรียนเลย</a>
           </div>
         `;
         return;
@@ -421,7 +421,7 @@
                   <div style="width:${prog.percentage}%;height:100%;background:var(--c-sky);transition:width 0.3s ease"></div>
                 </div>
                 <button onclick="openClassroomRoom('${c.id}')" style="width:100%;background:var(--c-sky);color:white;font-weight:850;font-size:13px;padding:12px;border-radius:12px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
-                  ▶ เข้าสู่ห้องเรียน
+                  เข้าสู่ห้องเรียน
                 </button>
               </div>
             </div>
@@ -441,7 +441,7 @@
 
     function openClassroomRoom(courseId, lessonId = null) {
       if (!AppState.enrolled.includes(courseId) && AppState.userRole !== 'admin') {
-        showToast('⚠️ คุณยังไม่ได้ลงทะเบียนในคอร์สนี้ กรุณาสมัครคอร์สก่อนเข้าเรียน', 'warning');
+        showToast('คุณยังไม่ได้ลงทะเบียนในคอร์สนี้ กรุณาสมัครคอร์สก่อนเข้าเรียน', 'warning');
         setTimeout(() => { location.href = 'courses.html'; }, 1000);
         return;
       }
@@ -500,7 +500,7 @@
       } else {
         wrapper.innerHTML = `
           <div style="text-align:center;padding:24px;color:#94A3B8">
-            <span style="font-size:48px;display:block;margin-bottom:12px">🎬</span>
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 12px"><polygon points="5 3 19 12 5 21 5 3"/></svg>
             <p style="font-size:16px;color:white;font-weight:800;margin:0 0 6px">วิดีโอบทเรียนกำลังเตรียมพร้อม</p>
             <p style="font-size:12.5px;color:#94A3B8;margin:0">อาจารย์ผู้สอนสามารถเพิ่มลิงก์ YouTube สำหรับตอนนี้ได้ผ่านระบบแอดมิน</p>
           </div>
@@ -566,7 +566,7 @@
       const isCompleted = newProg.completedLessonIds.includes(currentLesson.id);
       updateActiveLessonBar();
       renderLessonList();
-      showToast(isCompleted ? `🎉 บันทึก "${currentLesson.title}" ว่าเรียนจบแล้ว!` : `↩️ ยกเลิกสถานะเรียนจบของ "${currentLesson.title}"`, 'success');
+      showToast(isCompleted ? `บันทึก "${currentLesson.title}" ว่าเรียนจบแล้ว` : `ยกเลิกสถานะเรียนจบของ "${currentLesson.title}"`, 'success');
     }
 
     function toggleLessonCompletion(e, courseId, lessonId) {
@@ -575,7 +575,7 @@
       const isCompleted = newProg.completedLessonIds.includes(lessonId);
       updateActiveLessonBar();
       renderLessonList();
-      showToast(isCompleted ? `🎉 บันทึกว่าเรียนจบตอนนี้แล้ว` : `↩️ ยกเลิกสถานะเรียนจบ`, 'success');
+      showToast(isCompleted ? `บันทึกว่าเรียนจบตอนนี้แล้ว` : `ยกเลิกสถานะเรียนจบ`, 'success');
     }
 
     function renderLessonList() {
@@ -647,8 +647,8 @@
 
       document.getElementById('modal-ebook-title').textContent = title;
       document.getElementById('modal-ebook-heading').textContent = title;
-      document.getElementById('modal-ebook-pages').textContent = `📄 ${pages}`;
-      document.getElementById('modal-ebook-size').textContent = `💾 ${size}`;
+      document.getElementById('modal-ebook-pages').textContent = `${pages}`;
+      document.getElementById('modal-ebook-size').textContent = `${size}`;
       document.getElementById('modal-ebook-cover').src = currentCourse.imageUrl;
 
       const countBadge = document.getElementById('modal-materials-count-badge');
@@ -668,7 +668,7 @@
               <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid #F1F5F9;background:${idx % 2 === 0 ? 'white' : '#FAFAFA'};flex-wrap:wrap;gap:10px">
                 <div style="display:flex;align-items:center;gap:12px;min-width:240px;flex:1">
                   <span style="width:34px;height:34px;border-radius:10px;background:#EFF6FF;color:var(--c-navy);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">
-                    ${m.isPrimary ? '📖' : '📄'}
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                   </span>
                   <div>
                     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
@@ -677,7 +677,7 @@
                       ${isDrive ? `<span style="font-size:9.5px;font-weight:800;color:#92400E;background:#FEF3C7;padding:1px 6px;border-radius:4px">Google Drive</span>` : ''}
                     </div>
                     <div style="display:flex;align-items:center;gap:8px;margin-top:3px;font-size:11px;color:#64748B">
-                      <span>💾 ${m.fileSize || m.pages || 'PDF'}</span>
+                      <span>${m.fileSize || m.pages || 'PDF'}</span>
                       ${m.description ? `<span>• ${m.description}</span>` : ''}
                     </div>
                   </div>
@@ -686,11 +686,11 @@
                 <div style="display:flex;align-items:center;gap:8px">
                   ${hasUrl ? `
                     <a href="${m.url}" target="_blank" rel="noopener noreferrer" style="background:white;color:#047857;border:1.5px solid #86EFAC;font-weight:800;font-size:11.5px;padding:6px 12px;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;gap:4px">
-                      👁️ เปิดอ่าน
+                      เปิดอ่าน
                     </a>
                   ` : ''}
                   <button type="button" onclick="downloadMaterialItem(${idx})" style="background:#15803D;color:white;border:none;font-weight:800;font-size:11.5px;padding:7px 14px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;box-shadow:0 2px 6px rgba(21,128,61,0.25)">
-                    ⬇️ ดาวน์โหลด
+                    ดาวน์โหลด
                   </button>
                 </div>
               </div>
@@ -727,13 +727,13 @@
       if (!m) return;
 
       if (m.url && m.url.trim()) {
-        showToast(`🚀 กำลังเปิดลิงก์ดาวน์โหลด "${m.title}"...`, 'info');
+        showToast(`กำลังเปิดลิงก์ดาวน์โหลด "${m.title}"...`, 'info');
         window.open(m.url, '_blank');
         return;
       }
 
       const fileName = m.filename || `${currentCourse.id}-handout.pdf`;
-      showToast(`📥 กำลังจัดเตรียมไฟล์ดาวน์โหลด "${m.title}"...`, 'info');
+      showToast(`กำลังจัดเตรียมไฟล์ดาวน์โหลด "${m.title}"...`, 'info');
 
       setTimeout(() => {
         const content = `INBIOLOGY Academy by Kru Ton\nCourse: ${currentCourse.title}\nDocument: ${m.title}\nCategory: ${m.category}\n\nChapters:\n` +
@@ -748,7 +748,7 @@
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        showToast(`🎉 ดาวน์โหลด "${fileName}" เรียบร้อยแล้ว!`, 'success');
+        showToast(`ดาวน์โหลด "${fileName}" เรียบร้อยแล้ว`, 'success');
       }, 600);
     }
 
@@ -756,7 +756,7 @@
       const materials = AppState.getCourseMaterials(currentCourse.id);
       const primary = materials.find(m => m.isPrimary) || materials[0];
       if (primary && primary.url && primary.url.trim()) {
-        showToast(`🚀 กำลังเปิดดาวน์โหลด "${primary.title}"...`, 'info');
+        showToast(`กำลังเปิดดาวน์โหลด "${primary.title}"...`, 'info');
         window.open(primary.url, '_blank');
         return;
       }
@@ -783,10 +783,10 @@
       const q = document.getElementById('ask-query').value.trim();
       if (!q) return;
       document.getElementById('ask-query').value = '';
-      showToast('📩 ส่งคำถามถึงพี่ต้นเรียบร้อยแล้ว!', 'success');
+      showToast('ส่งคำถามถึงพี่ต้นเรียบร้อยแล้ว', 'success');
       const box = document.getElementById('ask-response-box');
       box.style.display = 'block';
-      box.innerHTML = `💬 **ตอบกลับจากพี่ต้น**: ได้รับคำถามเรื่อง "${q}" เรียบร้อยแล้วครับ! เดี๋ยวพี่ต้นจะมาตอบคลายข้อสงสัยให้น้องทางกล่องข้อความอย่างละเอียดแน่นอนครับ ✌️`;
+      box.innerHTML = `**ตอบกลับจากพี่ต้น**: ได้รับคำถามเรื่อง "${q}" เรียบร้อยแล้วครับ เดี๋ยวพี่ต้นจะมาตอบคลายข้อสงสัยให้น้องทางกล่องข้อความอย่างละเอียดแน่นอนครับ`;
     }
 
     function getNotesStorageKey() {
@@ -804,7 +804,7 @@
       notes.push({ id: Date.now(), courseTitle: currentCourse.title, lessonTitle: currentLesson ? currentLesson.title : currentCourse.title, text });
       localStorage.setItem(key, JSON.stringify(notes));
       document.getElementById('note-input').value = '';
-      showToast('📝 บันทึกโน้ตย่อสำเร็จ', 'success');
+      showToast('บันทึกโน้ตย่อสำเร็จ', 'success');
       renderNotes();
     }
 
@@ -826,7 +826,7 @@
     }
 
     async function refreshClassroomLessonsFromCloud() {
-      showToast('☁️ กำลังตรวจสอบคลิปวิดีโอล่าสุดจาก Cloud...', 'info');
+      showToast('กำลังตรวจสอบคลิปวิดีโอล่าสุดจาก Cloud...', 'info');
       try {
         if (typeof AppState.syncCoursesAndLessonsFromCloud === 'function') {
           await AppState.syncCoursesAndLessonsFromCloud();
@@ -845,11 +845,11 @@
           updateEbookBanner();
           updateActiveLessonBar();
           if (currentLesson) playLessonVideo(currentLesson);
-          showToast('✅ อัปเดตรายการคลิปวิดีโอล่าสุดเรียบร้อยแล้ว!', 'success');
+          showToast('อัปเดตรายการคลิปวิดีโอล่าสุดเรียบร้อยแล้ว', 'success');
         }
       } catch(e) {
         console.warn('Error refreshing classroom lessons:', e);
-        showToast('⚠️ ไม่สามารถเชื่อมต่อคลาวด์ได้ในขณะนี้', 'warning');
+        showToast('ไม่สามารถเชื่อมต่อคลาวด์ได้ในขณะนี้', 'warning');
       }
     }
   </script>
