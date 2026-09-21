@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
@@ -441,7 +441,7 @@
         <!-- ================================================================= -->
         <!-- FORM: LOGIN / REGISTER -->
         <!-- ================================================================= -->
-        <form id="auth-form" style="display:flex;flex-direction:column;gap:16px">
+        <form id="auth-form" novalidate style="display:flex;flex-direction:column;gap:16px">
 
           <!-- ─────────────────────────────────────────────────────────────── -->
           <!-- A. LOGIN MODE FIELDS (Email OR Phone + Password) -->
@@ -636,7 +636,7 @@
             <!-- PDPA Terms Agreement -->
             <div style="font-size:12px;color:#64748B;line-height:1.5;margin-top:6px;background:#F8FAFC;padding:12px;border-radius:10px;border:1px solid #E2E8F0">
               <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer">
-                <input type="checkbox" id="reg-terms-check" required checked style="accent-color:#1E3A8A;margin-top:2px" />
+                <input type="checkbox" id="reg-terms-check" checked style="accent-color:#1E3A8A;margin-top:2px" />
                 <span>ฉันยินยอมรับ <a href="terms.html" target="_blank" style="color:#1E3A8A;font-weight:700;text-decoration:underline">เงื่อนไขการใช้งาน</a> และ <a href="privacy.html" target="_blank" style="color:#1E3A8A;font-weight:700;text-decoration:underline">นโยบายความเป็นส่วนตัว (PDPA)</a> ของ INBIOLOGY Academy</span>
               </label>
             </div>
@@ -1023,6 +1023,12 @@
         if (!school) {
           showToast('❌ กรุณากรอกชื่อโรงเรียนของคุณ', 'error');
           document.getElementById('input-reg-school').focus();
+          return;
+        }
+
+        const termsAccepted = document.getElementById('reg-terms-check')?.checked;
+        if (!termsAccepted) {
+          showToast('❌ กรุณายินยอมรับเงื่อนไขการใช้งานและนโยบายความเป็นส่วนตัว (PDPA)', 'error');
           return;
         }
 

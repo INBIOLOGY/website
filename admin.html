@@ -198,7 +198,7 @@
 
           <form id="add-course-form" style="display:flex;flex-direction:column;gap:16px">
             <!-- Row 1: Title, Level, Category -->
-            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px">
+            <div class="admin-grid-3">
               <div>
                 <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">ชื่อคอร์สเรียน <span style="color:#EF4444">*</span></label>
                 <input type="text" id="new-title" placeholder="เช่น 🧬 Bio Intensive VII: สรีรวิทยาขั้นสูง" required style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:12.5px;outline:none;background:white;font-weight:700" />
@@ -230,7 +230,7 @@
             </div>
 
             <!-- Row 2: Prices, Hours, Validity -->
-            <div style="display:grid;grid-template-columns:1.2fr 1.2fr 1fr 1fr;gap:12px">
+            <div class="admin-grid-4">
               <div>
                 <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">ราคาขายจริง (฿) <span style="color:#EF4444">*</span></label>
                 <input type="number" id="new-price" min="0" placeholder="เช่น 1290" oninput="updateCourseDiscountBadge('new')" required style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:13px;outline:none;background:white;font-weight:900;color:#DC2626" />
@@ -253,7 +253,7 @@
             </div>
 
             <!-- Row 3: Badge & Badge Color -->
-            <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:12px;align-items:end">
+            <div class="admin-grid-2" style="align-items:end">
               <div>
                 <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">ป้ายกำกับคอร์ส (Badge)</label>
                 <input type="text" id="new-badge" placeholder="เช่น Bio Intensive VII หรือ A-Level ชีวะ 🏆" required style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:12.5px;outline:none;background:white;font-weight:800" />
@@ -428,8 +428,8 @@
   </div>
 
   <!-- 2-Step Admin Order Approval Confirmation Modal -->
-  <div id="admin-approval-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.65);backdrop-filter:blur(6px);z-index:10000;align-items:center;justify-content:center;padding:16px">
-    <div style="background:white;border-radius:24px;width:100%;max-width:540px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.3);overflow:hidden;animation:fadeIn 0.2s ease;max-height:90vh;display:flex;flex-direction:column">
+  <div id="admin-approval-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.65);backdrop-filter:blur(6px);z-index:10000;align-items:center;justify-content:center;padding:16px;box-sizing:border-box">
+    <div style="background:white;border-radius:24px;width:100%;max-width:min(540px,calc(100vw - 32px));box-shadow:0 25px 50px -12px rgba(0,0,0,0.3);overflow:hidden;animation:fadeIn 0.2s ease;max-height:90vh;display:flex;flex-direction:column;box-sizing:border-box">
       <div style="padding:18px 24px;border-bottom:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center;background:#F8FAFC">
         <div>
           <h3 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0">📋 ตรวจสอบสลิป & ยืนยันการอนุมัติคอร์ส</h3>
@@ -446,7 +446,7 @@
         </div>
 
         <!-- Slip & Info Grid -->
-        <div style="display:grid;grid-template-columns:140px 1fr;gap:16px;align-items:start">
+        <div class="approval-modal-grid">
           <!-- Slip Preview -->
           <div style="text-align:center">
             <div id="modal-slip-container" style="width:140px;height:175px;border-radius:12px;background:#F1F5F9;overflow:hidden;border:1px solid #E2E8F0;display:flex;align-items:center;justify-content:center;cursor:pointer" onclick="viewSlipFromModal()" title="คลิกเพื่อดูสลิปขนาดเต็ม">
@@ -498,8 +498,8 @@
   </div>
 
   <!-- Admin Edit Student Modal -->
-  <div id="admin-student-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;padding:20px">
-    <div style="background:white;border-radius:24px;width:100%;max-width:520px;padding:28px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);position:relative">
+  <div id="admin-student-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;padding:16px;box-sizing:border-box">
+    <div style="background:white;border-radius:24px;width:100%;max-width:min(520px,calc(100vw - 32px));padding:28px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);position:relative;box-sizing:border-box">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border-bottom:1px solid #F3F4F6;padding-bottom:12px">
         <h3 style="font-size:18px;font-weight:900;color:var(--c-navy);margin:0">🛡️ แอดมินแก้ไขข้อมูลนักเรียน</h3>
         <button onclick="closeAdminStudentModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#9CA3AF">✕</button>
@@ -551,9 +551,9 @@
   </div>
 
   <!-- Course Lessons & YouTube Video Cloud CMS Modal -->
-  <div id="admin-lesson-modal" class="modal-overlay" style="display:none;z-index:9999;align-items:center;justify-content:center;padding:16px">
+  <div id="admin-lesson-modal" class="modal-overlay" style="display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;padding:16px;box-sizing:border-box">
     <div class="modal-backdrop" onclick="closeAdminLessonModal()"></div>
-    <div class="modal-box" style="position:relative;background:#FFFFFF;border-radius:24px;box-shadow:0 25px 60px rgba(0,0,0,0.25);width:100%;max-width:980px;height:90vh;max-height:860px;display:flex;flex-direction:column;overflow:hidden;z-index:1000">
+    <div class="modal-box" style="position:relative;background:#FFFFFF;border-radius:24px;box-shadow:0 25px 60px rgba(0,0,0,0.25);width:100%;max-width:min(980px,calc(100vw - 32px));height:90vh;max-height:860px;display:flex;flex-direction:column;overflow:hidden;box-sizing:border-box;z-index:1000">
       <!-- Modal Header -->
       <div style="padding:16px 24px;background:var(--c-navy);color:white;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
         <div style="display:flex;align-items:center;gap:12px">
@@ -635,7 +635,7 @@
                 ✨ ตรวจพบความยาวคลิปอัตโนมัติ
               </span>
             </div>
-            <div style="display:grid;grid-template-columns:85px 2fr 100px 3fr auto;gap:10px;align-items:end">
+            <div class="cms-lesson-form-grid">
               <div>
                 <label style="display:block;font-size:11px;font-weight:800;color:#475569;margin-bottom:4px">รหัส EP (ออโต้)</label>
                 <input type="text" id="cms-new-ep" placeholder="EP.1" style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 10px;font-size:12px;outline:none;font-weight:900;color:var(--c-sky);text-align:center" />
@@ -695,7 +695,7 @@
               <span style="background:#DCFCE7;color:#15803D;font-size:11px;font-weight:900;padding:3px 10px;border-radius:6px">+ NEW DOCUMENT</span>
               <span style="font-weight:900;color:var(--c-navy);font-size:13.5px">เพิ่มไฟล์เอกสาร / ชีทเรียนใหม่ในคอร์สนี้</span>
             </div>
-            <div style="display:grid;grid-template-columns:2fr 1.4fr 1.2fr 2.5fr auto;gap:10px;align-items:end">
+            <div class="cms-material-form-grid">
               <div>
                 <label style="display:block;font-size:11px;font-weight:800;color:#475569;margin-bottom:4px">ชื่อเอกสาร / ชีทเรียน</label>
                 <input type="text" id="cms-new-mat-title" placeholder="เช่น ชีทสรุป Mindmap ชีวะ..." style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:12px;outline:none" />
@@ -746,9 +746,9 @@
   </div>
 
   <!-- Live Video Test Player Modal -->
-  <div id="admin-video-test-modal" class="modal-overlay" style="display:none;z-index:10000;align-items:center;justify-content:center;padding:16px">
+  <div id="admin-video-test-modal" class="modal-overlay" style="display:none;position:fixed;inset:0;z-index:10000;align-items:center;justify-content:center;padding:16px;box-sizing:border-box">
     <div class="modal-backdrop" onclick="closeAdminVideoTestModal()"></div>
-    <div class="modal-box" style="position:relative;background:#0F172A;border-radius:24px;box-shadow:0 25px 60px rgba(0,0,0,0.5);width:100%;max-width:820px;overflow:hidden;z-index:10001;border:1px solid rgba(255,255,255,0.1)">
+    <div class="modal-box" style="position:relative;background:#0F172A;border-radius:24px;box-shadow:0 25px 60px rgba(0,0,0,0.5);width:100%;max-width:min(820px,calc(100vw - 32px));overflow:hidden;box-sizing:border-box;z-index:10001;border:1px solid rgba(255,255,255,0.1)">
       <div style="padding:14px 20px;background:rgba(255,255,255,0.05);color:white;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.1)">
         <div style="display:flex;align-items:center;gap:10px">
           <span style="font-size:18px">▶</span>
@@ -772,9 +772,9 @@
   </div>
 
   <!-- Edit Course Information Modal -->
-  <div id="admin-course-info-modal" class="modal-overlay" style="display:none;position:fixed;inset:0;z-index:99999;align-items:center;justify-content:center;padding:16px">
+  <div id="admin-course-info-modal" class="modal-overlay" style="display:none;position:fixed;inset:0;z-index:99999;align-items:center;justify-content:center;padding:16px;box-sizing:border-box">
     <div class="modal-backdrop" onclick="closeCourseInfoModal()"></div>
-    <div class="modal-box" style="position:relative;background:#FFFFFF;border-radius:24px;box-shadow:0 25px 60px rgba(0,0,0,0.3);width:100%;max-width:720px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden;z-index:100000">
+    <div class="modal-box" style="position:relative;background:#FFFFFF;border-radius:24px;box-shadow:0 25px 60px rgba(0,0,0,0.3);width:100%;max-width:min(720px,calc(100vw - 32px));max-height:92vh;display:flex;flex-direction:column;overflow:hidden;box-sizing:border-box;z-index:100000">
       <!-- Modal Header -->
       <div style="padding:16px 24px;background:linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%);color:white;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
         <div style="display:flex;align-items:center;gap:12px">
@@ -794,7 +794,7 @@
         <input type="hidden" id="edit-course-id" />
 
         <!-- Title, Level & Category -->
-        <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:14px">
+        <div class="admin-grid-3">
           <div>
             <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">ชื่อคอร์สเรียน <span style="color:#EF4444">*</span></label>
             <input type="text" id="edit-course-title" required style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:13px;outline:none;background:white;font-weight:700" />
@@ -826,7 +826,7 @@
         </div>
 
         <!-- Prices & Hours & Validity Row -->
-        <div style="display:grid;grid-template-columns:1.2fr 1.2fr 1fr 1fr;gap:14px">
+        <div class="admin-grid-4">
           <div>
             <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">ราคาขายจริง (฿) <span style="color:#EF4444">*</span></label>
             <input type="number" id="edit-course-price" min="0" required oninput="updateCourseDiscountBadge('edit')" style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:13px;outline:none;background:white;font-weight:900;color:#DC2626" />
@@ -849,7 +849,7 @@
         </div>
 
         <!-- Badge & Badge Color Row -->
-        <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:14px;align-items:end">
+        <div class="admin-grid-2" style="align-items:end">
           <div>
             <label style="display:block;font-size:11.5px;font-weight:850;color:#334155;margin-bottom:6px">ป้ายกำกับคอร์ส (Badge)</label>
             <input type="text" id="edit-course-badge" placeholder="เช่น Bio Intensive III หรือ A-Level ชีวะ 🏆" style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:12.5px;outline:none;background:white;font-weight:800" />
@@ -1342,10 +1342,10 @@
         return;
       }
       const overlay = document.createElement('div');
-      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;cursor:pointer;backdrop-filter:blur(4px)';
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;cursor:pointer;backdrop-filter:blur(4px)';
       overlay.onclick = () => overlay.remove();
       overlay.innerHTML = `
-        <div style="background:white;border-radius:20px;padding:20px;max-width:520px;width:100%;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,0.3)" onclick="event.stopPropagation()">
+        <div style="background:white;border-radius:20px;padding:20px;max-width:min(520px,calc(100vw - 32px));width:100%;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,0.3);box-sizing:border-box" onclick="event.stopPropagation()">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:1px solid #F1F5F9;padding-bottom:10px">
             <span style="font-weight:850;color:var(--c-navy);font-size:15px">🖼️ หลักฐานการโอนเงิน (สลิป)</span>
             <button onclick="this.closest('[style*=fixed]').remove()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#9CA3AF;font-weight:700">✕</button>
@@ -2190,7 +2190,7 @@
             </div>
 
             <!-- Inputs for Title, Duration, and Video URL -->
-            <div style="display:grid;grid-template-columns:2fr 100px 3fr;gap:10px;align-items:center">
+            <div class="cms-lesson-row-grid">
               <div>
                 <input type="text" value="${(l.title || '').replace(/"/g, '&quot;')}" oninput="updateLessonField(${idx}, 'title', this.value)" placeholder="ชื่อบทเรียน..." style="width:100%;border:1px solid #E2E8F0;border-radius:8px;padding:7px 10px;font-size:12px;outline:none" />
               </div>
@@ -2341,7 +2341,7 @@
             </div>
 
             <!-- Edit Fields Grid -->
-            <div style="display:grid;grid-template-columns:2.5fr 1.5fr 1fr;gap:10px;align-items:center">
+            <div class="cms-material-row-grid">
               <div>
                 <label style="display:block;font-size:10.5px;font-weight:800;color:#64748B;margin-bottom:3px">ชื่อเอกสาร / ชีทเรียน</label>
                 <input type="text"

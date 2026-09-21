@@ -947,7 +947,10 @@ function openTrialModal(trialItem) {
     modal = document.createElement('div');
     modal.id = 'trial-video-modal';
     modal.className = 'modal-overlay';
-    modal.onclick = () => modal.classList.remove('show');
+    modal.onclick = () => {
+      modal.classList.remove('show');
+      modal.innerHTML = '';
+    };
     document.body.appendChild(modal);
   }
 
@@ -964,11 +967,11 @@ function openTrialModal(trialItem) {
   }
 
   modal.innerHTML = `
-    <div class="modal-backdrop"></div>
+    <div class="modal-backdrop" onclick="const m=document.getElementById('trial-video-modal');if(m){m.classList.remove('show');m.innerHTML='';}"></div>
     <div class="modal-box wide animate-fade-in-up" onclick="event.stopPropagation()">
       <div class="modal-header">
         <h3 style="font-weight:800;color:var(--c-navy);font-size:14px;margin:0">▶ วิดีโอตัวอย่างทดลองเรียนฟรี</h3>
-        <button onclick="document.getElementById('trial-video-modal').classList.remove('show')" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none">✕</button>
+        <button onclick="const m=document.getElementById('trial-video-modal');if(m){m.classList.remove('show');m.innerHTML='';}" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none;font-size:18px;color:#64748B">✕</button>
       </div>
       <div class="modal-body">
         <div style="background:black;border-radius:16px;aspect-ratio:16/9;overflow:hidden;margin-bottom:16px;display:flex;align-items:center;justify-content:center">
@@ -998,7 +1001,7 @@ function openReviewModal(studentName) {
   }
 
   modal.innerHTML = `
-    <div class="modal-backdrop"></div>
+    <div class="modal-backdrop" onclick="document.getElementById('review-detail-modal').classList.remove('show')"></div>
     <div class="modal-box animate-fade-in-up" onclick="event.stopPropagation()">
       <div class="modal-header">
         <h3 style="font-weight:800;color:var(--c-navy);font-size:14px;margin:0">รีวิวจาก ${r.name}</h3>
@@ -1040,32 +1043,126 @@ function openCourseModal(course) {
   }
 
   const isEnrolled = AppState.enrolled.includes(course.id);
+  const discountPercent = (course.originalPrice && course.originalPrice > course.price)
+    ? Math.round(((course.originalPrice - course.price) / course.originalPrice) * 100)
+    : null;
+
+  const lessons = AppState.getCourseLessons(course.id) || [];
+  const lessonCount = lessons.length > 0 ? lessons.length : (course.lessons || 6);
+  const durationMinutes = lessons.reduce((acc, l) => acc + (Number(l.duration) || 45), 0);
+
+  const trial = (typeof TRIAL_LESSONS !== 'undefined' ? TRIAL_LESSONS.find(t =>
+    (course.badge && t.course.toLowerCase().includes(course.badge.toLowerCase())) ||
+    (course.title && t.course.toLowerCase().includes(course.title.toLowerCase()))
+  ) : null) || (typeof TRIAL_LESSONS !== 'undefined' ? TRIAL_LESSONS[0] : null);
 
   modal.innerHTML = `
-    <div class="modal-backdrop"></div>
+    <div class="modal-backdrop" onclick="document.getElementById('global-course-modal').classList.remove('show')"></div>
     <div class="modal-box wide animate-fade-in-up" onclick="event.stopPropagation()">
-      <div class="modal-header">
-        <h3 style="font-weight:800;color:var(--c-navy);font-size:14px;margin:0">หน้ารายละเอียดหลักสูตรคอร์สเรียนชีวะ</h3>
-        <button onclick="document.getElementById('global-course-modal').classList.remove('show')" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none">✕</button>
+      <div class="modal-header" style="background:#F8FAFC">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="background:${course.badgeBg || '#1E3A8A'};color:white;font-size:11px;font-weight:900;padding:3px 10px;border-radius:6px">${course.badge || 'INBIOLOGY'}</span>
+          <span style="background:#E2E8F0;color:#334155;font-size:11px;font-weight:800;padding:3px 10px;border-radius:6px">${course.level || 'ม.ปลาย'}</span>
+          <span style="font-weight:800;color:var(--c-navy);font-size:13px">หน้ารายละเอียดหลักสูตร</span>
+        </div>
+        <button onclick="document.getElementById('global-course-modal').classList.remove('show')" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none;font-size:18px;color:#64748B">✕</button>
       </div>
-      <div class="modal-body">
-        <div style="display:flex;flex-direction:column;gap:20px">
-          <div style="display:grid;grid-template-columns:1.2fr 0.8fr;gap:24px;align-items:start">
-            <div>
-              <div style="height:220px;background:#0F172A;border-radius:16px;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;padding:20px;margin-bottom:16px">
-                <img src="${course.imageUrl}" style="max-height:100%;max-width:100%;object-fit:contain;border-radius:8px;opacity:0.9" alt="" />
-              </div>
-              <h2 style="font-size:20px;font-weight:900;color:var(--c-navy);margin:0 0 8px">${course.title}</h2>
-              <p style="font-size:13px;color:#4B5563;line-height:1.6">${course.description}</p>
+      <div class="modal-body" style="background:#FAFAFA">
+        <div class="course-modal-grid">
+          <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+            <div style="height:210px;background:linear-gradient(135deg,#0F172A 0%,#1E293B 100%);border-radius:18px;display:flex;align-items:center;justify-content:center;padding:16px;box-shadow:inset 0 2px 8px rgba(255,255,255,0.05)">
+              <img src="${course.imageUrl || './course-cover-1.png'}" style="height:170px;max-width:85%;object-fit:contain;border-radius:10px;box-shadow:0 12px 28px rgba(0,0,0,0.35)" alt="${course.title}" onerror="this.src='./course-cover-1.png'" />
             </div>
-            <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:16px">
-              <div style="font-size:32px;font-weight:950;color:var(--c-navy)">฿${formatPrice(course.price)}</div>
-              <button onclick="AppState.addToCart(COURSES.find(c=>c.id==='${course.id}'));document.getElementById('global-course-modal').classList.remove('show')" ${isEnrolled ? 'disabled' : ''} style="width:100%;background:${isEnrolled ? '#D1FAE5' : 'var(--c-sky)'};color:${isEnrolled ? '#065F46' : 'white'};font-weight:800;font-size:14px;padding:14px;border-radius:12px;cursor:pointer;border:none">
-                ${isEnrolled ? '✓ คุณเป็นเจ้าของคอร์สนี้แล้ว' : '🛒 ซื้อคอร์สเรียนนี้เลย'}
-              </button>
+
+            <div>
+              <h2 style="font-size:20px;font-weight:950;color:var(--c-navy);margin:0 0 8px;line-height:1.35">${course.title}</h2>
+              <p style="font-size:13px;color:#4B5563;line-height:1.65;margin:0 0 12px">${course.description || 'คอร์สเรียนชีววิทยาเข้มข้น จัดเต็มเนื้อหาและเทคนิคการจำ ตรงตามแนวข้อสอบจริง'}</p>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:10px;background:white;padding:14px;border-radius:14px;border:1px solid #E2E8F0">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:20px">⏱️</span>
+                <div>
+                  <div style="font-size:10px;color:#64748B;font-weight:700">ชั่วโมงเรียน</div>
+                  <div style="font-size:13px;font-weight:900;color:var(--c-navy)">${course.hours || 30} ชั่วโมง</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:20px">🎬</span>
+                <div>
+                  <div style="font-size:10px;color:#64748B;font-weight:700">จำนวนบทเรียน</div>
+                  <div style="font-size:13px;font-weight:900;color:var(--c-navy)">${lessonCount} ตอน (${durationMinutes} น.)</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:20px">📅</span>
+                <div>
+                  <div style="font-size:10px;color:#64748B;font-weight:700">อายุการใช้งาน</div>
+                  <div style="font-size:13px;font-weight:900;color:var(--c-navy)">${course.validityDays || 365} วัน</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:12px">
+              <img src="./hero-instructor.png" alt="พี่ต้น" style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid #1E3A8A;flex-shrink:0" onerror="this.style.display='none'" />
+              <div>
+                <div style="font-size:12.5px;font-weight:900;color:#1E3A8A">สอนโดย พี่ต้น (INBIOLOGY)</div>
+                <div style="font-size:11px;color:#3B82F6;font-weight:700">เกียรตินิยมอันดับ 1 • ประสบการณ์สอนชีววิทยา 9 ปี</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:white;border:1px solid #E2E8F0;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:16px;box-shadow:0 4px 16px rgba(0,0,0,0.03);position:sticky;top:20px">
+            <div>
+              <div style="font-size:11px;font-weight:800;color:#64748B;text-transform:uppercase;letter-spacing:0.5px">ราคาคอร์สเรียน</div>
+              <div style="display:flex;align-items:baseline;gap:8px;margin-top:4px">
+                <span style="font-size:32px;font-weight:950;color:#B91C1C;line-height:1">฿${formatPrice(course.price)}</span>
+                ${course.originalPrice && course.originalPrice > course.price ? `
+                  <span style="font-size:16px;color:#94A3B8;text-decoration:line-through;font-weight:700">฿${formatPrice(course.originalPrice)}</span>
+                  <span style="background:#FEE2E2;color:#DC2626;font-size:11px;font-weight:900;padding:2px 8px;border-radius:6px">-${discountPercent}%</span>
+                ` : ''}
+              </div>
+            </div>
+
+            <div style="border-top:1px solid #F1F5F9;border-bottom:1px solid #F1F5F9;padding:12px 0;display:flex;flex-direction:column;gap:8px;font-size:12px;color:#334155">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="color:#10B981;font-weight:900">✓</span>
+                <span>เข้าดูคลิปวิดีโอได้ไม่จำกัดรอบตลอด ${course.validityDays || 365} วัน</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="color:#10B981;font-weight:900">✓</span>
+                <span>ฟรี ไฟล์ e-Book PDF & ชีทสรุป Mindmap</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="color:#10B981;font-weight:900">✓</span>
+                <span>ระบบบันทึกโน้ตย่อส่วนตัวในบทเรียน</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="color:#10B981;font-weight:900">✓</span>
+                <span>ระบบพิมพ์คำถามส่งตรงถึงพี่ต้น</span>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:10px">
+              ${isEnrolled ? `
+                <a href="classroom.html?course=${course.id}" style="width:100%;background:#D1FAE5;color:#065F46;border:1.5px solid #6EE7B7;font-weight:900;font-size:14px;padding:13px;border-radius:12px;cursor:pointer;text-align:center;text-decoration:none;display:block;box-sizing:border-box">
+                  ✓ คุณเป็นเจ้าของคอร์สนี้แล้ว (เข้าสู่ห้องเรียน ➔)
+                </a>
+              ` : `
+                <button onclick="AppState.addToCart(COURSES.find(c=>c.id==='${course.id}'));document.getElementById('global-course-modal').classList.remove('show')" style="width:100%;background:var(--c-sky);color:white;font-weight:900;font-size:14px;padding:13px;border-radius:12px;cursor:pointer;border:none;box-shadow:0 4px 14px rgba(30,58,138,0.25);transition:transform 0.15s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+                  🛒 ใส่ตะกร้าและชำระเงิน
+                </button>
+              `}
+
+              ${trial ? `
+                <button onclick="document.getElementById('global-course-modal').classList.remove('show');openTrialModal(TRIAL_LESSONS.find(t=>t.id==='${trial.id}') || TRIAL_LESSONS[0])" style="width:100%;background:#EFF6FF;color:#1E3A8A;border:1px solid #BFDBFE;font-weight:850;font-size:12.5px;padding:11px;border-radius:12px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px">
+                  ▶ ทดลองเรียนฟรี (วิดีโอตัวอย่าง)
+                </button>
+              ` : ''}
+
               ${AppState.userRole === 'admin' ? `
-                <a href="admin.html?edit=${course.id}" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;background:#EFF6FF;color:#1E3A8A;border:1.5px solid #BFDBFE;font-weight:800;font-size:12px;padding:10px 14px;border-radius:10px;text-decoration:none;transition:all 0.2s">
-                  ✏️ จัดการ/แก้ไขคอร์สนี้ในระบบแอดมิน
+                <a href="admin.html?edit=${course.id}" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;font-weight:800;font-size:11.5px;padding:9px 12px;border-radius:10px;text-decoration:none;box-sizing:border-box">
+                  ✏️ แก้ไขคอร์สนี้ในระบบแอดมิน
                 </a>
               ` : ''}
             </div>
@@ -1087,7 +1184,7 @@ function renderHeader(activePage = 'home') {
   const isAdmin = AppState.userRole === 'admin';
 
   const studentProfile = AppState.getStudentProfile();
-  const studentDisplayName = studentProfile ? `🎓 น้อง${studentProfile.nickname || 'นักเรียน'}` : '🎓 นักเรียน';
+  const studentDisplayName = studentProfile ? `น้อง${studentProfile.nickname || studentProfile.fullName || 'นักเรียน'}` : 'นักเรียน';
 
   header.innerHTML = `
     <div class="header-container">
@@ -1122,10 +1219,10 @@ function renderHeader(activePage = 'home') {
           ? `<a href="login.html" class="btn-login">เข้าสู่ระบบ</a>`
           : `<div class="header-user-actions" style="display:flex;align-items:center;gap:6px">
               <a href="dashboard.html" class="header-user-badge">
-                ${isAdmin ? '🛡️ แอดมิน' : studentDisplayName}
+                ${isAdmin ? 'แอดมิน' : studentDisplayName}
               </a>
               <button onclick="AppState.logout()" class="header-logout-btn" title="ออกจากระบบ" style="padding:6px 12px;background:#FEE2E2;color:#DC2626;border-radius:10px;font-size:11px;font-weight:800;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap">
-                🚪 ออกจากระบบ
+                ออกจากระบบ
               </button>
             </div>`
         }
@@ -1137,21 +1234,21 @@ function renderHeader(activePage = 'home') {
         </button>
 
         <div id="nav-dropdown" class="dropdown-panel">
-          <a href="index.html" class="dropdown-item">👉 หน้าแรก</a>
-          <a href="courses.html" class="dropdown-item">📚 คอร์สเรียนทั้งหมด</a>
-          <a href="exam.html" class="dropdown-item">🏆 คลังข้อสอบ A-Level</a>
-          <a href="about.html" class="dropdown-item">🔬 เกี่ยวกับเรา (พี่ต้น)</a>
-          <a href="faq.html" class="dropdown-item">❓ คำถามพบบ่อย (FAQ)</a>
-          <a href="guide.html" class="dropdown-item">📖 คู่มือการใช้งาน</a>
+          <a href="index.html" class="dropdown-item">หน้าแรก</a>
+          <a href="courses.html" class="dropdown-item">คอร์สเรียนทั้งหมด</a>
+          <a href="exam.html" class="dropdown-item">คลังข้อสอบ A-Level</a>
+          <a href="about.html" class="dropdown-item">เกี่ยวกับเรา</a>
+          <a href="faq.html" class="dropdown-item">คำถามพบบ่อย</a>
+          <a href="guide.html" class="dropdown-item">คู่มือการใช้งาน</a>
           ${isLoggedIn ? `
-            <a href="classroom.html" class="dropdown-item">🎓 คอร์สเรียนของฉัน</a>
-            <a href="dashboard.html" class="dropdown-item">👤 แดชบอร์ดของฉัน</a>
-            <a href="dashboard.html?tab=orders" class="dropdown-item">🧾 ประวัติการสั่งซื้อ</a>
+            <a href="classroom.html" class="dropdown-item">คอร์สเรียนของฉัน</a>
+            <a href="dashboard.html" class="dropdown-item">แดชบอร์ดของฉัน</a>
+            <a href="dashboard.html?tab=orders" class="dropdown-item">ประวัติการสั่งซื้อ</a>
           ` : ''}
-          ${isAdmin ? `<a href="admin.html" class="dropdown-item">🛡 แดชบอร์ดแอดมิน</a>` : ''}
+          ${isAdmin ? `<a href="admin.html" class="dropdown-item">แดชบอร์ดแอดมิน</a>` : ''}
           ${isLoggedIn 
-            ? `<button onclick="AppState.logout()" class="dropdown-item" style="color:#DC2626;font-weight:800">🚪 ออกจากระบบ</button>`
-            : `<a href="login.html" class="dropdown-item" style="color:var(--c-sky);font-weight:800">🔑 เข้าสู่ระบบ</a>`
+            ? `<button onclick="AppState.logout()" class="dropdown-item" style="color:#DC2626;font-weight:800">ออกจากระบบ</button>`
+            : `<a href="login.html" class="dropdown-item" style="color:var(--c-sky);font-weight:800">เข้าสู่ระบบ</a>`
           }
         </div>
       </div>
@@ -1218,18 +1315,18 @@ function renderFooter() {
           <div class="footer-col">
             <h4>เมนูลัด</h4>
             <ul class="footer-links">
-              <li><a href="index.html">👉 หน้าแรก</a></li>
-              <li><a href="courses.html">📚 คอร์สเรียนทั้งหมด</a></li>
-              <li><a href="exam.html">🏆 คลังข้อสอบ A-Level</a></li>
+              <li><a href="index.html">หน้าแรก</a></li>
+              <li><a href="courses.html">คอร์สเรียนทั้งหมด</a></li>
+              <li><a href="exam.html">คลังข้อสอบ A-Level</a></li>
             </ul>
           </div>
 
           <div class="footer-col">
             <h4>ติดต่อ & ช่วยเหลือ</h4>
             <ul class="footer-links">
-              <li><a href="about.html">🔬 เกี่ยวกับพี่ต้น</a></li>
-              <li><a href="faq.html">❓ คำถามพบบ่อย</a></li>
-              <li><a href="https://line.me" target="_blank" style="color:#38BDF8;font-weight:800">💬 LINE: @inbiology</a></li>
+              <li><a href="about.html">เกี่ยวกับพี่ต้น</a></li>
+              <li><a href="faq.html">คำถามพบบ่อย</a></li>
+              <li><a href="https://line.me" target="_blank" style="color:#38BDF8;font-weight:800">LINE: @inbiology</a></li>
             </ul>
           </div>
         </div>
@@ -1370,7 +1467,7 @@ function initFaqPage() {
     container.innerHTML = items.map((f, idx) => `
       <div class="faq-item-card ${idx === 0 ? 'open' : ''}" data-category="${f.category}">
         <button class="faq-header-btn" onclick="this.parentElement.classList.toggle('open')" aria-expanded="${idx === 0}">
-          <span style="font-weight:700">❓ ${f.q}</span>
+          <span style="font-weight:700">${f.q}</span>
           <span class="faq-icon-arrow">▼</span>
         </button>
         <div class="faq-answer-body">

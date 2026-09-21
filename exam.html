@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>คลังข้อสอบจำลอง A-Level & สอวน. ชีววิทยา — INBIOLOGY Academy</title>
-  <meta name="description" content="คลังข้อสอบจับเวลาจำลองเสมือนจริง A-Level ชีววิทยา และ สอวน. พร้อมเฉลยละเอียดและวิเคราะห์ผลคะแนน">
+  <title>เธเธฅเธฑเธเธเนเธญเธชเธญเธเธเธณเธฅเธญเธ A-Level & เธชเธญเธงเธ. เธเธตเธงเธงเธดเธ—เธขเธฒ โ€” INBIOLOGY Academy</title>
+  <meta name="description" content="เธเธฅเธฑเธเธเนเธญเธชเธญเธเธเธฑเธเน€เธงเธฅเธฒเธเธณเธฅเธญเธเน€เธชเธกเธทเธญเธเธเธฃเธดเธ A-Level เธเธตเธงเธงเธดเธ—เธขเธฒ เนเธฅเธฐ เธชเธญเธงเธ. เธเธฃเนเธญเธกเน€เธเธฅเธขเธฅเธฐเน€เธญเธตเธขเธ”เนเธฅเธฐเธงเธดเน€เธเธฃเธฒเธฐเธซเนเธเธฅเธเธฐเนเธเธ">
   <meta name="robots" content="index, follow">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="stylesheet" href="./css/style.css?v=20260919_v21">
@@ -14,28 +14,31 @@
   <!-- Universal Header (Static Initial HTML for Crawlers & Instant Render) -->
   <header class="site-header">
     <div class="header-container">
-      <a href="index.html" class="logo-btn" aria-label="INBIOLOGY หน้าแรก">
+      <a href="index.html" class="logo-btn" aria-label="INBIOLOGY เธซเธเนเธฒเนเธฃเธ">
         <img src="./logo.png" alt="INBIOLOGY Logo" class="logo-img" style="height:44px;width:auto;object-fit:contain" />
         <div style="text-align:left">
           <span style="font-weight:700;font-size:18px;color:var(--c-navy);display:block;line-height:1;letter-spacing:-0.3px">INBIOLOGY</span>
-          <span style="font-size:10px;font-weight:600;color:var(--c-sky);display:block;margin-top:2px">by พี่ต้น</span>
+          <span style="font-size:10px;font-weight:600;color:var(--c-sky);display:block;margin-top:2px">by เธเธตเนเธ•เนเธ</span>
         </div>
       </a>
 
-      <nav class="desktop-nav" aria-label="เมนูหลัก">
-        <a href="index.html" class="nav-link">หน้าแรก</a>
-        <a href="courses.html" class="nav-link">คอร์สเรียน</a>
-        <a href="exam.html" class="nav-link active">คลังข้อสอบ</a>
-        <a href="about.html" class="nav-link">เกี่ยวกับเรา</a>
-        <a href="faq.html" class="nav-link">คำถามพบบ่อย</a>
+      <nav class="desktop-nav" aria-label="เน€เธกเธเธนเธซเธฅเธฑเธ">
+        <a href="index.html" class="nav-link">เธซเธเนเธฒเนเธฃเธ</a>
+        <a href="courses.html" class="nav-link">เธเธญเธฃเนเธชเน€เธฃเธตเธขเธ</a>
+        <a href="exam.html" class="nav-link active">เธเธฅเธฑเธเธเนเธญเธชเธญเธ</a>
+        <a href="about.html" class="nav-link">เน€เธเธตเนเธขเธงเธเธฑเธเน€เธฃเธฒ</a>
+        <a href="faq.html" class="nav-link">เธเธณเธ–เธฒเธกเธเธเธเนเธญเธข</a>
       </nav>
 
       <div style="display:flex;align-items:center;gap:12px">
-        <button onclick="openCartDrawer()" class="cart-icon-btn" title="ตะกร้าสินค้า" aria-label="เปิดตะกร้าสินค้า">
-          <span style="font-size:20px">🛒</span>
+        <button onclick="openCartDrawer()" class="cart-icon-btn" title="เธ•เธฐเธเธฃเนเธฒเธชเธดเธเธเนเธฒ" aria-label="เน€เธเธดเธ”เธ•เธฐเธเธฃเนเธฒเธชเธดเธเธเนเธฒ">
+          <span style="font-size:20px">๐’</span>
           <span class="cart-badge" style="display:none">0</span>
         </button>
 
+        <a href="login.html" class="btn-login">เน€เธเนเธฒเธชเธนเนเธฃเธฐเธเธ</a>
+
+        <button onclick="document.getElementById('nav-dropdown').classList.toggle('show')" class="hamburger-btn" aria-label="เน€เธเธดเธ”เน€เธกเธเธนเธเธเธกเธทเธญเธ–เธทเธญ">
         <a href="login.html" class="btn-login">เข้าสู่ระบบ</a>
 
         <button onclick="document.getElementById('nav-dropdown').classList.toggle('show')" class="hamburger-btn" aria-label="เปิดเมนูบนมือถือ">
@@ -45,13 +48,13 @@
         </button>
 
         <div id="nav-dropdown" class="dropdown-panel">
-          <a href="index.html" class="dropdown-item">👉 หน้าแรก</a>
-          <a href="courses.html" class="dropdown-item">📚 คอร์สเรียนทั้งหมด</a>
-          <a href="exam.html" class="dropdown-item">🏆 คลังข้อสอบ A-Level</a>
-          <a href="about.html" class="dropdown-item">🔬 เกี่ยวกับเรา (พี่ต้น)</a>
-          <a href="faq.html" class="dropdown-item">❓ คำถามพบบ่อย (FAQ)</a>
-          <a href="guide.html" class="dropdown-item">📖 คู่มือการใช้งาน</a>
-          <a href="login.html" class="dropdown-item" style="color:var(--c-sky);font-weight:800">🔑 เข้าสู่ระบบ</a>
+          <a href="index.html" class="dropdown-item">หน้าแรก</a>
+          <a href="courses.html" class="dropdown-item">คอร์สเรียนทั้งหมด</a>
+          <a href="exam.html" class="dropdown-item">คลังข้อสอบ A-Level</a>
+          <a href="about.html" class="dropdown-item">เกี่ยวกับเรา</a>
+          <a href="faq.html" class="dropdown-item">คำถามพบบ่อย</a>
+          <a href="guide.html" class="dropdown-item">คู่มือการใช้งาน</a>
+          <a href="login.html" class="dropdown-item" style="color:var(--c-sky);font-weight:800">เข้าสู่ระบบ</a>
         </div>
       </div>
     </div>
@@ -64,8 +67,8 @@
       <div id="topic-selector-view">
         <div style="text-align:center;margin-bottom:32px">
           <span style="background:var(--c-sky);color:white;font-size:11px;font-weight:900;padding:4px 14px;border-radius:20px">EXAM CENTER</span>
-          <h1 style="font-size:28px;font-weight:950;color:var(--c-navy);margin:10px 0 6px">🏆 คลังข้อสอบ A-Level & สอวน. แยกตามเนื้อหาคอร์ส</h1>
-          <p style="font-size:13px;color:#6B7280;margin:0">เลือกชุดข้อสอบคอร์สเรียนที่ต้องการทำโจทย์ (เนื้อหาจะปลดล็อกตามคอร์สที่คุณซื้อ)</p>
+          <h1 style="font-size:28px;font-weight:950;color:var(--c-navy);margin:10px 0 6px">คลังข้อสอบ A-Level & สอวน. แยกตามเนื้อหาคอร์ส</h1>
+          <p style="font-size:13px;color:#6B7280;margin:0">เลือกชุดข้อสอบตามคอร์สที่ต้องการทำโจทย์ (เนื้อหาจะปลดล็อกตามคอร์สที่ซื้อ)</p>
         </div>
 
         <div id="topics-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px"></div>
@@ -76,12 +79,13 @@
         <!-- Back Button & Exam Timer Bar -->
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
           <button onclick="showTopicSelector()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;border:1px solid #E5E7EB;background:white;color:var(--c-navy);font-weight:800;font-size:12px;cursor:pointer">
-            ⬅ เลือกชุดข้อสอบอื่น
+            ← เลือกชุดข้อสอบอื่นๆ
           </button>
           <span style="font-size:11px;font-weight:800;color:#6B7280" id="current-user-badge">ผู้ทำสอบ: 🎓 นักเรียน</span>
+        </div>
         <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
           <div>
-            <h2 id="quiz-topic-title" style="font-size:18px;font-weight:950;color:var(--c-navy);margin:0">🏆 คลังข้อสอบจำลอง A-Level ชีววิทยา</h2>
+            <h2 id="quiz-topic-title" style="font-size:18px;font-weight:950;color:var(--c-navy);margin:0">คลังข้อสอบจำลอง A-Level ชีววิทยา</h2>
             <p id="quiz-topic-subtitle" style="font-size:11px;color:#6B7280;margin:4px 0 0">ระบบจำลองสอบจับเวลาจริง พร้อมเฉลยละเอียด</p>
           </div>
           <div style="text-align:right">
@@ -117,7 +121,7 @@
       const p = AppState.getStudentProfile();
       const userBadge = document.getElementById('current-user-badge');
       if (userBadge) {
-        userBadge.textContent = p ? `ผู้ทำสอบ: 🎓 น้อง${p.nickname || p.fullName || 'นักเรียน'}` : 'ผู้ทำสอบ: 🎓 บุคคลทั่วไป';
+        userBadge.textContent = p ? `เธเธนเนเธ—เธณเธชเธญเธ: ๐“ เธเนเธญเธ${p.nickname || p.fullName || 'เธเธฑเธเน€เธฃเธตเธขเธ'}` : 'เธเธนเนเธ—เธณเธชเธญเธ: ๐“ เธเธธเธเธเธฅเธ—เธฑเนเธงเนเธ';
       }
       renderTopicsMenu();
     });
@@ -139,7 +143,7 @@
                 ${topic.badge}
               </span>
               <span style="font-size:10px;font-weight:800;padding:4px 10px;border-radius:12px;background:${isUnlocked ? '#D1FAE5' : '#FFEDD5'};color:${isUnlocked ? '#065F46' : '#C2410C'}">
-                ${isUnlocked ? '🔓 ปลดล็อกแล้ว' : '🔒 ต้องซื้อคอร์สก่อน'}
+                ${isUnlocked ? '๐”“ เธเธฅเธ”เธฅเนเธญเธเนเธฅเนเธง' : '๐”’ เธ•เนเธญเธเธเธทเนเธญเธเธญเธฃเนเธชเธเนเธญเธ'}
               </span>
             </div>
 
@@ -149,10 +153,10 @@
             </div>
 
             <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid #F3F4F6;padding-top:12px;margin-top:auto">
-              <span style="font-size:11px;font-weight:800;color:var(--c-sky)">📝 จำนวน ${questionsCount} ข้อ</span>
+              <span style="font-size:11px;font-weight:800;color:var(--c-sky)">๐“ เธเธณเธเธงเธ ${questionsCount} เธเนเธญ</span>
               ${isUnlocked
-                ? `<button onclick="startExam('${topic.id}')" style="background:var(--c-sky);color:white;font-weight:850;font-size:12px;padding:8px 16px;border-radius:10px;border:none;cursor:pointer">▶ เริ่มทำข้อสอบ</button>`
-                : `<a href="courses.html" style="background:var(--c-red);color:white;font-weight:850;font-size:11px;padding:8px 14px;border-radius:10px;text-decoration:none">🛒 ซื้อคอร์สเพื่อปลดล็อก</a>`
+                ? `<button onclick="startExam('${topic.id}')" style="background:var(--c-sky);color:white;font-weight:850;font-size:12px;padding:8px 16px;border-radius:10px;border:none;cursor:pointer">โ–ถ เน€เธฃเธดเนเธกเธ—เธณเธเนเธญเธชเธญเธ</button>`
+                : `<a href="courses.html" style="background:var(--c-red);color:white;font-weight:850;font-size:11px;padding:8px 14px;border-radius:10px;text-decoration:none">๐’ เธเธทเนเธญเธเธญเธฃเนเธชเน€เธเธทเนเธญเธเธฅเธ”เธฅเนเธญเธ</a>`
               }
             </div>
           </div>
@@ -179,7 +183,7 @@
       }
 
       if (activeQuestions.length === 0) {
-        showToast('ยังไม่มีข้อสอบในบทเรียนนี้', 'info');
+        showToast('เธขเธฑเธเนเธกเนเธกเธตเธเนเธญเธชเธญเธเนเธเธเธ—เน€เธฃเธตเธขเธเธเธตเน', 'info');
         return;
       }
 
@@ -190,7 +194,7 @@
       selectedAnswers = {};
       
       document.getElementById('quiz-topic-title').textContent = activeTopic.title;
-      document.getElementById('quiz-topic-subtitle').textContent = `คลังข้อสอบเฉพาะบทเรียนจำนวน ${activeQuestions.length} ข้อ (ระบบจับเวลาจริง)`;
+      document.getElementById('quiz-topic-subtitle').textContent = `เธเธฅเธฑเธเธเนเธญเธชเธญเธเน€เธเธเธฒเธฐเธเธ—เน€เธฃเธตเธขเธเธเธณเธเธงเธ ${activeQuestions.length} เธเนเธญ (เธฃเธฐเธเธเธเธฑเธเน€เธงเธฅเธฒเธเธฃเธดเธ)`;
 
       resetTimer();
       renderQuestion();
@@ -223,8 +227,8 @@
 
       card.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #F3F4F6;padding-bottom:12px">
-          <span style="background:var(--c-sky);color:white;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px">ข้อที่ ${qIndex + 1} / ${activeQuestions.length}</span>
-          <span style="background:#F3F4F6;color:#4B5563;font-size:10px;font-weight:800;padding:3px 10px;border-radius:8px">${q.categoryName || 'ชีววิทยา'}</span>
+          <span style="background:var(--c-sky);color:white;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px">เธเนเธญเธ—เธตเน ${qIndex + 1} / ${activeQuestions.length}</span>
+          <span style="background:#F3F4F6;color:#4B5563;font-size:10px;font-weight:800;padding:3px 10px;border-radius:8px">${q.categoryName || 'เธเธตเธงเธงเธดเธ—เธขเธฒ'}</span>
         </div>
         <h3 style="font-size:15px;font-weight:850;color:#111827;line-height:1.6;margin:0">${q.question}</h3>
         <div style="display:flex;flex-direction:column;gap:10px">
@@ -235,10 +239,10 @@
           `).join('')}
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:10px">
-          <button onclick="prevQ()" ${qIndex === 0 ? 'disabled style="opacity:0.4;cursor:not-allowed"' : ''} style="padding:10px 20px;border-radius:10px;border:1px solid #E5E7EB;background:white;font-weight:800;font-size:12px;cursor:pointer">ข้อก่อนหน้า</button>
+          <button onclick="prevQ()" ${qIndex === 0 ? 'disabled style="opacity:0.4;cursor:not-allowed"' : ''} style="padding:10px 20px;border-radius:10px;border:1px solid #E5E7EB;background:white;font-weight:800;font-size:12px;cursor:pointer">เธเนเธญเธเนเธญเธเธซเธเนเธฒ</button>
           ${qIndex === activeQuestions.length - 1 
-            ? `<button onclick="submitExam()" style="padding:10px 24px;border-radius:10px;border:none;background:var(--c-red);color:white;font-weight:800;font-size:12px;cursor:pointer">ส่งข้อสอบ</button>`
-            : `<button onclick="nextQ()" style="padding:10px 24px;border-radius:10px;border:none;background:var(--c-sky);color:white;font-weight:800;font-size:12px;cursor:pointer">ข้อถัดไป</button>`
+            ? `<button onclick="submitExam()" style="padding:10px 24px;border-radius:10px;border:none;background:var(--c-red);color:white;font-weight:800;font-size:12px;cursor:pointer">เธชเนเธเธเนเธญเธชเธญเธ</button>`
+            : `<button onclick="nextQ()" style="padding:10px 24px;border-radius:10px;border:none;background:var(--c-sky);color:white;font-weight:800;font-size:12px;cursor:pointer">เธเนเธญเธ–เธฑเธ”เนเธ</button>`
           }
         </div>
       `;
@@ -273,27 +277,27 @@
       const card = document.getElementById('quiz-card');
       card.innerHTML = `
         <div style="text-align:center;padding:20px 0">
-          <h2 style="font-size:24px;font-weight:950;color:var(--c-navy);margin:0 0 8px">🎉 ผลการทำข้อสอบจำลอง</h2>
+          <h2 style="font-size:24px;font-weight:950;color:var(--c-navy);margin:0 0 8px">๐ เธเธฅเธเธฒเธฃเธ—เธณเธเนเธญเธชเธญเธเธเธณเธฅเธญเธ</h2>
           <div style="font-size:48px;font-weight:950;color:var(--c-sky);margin:12px 0">${score} / ${activeQuestions.length}</div>
-          <p style="font-size:13px;color:#6B7280;margin:0 0 24px">ทำคะแนนได้ ${Math.round((score/activeQuestions.length)*100)}%</p>
+          <p style="font-size:13px;color:#6B7280;margin:0 0 24px">เธ—เธณเธเธฐเนเธเธเนเธ”เน ${Math.round((score/activeQuestions.length)*100)}%</p>
           <div style="display:flex;flex-direction:column;gap:12px;text-align:left">
-            <h4 style="font-weight:900;color:var(--c-navy);font-size:14px;margin:0">เฉลยและคำอธิบายอย่างละเอียด:</h4>
+            <h4 style="font-weight:900;color:var(--c-navy);font-size:14px;margin:0">เน€เธเธฅเธขเนเธฅเธฐเธเธณเธญเธเธดเธเธฒเธขเธญเธขเนเธฒเธเธฅเธฐเน€เธญเธตเธขเธ”:</h4>
             ${activeQuestions.map((q, i) => `
               <div style="background:#F9FAFB;padding:12px 16px;border-radius:12px;border:1px solid #E5E7EB">
-                <p style="font-weight:800;font-size:12px;color:#374151;margin:0 0 4px">ข้อ ${i+1}: ${q.question}</p>
+                <p style="font-weight:800;font-size:12px;color:#374151;margin:0 0 4px">เธเนเธญ ${i+1}: ${q.question}</p>
                 <p style="font-size:11px;color:${selectedAnswers[i] === q.correct ? '#10B981' : '#EF4444'};font-weight:800;margin:0">
-                  คำตอบที่ถูกต้อง: ${q.options[q.correct]} ${selectedAnswers[i] === q.correct ? '✓ (ตอบถูกต้อง)' : '✕ (ตอบผิด)'}
+                  เธเธณเธ•เธญเธเธ—เธตเนเธ–เธนเธเธ•เนเธญเธ: ${q.options[q.correct]} ${selectedAnswers[i] === q.correct ? 'โ“ (เธ•เธญเธเธ–เธนเธเธ•เนเธญเธ)' : 'โ• (เธ•เธญเธเธเธดเธ”)'}
                 </p>
-                <p style="font-size:11px;color:#6B7280;margin:4px 0 0">💡 ${q.explanation}</p>
+                <p style="font-size:11px;color:#6B7280;margin:4px 0 0">๐’ก ${q.explanation}</p>
               </div>
             `).join('')}
           </div>
           <div style="display:flex;gap:12px;justify-content:center;margin-top:24px">
             <button onclick="showTopicSelector()" style="background:#EFF6FF;color:var(--c-sky);font-weight:800;font-size:12px;padding:12px 20px;border-radius:10px;border:none;cursor:pointer">
-              ⬅ เลือกบทเรียนอื่น
+              โฌ… เน€เธฅเธทเธญเธเธเธ—เน€เธฃเธตเธขเธเธญเธทเนเธ
             </button>
             <button onclick="startExam('${activeTopic.id}')" style="background:var(--c-navy);color:white;font-weight:800;font-size:12px;padding:12px 24px;border-radius:10px;border:none;cursor:pointer">
-              🔄 ลองทำใหม่อีกครั้ง
+              ๐” เธฅเธญเธเธ—เธณเนเธซเธกเนเธญเธตเธเธเธฃเธฑเนเธ
             </button>
           </div>
         </div>
@@ -301,31 +305,3 @@
     }
   </script>
 </body>
-</html>         คำตอบที่ถูกต้อง: ${q.options[q.correct]} ${selectedAnswers[i] === q.correct ? '✓ (ตอบถูกต้อง)' : '✕ (ตอบผิด)'}
-                </p>
-                <p style="font-size:11px;color:#6B7280;margin:4px 0 0">💡 ${q.explanation}</p>
-              </div>
-            `).join('')}
-          </div>
-          <button onclick="selectCategory('${activeCat}')" style="margin-top:24px;background:var(--c-navy);color:white;font-weight:800;font-size:13px;padding:12px 28px;border-radius:12px;border:none;cursor:pointer">
-            🔄 ลองทำข้อสอบหมวดนี้ใหม่อีกครั้ง
-          </button>
-        </div>
-      `;
-    }
-  </script>
-</body>
-</html>x;color:#6B7280;margin:4px 0 0">💡 ${q.explanation}</p>
-              </div>
-            `).join('')}
-          </div>
-          <button onclick="location.reload()" style="margin-top:24px;background:var(--c-navy);color:white;font-weight:800;font-size:13px;padding:12px 28px;border-radius:12px;border:none;cursor:pointer">
-            🔄 ลองทำข้อสอบใหม่อีกครั้ง
-          </button>
-        </div>
-      `;
-    }
-  </script>
-</body>
-</html>
-

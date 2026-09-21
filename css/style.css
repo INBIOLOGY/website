@@ -989,6 +989,7 @@ h6 {
   align-items: center;
   justify-content: center;
   padding: 16px;
+  box-sizing: border-box;
 }
 
 .modal-overlay.show {
@@ -1009,14 +1010,16 @@ h6 {
   border-radius: 20px;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
   width: 100%;
-  max-width: 480px;
+  max-width: min(480px, calc(100vw - 32px));
   max-height: 90vh;
   overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
   z-index: 1000;
 }
 
 .modal-box.wide {
-  max-width: 760px;
+  max-width: min(840px, calc(100vw - 32px));
 }
 
 .modal-header {
@@ -1025,10 +1028,27 @@ h6 {
   justify-content: space-between;
   padding: 16px 24px;
   border-bottom: 1px solid var(--c-border);
+  box-sizing: border-box;
 }
 
 .modal-body {
   padding: 24px;
+  box-sizing: border-box;
+}
+
+/* Responsive Modal Layouts */
+.course-modal-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .course-modal-grid {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
 }
 
 /* CART DRAWER */
@@ -1331,7 +1351,121 @@ h6 {
 
 @media (max-width: 900px) {
   .classroom-grid {
-    grid-template-columns: 1fr;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
+  .classroom-grid > main {
+    order: 1 !important;
+    width: 100% !important;
+  }
+  .classroom-grid > aside {
+    order: 2 !important;
+    position: static !important;
+    max-height: 480px !important;
+    width: 100% !important;
+  }
+}
+
+/* Admin & CMS Responsive Grids */
+.admin-grid-3 {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 12px;
+}
+.admin-grid-4 {
+  display: grid;
+  grid-template-columns: 1.2fr 1.2fr 1fr 1fr;
+  gap: 12px;
+}
+.admin-grid-2 {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 12px;
+}
+.cms-lesson-form-grid {
+  display: grid;
+  grid-template-columns: 85px 2fr 100px 3fr auto;
+  gap: 10px;
+  align-items: end;
+}
+.cms-material-form-grid {
+  display: grid;
+  grid-template-columns: 2fr 1.4fr 1.2fr 2.5fr auto;
+  gap: 10px;
+  align-items: end;
+}
+.cms-lesson-row-grid {
+  display: grid;
+  grid-template-columns: 2fr 100px 3fr;
+  gap: 10px;
+  align-items: center;
+}
+.cms-material-row-grid {
+  display: grid;
+  grid-template-columns: 2.5fr 1.5fr 1fr;
+  gap: 10px;
+  align-items: center;
+}
+.approval-modal-grid {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .admin-grid-3,
+  .admin-grid-4,
+  .admin-grid-2 {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .cms-lesson-form-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+  .cms-lesson-form-grid > div:nth-child(2),
+  .cms-lesson-form-grid > div:nth-child(4),
+  .cms-lesson-form-grid > button {
+    grid-column: span 2 !important;
+  }
+  .cms-material-form-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+  .cms-material-form-grid > div:nth-child(1),
+  .cms-material-form-grid > div:nth-child(4),
+  .cms-material-form-grid > button {
+    grid-column: span 2 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-grid-3,
+  .admin-grid-4,
+  .admin-grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+  .cms-lesson-form-grid,
+  .cms-material-form-grid,
+  .cms-lesson-row-grid,
+  .cms-material-row-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+  .cms-lesson-form-grid > div,
+  .cms-lesson-form-grid > button,
+  .cms-material-form-grid > div,
+  .cms-material-form-grid > button {
+    grid-column: span 1 !important;
+    width: 100% !important;
+  }
+  .approval-modal-grid {
+    grid-template-columns: 1fr !important;
+    text-align: center;
+  }
+  .approval-modal-grid > div:first-child {
+    margin: 0 auto;
   }
 }
 
