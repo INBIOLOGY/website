@@ -66,11 +66,14 @@
 
       <!-- Admin Tabs Navigation -->
       <div style="display:flex;gap:8px;background:white;border:1px solid #E5E7EB;border-radius:16px;padding:8px;margin-bottom:20px;overflow-x:auto">
-        <button onclick="switchAdminTab('overview')" id="atab-overview" style="padding:8px 16px;border-radius:10px;border:none;background:var(--c-navy);color:white;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">📊 ภาพรวม</button>
-        <button onclick="switchAdminTab('courses')" id="atab-courses" style="padding:8px 16px;border-radius:10px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">📚 คอร์สเรียน</button>
-        <button onclick="switchAdminTab('orders')" id="atab-orders" style="padding:8px 16px;border-radius:10px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">💳 ตรวจสลิปออเดอร์</button>
-        <button onclick="switchAdminTab('coupons')" id="atab-coupons" style="padding:8px 16px;border-radius:10px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">🎫 จัดการคูปอง</button>
-        <button onclick="switchAdminTab('students')" id="atab-students" style="padding:8px 16px;border-radius:10px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">👥 รายชื่อนักเรียน</button>
+        <button onclick="switchAdminTab('overview')" id="atab-overview" style="padding:8px 16px;border-radius:10px;border:none;background:var(--c-navy);color:white;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">ภาพรวม</button>
+        <button onclick="switchAdminTab('courses')" id="atab-courses" style="padding:8px 16px;border-radius:10px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">คอร์สเรียน</button>
+        <button onclick="switchAdminTab('trials')" id="atab-trials" style="padding:8px 16px;border-radius:10px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">วิดีโอทดลองเรียน</button>
+        <button onclick="switchAdminTab('articles')" id="atab-articles" style="padding:8px 16px;border-radius:10px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">บทความชีวะ</button>
+        <button onclick="switchAdminTab('orders')" id="atab-orders" style="padding:8px 16px;border-radius:10px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">ตรวจสลิปโอนเงิน</button>
+        <button onclick="switchAdminTab('coupons')" id="atab-coupons" style="padding:8px 16px;border-radius:10px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">จัดการคูปอง</button>
+        <button onclick="switchAdminTab('students')" id="atab-students" style="padding:8px 16px;border-radius:10px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">รายชื่อนักเรียน & สิทธิ์แอดมิน</button>
+        <button onclick="switchAdminTab('banner')" id="atab-banner" style="padding:8px 16px;border-radius:10px;border:1px solid #E5E7EB;background:white;color:#374151;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap">แบนเนอร์โปรโมชั่น</button>
       </div>
 
       <!-- Tab: Overview -->
@@ -399,24 +402,100 @@
         </div>
       </div>
 
-      <!-- Tab: Students -->
-      <div id="apanel-students" style="display:none;flex-direction:column;gap:20px">
-        <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center">
+      <!-- Tab: Free Trials CMS -->
+      <div id="apanel-trials" style="display:none;flex-direction:column;gap:20px">
+        <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:22px 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;box-shadow:0 2px 10px rgba(0,0,0,0.02)">
           <div>
-            <h3 style="font-size:15px;font-weight:900;color:var(--c-navy);margin:0 0 4px">👥 การจัดการข้อมูลและสิทธิ์นักเรียน</h3>
-            <p style="font-size:12px;color:#6B7280;margin:0">เฉพาะแอดมินเท่านั้นที่มีสิทธิ์แก้ไขอีเมลและรหัสผ่านของนักเรียน</p>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+              <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:#EFF6FF;color:#1E3A8A">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </span>
+              <h3 style="font-size:17px;font-weight:900;color:var(--c-navy);margin:0">จัดการวิดีโอและบทเรียนทดลองเรียนฟรี</h3>
+            </div>
+            <p style="font-size:12.5px;color:#64748B;margin:0">กำหนดคลิปตัวอย่างและบทเรียนทดลองเรียนฟรีบนหน้าแรก หากลบจนหมด (0 รายการ) ส่วนนี้จะถูกซ่อนจากหน้าแรกโดยอัตโนมัติ</p>
+          </div>
+          <button type="button" onclick="openAddTrialModal()" style="background:#1E3A8A;color:white;border:none;border-radius:12px;padding:10px 18px;font-size:13px;font-weight:850;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(30,58,138,0.2)">
+            + เพิ่มวิดีโอทดลองเรียน
+          </button>
+        </div>
+
+        <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden">
+          <div class="admin-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%">
+            <table style="width:100%;min-width:760px;border-collapse:collapse;font-size:12px">
+              <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
+                <tr>
+                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280;width:70px">ปก</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ชื่อคลิปทดลองเรียน</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">คอร์สที่เกี่ยวข้อง</th>
+                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280;width:90px">ความยาว</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ลิงก์วิดีโอ</th>
+                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280;width:150px">การจัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="admin-trials-table"></tbody>
+            </table>
           </div>
         </div>
+      </div>
+
+      <!-- Tab: Articles CMS -->
+      <div id="apanel-articles" style="display:none;flex-direction:column;gap:20px">
+        <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:22px 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;box-shadow:0 2px 10px rgba(0,0,0,0.02)">
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+              <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:#EFF6FF;color:#1E3A8A">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+              </span>
+              <h3 style="font-size:17px;font-weight:900;color:var(--c-navy);margin:0">จัดการคลังความรู้และบทความชีวะ</h3>
+            </div>
+            <p style="font-size:12.5px;color:#64748B;margin:0">สร้างและปรับปรุงบทความวิชาการบนหน้าแรก หากลบจนหมด (0 รายการ) ส่วนนี้จะถูกซ่อนจากหน้าแรกโดยอัตโนมัติ</p>
+          </div>
+          <button type="button" onclick="openAddArticleModal()" style="background:#1E3A8A;color:white;border:none;border-radius:12px;padding:10px 18px;font-size:13px;font-weight:850;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(30,58,138,0.2)">
+            + เพิ่มบทความใหม่
+          </button>
+        </div>
+
         <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden">
           <div class="admin-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%">
             <table style="width:100%;min-width:700px;border-collapse:collapse;font-size:12px">
+              <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
+                <tr>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280;width:120px">วันที่</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">หัวข้อบทความ</th>
+                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280;width:110px">ยอดอ่าน</th>
+                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280;width:120px">เวลาอ่าน</th>
+                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280;width:150px">การจัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="admin-articles-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Students & Super Admin Control -->
+      <div id="apanel-students" style="display:none;flex-direction:column;gap:20px">
+        <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px">
+          <div>
+            <h3 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 4px">การจัดการข้อมูลและสิทธิ์ผู้ดูแลระบบ (Admin Role Control)</h3>
+            <p style="font-size:12px;color:#6B7280;margin:0">รายชื่อสมาชิกทั้งหมดในระบบ พร้อมระบบกำหนดสิทธิ์แอดมินโดย Super Admin</p>
+          </div>
+        </div>
+
+        <div id="super-admin-status-banner"></div>
+
+        <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden">
+          <div class="admin-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%">
+            <table style="width:100%;min-width:850px;border-collapse:collapse;font-size:12px">
               <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
                 <tr>
                   <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ชื่อจริง - นามสกุล</th>
                   <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ชื่อเล่น</th>
                   <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">อีเมล</th>
                   <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">โรงเรียน / ชั้น</th>
-                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280">สิทธิ์แอดมิน</th>
+                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280">สิทธิ์ในระบบ</th>
+                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280">จัดการสิทธิ์แอดมิน</th>
+                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280">แก้ไขข้อมูล</th>
                 </tr>
               </thead>
               <tbody id="admin-students-table"></tbody>
@@ -424,7 +503,258 @@
           </div>
         </div>
       </div>
+
+      <!-- Tab: Banner Management -->
+      <div id="apanel-banner" style="display:none;flex-direction:column;gap:20px">
+
+        <!-- Header -->
+        <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:22px 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;box-shadow:0 2px 10px rgba(0,0,0,0.02)">
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+              <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:8px;background:#EFF6FF;color:#1E3A8A">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              </span>
+              <h3 style="font-size:17px;font-weight:900;color:var(--c-navy);margin:0">จัดการแบนเนอร์โปรโมชั่นหน้าแรก</h3>
+            </div>
+            <p style="font-size:12.5px;color:#64748B;margin:0">ตั้งค่าป้ายประชาสัมพันธ์หน้าแรก รองรับทั้งแบบวางภาพแบนเนอร์เต็มผืน และแบบการ์ดข้อความโปรโมชั่น</p>
+          </div>
+          <div style="display:flex;gap:12px;align-items:center">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:8px 16px">
+              <span style="font-size:12.5px;font-weight:800;color:#334155">แสดงแบนเนอร์บนหน้าแรก</span>
+              <div style="position:relative;width:42px;height:24px;flex-shrink:0">
+                <input type="checkbox" id="banner-visible" checked style="opacity:0;width:100%;height:100%;position:absolute;cursor:pointer;z-index:2;margin:0">
+                <div id="banner-visible-track" style="position:absolute;inset:0;background:#1E3A8A;border-radius:999px;transition:background 0.2s"></div>
+                <div id="banner-visible-thumb" style="position:absolute;top:3px;left:21px;width:18px;height:18px;background:white;border-radius:50%;transition:left 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.25)"></div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Mode Selector: Full Image vs Card -->
+        <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:18px 24px">
+          <label style="font-size:12px;font-weight:850;color:#475569;display:block;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px">รูปแบบแบนเนอร์ที่ต้องการแสดง</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <button type="button" id="banner-mode-btn-full" onclick="setBannerMode('full_image')" style="border:2px solid #1E3A8A;background:#F0F7FF;border-radius:14px;padding:16px;text-align:left;cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <strong style="font-size:13.5px;color:#1E3A8A;display:flex;align-items:center;gap:8px">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                  ภาพแบนเนอร์เต็มผืน (Full Banner Graphic)
+                </strong>
+                <span style="background:#DCFCE7;color:#15803D;font-size:10.5px;font-weight:850;padding:2px 8px;border-radius:999px">วางรูปลงได้เลย</span>
+              </div>
+              <span style="font-size:11.5px;color:#475569;line-height:1.5">วางรูปภาพป้ายโปรโมชั่นที่ออกแบบไว้แล้ว รูปจะแสดงเต็มความกว้างสวยงาม พร้อมกดคลิกไปยังลิงก์ปลายทาง</span>
+            </button>
+            <button type="button" id="banner-mode-btn-card" onclick="setBannerMode('card')" style="border:2px solid #E2E8F0;background:white;border-radius:14px;padding:16px;text-align:left;cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;gap:6px">
+              <div style="display:flex;align-items:center;justify-content:space-between">
+                <strong style="font-size:13.5px;color:#334155;display:flex;align-items:center;gap:8px">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                  การ์ดโปรโมชั่นพร้อมข้อความ (Custom Card Banner)
+                </strong>
+                <span style="background:#F1F5F9;color:#64748B;font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:999px">ปรับข้อความ & ปุ่ม</span>
+              </div>
+              <span style="font-size:11.5px;color:#64748B;line-height:1.5">สร้างการ์ดโปรโมชั่นด้วยระบบข้อความ ป้ายส่วนลด ปุ่มกด สีพื้นหลัง และรูปประกอบด้านข้าง</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Form Panels Grid -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+
+          <!-- Left Column: Mode Inputs -->
+          <div style="display:flex;flex-direction:column;gap:16px">
+
+            <!-- MODE 1: Full Image Banner Inputs -->
+            <div id="banner-full-panel" style="display:flex;flex-direction:column;gap:16px">
+              <!-- Upload Image Box -->
+              <div style="background:white;border:1px solid #E5E7EB;border-radius:18px;padding:20px">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+                  <label style="font-size:12.5px;font-weight:850;color:#1E293B">รูปภาพแบนเนอร์ (วางรูปลงไปได้เลย)</label>
+                  <button type="button" onclick="useSampleBannerGraphic()" style="background:#EFF6FF;color:#1E3A8A;border:1px solid #BFDBFE;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:800;cursor:pointer">ใช้ภาพตัวอย่างแคมเปญ</button>
+                </div>
+
+                <!-- Dropzone -->
+                <div id="banner-full-dropzone" onclick="document.getElementById('banner-full-file').click()" style="border:2px dashed #93C5FD;border-radius:14px;padding:26px 16px;text-align:center;cursor:pointer;background:#F8FAFF;transition:all 0.2s;margin-bottom:12px">
+                  <div id="banner-full-preview-box" style="display:none;margin-bottom:10px">
+                    <img id="banner-full-preview-img" src="" alt="preview" style="max-height:160px;max-width:100%;border-radius:10px;object-fit:cover;box-shadow:0 4px 14px rgba(0,0,0,0.1)">
+                  </div>
+                  <div id="banner-full-placeholder">
+                    <div style="width:44px;height:44px;border-radius:50%;background:#EFF6FF;color:#1E3A8A;display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    </div>
+                    <p style="font-size:13px;font-weight:800;color:#1E3A8A;margin:0 0 4px">คลิกเพื่อเลือกไฟล์รูปภาพ หรือลากไฟล์มาวางที่นี่</p>
+                    <p style="font-size:11px;color:#94A3B8;margin:0">รองรับ JPG, PNG, WebP — แนะนำสัดส่วน 16:9 หรือความกว้าง 1100–1200px</p>
+                  </div>
+                  <input type="file" id="banner-full-file" accept="image/*" style="display:none" onchange="handleFullBannerFileUpload(event)">
+                </div>
+
+                <!-- Direct URL Input -->
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+                  <div style="flex:1;height:1px;background:#E5E7EB"></div>
+                  <span style="font-size:11px;color:#94A3B8;font-weight:700">หรือวาง URL รูปภาพ</span>
+                  <div style="flex:1;height:1px;background:#E5E7EB"></div>
+                </div>
+                <input id="banner-full-url" type="url" placeholder="https://... หรือชื่อไฟล์รูป เช่น promo-banner-sample.jpg" style="width:100%;box-sizing:border-box;border:1.5px solid #E5E7EB;border-radius:10px;padding:10px 12px;font-size:12px;font-family:inherit;outline:none" onfocus="this.style.borderColor='#1E3A8A'" onblur="this.style.borderColor='#E5E7EB'" oninput="handleFullBannerUrlInput(this.value)">
+                <div style="display:flex;gap:8px;margin-top:8px">
+                  <button type="button" onclick="clearFullBannerImage()" style="background:#FEE2E2;color:#991B1B;border:none;border-radius:8px;padding:6px 12px;font-size:11px;font-weight:800;cursor:pointer">ลบรูปภาพ</button>
+                </div>
+              </div>
+
+              <!-- Click Action & Destination -->
+              <div style="background:white;border:1px solid #E5E7EB;border-radius:18px;padding:20px">
+                <label style="font-size:12.5px;font-weight:850;color:#1E293B;display:block;margin-bottom:12px">ปลายทางเมื่อผู้เรียนคลิกที่แบนเนอร์</label>
+                <div style="display:flex;flex-direction:column;gap:12px">
+                  <div>
+                    <label style="font-size:11px;font-weight:700;color:#64748B;display:block;margin-bottom:5px">เลือกปลายทาง</label>
+                    <select id="banner-full-target-select" onchange="onBannerTargetSelectChange(this.value)" style="width:100%;box-sizing:border-box;border:1.5px solid #E5E7EB;border-radius:10px;padding:10px 12px;font-size:12.5px;font-family:inherit;outline:none;background:white">
+                      <option value="courses.html">หน้ารวมคอร์สเรียนทั้งหมด (courses.html)</option>
+                      <!-- populated dynamically -->
+                    </select>
+                  </div>
+                  <div>
+                    <label style="font-size:11px;font-weight:700;color:#64748B;display:block;margin-bottom:5px">ลิงก์ URL ปลายทาง</label>
+                    <input id="banner-full-target-url" type="text" value="courses.html" style="width:100%;box-sizing:border-box;border:1.5px solid #E5E7EB;border-radius:10px;padding:10px 12px;font-size:12px;font-family:inherit;outline:none" onfocus="this.style.borderColor='#1E3A8A'" onblur="this.style.borderColor='#E5E7EB'">
+                  </div>
+                  <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:#334155;font-weight:700;margin-top:4px">
+                    <input type="checkbox" id="banner-full-newtab" style="accent-color:#1E3A8A;width:16px;height:16px">
+                    เปิดในแท็บใหม่ (Open in new tab)
+                  </label>
+                </div>
+              </div>
+
+              <!-- Alt text -->
+              <div style="background:white;border:1px solid #E5E7EB;border-radius:18px;padding:18px">
+                <label style="font-size:12px;font-weight:800;color:#374151;display:block;margin-bottom:6px">ข้อความอธิบายภาพ (Alt Text / SEO)</label>
+                <input id="banner-full-alt" type="text" value="โปรโมชั่นพิเศษ INBIOLOGY Academy" placeholder="คำอธิบายสำหรับ SEO และโปรแกรมอ่านจอ" style="width:100%;box-sizing:border-box;border:1.5px solid #E5E7EB;border-radius:10px;padding:9px 12px;font-size:12px;font-family:inherit;outline:none" onfocus="this.style.borderColor='#1E3A8A'" onblur="this.style.borderColor='#E5E7EB'">
+              </div>
+            </div>
+
+            <!-- MODE 2: Custom Card Inputs -->
+            <div id="banner-card-panel" style="display:none;flex-direction:column;gap:16px">
+              <!-- Badges -->
+              <div style="background:white;border:1px solid #E5E7EB;border-radius:18px;padding:18px">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                  <div>
+                    <label style="font-size:11.5px;font-weight:800;color:#374151;display:block;margin-bottom:6px">ป้ายกำกับ 1 (ซ้าย)</label>
+                    <input id="banner-badge1" type="text" value="โปรต้อนรับเปิดเทอม" placeholder="เช่น โปรต้อนรับเปิดเทอม" style="width:100%;box-sizing:border-box;border:1.5px solid #E5E7EB;border-radius:10px;padding:9px 12px;font-size:12px;font-family:inherit;outline:none" onfocus="this.style.borderColor='#1E3A8A'" onblur="this.style.borderColor='#E5E7EB'">
+                  </div>
+                  <div>
+                    <label style="font-size:11.5px;font-weight:800;color:#374151;display:block;margin-bottom:6px">ป้ายกำกับ 2 (ขวา)</label>
+                    <input id="banner-badge2" type="text" value="ลดสูงสุด 30%" placeholder="เช่น ลดสูงสุด 30%" style="width:100%;box-sizing:border-box;border:1.5px solid #E5E7EB;border-radius:10px;padding:9px 12px;font-size:12px;font-family:inherit;outline:none" onfocus="this.style.borderColor='#1E3A8A'" onblur="this.style.borderColor='#E5E7EB'">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Title & Description -->
+              <div style="background:white;border:1px solid #E5E7EB;border-radius:18px;padding:18px">
+                <label style="font-size:11.5px;font-weight:800;color:#374151;display:block;margin-bottom:6px">หัวข้อโปรโมชั่น</label>
+                <input id="banner-title" type="text" value="Bio Intensive I - VI Complete Set" placeholder="ชื่อแคมเปญ" style="width:100%;box-sizing:border-box;border:1.5px solid #E5E7EB;border-radius:10px;padding:10px 12px;font-size:12.5px;font-family:inherit;outline:none;margin-bottom:12px" onfocus="this.style.borderColor='#1E3A8A'" onblur="this.style.borderColor='#E5E7EB'">
+
+                <label style="font-size:11.5px;font-weight:800;color:#374151;display:block;margin-bottom:6px">คำอธิบายรายละเอียด</label>
+                <textarea id="banner-description" rows="3" placeholder="รายละเอียดโปรโมชั่น..." style="width:100%;box-sizing:border-box;border:1.5px solid #E5E7EB;border-radius:10px;padding:10px 12px;font-size:12px;font-family:inherit;outline:none;resize:vertical" onfocus="this.style.borderColor='#1E3A8A'" onblur="this.style.borderColor='#E5E7EB'">ลงทะเบียนเรียนคอร์สแพ็กคู่รับส่วนลดพิเศษทันที 30% พร้อมรับไฟล์ e-Book สรุปเนื้อหาฟรีตลอดชีพ</textarea>
+              </div>
+
+              <!-- CTA Button -->
+              <div style="background:white;border:1px solid #E5E7EB;border-radius:18px;padding:18px">
+                <label style="font-size:11.5px;font-weight:800;color:#374151;display:block;margin-bottom:8px">ปุ่มดำเนินการ (Call to Action)</label>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                  <div>
+                    <label style="font-size:11px;font-weight:700;color:#64748B;display:block;margin-bottom:5px">ข้อความปุ่ม</label>
+                    <input id="banner-cta-text" type="text" value="ดูคอร์สทั้งหมด" style="width:100%;box-sizing:border-box;border:1.5px solid #E5E7EB;border-radius:10px;padding:9px 12px;font-size:12px;font-family:inherit;outline:none" onfocus="this.style.borderColor='#1E3A8A'" onblur="this.style.borderColor='#E5E7EB'">
+                  </div>
+                  <div>
+                    <label style="font-size:11px;font-weight:700;color:#64748B;display:block;margin-bottom:5px">ลิงก์ URL</label>
+                    <input id="banner-cta-url" type="text" value="courses.html" style="width:100%;box-sizing:border-box;border:1.5px solid #E5E7EB;border-radius:10px;padding:9px 12px;font-size:12px;font-family:inherit;outline:none" onfocus="this.style.borderColor='#1E3A8A'" onblur="this.style.borderColor='#E5E7EB'">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Background Gradient -->
+              <div style="background:white;border:1px solid #E5E7EB;border-radius:18px;padding:18px">
+                <label style="font-size:11.5px;font-weight:800;color:#374151;display:block;margin-bottom:10px">ชุดสีพื้นหลังการ์ด</label>
+                <div style="display:flex;gap:10px;flex-wrap:wrap">
+                  <label style="cursor:pointer;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700">
+                    <input type="radio" name="banner-bg" value="blue" checked style="accent-color:#1E3A8A">
+                    <span style="width:24px;height:18px;border-radius:6px;background:linear-gradient(135deg,#E0F2FE,#EFF6FF);border:1px solid #BFDBFE;display:inline-block"></span> ฟ้า Ocean
+                  </label>
+                  <label style="cursor:pointer;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700">
+                    <input type="radio" name="banner-bg" value="red" style="accent-color:#B91C1C">
+                    <span style="width:24px;height:18px;border-radius:6px;background:linear-gradient(135deg,#FEF2F2,#FFF1F2);border:1px solid #FECDD3;display:inline-block"></span> แดง Crimson
+                  </label>
+                  <label style="cursor:pointer;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700">
+                    <input type="radio" name="banner-bg" value="green" style="accent-color:#065F46">
+                    <span style="width:24px;height:18px;border-radius:6px;background:linear-gradient(135deg,#F0FDF4,#DCFCE7);border:1px solid #BBF7D0;display:inline-block"></span> เขียว Mint
+                  </label>
+                  <label style="cursor:pointer;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700">
+                    <input type="radio" name="banner-bg" value="yellow" style="accent-color:#92400E">
+                    <span style="width:24px;height:18px;border-radius:6px;background:linear-gradient(135deg,#FFFBEB,#FEF9C3);border:1px solid #FDE68A;display:inline-block"></span> ทอง Amber
+                  </label>
+                  <label style="cursor:pointer;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700">
+                    <input type="radio" name="banner-bg" value="purple" style="accent-color:#6B21A8">
+                    <span style="width:24px;height:18px;border-radius:6px;background:linear-gradient(135deg,#FAF5FF,#F3E8FF);border:1px solid #E9D5FF;display:inline-block"></span> ม่วง Violet
+                  </label>
+                </div>
+              </div>
+
+              <!-- Side Image / Icon -->
+              <div style="background:white;border:1px solid #E5E7EB;border-radius:18px;padding:18px">
+                <label style="font-size:11.5px;font-weight:800;color:#374151;display:block;margin-bottom:8px">รูปภาพหรือไอคอนประกอบด้านข้าง</label>
+                <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+                  <input type="file" id="banner-card-file" accept="image/*" style="display:none" onchange="handleBannerCardImageUpload(event)">
+                  <button type="button" onclick="document.getElementById('banner-card-file').click()" style="background:#F8FAFC;border:1px solid #CBD5E1;border-radius:8px;padding:8px 14px;font-size:11.5px;font-weight:800;color:#334155;cursor:pointer">เลือกรูปภาพ</button>
+                  <button type="button" onclick="clearBannerCardImage()" style="background:#FEE2E2;border:none;border-radius:8px;padding:8px 12px;font-size:11.5px;font-weight:800;color:#991B1B;cursor:pointer">ใช้ไอคอนเดิม</button>
+                </div>
+                <input id="banner-card-url" type="url" placeholder="หรือวาง URL รูปภาพ" style="width:100%;box-sizing:border-box;border:1.5px solid #E5E7EB;border-radius:10px;padding:8px 12px;font-size:12px;font-family:inherit;outline:none;margin-bottom:10px" oninput="handleBannerCardUrlInput(this.value)">
+                <label style="font-size:11px;font-weight:700;color:#64748B;display:block;margin-bottom:5px">ข้อความใต้รูป / Label</label>
+                <input id="banner-right-label" type="text" value="FLASH SALE INBIOLOGY" style="width:100%;box-sizing:border-box;border:1.5px solid #E5E7EB;border-radius:10px;padding:8px 12px;font-size:12px;font-family:inherit;outline:none">
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Right Column: Live Preview & Action Buttons -->
+          <div style="display:flex;flex-direction:column;gap:16px">
+
+            <!-- Live Preview Card -->
+            <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px;position:sticky;top:20px;box-shadow:0 4px 16px rgba(0,0,0,0.02)">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span style="width:8px;height:8px;border-radius:50%;background:#10B981;display:inline-block"></span>
+                  <label style="font-size:12.5px;font-weight:850;color:#1E293B">ตัวอย่างการแสดงผลจริง (Live Preview)</label>
+                </div>
+                <button type="button" onclick="updateBannerPreview()" style="background:#F1F5F9;color:#475569;border:1px solid #E2E8F0;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:800;cursor:pointer">รีเฟรช</button>
+              </div>
+
+              <!-- Preview Display Area -->
+              <div id="banner-live-preview-container" style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:18px;padding:16px;min-height:180px;display:flex;align-items:center;justify-content:center">
+                <!-- Injected by JS -->
+              </div>
+
+              <p style="font-size:11.5px;color:#94A3B8;margin:12px 0 16px;line-height:1.5">ตัวอย่างข้างต้นจำลองการแสดงผลบนหน้าแรก เมื่อผู้เรียนเปิดดูผ่านหน้าจอคอมพิวเตอร์และอุปกรณ์ต่างๆ</p>
+
+              <!-- Actions -->
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <button type="button" id="btn-save-banner" onclick="saveBannerConfig()" style="background:linear-gradient(135deg,#1E3A8A 0%,#2563EB 100%);color:white;border:none;border-radius:12px;padding:14px 20px;font-size:13.5px;font-weight:850;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(37,99,235,0.25);transition:all 0.2s">
+                  บันทึกการตั้งค่าแบนเนอร์
+                </button>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                  <a href="index.html" target="_blank" style="background:#F8FAFC;color:#1E3A8A;border:1px solid #BFDBFE;border-radius:12px;padding:11px 16px;font-size:12px;font-weight:800;text-align:center;text-decoration:none;display:inline-block">
+                    เปิดดูหน้าแรก
+                  </a>
+                  <button type="button" onclick="resetBannerConfig()" style="background:#F1F5F9;color:#475569;border:1px solid #E2E8F0;border-radius:12px;padding:11px 16px;font-size:12px;font-weight:800;cursor:pointer">
+                    คืนค่าเริ่มต้น
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
+
   </div>
 
   <!-- 2-Step Admin Order Approval Confirmation Modal -->
@@ -545,6 +875,93 @@
         <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:10px">
           <button type="button" onclick="closeAdminStudentModal()" style="background:#F3F4F6;color:#374151;font-weight:800;font-size:12px;padding:8px 16px;border-radius:8px;border:none;cursor:pointer">ยกเลิก</button>
           <button type="submit" style="background:var(--c-navy);color:white;font-weight:800;font-size:12px;padding:8px 20px;border-radius:8px;border:none;cursor:pointer">💾 บันทึกข้อมูลนักเรียน</button>
+        </div>
+      </form>
+    </div>
+  <!-- Admin Free Trial Video Modal -->
+  <div id="admin-trial-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;padding:16px;box-sizing:border-box">
+    <div style="background:white;border-radius:24px;width:100%;max-width:min(540px,calc(100vw - 32px));padding:28px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);position:relative;box-sizing:border-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border-bottom:1px solid #F3F4F6;padding-bottom:12px">
+        <h3 id="admin-trial-modal-title" style="font-size:18px;font-weight:900;color:var(--c-navy);margin:0">เพิ่มวิดีโอทดลองเรียนฟรี</h3>
+        <button type="button" onclick="closeTrialModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#9CA3AF">✕</button>
+      </div>
+
+      <form onsubmit="saveTrialItem(event)" style="display:flex;flex-direction:column;gap:14px">
+        <input type="hidden" id="admin-trial-id" />
+
+        <div>
+          <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">ชื่อคลิปทดลองเรียน</label>
+          <input type="text" id="admin-trial-title" placeholder="เช่น คลิปทดลองเรียน Bio Intensive I: โครงสร้างเซลล์" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">คอร์สที่เกี่ยวข้อง</label>
+            <input type="text" id="admin-trial-course" placeholder="เช่น Bio Intensive I" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">ความยาวคลิป</label>
+            <input type="text" id="admin-trial-duration" placeholder="เช่น 45 นาที" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
+          </div>
+        </div>
+
+        <div>
+          <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">ลิงก์รูปภาพปก (Image URL หรืออัปโหลด)</label>
+          <div style="display:flex;gap:8px">
+            <input type="text" id="admin-trial-image" placeholder="./course-cover-1.png" style="flex:1;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
+            <input type="file" id="admin-trial-file" accept="image/*" style="display:none" onchange="handleTrialImageUpload(event)" />
+            <button type="button" onclick="document.getElementById('admin-trial-file').click()" style="background:#F1F5F9;border:1px solid #CBD5E1;padding:8px 14px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer">เลือกรูป</button>
+          </div>
+        </div>
+
+        <div>
+          <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">ลิงก์วิดีโอ (YouTube URL หรือไฟล์ MP4)</label>
+          <input type="text" id="admin-trial-videourl" placeholder="https://www.youtube.com/watch?v=... หรือ https://...mp4" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:10px">
+          <button type="button" onclick="closeTrialModal()" style="background:#F3F4F6;color:#374151;font-weight:800;font-size:12px;padding:9px 18px;border-radius:8px;border:none;cursor:pointer">ยกเลิก</button>
+          <button type="submit" style="background:#1E3A8A;color:white;font-weight:850;font-size:12px;padding:9px 22px;border-radius:8px;border:none;cursor:pointer">บันทึกวิดีโอ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Article Modal -->
+  <div id="admin-article-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;padding:16px;box-sizing:border-box">
+    <div style="background:white;border-radius:24px;width:100%;max-width:min(540px,calc(100vw - 32px));padding:28px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);position:relative;box-sizing:border-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border-bottom:1px solid #F3F4F6;padding-bottom:12px">
+        <h3 id="admin-article-modal-title" style="font-size:18px;font-weight:900;color:var(--c-navy);margin:0">เพิ่มบทความใหม่</h3>
+        <button type="button" onclick="closeArticleModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#9CA3AF">✕</button>
+      </div>
+
+      <form onsubmit="saveArticleItem(event)" style="display:flex;flex-direction:column;gap:14px">
+        <input type="hidden" id="admin-article-id" />
+
+        <div>
+          <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">หัวข้อบทความ</label>
+          <input type="text" id="admin-article-title" placeholder="เช่น สรุป 10 จุดสำคัญเรื่องการสังเคราะห์ด้วยแสง" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">วันที่เผยแพร่</label>
+            <input type="text" id="admin-article-date" placeholder="เช่น 21 ก.ย. 2026" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">เวลาในการอ่าน</label>
+            <input type="text" id="admin-article-readtime" placeholder="เช่น 5 นาที" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
+          </div>
+        </div>
+
+        <div>
+          <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">ยอดอ่าน (ครั้ง)</label>
+          <input type="number" id="admin-article-views" placeholder="1250" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:9px 12px;font-size:12px;outline:none" />
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:10px">
+          <button type="button" onclick="closeArticleModal()" style="background:#F3F4F6;color:#374151;font-weight:800;font-size:12px;padding:9px 18px;border-radius:8px;border:none;cursor:pointer">ยกเลิก</button>
+          <button type="submit" style="background:#1E3A8A;color:white;font-weight:850;font-size:12px;padding:9px 22px;border-radius:8px;border:none;cursor:pointer">บันทึกบทความ</button>
         </div>
       </form>
     </div>
@@ -944,6 +1361,8 @@
       loadAndRenderOrders();
       renderCouponsTable();
       renderStudentsTable();
+      renderAdminTrials();
+      renderAdminArticles();
       updateAdminOverviewStats();
 
       // Check for ?edit=courseId in URL
@@ -1127,9 +1546,10 @@
     }
 
     function switchAdminTab(tName) {
-      ['overview', 'courses', 'orders', 'coupons', 'students'].forEach(t => {
+      ['overview', 'courses', 'trials', 'articles', 'orders', 'coupons', 'students', 'banner'].forEach(t => {
         const btn = document.getElementById(`atab-${t}`);
         const panel = document.getElementById(`apanel-${t}`);
+        if (!btn || !panel) return;
         if (t === tName) {
           btn.style.background = 'var(--c-navy)';
           btn.style.color = 'white';
@@ -1140,7 +1560,663 @@
           panel.style.display = 'none';
         }
       });
+      if (tName === 'trials') {
+        renderAdminTrials();
+      }
+      if (tName === 'articles') {
+        renderAdminArticles();
+      }
+      if (tName === 'students') {
+        renderStudentsTable();
+      }
+      if (tName === 'banner') {
+        loadBannerConfig();
+        updateBannerPreview();
+      }
     }
+
+    // ─── FREE TRIALS CMS ──────────────────────────────────────────────
+    let adminTrialsCache = [];
+
+    function getTrialsData() {
+      try {
+        const stored = localStorage.getItem('inbiology_free_trials');
+        if (stored !== null) return JSON.parse(stored);
+      } catch(e) {}
+      return (typeof FREE_TRIALS !== 'undefined' ? FREE_TRIALS : (window.FREE_TRIALS || []));
+    }
+
+    async function renderAdminTrials() {
+      const tableEl = document.getElementById('admin-trials-table');
+      if (!tableEl) return;
+
+      adminTrialsCache = getTrialsData();
+
+      if (!adminTrialsCache || adminTrialsCache.length === 0) {
+        tableEl.innerHTML = `<tr><td colspan="6" style="padding:28px;text-align:center;color:#94A3B8;font-size:13px">ยังไม่มีรายการวิดีโอทดลองเรียน (ระบบจะซ่อนส่วนนี้จากหน้าแรกโดยอัตโนมัติเมื่อไม่มีข้อมูล)</td></tr>`;
+        return;
+      }
+
+      tableEl.innerHTML = adminTrialsCache.map(ft => `
+        <tr style="border-bottom:1px solid #F3F4F6">
+          <td style="padding:12px 16px;text-align:center">
+            <img src="${ft.imageUrl || './course-cover-1.png'}" style="width:42px;height:42px;object-fit:cover;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.1)" alt="" />
+          </td>
+          <td style="padding:12px 16px;font-weight:700;color:var(--c-navy)">${ft.title}</td>
+          <td style="padding:12px 16px"><span style="background:#EFF6FF;color:#1E40AF;padding:3px 8px;border-radius:6px;font-weight:800;font-size:11px">${ft.course}</span></td>
+          <td style="padding:12px 16px;text-align:center;font-weight:800;color:#1E3A8A">${ft.duration}</td>
+          <td style="padding:12px 16px">
+            <a href="${ft.videoUrl}" target="_blank" style="color:#2563EB;text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:4px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${ft.videoUrl}">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              ${ft.videoUrl}
+            </a>
+          </td>
+          <td style="padding:12px 16px;text-align:center">
+            <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+              <button type="button" onclick="openEditTrialModal('${ft.id}')" style="background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE;padding:5px 10px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer">แก้ไข</button>
+              <button type="button" onclick="deleteTrialItem('${ft.id}')" style="background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;padding:5px 10px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer">ลบ</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openAddTrialModal() {
+      document.getElementById('admin-trial-modal-title').textContent = 'เพิ่มวิดีโอทดลองเรียนฟรี';
+      document.getElementById('admin-trial-id').value = '';
+      document.getElementById('admin-trial-title').value = '';
+      document.getElementById('admin-trial-course').value = '';
+      document.getElementById('admin-trial-duration').value = '40 นาที';
+      document.getElementById('admin-trial-image').value = './course-cover-1.png';
+      document.getElementById('admin-trial-videourl').value = '';
+      document.getElementById('admin-trial-modal').style.display = 'flex';
+    }
+
+    function openEditTrialModal(id) {
+      const item = adminTrialsCache.find(x => String(x.id) === String(id));
+      if (!item) return;
+      document.getElementById('admin-trial-modal-title').textContent = 'แก้ไขวิดีโอทดลองเรียนฟรี';
+      document.getElementById('admin-trial-id').value = item.id;
+      document.getElementById('admin-trial-title').value = item.title;
+      document.getElementById('admin-trial-course').value = item.course;
+      document.getElementById('admin-trial-duration').value = item.duration;
+      document.getElementById('admin-trial-image').value = item.imageUrl || './course-cover-1.png';
+      document.getElementById('admin-trial-videourl').value = item.videoUrl || '';
+      document.getElementById('admin-trial-modal').style.display = 'flex';
+    }
+
+    function closeTrialModal() {
+      document.getElementById('admin-trial-modal').style.display = 'none';
+    }
+
+    function handleTrialImageUpload(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        document.getElementById('admin-trial-image').value = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function saveTrialItem(e) {
+      e.preventDefault();
+      const id = document.getElementById('admin-trial-id').value;
+      const title = document.getElementById('admin-trial-title').value.trim();
+      const course = document.getElementById('admin-trial-course').value.trim();
+      const duration = document.getElementById('admin-trial-duration').value.trim();
+      const imageUrl = document.getElementById('admin-trial-image').value.trim() || './course-cover-1.png';
+      const videoUrl = document.getElementById('admin-trial-videourl').value.trim();
+
+      let trials = getTrialsData();
+      if (id) {
+        const idx = trials.findIndex(x => String(x.id) === String(id));
+        if (idx >= 0) {
+          trials[idx] = { ...trials[idx], title, course, duration, imageUrl, videoUrl };
+        }
+      } else {
+        const newId = 'ft_' + Date.now();
+        trials.push({ id: newId, title, course, duration, imageUrl, videoUrl });
+      }
+
+      localStorage.setItem('inbiology_free_trials', JSON.stringify(trials));
+      if (window.CloudService && typeof window.CloudService.saveSiteContent === 'function') {
+        window.CloudService.saveSiteContent('free_trials', trials).catch(err => console.warn(err));
+      }
+      closeTrialModal();
+      renderAdminTrials();
+      showToast('✅ บันทึกวิดีโอทดลองเรียนเรียบร้อยแล้ว', 'success');
+    }
+
+    async function deleteTrialItem(id) {
+      if (!confirm('คุณต้องการลบวิดีโอทดลองเรียนนี้ใช่หรือไม่? (หากลบทั้งหมด หัวข้อนี้จะถูกซ่อนจากหน้าแรกทันที)')) return;
+      let trials = getTrialsData();
+      trials = trials.filter(x => String(x.id) !== String(id));
+      localStorage.setItem('inbiology_free_trials', JSON.stringify(trials));
+      if (window.CloudService && typeof window.CloudService.saveSiteContent === 'function') {
+        window.CloudService.saveSiteContent('free_trials', trials).catch(err => console.warn(err));
+      }
+      renderAdminTrials();
+      showToast('🗑 ลบรายการทดลองเรียนเรียบร้อยแล้ว', 'success');
+    }
+
+    // ─── ARTICLES CMS ─────────────────────────────────────────────────
+    let adminArticlesCache = [];
+
+    function getArticlesData() {
+      try {
+        const stored = localStorage.getItem('inbiology_articles');
+        if (stored !== null) return JSON.parse(stored);
+      } catch(e) {}
+      return (typeof ARTICLES !== 'undefined' ? ARTICLES : (window.ARTICLES || []));
+    }
+
+    async function renderAdminArticles() {
+      const tableEl = document.getElementById('admin-articles-table');
+      if (!tableEl) return;
+
+      adminArticlesCache = getArticlesData();
+
+      if (!adminArticlesCache || adminArticlesCache.length === 0) {
+        tableEl.innerHTML = `<tr><td colspan="5" style="padding:28px;text-align:center;color:#94A3B8;font-size:13px">ยังไม่มีบทความชีวะในระบบ (ระบบจะซ่อนส่วนนี้จากหน้าแรกโดยอัตโนมัติเมื่อไม่มีข้อมูล)</td></tr>`;
+        return;
+      }
+
+      tableEl.innerHTML = adminArticlesCache.map(art => `
+        <tr style="border-bottom:1px solid #F3F4F6">
+          <td style="padding:12px 16px;color:#64748B;font-weight:600">${art.date}</td>
+          <td style="padding:12px 16px;font-weight:700;color:var(--c-navy)">${art.title}</td>
+          <td style="padding:12px 16px;text-align:center;font-weight:800;color:#1E40AF">${art.views || 0} ครั้ง</td>
+          <td style="padding:12px 16px;text-align:center;color:#64748B">${art.readTime}</td>
+          <td style="padding:12px 16px;text-align:center">
+            <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+              <button type="button" onclick="openEditArticleModal('${art.id}')" style="background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE;padding:5px 10px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer">แก้ไข</button>
+              <button type="button" onclick="deleteArticleItem('${art.id}')" style="background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;padding:5px 10px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer">ลบ</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openAddArticleModal() {
+      document.getElementById('admin-article-modal-title').textContent = 'เพิ่มบทความชีวะใหม่';
+      document.getElementById('admin-article-id').value = '';
+      document.getElementById('admin-article-title').value = '';
+      const now = new Date();
+      const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+      const dateStr = `${now.getDate()} ${thaiMonths[now.getMonth()]} ${now.getFullYear() + 543}`;
+      document.getElementById('admin-article-date').value = dateStr;
+      document.getElementById('admin-article-readtime').value = '5 นาที';
+      document.getElementById('admin-article-views').value = '100';
+      document.getElementById('admin-article-modal').style.display = 'flex';
+    }
+
+    function openEditArticleModal(id) {
+      const item = adminArticlesCache.find(x => String(x.id) === String(id));
+      if (!item) return;
+      document.getElementById('admin-article-modal-title').textContent = 'แก้ไขบทความชีวะ';
+      document.getElementById('admin-article-id').value = item.id;
+      document.getElementById('admin-article-title').value = item.title;
+      document.getElementById('admin-article-date').value = item.date;
+      document.getElementById('admin-article-readtime').value = item.readTime;
+      document.getElementById('admin-article-views').value = item.views || 0;
+      document.getElementById('admin-article-modal').style.display = 'flex';
+    }
+
+    function closeArticleModal() {
+      document.getElementById('admin-article-modal').style.display = 'none';
+    }
+
+    async function saveArticleItem(e) {
+      e.preventDefault();
+      const id = document.getElementById('admin-article-id').value;
+      const title = document.getElementById('admin-article-title').value.trim();
+      const date = document.getElementById('admin-article-date').value.trim();
+      const readTime = document.getElementById('admin-article-readtime').value.trim();
+      const views = parseInt(document.getElementById('admin-article-views').value, 10) || 0;
+
+      let articles = getArticlesData();
+      if (id) {
+        const idx = articles.findIndex(x => String(x.id) === String(id));
+        if (idx >= 0) {
+          articles[idx] = { ...articles[idx], title, date, readTime, views };
+        }
+      } else {
+        const newId = 'art_' + Date.now();
+        articles.push({ id: newId, title, date, readTime, views });
+      }
+
+      localStorage.setItem('inbiology_articles', JSON.stringify(articles));
+      if (window.CloudService && typeof window.CloudService.saveSiteContent === 'function') {
+        window.CloudService.saveSiteContent('articles', articles).catch(err => console.warn(err));
+      }
+      closeArticleModal();
+      renderAdminArticles();
+      showToast('✅ บันทึกบทความชีวะเรียบร้อยแล้ว', 'success');
+    }
+
+    async function deleteArticleItem(id) {
+      if (!confirm('คุณต้องการลบบทความนี้ใช่หรือไม่? (หากลบทั้งหมด หัวข้อนี้จะถูกซ่อนจากหน้าแรกทันที)')) return;
+      let articles = getArticlesData();
+      articles = articles.filter(x => String(x.id) !== String(id));
+      localStorage.setItem('inbiology_articles', JSON.stringify(articles));
+      if (window.CloudService && typeof window.CloudService.saveSiteContent === 'function') {
+        window.CloudService.saveSiteContent('articles', articles).catch(err => console.warn(err));
+      }
+      renderAdminArticles();
+      showToast('🗑 ลบบทความเรียบร้อยแล้ว', 'success');
+    }
+
+    // ─── PROMO BANNER CONFIGURATION & CMS ─────────────────────────────
+    let currentBannerMode = 'full_image'; // 'full_image' or 'card'
+
+    const BANNER_DEFAULTS = {
+      mode: 'full_image',
+      // Full image banner settings
+      fullImageBase64: '',
+      fullImageUrl: 'promo-banner-sample.jpg',
+      fullImageAlt: 'โปรโมชั่นพิเศษ INBIOLOGY Academy',
+      targetUrl: 'courses.html',
+      targetType: 'courses.html',
+      openNewTab: false,
+      // Card banner settings
+      badge1: 'โปรต้อนรับเปิดเทอม',
+      badge2: 'ลดสูงสุด 30%',
+      title: 'Bio Intensive I - VI Complete Set',
+      description: 'ลงทะเบียนเรียนคอร์สแพ็กคู่รับส่วนลดพิเศษทันที 30% พร้อมรับไฟล์ e-Book สรุปเนื้อหาฟรีตลอดชีพ',
+      ctaText: 'ดูคอร์สทั้งหมด',
+      ctaUrl: 'courses.html',
+      cardImageBase64: '',
+      cardImageUrl: '',
+      rightLabel: 'FLASH SALE INBIOLOGY',
+      bgPreset: 'blue',
+      isVisible: true
+    };
+
+    const BANNER_BG_GRADIENTS = {
+      blue:   'linear-gradient(135deg,#E0F2FE 0%,#EFF6FF 100%)',
+      red:    'linear-gradient(135deg,#FEF2F2 0%,#FFF1F2 100%)',
+      green:  'linear-gradient(135deg,#F0FDF4 0%,#DCFCE7 100%)',
+      yellow: 'linear-gradient(135deg,#FFFBEB 0%,#FEF9C3 100%)',
+      purple: 'linear-gradient(135deg,#FAF5FF 0%,#F3E8FF 100%)'
+    };
+
+    function setBannerMode(mode) {
+      currentBannerMode = mode;
+      const fullBtn = document.getElementById('banner-mode-btn-full');
+      const cardBtn = document.getElementById('banner-mode-btn-card');
+      const fullPanel = document.getElementById('banner-full-panel');
+      const cardPanel = document.getElementById('banner-card-panel');
+
+      if (mode === 'full_image') {
+        if (fullBtn) {
+          fullBtn.style.border = '2px solid #1E3A8A';
+          fullBtn.style.background = '#F0F7FF';
+        }
+        if (cardBtn) {
+          cardBtn.style.border = '2px solid #E2E8F0';
+          cardBtn.style.background = 'white';
+        }
+        if (fullPanel) fullPanel.style.display = 'flex';
+        if (cardPanel) cardPanel.style.display = 'none';
+      } else {
+        if (fullBtn) {
+          fullBtn.style.border = '2px solid #E2E8F0';
+          fullBtn.style.background = 'white';
+        }
+        if (cardBtn) {
+          cardBtn.style.border = '2px solid #1E3A8A';
+          cardBtn.style.background = '#F0F7FF';
+        }
+        if (fullPanel) fullPanel.style.display = 'none';
+        if (cardPanel) cardPanel.style.display = 'flex';
+      }
+      updateBannerPreview();
+    }
+
+    function populateBannerCourseDropdown() {
+      const select = document.getElementById('banner-full-target-select');
+      if (!select) return;
+      let html = '<option value="courses.html">หน้ารวมคอร์สเรียนทั้งหมด (courses.html)</option>';
+      if (typeof COURSES !== 'undefined' && Array.isArray(COURSES)) {
+        COURSES.forEach(c => {
+          const cleanTitle = (c.title || '').replace(/^[^\w\sก-๙]+/, '').trim();
+          html += `<option value="courses.html#course-${c.id}">คอร์ส: ${cleanTitle}</option>`;
+        });
+      }
+      html += '<option value="custom">กำหนดลิงก์เอง (Custom URL)</option>';
+      select.innerHTML = html;
+    }
+
+    function onBannerTargetSelectChange(val) {
+      const urlInput = document.getElementById('banner-full-target-url');
+      if (!urlInput) return;
+      if (val !== 'custom') {
+        urlInput.value = val;
+      } else {
+        urlInput.focus();
+      }
+      updateBannerPreview();
+    }
+
+    function useSampleBannerGraphic() {
+      const imgUrlInput = document.getElementById('banner-full-url');
+      if (imgUrlInput) imgUrlInput.value = 'promo-banner-sample.jpg';
+      const previewImg = document.getElementById('banner-full-preview-img');
+      if (previewImg) previewImg.src = 'promo-banner-sample.jpg';
+      const previewBox = document.getElementById('banner-full-preview-box');
+      if (previewBox) previewBox.style.display = 'block';
+      const placeholder = document.getElementById('banner-full-placeholder');
+      if (placeholder) placeholder.style.display = 'none';
+      updateBannerPreview();
+    }
+
+    function handleFullBannerFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      if (file.size > 2.5 * 1024 * 1024) {
+        alert('ไฟล์รูปภาพมีขนาดใหญ่เกินไป กรุณาเลือกไฟล์ขนาดไม่เกิน 2.5MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const src = e.target.result;
+        const previewImg = document.getElementById('banner-full-preview-img');
+        if (previewImg) previewImg.src = src;
+        const previewBox = document.getElementById('banner-full-preview-box');
+        if (previewBox) previewBox.style.display = 'block';
+        const placeholder = document.getElementById('banner-full-placeholder');
+        if (placeholder) placeholder.style.display = 'none';
+        const urlInput = document.getElementById('banner-full-url');
+        if (urlInput) urlInput.value = '';
+        updateBannerPreview();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleFullBannerUrlInput(url) {
+      if (!url) return;
+      const previewImg = document.getElementById('banner-full-preview-img');
+      if (previewImg) previewImg.src = url;
+      const previewBox = document.getElementById('banner-full-preview-box');
+      if (previewBox) previewBox.style.display = 'block';
+      const placeholder = document.getElementById('banner-full-placeholder');
+      if (placeholder) placeholder.style.display = 'none';
+      updateBannerPreview();
+    }
+
+    function clearFullBannerImage() {
+      const previewImg = document.getElementById('banner-full-preview-img');
+      if (previewImg) previewImg.src = '';
+      const previewBox = document.getElementById('banner-full-preview-box');
+      if (previewBox) previewBox.style.display = 'none';
+      const placeholder = document.getElementById('banner-full-placeholder');
+      if (placeholder) placeholder.style.display = 'block';
+      const urlInput = document.getElementById('banner-full-url');
+      if (urlInput) urlInput.value = '';
+      const fileInput = document.getElementById('banner-full-file');
+      if (fileInput) fileInput.value = '';
+      updateBannerPreview();
+    }
+
+    function handleBannerCardImageUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      if (file.size > 1.5 * 1024 * 1024) {
+        alert('ไฟล์รูปใหญ่เกินไป กรุณาเลือกไฟล์ขนาดไม่เกิน 1.5MB');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const src = e.target.result;
+        const urlInput = document.getElementById('banner-card-url');
+        if (urlInput) {
+          urlInput.value = '';
+          urlInput.dataset.base64 = src;
+        }
+        updateBannerPreview();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleBannerCardUrlInput(url) {
+      const urlInput = document.getElementById('banner-card-url');
+      if (urlInput) urlInput.dataset.base64 = '';
+      updateBannerPreview();
+    }
+
+    function clearBannerCardImage() {
+      const urlInput = document.getElementById('banner-card-url');
+      if (urlInput) {
+        urlInput.value = '';
+        urlInput.dataset.base64 = '';
+      }
+      const fileInput = document.getElementById('banner-card-file');
+      if (fileInput) fileInput.value = '';
+      updateBannerPreview();
+    }
+
+    function loadBannerConfig() {
+      populateBannerCourseDropdown();
+      let cfg = BANNER_DEFAULTS;
+      try {
+        const stored = localStorage.getItem('inbiology_promo_banner');
+        if (stored) cfg = { ...BANNER_DEFAULTS, ...JSON.parse(stored) };
+      } catch(e) {}
+
+      // Set mode
+      currentBannerMode = cfg.mode || 'full_image';
+      setBannerMode(currentBannerMode);
+
+      // Full Image Fields
+      const fullImgSrc = cfg.fullImageBase64 || cfg.fullImageUrl || (currentBannerMode === 'full_image' ? 'promo-banner-sample.jpg' : '');
+      const fullUrlInput = document.getElementById('banner-full-url');
+      if (fullUrlInput) fullUrlInput.value = cfg.fullImageUrl || '';
+      const fullPreviewImg = document.getElementById('banner-full-preview-img');
+      const fullPreviewBox = document.getElementById('banner-full-preview-box');
+      const fullPlaceholder = document.getElementById('banner-full-placeholder');
+      if (fullImgSrc) {
+        if (fullPreviewImg) fullPreviewImg.src = fullImgSrc;
+        if (fullPreviewBox) fullPreviewBox.style.display = 'block';
+        if (fullPlaceholder) fullPlaceholder.style.display = 'none';
+      } else {
+        if (fullPreviewBox) fullPreviewBox.style.display = 'none';
+        if (fullPlaceholder) fullPlaceholder.style.display = 'block';
+      }
+
+      const targetUrlInput = document.getElementById('banner-full-target-url');
+      if (targetUrlInput) targetUrlInput.value = cfg.targetUrl || cfg.ctaUrl || 'courses.html';
+      const targetSelect = document.getElementById('banner-full-target-select');
+      if (targetSelect) targetSelect.value = cfg.targetType || 'courses.html';
+      const newTabChk = document.getElementById('banner-full-newtab');
+      if (newTabChk) newTabChk.checked = Boolean(cfg.openNewTab);
+      const altInput = document.getElementById('banner-full-alt');
+      if (altInput) altInput.value = cfg.fullImageAlt || 'โปรโมชั่นพิเศษ INBIOLOGY Academy';
+
+      // Card Fields
+      document.getElementById('banner-badge1').value = cfg.badge1 || '';
+      document.getElementById('banner-badge2').value = cfg.badge2 || '';
+      document.getElementById('banner-title').value = cfg.title || BANNER_DEFAULTS.title;
+      document.getElementById('banner-description').value = cfg.description || BANNER_DEFAULTS.description;
+      document.getElementById('banner-cta-text').value = cfg.ctaText || 'ดูคอร์สทั้งหมด';
+      document.getElementById('banner-cta-url').value = cfg.ctaUrl || 'courses.html';
+      document.getElementById('banner-right-label').value = cfg.rightLabel || 'FLASH SALE INBIOLOGY';
+
+      const cardUrlInput = document.getElementById('banner-card-url');
+      if (cardUrlInput) {
+        cardUrlInput.value = cfg.cardImageUrl || cfg.imageUrl || '';
+        cardUrlInput.dataset.base64 = cfg.cardImageBase64 || cfg.imageBase64 || '';
+      }
+
+      // Background preset
+      const radio = document.querySelector(`input[name="banner-bg"][value="${cfg.bgPreset}"]`);
+      if (radio) radio.checked = true;
+
+      // Visibility Toggle
+      const visChk = document.getElementById('banner-visible');
+      if (visChk) {
+        visChk.checked = cfg.isVisible !== false;
+        updateVisibleToggle(visChk.checked);
+      }
+
+      updateBannerPreview();
+    }
+
+    async function saveBannerConfig() {
+      const fullPreviewImg = document.getElementById('banner-full-preview-img');
+      const fullImgBase64 = (fullPreviewImg && fullPreviewImg.src && fullPreviewImg.src.startsWith('data:')) ? fullPreviewImg.src : '';
+      const fullImgUrl = document.getElementById('banner-full-url')?.value.trim() || '';
+
+      const cardUrlInput = document.getElementById('banner-card-url');
+      const cardImgBase64 = cardUrlInput?.dataset.base64 || '';
+      const cardImgUrl = cardUrlInput?.value.trim() || '';
+
+      const bgPreset = document.querySelector('input[name="banner-bg"]:checked')?.value || 'blue';
+      const targetUrl = document.getElementById('banner-full-target-url')?.value.trim() || 'courses.html';
+      const targetType = document.getElementById('banner-full-target-select')?.value || 'courses.html';
+      const openNewTab = document.getElementById('banner-full-newtab')?.checked || false;
+
+      const cfg = {
+        mode: currentBannerMode,
+        // Full banner
+        fullImageBase64: fullImgBase64,
+        fullImageUrl: fullImgUrl || (currentBannerMode === 'full_image' && !fullImgBase64 ? 'promo-banner-sample.jpg' : ''),
+        fullImageAlt: document.getElementById('banner-full-alt')?.value.trim() || 'โปรโมชั่นพิเศษ INBIOLOGY Academy',
+        targetUrl: targetUrl,
+        targetType: targetType,
+        openNewTab: openNewTab,
+        // Card banner
+        badge1: document.getElementById('banner-badge1')?.value.trim() || '',
+        badge2: document.getElementById('banner-badge2')?.value.trim() || '',
+        title: document.getElementById('banner-title')?.value.trim() || BANNER_DEFAULTS.title,
+        description: document.getElementById('banner-description')?.value.trim() || '',
+        ctaText: document.getElementById('banner-cta-text')?.value.trim() || 'ดูคอร์สทั้งหมด',
+        ctaUrl: document.getElementById('banner-cta-url')?.value.trim() || targetUrl,
+        cardImageBase64: cardImgBase64,
+        cardImageUrl: cardImgUrl,
+        // Legacy fallback properties for backward compatibility
+        imageBase64: cardImgBase64 || fullImgBase64,
+        imageUrl: cardImgUrl || fullImgUrl,
+        rightLabel: document.getElementById('banner-right-label')?.value.trim() || 'FLASH SALE INBIOLOGY',
+        bgPreset: bgPreset,
+        isVisible: document.getElementById('banner-visible')?.checked ?? true,
+        updatedAt: new Date().toISOString()
+      };
+
+      // Save to localStorage immediately
+      localStorage.setItem('inbiology_promo_banner', JSON.stringify(cfg));
+      updateBannerPreview();
+
+      // Cloud sync to Supabase if configured
+      if (window.CloudService && typeof window.CloudService.savePromoBannerToCloud === 'function') {
+        window.CloudService.savePromoBannerToCloud(cfg).catch(err => {
+          console.warn('[PromoBanner] Cloud sync warning:', err);
+        });
+      }
+
+      // Visual feedback
+      const btn = document.getElementById('btn-save-banner');
+      if (btn) {
+        const origText = btn.innerHTML;
+        btn.innerHTML = 'บันทึกการตั้งค่าสำเร็จ';
+        btn.style.background = 'linear-gradient(135deg,#059669 0%,#10B981 100%)';
+        setTimeout(() => {
+          btn.innerHTML = origText;
+          btn.style.background = 'linear-gradient(135deg,#1E3A8A 0%,#2563EB 100%)';
+        }, 2200);
+      }
+      if (typeof showToast === 'function') {
+        showToast('บันทึกการตั้งค่าแบนเนอร์เรียบร้อยแล้ว', 'success');
+      }
+    }
+
+    function resetBannerConfig() {
+      if (!confirm('ต้องการคืนค่าแบนเนอร์กลับสู่การตั้งค่าเริ่มต้นหรือไม่?')) return;
+      localStorage.removeItem('inbiology_promo_banner');
+      loadBannerConfig();
+      updateBannerPreview();
+      if (typeof showToast === 'function') {
+        showToast('คืนค่าเริ่มต้นเรียบร้อยแล้ว', 'info');
+      }
+    }
+
+    function updateBannerPreview() {
+      const container = document.getElementById('banner-live-preview-container');
+      if (!container) return;
+
+      if (currentBannerMode === 'full_image') {
+        const previewImg = document.getElementById('banner-full-preview-img');
+        const urlInput = document.getElementById('banner-full-url');
+        const targetUrl = document.getElementById('banner-full-target-url')?.value || 'courses.html';
+        const altText = document.getElementById('banner-full-alt')?.value || 'โปรโมชั่น INBIOLOGY';
+        let imgSrc = (previewImg && previewImg.src && previewImg.src !== window.location.href) ? previewImg.src : (urlInput?.value || 'promo-banner-sample.jpg');
+
+        container.style.cssText = 'background:#F8FAFC;border:1px solid #E2E8F0;border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:8px';
+        container.innerHTML = `
+          <div style="position:relative;border-radius:14px;overflow:hidden;box-shadow:0 8px 24px rgba(15,23,42,0.08);background:#E2E8F0">
+            <img src="${imgSrc}" alt="${altText}" style="width:100%;max-height:190px;object-fit:cover;display:block;border-radius:14px">
+            <div style="position:absolute;bottom:8px;right:8px;background:rgba(15,23,42,0.75);color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;backdrop-filter:blur(4px)">
+              คลิกเพื่อไปยัง: ${targetUrl}
+            </div>
+          </div>
+          <div style="font-size:11px;color:#64748B;text-align:center">ภาพแบนเนอร์จะแสดงเต็มความกว้างในกรอบ 1100px บนหน้าแรก</div>
+        `;
+      } else {
+        const bgPreset = document.querySelector('input[name="banner-bg"]:checked')?.value || 'blue';
+        const bg = BANNER_BG_GRADIENTS[bgPreset] || BANNER_BG_GRADIENTS.blue;
+        const badge1 = document.getElementById('banner-badge1')?.value || '';
+        const badge2 = document.getElementById('banner-badge2')?.value || '';
+        const title = document.getElementById('banner-title')?.value || BANNER_DEFAULTS.title;
+        const desc = document.getElementById('banner-description')?.value || '';
+        const ctaText = document.getElementById('banner-cta-text')?.value || 'ดูคอร์สทั้งหมด';
+        const rightLabel = document.getElementById('banner-right-label')?.value || 'FLASH SALE INBIOLOGY';
+
+        const cardUrlInput = document.getElementById('banner-card-url');
+        const imgSrc = cardUrlInput?.dataset.base64 || cardUrlInput?.value;
+
+        const rightBox = imgSrc
+          ? `<img src="${imgSrc}" alt="graphic" style="max-height:80px;max-width:110px;object-fit:contain;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.1)">`
+          : `<div style="width:48px;height:48px;border-radius:50%;background:#FEF2F2;display:flex;align-items:center;justify-content:center;color:#EF4444;font-size:22px;flex-shrink:0">⚡</div>`;
+
+        container.style.cssText = `background:${bg};border-radius:18px;padding:22px 20px;display:flex;gap:16px;align-items:center;justify-content:space-between;border:1px solid rgba(255,255,255,0.7);box-shadow:0 8px 24px rgba(15,23,42,0.06)`;
+        container.innerHTML = `
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+              ${badge1 ? `<span style="background:white;color:#374151;font-size:10px;font-weight:800;padding:3px 10px;border-radius:999px;box-shadow:0 1px 4px rgba(0,0,0,0.04)">${badge1}</span>` : ''}
+              ${badge2 ? `<span style="background:white;color:#EF4444;font-size:10px;font-weight:900;padding:3px 10px;border-radius:999px;box-shadow:0 1px 4px rgba(0,0,0,0.04)">${badge2}</span>` : ''}
+            </div>
+            <div style="font-size:14px;font-weight:900;color:#0F172A;margin-bottom:6px;line-height:1.3">${title}</div>
+            <p style="font-size:11px;color:#64748B;margin:0 0 12px;line-height:1.5">${desc}</p>
+            <span style="background:#B91C1C;color:white;font-size:10.5px;font-weight:800;padding:6px 14px;border-radius:8px;display:inline-block">${ctaText} ➔</span>
+          </div>
+          <div style="background:white;border-radius:14px;padding:16px 12px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;flex-shrink:0;min-width:90px;box-shadow:0 4px 12px rgba(0,0,0,0.04)">
+            ${rightBox}
+            <span style="color:#B91C1C;font-size:9.5px;font-weight:900;letter-spacing:0.5px">${rightLabel}</span>
+          </div>
+        `;
+      }
+    }
+
+    function updateVisibleToggle(checked) {
+      const track = document.getElementById('banner-visible-track');
+      const thumb = document.getElementById('banner-visible-thumb');
+      if (!track || !thumb) return;
+      track.style.background = checked ? '#1E3A8A' : '#CBD5E1';
+      thumb.style.left = checked ? '21px' : '3px';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const vis = document.getElementById('banner-visible');
+      if (vis) {
+        vis.addEventListener('change', () => updateVisibleToggle(vis.checked));
+      }
+      document.querySelectorAll('#apanel-banner input, #apanel-banner textarea, #apanel-banner select').forEach(el => {
+        el.addEventListener('input', updateBannerPreview);
+        el.addEventListener('change', updateBannerPreview);
+      });
+    });
+
+
 
     function renderAdminTable() {
       document.getElementById('admin-course-count').textContent = COURSES.length;
@@ -1501,38 +2577,125 @@
         studentListCache = (typeof MOCK_STUDENTS !== 'undefined' ? MOCK_STUDENTS : []).map(s => ({
           id: s.id,
           fullName: s.name,
-          nickname: s.name.split(' ')[1] || 'นักเรียน',
+          nickname: (s.name.split(' ')[1] || 'นักเรียน'),
           email: s.email,
           phone: s.phone || '08X-XXX-XXXX',
           school: s.school,
-          level: s.level || 'ม.5'
+          level: s.level || 'ม.5',
+          role: (s.email && s.email.toLowerCase() === 'witsarutcha@pccpl.ac.th') ? 'admin' : (s.role || 'student')
         }));
       }
 
       updateAdminOverviewStats();
 
+      const currentProfile = (typeof AppState !== 'undefined' && typeof AppState.getStudentProfile === 'function') ? AppState.getStudentProfile() : null;
+      const currentEmail = (currentProfile && currentProfile.email) ? currentProfile.email.trim().toLowerCase() : (localStorage.getItem('inbiology_user_email') || '').toLowerCase();
+      const isSuperAdmin = (currentEmail === 'witsarutcha@pccpl.ac.th');
+
+      // Super Admin Status Banner
+      const bannerEl = document.getElementById('super-admin-status-banner');
+      if (bannerEl) {
+        if (isSuperAdmin) {
+          bannerEl.innerHTML = `
+            <div style="background:linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);border:1.5px solid #93C5FD;border-radius:16px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div style="width:42px;height:42px;border-radius:12px;background:#1E3A8A;color:white;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">
+                  👑
+                </div>
+                <div>
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <span style="font-size:14px;font-weight:900;color:var(--c-navy)">คุณคือ Super Admin (ผู้ดูแลระบบสูงสุด)</span>
+                    <span style="background:#2563EB;color:white;font-size:11px;font-weight:850;padding:2px 8px;border-radius:6px">witsarutcha@pccpl.ac.th</span>
+                  </div>
+                  <p style="font-size:12px;color:#475569;margin:2px 0 0">คุณมีสิทธิ์แต่งตั้งสมาชิกทุกคนเป็นแอดมิน หรือถอดถอนสิทธิ์แอดมินได้ตลอดเวลา โดยสิทธิ์ของคุณถูกคุ้มครองอย่างถาวร</p>
+                </div>
+              </div>
+              <span style="background:#DCFCE7;color:#166534;font-size:11px;font-weight:850;padding:4px 10px;border-radius:8px;border:1px solid #86EFAC">สิทธิ์เต็มขั้น (Full Permission)</span>
+            </div>
+          `;
+        } else {
+          bannerEl.innerHTML = `
+            <div style="background:#FFFBEB;border:1.5px solid #FCD34D;border-radius:16px;padding:14px 20px;display:flex;align-items:center;gap:12px;margin-bottom:16px">
+              <div style="font-size:22px;flex-shrink:0">🔒</div>
+              <div>
+                <div style="font-size:13px;font-weight:850;color:#92400E">สิทธิ์การแต่งตั้ง/ถอดถอนผู้ดูแลระบบ สงวนสิทธิ์เฉพาะ Super Admin</div>
+                <div style="font-size:11.5px;color:#B45309;margin-top:2px">ผู้ดูแลระบบสูงสุดคือ <strong>witsarutcha@pccpl.ac.th</strong> เท่านั้นที่มีสิทธิ์มอบหมายหรือถอดถอนสิทธิ์แอดมินของสมาชิกท่านอื่น</div>
+              </div>
+            </div>
+          `;
+        }
+      }
+
       if (studentListCache.length === 0) {
-        tableEl.innerHTML = `<tr><td colspan="5" style="padding:24px;text-align:center;color:#94A3B8">ยังไม่มีข้อมูลนักเรียน</td></tr>`;
+        tableEl.innerHTML = `<tr><td colspan="7" style="padding:24px;text-align:center;color:#94A3B8">ยังไม่มีข้อมูลนักเรียน</td></tr>`;
         return;
       }
 
-      tableEl.innerHTML = studentListCache.map(s => `
-        <tr style="border-bottom:1px solid #F3F4F6">
-          <td style="padding:12px 16px;font-weight:700;color:var(--c-navy)">${s.fullName}</td>
-          <td style="padding:12px 16px;font-weight:800;color:var(--c-sky)">น้อง${s.nickname}</td>
-          <td style="padding:12px 16px;color:#6B7280">${s.email}</td>
-          <td style="padding:12px 16px">${s.school} • ${s.level}</td>
-          <td style="padding:12px 16px;text-align:center">
-            <button onclick="openAdminEditStudentModal('${s.id}')" style="background:#FEF2F2;color:#DC2626;border:1px solid #FCA5A5;padding:6px 12px;border-radius:8px;font-weight:800;font-size:11px;cursor:pointer">
-              ✏️ แก้ไข (แอดมิน)
-            </button>
-          </td>
-        </tr>
-      `).join('');
+      tableEl.innerHTML = studentListCache.map(s => {
+        const sEmail = (s.email || '').toLowerCase().trim();
+        const isTargetSuper = (sEmail === 'witsarutcha@pccpl.ac.th');
+        const isTargetAdmin = isTargetSuper || (s.role === 'admin');
+
+        // Role Badge
+        let roleBadge = '';
+        if (isTargetSuper) {
+          roleBadge = `<span style="background:#EFF6FF;color:#1E3A8A;border:1.5px solid #93C5FD;font-size:11px;font-weight:900;padding:4px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:4px">👑 Super Admin</span>`;
+        } else if (isTargetAdmin) {
+          roleBadge = `<span style="background:#DCFCE7;color:#166534;border:1px solid #86EFAC;font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px">🛡️ แอดมิน</span>`;
+        } else {
+          roleBadge = `<span style="background:#F1F5F9;color:#64748B;border:1px solid #E2E8F0;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px">🎓 นักเรียน</span>`;
+        }
+
+        // Action Column
+        let actionCol = '';
+        if (isTargetSuper) {
+          actionCol = `<span style="font-size:11px;color:#64748B;font-weight:800;background:#F1F5F9;padding:4px 10px;border-radius:8px;display:inline-block">🔒 สิทธิ์ถาวร (เจ้าของระบบ)</span>`;
+        } else if (isSuperAdmin) {
+          if (isTargetAdmin) {
+            actionCol = `<button type="button" onclick="changeAdminRole('${s.id}', 'student', '${s.email}')" style="background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;padding:6px 12px;border-radius:8px;font-weight:850;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:4px">ถอดสิทธิ์แอดมิน</button>`;
+          } else {
+            actionCol = `<button type="button" onclick="changeAdminRole('${s.id}', 'admin', '${s.email}')" style="background:#EFF6FF;color:#1E3A8A;border:1px solid #93C5FD;padding:6px 12px;border-radius:8px;font-weight:850;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:4px">+ ตั้งเป็นแอดมิน</button>`;
+          }
+        } else {
+          actionCol = `<span style="font-size:11px;color:#94A3B8;font-weight:600">สงวนสิทธิ์ Super Admin</span>`;
+        }
+
+        return `
+          <tr style="border-bottom:1px solid #F3F4F6">
+            <td style="padding:12px 16px;font-weight:700;color:var(--c-navy)">${s.fullName}</td>
+            <td style="padding:12px 16px;font-weight:800;color:var(--c-sky)">น้อง${s.nickname}</td>
+            <td style="padding:12px 16px;color:#6B7280">${s.email}</td>
+            <td style="padding:12px 16px">${s.school} • ${s.level}</td>
+            <td style="padding:12px 16px;text-align:center">${roleBadge}</td>
+            <td style="padding:12px 16px;text-align:center">${actionCol}</td>
+            <td style="padding:12px 16px;text-align:center">
+              <button onclick="openAdminEditStudentModal('${s.id}')" style="background:#F8FAFC;color:#475569;border:1px solid #CBD5E1;padding:6px 12px;border-radius:8px;font-weight:800;font-size:11px;cursor:pointer">
+                ✏️ แก้ไขข้อมูล
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function changeAdminRole(userId, newRole, targetEmail) {
+      const actionText = newRole === 'admin' ? 'แต่งตั้งเป็นแอดมิน (Admin)' : 'ถอดถอนสิทธิ์แอดมิน (เปลี่ยนเป็นนักเรียน)';
+      if (!confirm(`คุณต้องการ "${actionText}" ให้กับผู้ใช้งาน:\n${targetEmail}\nใช่หรือไม่?`)) return;
+
+      try {
+        const currentProfile = (typeof AppState !== 'undefined' && typeof AppState.getStudentProfile === 'function') ? AppState.getStudentProfile() : null;
+        const requesterEmail = (currentProfile && currentProfile.email) ? currentProfile.email : (localStorage.getItem('inbiology_user_email') || '');
+
+        await window.CloudService.updateUserRole(userId, newRole, requesterEmail);
+        showToast(`✅ ดำเนินการ${actionText} เรียบร้อยแล้ว`, 'success');
+        await renderStudentsTable();
+      } catch(err) {
+        alert(err.message || 'เกิดข้อผิดพลาดในการเปลี่ยนสิทธิ์');
+      }
     }
 
     function openAdminEditStudentModal(id) {
-      const s = studentListCache.find(x => x.id === id);
+      const s = studentListCache.find(x => String(x.id) === String(id));
       if (!s) return;
       document.getElementById('admin-edit-student-id').value = s.id;
       document.getElementById('admin-edit-nickname').value = s.nickname;
@@ -1551,8 +2714,8 @@
 
     function saveAdminStudentEdit(e) {
       e.preventDefault();
-      const id = +document.getElementById('admin-edit-student-id').value;
-      const s = studentListCache.find(x => x.id === id);
+      const id = document.getElementById('admin-edit-student-id').value;
+      const s = studentListCache.find(x => String(x.id) === String(id));
       if (!s) return;
 
       s.nickname = document.getElementById('admin-edit-nickname').value.trim();
@@ -1562,7 +2725,16 @@
       s.school = document.getElementById('admin-edit-school').value.trim();
       s.level = document.getElementById('admin-edit-level').value.trim();
 
-      if (id === 99) {
+      if (window.CloudService && typeof window.CloudService._getUsersDb === 'function') {
+        const users = window.CloudService._getUsersDb();
+        const uIdx = users.findIndex(u => String(u.id) === String(id) || (u.email && u.email.toLowerCase() === s.email.toLowerCase()));
+        if (uIdx >= 0) {
+          users[uIdx] = { ...users[uIdx], nickname: s.nickname, fullName: s.fullName, email: s.email, password: s.password, school: s.school, level: s.level };
+          window.CloudService._saveUsersDb(users);
+        }
+      }
+
+      if (typeof AppState !== 'undefined' && AppState.getStudentProfile && String(AppState.getStudentProfile().id) === String(id)) {
         AppState.saveStudentProfile(s);
       }
 

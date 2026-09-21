@@ -18,7 +18,7 @@ const BRAND_COLORS = {
 const COURSES = [
   {
     id: 'bio-intensive-1',
-    title: '🧬 Bio Intensive I: Introbiology & Biochemistry & Cell biology',
+    title: 'Bio Intensive I: Introbiology & Biochemistry & Cell biology',
     instructor: 'พี่ต้น (เกียรตินิยมอันดับ 1)',
     price: 1290, originalPrice: 2500,
     badge: 'Bio Intensive I', badgeBg: BRAND_COLORS.navy,
@@ -40,11 +40,11 @@ const COURSES = [
       { id: 'l6', title: 'EP 6: วัฏจักรเซลล์ การแบ่งเซลล์แบบ Mitosis และ Meiosis', duration: 60, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' },
     ],
     imageUrl: './course-cover-1.png',
-    rating: 4.9, reviewCount: 450, Level: 'ม.4', Category: '🧬 Bio Intensive'
+    rating: 4.9, reviewCount: 450, Level: 'ม.4', Category: 'Bio Intensive'
   },
   {
     id: 'bio-intensive-2',
-    title: '🧫 Bio Intensive II: Genetic and evolution',
+    title: 'Bio Intensive II: Genetic and evolution',
     instructor: 'พี่ต้น (เกียรตินิยมอันดับ 1)',
     price: 1390, originalPrice: 2700,
     badge: 'Bio Intensive II', badgeBg: BRAND_COLORS.sky,
@@ -66,11 +66,11 @@ const COURSES = [
       { id: 'l6', title: 'EP 6: หลักฐานและกลไกการเกิดวิวัฒนาการของสิ่งมีชีวิต', duration: 45, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
     ],
     imageUrl: './course-cover-2.png',
-    rating: 5.0, reviewCount: 380, Level: 'ม.5', Category: '🧫 Bio Intensive'
+    rating: 5.0, reviewCount: 380, Level: 'ม.5', Category: 'Bio Intensive'
   },
   {
     id: 'bio-intensive-3',
-    title: '🌱 Bio Intensive III: Plant Biology',
+    title: 'Bio Intensive III: Plant Biology',
     instructor: 'พี่ต้น (เกียรตินิยมอันดับ 1)',
     price: 1290, originalPrice: 2400,
     badge: 'Bio Intensive III', badgeBg: '#10B981',
@@ -90,11 +90,11 @@ const COURSES = [
       { id: 'l4', title: 'EP 4: ฮอร์โมนพืชและการตอบสนองต่อสิ่งแวดล้อม (Auxin, Gibberellin, Cytokinin)', duration: 45, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
     ],
     imageUrl: './course-cover-3.jpg',
-    rating: 4.9, reviewCount: 310, Level: 'ม.5', Category: '🌱 Bio Intensive'
+    rating: 4.9, reviewCount: 310, Level: 'ม.5', Category: 'Bio Intensive'
   },
   {
     id: 'bio-intensive-4',
-    title: '🦴 Bio Intensive IV: Animal Biology I',
+    title: 'Bio Intensive IV: Animal Biology I',
     instructor: 'พี่ต้น (เกียรตินิยมอันดับ 1)',
     price: 1490, originalPrice: 2800,
     badge: 'Bio Intensive IV', badgeBg: '#F59E0B',
@@ -114,11 +114,11 @@ const COURSES = [
       { id: 'l4', title: 'EP 4: โครงสร้างไตและการรักษาสมดุลน้ำในร่างกาย (Nephron & Osmoregulation)', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
     ],
     imageUrl: './course-cover-4.jpg',
-    rating: 4.8, reviewCount: 415, Level: 'ม.6', Category: '🦴 Bio Intensive'
+    rating: 4.8, reviewCount: 415, Level: 'ม.6', Category: 'Bio Intensive'
   },
   {
     id: 'bio-intensive-5',
-    title: '🧠 Bio Intensive V: Animal Biology II (Control & Coordination)',
+    title: 'Bio Intensive V: Animal Biology II (Control & Coordination)',
     instructor: 'พี่ต้น (เกียรตินิยมอันดับ 1)',
     price: 1490, originalPrice: 2800,
     badge: 'Bio Intensive V', badgeBg: '#8B5CF6',
@@ -139,11 +139,11 @@ const COURSES = [
       { id: 'l5', title: 'EP 5: ระบบสืบพันธุ์และการเจริญเติบโตของเอ็มบริโอ', duration: 55, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
     ],
     imageUrl: './course-cover-1.png',
-    rating: 4.95, reviewCount: 390, Level: 'ม.6', Category: '🦴 Bio Intensive'
+    rating: 4.95, reviewCount: 390, Level: 'ม.6', Category: 'Bio Intensive'
   },
   {
     id: 'bio-intensive-6',
-    title: '🌍 Bio Intensive VI: Ecology, Diversity & Animal Behavior',
+    title: 'Bio Intensive VI: Ecology, Diversity & Animal Behavior',
     instructor: 'พี่ต้น (เกียรตินิยมอันดับ 1)',
     price: 1390, originalPrice: 2600,
     badge: 'Bio Intensive VI', badgeBg: '#059669',
@@ -163,14 +163,14 @@ const COURSES = [
       { id: 'l4', title: 'EP 4: ประชากรศาสตร์และวิกฤตสิ่งแวดล้อมโลก', duration: 45, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
     ],
     imageUrl: './course-cover-3.jpg',
-    rating: 4.9, reviewCount: 360, Level: 'ม.6', Category: '🌱 Bio Intensive'
+    rating: 4.9, reviewCount: 360, Level: 'ม.6', Category: 'Bio Intensive'
   },
   {
     id: 'special-posn-100',
-    title: '🎯 คอร์ส ตะลุยโจทย์ สอวน . ละเอียด 100 ข้อ',
+    title: 'คอร์ส ตะลุยโจทย์ สอวน. เจาะลึก 100 ข้อ',
     instructor: 'พี่ต้น (เกียรตินิยมอันดับ 1)',
     price: 390, originalPrice: 1290,
-    badge: 'ราคาถูกสุดคุ้ม 🔥', badgeBg: BRAND_COLORS.red,
+    badge: 'ราคาพิเศษ 390.-', badgeBg: BRAND_COLORS.red,
     tag: 'ราคาโปรโมชั่น 390.-', tagBg: '#FEE2E2', tagColor: '#B91C1C',
     description: 'คอร์สตะลุยโจทย์ สอวน. ชีววิทยา คัดสรรโจทย์เข้มข้น 100 ข้อ พร้อมเฉลยรายละเอียดทุกข้อ ชี้จุดหลอก พิชิตคะแนนค่าย 1 (ราคาถูกพิเศษ)',
     hours: 18, validity: 365, ebook: true,
@@ -187,14 +187,14 @@ const COURSES = [
       { id: 'l4', title: 'EP 4: ตะลุยโจทย์ สอวน. ข้อ 76-100 (Ecology & Lab Skills)', duration: 55, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
     ],
     imageUrl: './course-cover-5.jpg',
-    rating: 4.9, reviewCount: 890, Level: 'ติวสอบ', Category: '🏅 คอร์สพิเศษ'
+    rating: 4.9, reviewCount: 890, Level: 'ติวสอบ', Category: 'คอร์ส สอวน.'
   },
   {
     id: 'special-99-starter',
-    title: '⚡ คอร์ส 99 บาท: สรุปชีวะสกัดเข้ม Quick Review (ม.ปลาย)',
+    title: 'คอร์ส 99 บาท: สรุปชีวะสกัดเข้ม Quick Review (ม.ปลาย)',
     instructor: 'พี่ต้น (เกียรตินิยมอันดับ 1)',
     price: 99, originalPrice: 590,
-    badge: 'คอร์ส 99 บาท 🔥', badgeBg: BRAND_COLORS.red,
+    badge: 'คอร์ส 99 บาท', badgeBg: BRAND_COLORS.red,
     tag: 'โปรสุดคุ้ม 99.-', tagBg: '#FEE2E2', tagColor: '#991B1B',
     description: 'คอร์สราคาสุดประหยัดเพียง 99 บาท! รวมเทคนิคสกัดเข้มจุดออกสอบบ่อยชีววิทยา ม.ปลาย สรุปสูตรลัดและแผนภาพ Mind Map พร้อมลุยทุกสนามสอบ',
     hours: 10, validity: 365, ebook: true,
@@ -210,14 +210,14 @@ const COURSES = [
       { id: 'l3', title: 'EP 3: จุดหลอกยอดฮิต Plant & Human Physiology', duration: 45, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
     ],
     imageUrl: './course-cover-6.png',
-    rating: 5.0, reviewCount: 1420, Level: 'ติวสอบ', Category: '⚡ คอร์ส 99 บาท'
+    rating: 5.0, reviewCount: 1420, Level: 'ติวสอบ', Category: 'คอร์ส 99 บาท'
   },
   {
     id: 'bio-alevel-mastery',
-    title: '🏆 คอร์ส ติวเข้ม A-Level ชีววิทยา เจาะลึกโจทย์เสมือนจริง 500 ข้อ',
+    title: 'คอร์ส ติวเข้ม A-Level ชีววิทยา เจาะลึกโจทย์เสมือนจริง 500 ข้อ',
     instructor: 'พี่ต้น (เกียรตินิยมอันดับ 1)',
     price: 1890, originalPrice: 3500,
-    badge: 'A-Level ชีวะ 🏆', badgeBg: '#1E3A8A',
+    badge: 'A-Level ชีวะ', badgeBg: '#1E3A8A',
     tag: 'ม.6 & ติวสอบ กสพท', tagBg: '#EFF6FF', tagColor: '#1E3A8A',
     description: 'คอร์สเตรียมสอบเข้ามหาวิทยาลัย กสพท / โควตา / Admission ครบทุกบทเรียน เจาะลึกแนวข้อสอบเสมือนจริง 500 ข้อตาม Test Blueprint ล่าสุด พร้อมเทคนิคตัดช้อยส์และจับเวลาสอบเสมือนจริง',
     hours: 42, validity: 365, ebook: true,
@@ -236,14 +236,14 @@ const COURSES = [
       { id: 'l6', title: 'EP 6: จับเวลาทำ Mock Exam ชุดเก็งข้อสอบปีล่าสุด + เฉลยละเอียด', duration: 65, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
     ],
     imageUrl: './course-cover-2.png',
-    rating: 4.98, reviewCount: 840, Level: 'ติวสอบ', Category: '📖 คอร์ส A-Level'
+    rating: 4.98, reviewCount: 840, Level: 'ติวสอบ', Category: 'คอร์ส A-Level'
   },
   {
     id: 'posn-camp1-mastery',
-    title: '🎯 คอร์ส สอวน. ชีววิทยา ค่าย 1 พิชิตเหรียญรางวัล',
+    title: 'คอร์ส สอวน. ชีววิทยา ค่าย 1 พิชิตเหรียญรางวัล',
     instructor: 'พี่ต้น (เกียรตินิยมอันดับ 1)',
     price: 1990, originalPrice: 3900,
-    badge: 'สอวน. ค่าย 1 🎯', badgeBg: '#B91C1C',
+    badge: 'สอวน. ค่าย 1', badgeBg: '#B91C1C',
     tag: 'ม.3-ม.5 & โอลิมปิกวิชาการ', tagBg: '#FEF2F2', tagColor: '#B91C1C',
     description: 'หลักสูตรเข้มข้นเจาะลึกเนื้อหาชีววิทยาเชิงลึกระดับมหาวิทยาลัย (Campbell Biology) ครอบคลุมทั้งภาคทฤษฎีและข้อสอบแล็บกริ๊ง สำหรับน้องๆ ม.ต้น-ม.ปลาย ที่มุ่งมั่นสอบติดค่าย 1 และค่าย 2',
     hours: 45, validity: 365, ebook: true,
@@ -260,7 +260,7 @@ const COURSES = [
       { id: 'l4', title: 'EP 4: เทคนิควิเคราะห์ผลการทดลองแล็บชีววิทยาและการอ่านสถิติ', duration: 50, videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4' }
     ],
     imageUrl: './course-cover-5.jpg',
-    rating: 4.95, reviewCount: 620, Level: 'ติวสอบ', Category: '🏅 คอร์ส สอวน.'
+    rating: 4.95, reviewCount: 620, Level: 'ติวสอบ', Category: 'คอร์ส สอวน.'
   }
 ];
 
@@ -287,7 +287,7 @@ const EXAM_TOPICS = [
     id: 'bio-1',
     courseId: 'bio-intensive-1',
     category: 'cell',
-    title: '🧬 Bio Intensive I: เซลล์และกลไกชีวิต',
+    title: 'Bio Intensive I: เซลล์และกลไกชีวิต',
     description: 'ทดสอบความรู้เรื่องโครงสร้างเซลล์ ออร์แกเนลล์ การสลายสารอาหารระดับเซลล์ และการลำเลียงสาร',
     badge: 'Bio Intensive I',
     badgeBg: '#1E3A8A',
@@ -297,7 +297,7 @@ const EXAM_TOPICS = [
     id: 'bio-2',
     courseId: 'bio-intensive-2',
     category: 'genetics',
-    title: '🧫 Bio Intensive II: พันธุศาสตร์และ DNA',
+    title: 'Bio Intensive II: พันธุศาสตร์และ DNA',
     description: 'เจาะลึกโจทย์เมนเดล มิวเทชัน เทคโนโลยีทางดีเอ็นเอ และวิวัฒนาการสิ่งมีชีวิต',
     badge: 'Bio Intensive II',
     badgeBg: '#5B21B6',
@@ -307,7 +307,7 @@ const EXAM_TOPICS = [
     id: 'bio-3',
     courseId: 'bio-intensive-3',
     category: 'plant',
-    title: '🌱 Bio Intensive III: ชีววิทยาของพืช',
+    title: 'Bio Intensive III: ชีววิทยาของพืช',
     description: 'โครงสร้างเนื้อเยื่อพืช การสังเคราะห์ด้วยแสง ฮอร์โมนและการเจริญเติบโตของพืช',
     badge: 'Bio Intensive III',
     badgeBg: '#065F46',
@@ -317,7 +317,7 @@ const EXAM_TOPICS = [
     id: 'bio-4',
     courseId: 'bio-intensive-4',
     category: 'animal',
-    title: '🦴 Bio Intensive IV: สรีรวิทยาสัตว์และระบบร่างกาย',
+    title: 'Bio Intensive IV: สรีรวิทยาสัตว์และระบบร่างกาย',
     description: 'ระบบย่อยอาหาร ระบบหมุนเวียนเลือด ระบบประสาท และระบบขับถ่ายในมนุษย์',
     badge: 'Bio Intensive IV',
     badgeBg: '#92400E',
@@ -327,7 +327,7 @@ const EXAM_TOPICS = [
     id: 'posn-exam',
     courseId: 'posn-intensive',
     category: 'posn',
-    title: '🎯 คอร์ส ติวเข้ม สอวน. ชีววิทยา',
+    title: 'คอร์ส ติวเข้ม สอวน. ชีววิทยา',
     description: 'แนวข้อสอบคัดเลือกค่าย 1 สอวน. เน้นโจทย์วิเคราะห์ขั้นสูงและแล็บปฏิบัติการ',
     badge: 'สอวน. ค่าย 1',
     badgeBg: '#B91C1C',
@@ -337,7 +337,7 @@ const EXAM_TOPICS = [
     id: 'free-all',
     courseId: null,
     category: 'all',
-    title: '🏆 ชุดสอบจำลอง A-Level (ทดลองสอบฟรี)',
+    title: 'ชุดสอบจำลอง A-Level (ทดลองสอบฟรี)',
     description: 'ชุดข้อสอบจำลอง A-Level คละเนื้อหาทุกบทเรียน สำหรับทดสอบวัดระดับพื้นฐานชีววิทยาฟรี',
     badge: 'เปิดสอบฟรี',
     badgeBg: '#10B981',
@@ -346,32 +346,32 @@ const EXAM_TOPICS = [
 ];
 
 const EXAM_CATEGORIES = [
-  { id: 'all', name: '🏆 รวมทุกบท A-Level', badgeBg: 'var(--c-navy)' },
-  { id: 'cell', name: '🧬 เซลล์และชีวโมเลกุล', badgeBg: '#1E3A8A' },
-  { id: 'genetics', name: '🧫 พันธุศาสตร์ & วิวัฒนาการ', badgeBg: '#5B21B6' },
-  { id: 'plant', name: '🌱 ชีววิทยาพืช', badgeBg: '#065F46' },
-  { id: 'animal', name: '🦴 สรีรวิทยาและร่างกายมนุษย์', badgeBg: '#92400E' },
-  { id: 'posn', name: '🎯 ตะลุยโจทย์ สอวน.', badgeBg: '#B91C1C' }
+  { id: 'all', name: 'รวมทุกบท A-Level', badgeBg: 'var(--c-navy)' },
+  { id: 'cell', name: 'เซลล์และชีวโมเลกุล', badgeBg: '#1E3A8A' },
+  { id: 'genetics', name: 'พันธุศาสตร์ & วิวัฒนาการ', badgeBg: '#5B21B6' },
+  { id: 'plant', name: 'ชีววิทยาพืช', badgeBg: '#065F46' },
+  { id: 'animal', name: 'สรีรวิทยาและร่างกายมนุษย์', badgeBg: '#92400E' },
+  { id: 'posn', name: 'ตะลุยโจทย์ สอวน.', badgeBg: '#B91C1C' }
 ];
 
 const EXAM_QUESTIONS = [
   // Cell & Biochemistry
   {
-    id: 1, category: 'cell', categoryName: '🧬 เซลล์และชีวโมเลกุล',
+    id: 1, category: 'cell', categoryName: 'เซลล์และชีวโมเลกุล',
     question: 'ออร์แกเนลล์ใดทำหน้าที่สังเคราะห์ลิพิดและทำลายสารพิษในเซลล์ตับ?',
     options: ['A. Smooth Endoplasmic Reticulum (SER)', 'B. Rough Endoplasmic Reticulum (RER)', 'C. Golgi Body', 'D. Lysosome'],
     correct: 0,
     explanation: 'SER (Smooth Endoplasmic Reticulum) เป็นออร์แกเนลล์หลักที่ทำหน้าที่สังเคราะห์สารลิพิด และมีเอนไซม์ขจัดสารพิษในเซลล์ตับ'
   },
   {
-    id: 2, category: 'cell', categoryName: '🧬 เซลล์และชีวโมเลกุล',
+    id: 2, category: 'cell', categoryName: 'เซลล์และชีวโมเลกุล',
     question: 'กระบวนการใดยังคงเกิดขึ้นในสภาวะที่ไม่มีแก๊สออกซิเจน (Anaerobic Condition)?',
     options: ['A. Krebs Cycle', 'B. Electron Transport Chain', 'C. Glycolysis', 'D. Pyruvate Oxidation'],
     correct: 2,
     explanation: 'Glycolysis เป็นกระบวนการสลายกลูโคสขั้นแรกที่เกิดขึ้นในไซโทพลาซึม โดยไม่ต้องใช้ออกซิเจน'
   },
   {
-    id: 3, category: 'cell', categoryName: '🧬 เซลล์และชีวโมเลกุล',
+    id: 3, category: 'cell', categoryName: 'เซลล์และชีวโมเลกุล',
     question: 'พันธะเคมีใดทำหน้าที่เชื่อมต่อกรดอะมิโนแต่ละโมเลกุลให้สายโพลีเพปไทด์ของโปรตีนมีความสมบูรณ์?',
     options: ['A. Glycosidic Linkage', 'B. Peptide Bond', 'C. Phosphodiester Bond', 'D. Ester Bond'],
     correct: 1,
@@ -380,21 +380,21 @@ const EXAM_QUESTIONS = [
 
   // Genetics & Evolution
   {
-    id: 4, category: 'genetics', categoryName: '🧫 พันธุศาสตร์ & วิวัฒนาการ',
+    id: 4, category: 'genetics', categoryName: 'พันธุศาสตร์ & วิวัฒนาการ',
     question: 'หมู่เลือดระบบ ABO ถูกควบคุมโดยแอลลีล IA, IB และ i ข้อใดระบุลักษณะพันธุศาสตร์ได้ถูกต้อง?',
     options: ['A. Single Gene with 2 alleles', 'B. Multiple Alleles with Codominance', 'C. Polygenic Inheritance', 'D. Incomplete Dominance'],
     correct: 1,
     explanation: 'หมู่เลือด ABO เป็นตัวอย่างของ Multiple Alleles (3 แอลลีล) และแสดงข่มร่วมกัน (Codominance ระหว่าง IA และ IB)'
   },
   {
-    id: 5, category: 'genetics', categoryName: '🧫 พันธุศาสตร์ & วิวัฒนาการ',
+    id: 5, category: 'genetics', categoryName: 'พันธุศาสตร์ & วิวัฒนาการ',
     question: 'เอนไซม์ใดทำหน้าที่เชื่อมต่อสาย DNA ในกระบวนการตัดต่อยีน (Recombinant DNA Technology)?',
     options: ['A. DNA Polymerase', 'B. DNA Ligase', 'C. Restriction Enzyme', 'D. Helicase'],
     correct: 1,
     explanation: 'DNA Ligase ทำหน้าที่เชื่อมพันธะฟอสโฟไดเอสเทอร์ระหว่างชิ้นส่วนสาย DNA สองสายเข้าด้วยกัน'
   },
   {
-    id: 6, category: 'genetics', categoryName: '🧫 พันธุศาสตร์ & วิวัฒนาการ',
+    id: 6, category: 'genetics', categoryName: 'พันธุศาสตร์ & วิวัฒนาการ',
     question: 'ข้อใดจัดเป็นหลักฐานสายสัมพันธ์ทางวิวัฒนาการที่มีกำเนิดกำเนิดมาจากโครงสร้างเดียวกัน (Homologous Structures)?',
     options: ['A. ปีกนก กับ ปีกผีเสื้อ', 'B. แขนมนุษย์ กับ ครีบปลาวาฬ', 'C. ตาของหมึก กับ ตาของมนุษย์', 'D. ปีกค้างคาว กับ ปีกแมลงวัน'],
     correct: 1,
@@ -403,14 +403,14 @@ const EXAM_QUESTIONS = [
 
   // Plant Biology
   {
-    id: 7, category: 'plant', categoryName: '🌱 ชีววิทยาพืช',
+    id: 7, category: 'plant', categoryName: 'ชีววิทยาพืช',
     question: 'เนื้อเยื่อเจริญส่วนใดของพืชทำหน้าที่เพิ่มขนาดความกว้าง/ความหนาของลำต้น (Secondary Growth)?',
     options: ['A. Apical Meristem', 'B. Vascular Cambium', 'C. Intercalary Meristem', 'D. Protoderm'],
     correct: 1,
     explanation: 'Vascular Cambium เป็นเนื้อเยื่อเจริญด้านข้าง (Lateral Meristem) ที่สร้างไซเลมและโฟลเอ็มขั้นที่สอง ทำให้ลำต้นพืชขยายออกด้านข้าง'
   },
   {
-    id: 8, category: 'plant', categoryName: '🌱 ชีววิทยาพืช',
+    id: 8, category: 'plant', categoryName: 'ชีววิทยาพืช',
     question: 'ฮอร์โมนพืชชนิดใดมีบทบาทหลักในการเร่งการสุกของผลไม้และการหลุดร่วงของใบ?',
     options: ['A. Auxin', 'B. Gibberellin', 'C. Ethylene', 'D. Cytokinin'],
     correct: 2,
@@ -419,14 +419,14 @@ const EXAM_QUESTIONS = [
 
   // Animal Physiology
   {
-    id: 9, category: 'animal', categoryName: '🦴 สรีรวิทยาและร่างกายมนุษย์',
+    id: 9, category: 'animal', categoryName: 'สรีรวิทยาและร่างกายมนุษย์',
     question: 'อวัยวะใดในระบบย่อยอาหารของมนุษย์ที่มีการย่อยสารอาหารประเภทโปรตีนเป็นแห่งแรก?',
     options: ['A. ปาก (Mouth)', 'B. กระเพาะอาหาร (Stomach)', 'C. ลำไส้เล็ก (Small Intestine)', 'D. ตับอ่อน (Pancreas)'],
     correct: 1,
     explanation: 'กระเพาะอาหารหลั่งเอนไซม์ Pepsin ออกมาย่อยโปรตีนให้เป็นเพปไทด์สายสั้นลงเป็นจุดแรก'
   },
   {
-    id: 10, category: 'animal', categoryName: '🦴 สรีรวิทยาและร่างกายมนุษย์',
+    id: 10, category: 'animal', categoryName: 'สรีรวิทยาและร่างกายมนุษย์',
     question: 'หน่วยไต (Nephron) ส่วนใดที่มีกระบวนการดูดกลับกลูโคสและกรดอะมิโนกลับเข้าสู่กระแสเลือดได้เกือบ 100%?',
     options: ['A. Bowman’s Capsule', 'B. Proximal Convoluted Tubule (PCT)', 'C. Loop of Henle', 'D. Distal Convoluted Tubule (DCT)'],
     correct: 1,
@@ -435,7 +435,7 @@ const EXAM_QUESTIONS = [
 
   // POSN Exam
   {
-    id: 11, category: 'posn', categoryName: '🎯 ตะลุยโจทย์ สอวน.',
+    id: 11, category: 'posn', categoryName: 'ตะลุยโจทย์ สอวน.',
     question: 'หากนำเซลล์เม็ดเลือดแดงไปแช่ในสารละลายไฮเปอร์โทนิก (Hypertonic Solution) ผลลัพธ์จะเป็นอย่างไร?',
     options: ['A. เซลล์เต่งและแตก (Lysis)', 'B. เซลล์เหี่ยว (Crenation)', 'C. เซลล์ไม่เปลี่ยนแปลงขนาด', 'D. เซลล์ขยายขนาดเท่าเดิม'],
     correct: 1,
@@ -495,21 +495,22 @@ const FAQS = [
 ];
 
 const MOCK_STUDENTS = [
-  { id: 1, name: 'นาย ภูมิพัฒน์ รัตนชัย', email: 'phumiphat.r@gmail.com', school: 'สวนกุหลาบวิทยาลัย', level: 'ม.5', enrolledCount: 2 },
-  { id: 2, name: 'นางสาว ณัฐนิชา สุขใจ', email: 'natnicha.s@hotmail.com', school: 'เตรียมอุดมศึกษา', level: 'ม.6', enrolledCount: 3 },
-  { id: 3, name: 'นาย ปกรณ์ ดีเลิศ', email: 'pakorn.d@yahoo.com', school: 'สามเสนวิทยาลัย', level: 'ม.4', enrolledCount: 1 }
+  { id: 'sa-01', name: 'อาจารย์ วิทศรุต', email: 'witsarutcha@pccpl.ac.th', school: 'PCCPL', level: 'ผู้ก่อตั้ง / Super Admin', role: 'admin', enrolledCount: 6 },
+  { id: 1, name: 'นาย ภูมิพัฒน์ รัตนชัย', email: 'phumiphat.r@gmail.com', school: 'สวนกุหลาบวิทยาลัย', level: 'ม.5', role: 'student', enrolledCount: 2 },
+  { id: 2, name: 'นางสาว ณัฐนิชา สุขใจ', email: 'natnicha.s@hotmail.com', school: 'เตรียมอุดมศึกษา', level: 'ม.6', role: 'student', enrolledCount: 3 },
+  { id: 3, name: 'นาย ปกรณ์ ดีเลิศ', email: 'pakorn.d@yahoo.com', school: 'สามเสนวิทยาลัย', level: 'ม.4', role: 'student', enrolledCount: 1 }
 ];
 
 const CATEGORIES = [
-  { emoji: '🧬', name: 'Bio Intensive I' },
-  { emoji: '🧫', name: 'Bio Intensive II' },
-  { emoji: '🌱', name: 'Bio Intensive III' },
-  { emoji: '🦴', name: 'Bio Intensive IV' },
-  { emoji: '🧠', name: 'Bio Intensive V' },
-  { emoji: '🌿', name: 'Bio Intensive VI' },
-  { emoji: '🏅', name: 'คอร์ส สอวน.' },
-  { emoji: '📖', name: 'คอร์ส A-Level' },
-  { emoji: '⚡', name: 'คอร์ส 99 บาท' }
+  { id: 'cat-bio-1', name: 'Bio Intensive I', icon: 'cell', badge: 'ม.4' },
+  { id: 'cat-bio-2', name: 'Bio Intensive II', icon: 'dna', badge: 'ม.5' },
+  { id: 'cat-bio-3', name: 'Bio Intensive III', icon: 'plant', badge: 'ม.5' },
+  { id: 'cat-bio-4', name: 'Bio Intensive IV', icon: 'anatomy', badge: 'ม.6' },
+  { id: 'cat-bio-5', name: 'Bio Intensive V', icon: 'brain', badge: 'ม.6' },
+  { id: 'cat-bio-6', name: 'Bio Intensive VI', icon: 'ecology', badge: 'ม.6' },
+  { id: 'cat-posn', name: 'คอร์ส สอวน.', icon: 'award', badge: 'โอลิมปิก' },
+  { id: 'cat-alevel', name: 'คอร์ส A-Level', icon: 'book', badge: 'สอบเข้า ม.' },
+  { id: 'cat-starter', name: 'คอร์ส 99 บาท', icon: 'bolt', badge: 'สรุปเข้ม' }
 ];
 
 const REVIEWS = [
@@ -562,8 +563,8 @@ const ARTICLES = [
 ];
 
 const DEFAULT_SLIDES = [
-  { id: 'slide-1', bg1: '#EFF6FF', bg2: '#DBEAFE', label: '🔥 โปรต้อนรับเปิดเทอม', title: 'Bio Intensive I - VI Complete Set', desc: 'ลงทะเบียนเรียนคอร์สแพ็กคู่รับส่วนลดพิเศษทันที 30% พร้อมรับไฟล์ e-Book สรุปเนื้อหาฟรีตลอดชีพ', badgeText: 'ลดสูงสุด 30%', imageUrl: '', actionText: 'ดูคอร์สทั้งหมด', actionType: 'bundle', targetCourseId: '' },
-  { id: 'slide-2', bg1: '#FEF2F2', bg2: '#FEE2E2', label: '⚡ คอร์สสุดประหยัด 99.-', title: 'คอร์ส 99 บาท: สรุปชีวะสกัดเข้ม Quick Review', desc: 'รวมเทคนิคสกัดเข้มจุดออกสอบบ่อยชีววิทยา ม.ปลาย สรุปสูตรลัดและแผนภาพ Mind Map พร้อมลุยทุกสนามสอบ', badgeText: 'ราคาพิเศษ 99.-', imageUrl: '', actionText: 'สมัครเรียน 99.-', actionType: 'course', targetCourseId: 'special-99-starter' }
+  { id: 'slide-1', bg1: '#EFF6FF', bg2: '#DBEAFE', label: 'โปรต้อนรับเปิดเทอม', title: 'Bio Intensive I - VI Complete Set', desc: 'ลงทะเบียนเรียนคอร์สแพ็กคู่รับส่วนลดพิเศษทันที 30% พร้อมรับไฟล์ e-Book สรุปเนื้อหาฟรีตลอดชีพ', badgeText: 'ลดสูงสุด 30%', imageUrl: '', actionText: 'ดูคอร์สทั้งหมด', actionType: 'bundle', targetCourseId: '' },
+  { id: 'slide-2', bg1: '#FEF2F2', bg2: '#FEE2E2', label: 'คอร์สสุดประหยัด 99.-', title: 'คอร์ส 99 บาท: สรุปชีวะสกัดเข้ม Quick Review', desc: 'รวมเทคนิคสกัดเข้มจุดออกสอบบ่อยชีววิทยา ม.ปลาย สรุปสูตรลัดและแผนภาพ Mind Map พร้อมลุยทุกสนามสอบ', badgeText: 'ราคาพิเศษ 99.-', imageUrl: '', actionText: 'สมัครเรียน 99.-', actionType: 'course', targetCourseId: 'special-99-starter' }
 ];
 
 // Attach to global window object

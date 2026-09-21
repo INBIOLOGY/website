@@ -232,52 +232,10 @@
     </div>
   </section>
 
-  <!-- Promo Sale Banner Card Section (Matching User Screenshot) -->
-  <section style="padding:32px 24px 10px;background:var(--c-page);position:relative;margin-top:-1px;border:none">
+  <!-- Promo Sale Banner Card Section — managed by admin from admin.html → แบนเนอร์ -->
+  <section id="promo-banner-section" style="padding:32px 24px 10px;background:var(--c-page);position:relative;margin-top:-1px;border:none">
     <div style="max-width:1100px;margin:0 auto">
-      <div class="promo-banner-grid" data-reveal style="background:linear-gradient(135deg, #E0F2FE 0%, #EFF6FF 100%);border-radius:28px;padding:36px 40px;box-shadow:0 12px 32px rgba(15,23,42,0.06);border:1px solid rgba(255,255,255,0.8)">
-        <!-- Left Side: Offer Details -->
-        <div>
-          <!-- Pill Badges -->
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-            <span style="background:white;color:#374151;font-size:12px;font-weight:800;padding:6px 16px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,0.04);display:inline-flex;align-items:center;gap:6px">
-              🔥 โปรต้อนรับเปิดเทอม
-            </span>
-            <span style="background:white;color:#EF4444;font-size:12px;font-weight:900;padding:6px 16px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,0.04)">
-              ลดสูงสุด 30%
-            </span>
-          </div>
-
-          <!-- Promo Title -->
-          <h2 style="font-size: clamp(24px, 3vw, 32px);font-weight:950;color:#0F172A;margin:0 0 10px;line-height:1.2">
-            Bio Intensive I - VI Complete Set
-          </h2>
-
-          <!-- Promo Description -->
-          <p style="font-size:13.5px;color:#64748B;margin:0 0 24px;line-height:1.6">
-            ลงทะเบียนเรียนคอร์สแพ็กคู่รับส่วนลดพิเศษทันที 30% พร้อมรับไฟล์ e-Book สรุปเนื้อหาฟรีตลอดชีพ
-          </p>
-
-          <!-- Buttons -->
-          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-            <a href="courses.html" style="background:#B91C1C;color:white;font-weight:850;font-size:13.5px;padding:12px 24px;border-radius:12px;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(185,28,28,0.25)">
-              ดูคอร์สทั้งหมด ➔
-            </a>
-            <button onclick="openCourseModal(COURSES[0])" style="background:white;color:#374151;font-weight:800;font-size:13.5px;padding:12px 20px;border-radius:12px;border:1px solid #E2E8F0;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(0,0,0,0.03)">
-              <span style="font-size:15px">ⓘ</span> ดูรายละเอียด
-            </button>
-          </div>
-        </div>
-
-        <!-- Right Side: Flash Sale Graphic Box -->
-        <div style="background:white;border-radius:24px;padding:36px 24px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,0.03);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
-          <div style="width:48px;height:48px;border-radius:50%;background:#FEF2F2;display:flex;align-items:center;justify-content:center;color:#EF4444;font-size:24px">
-            ⚡
-          </div>
-          <span style="color:#B91C1C;font-size:12px;font-weight:900;letter-spacing:1px">FLASH SALE INBIOLOGY</span>
-        </div>
-      </div>
-
+      <div id="promo-banner-card" class="promo-banner-grid" data-reveal></div>
       <!-- Slider Dots Pagination -->
       <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:20px">
         <span style="width:24px;height:6px;border-radius:10px;background:#1E3A8A;display:inline-block"></span>
@@ -285,6 +243,146 @@
       </div>
     </div>
   </section>
+
+  <script>
+  window.renderPromoBanner = function(customCfg) {
+    const BG_GRADIENTS = {
+      blue:   'linear-gradient(135deg,#E0F2FE 0%,#EFF6FF 100%)',
+      red:    'linear-gradient(135deg,#FEF2F2 0%,#FFF1F2 100%)',
+      green:  'linear-gradient(135deg,#F0FDF4 0%,#DCFCE7 100%)',
+      yellow: 'linear-gradient(135deg,#FFFBEB 0%,#FEF9C3 100%)',
+      purple: 'linear-gradient(135deg,#FAF5FF 0%,#F3E8FF 100%)'
+    };
+
+    const DEFAULTS = {
+      mode: 'full_image',
+      fullImageBase64: '',
+      fullImageUrl: 'promo-banner-sample.jpg',
+      fullImageAlt: 'โปรโมชั่นพิเศษ INBIOLOGY Academy',
+      targetUrl: 'courses.html',
+      openNewTab: false,
+      badge1: 'โปรต้อนรับเปิดเทอม',
+      badge2: 'ลดสูงสุด 30%',
+      title: 'Bio Intensive I - VI Complete Set',
+      description: 'ลงทะเบียนเรียนคอร์สแพ็กคู่รับส่วนลดพิเศษทันที 30% พร้อมรับไฟล์ e-Book สรุปเนื้อหาฟรีตลอดชีพ',
+      ctaText: 'ดูคอร์สทั้งหมด',
+      ctaUrl: 'courses.html',
+      cardImageBase64: '',
+      cardImageUrl: '',
+      rightLabel: 'FLASH SALE INBIOLOGY',
+      bgPreset: 'blue',
+      isVisible: true
+    };
+
+    let cfg = DEFAULTS;
+    if (customCfg) {
+      cfg = { ...DEFAULTS, ...customCfg };
+    } else {
+      try {
+        const stored = localStorage.getItem('inbiology_promo_banner');
+        if (stored) cfg = { ...DEFAULTS, ...JSON.parse(stored) };
+      } catch(e) {}
+    }
+
+    const section = document.getElementById('promo-banner-section');
+    const card = document.getElementById('promo-banner-card');
+    if (!section || !card) return;
+
+    // Visibility check
+    if (cfg.isVisible === false) {
+      section.style.display = 'none';
+      return;
+    }
+    section.style.display = 'block';
+
+    const mode = cfg.mode || 'full_image';
+
+    // ─── MODE 1: FULL BANNER GRAPHIC ─────────────────────────────
+    if (mode === 'full_image') {
+      const imgSrc = cfg.fullImageBase64 || cfg.fullImageUrl || cfg.imageBase64 || cfg.imageUrl || 'promo-banner-sample.jpg';
+      const targetUrl = cfg.targetUrl || cfg.ctaUrl || 'courses.html';
+      const targetAttr = cfg.openNewTab ? 'target="_blank" rel="noopener noreferrer"' : '';
+      const altText = cfg.fullImageAlt || cfg.title || 'โปรโมชั่น INBIOLOGY Academy';
+
+      card.className = '';
+      card.style.cssText = 'padding:0;background:transparent;border:none;box-shadow:none;display:block;margin:0 auto;max-width:1100px';
+
+      card.innerHTML = `
+        <a href="${targetUrl}" ${targetAttr} style="display:block;text-decoration:none;border-radius:24px;overflow:hidden;box-shadow:0 12px 32px rgba(15,23,42,0.08);transition:all 0.28s cubic-bezier(0.16,1,0.3,1);background:#F8FAFC;border:1px solid rgba(226,232,240,0.85);cursor:pointer;position:relative" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 20px 40px rgba(15,23,42,0.13)'" onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 12px 32px rgba(15,23,42,0.08)'">
+          <img src="${imgSrc}" alt="${altText}" style="width:100%;max-height:360px;object-fit:cover;display:block;border-radius:24px" onerror="this.onerror=null;this.src='promo-banner-sample.jpg'">
+        </a>
+      `;
+
+    // ─── MODE 2: CUSTOM CARD BANNER ──────────────────────────────
+    } else {
+      const bg = BG_GRADIENTS[cfg.bgPreset] || BG_GRADIENTS.blue;
+      const imgSrc = cfg.cardImageBase64 || cfg.cardImageUrl || cfg.imageBase64 || cfg.imageUrl;
+      const title = cfg.title || DEFAULTS.title;
+      const desc = cfg.description || DEFAULTS.description;
+      const ctaText = cfg.ctaText || DEFAULTS.ctaText;
+      const ctaUrl = cfg.ctaUrl || DEFAULTS.ctaUrl;
+      const rightLabel = cfg.rightLabel || DEFAULTS.rightLabel;
+
+      const rightBox = imgSrc
+        ? `<img src="${imgSrc}" alt="โปรโมชั่น INBIOLOGY" style="max-height:140px;max-width:100%;object-fit:contain;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.1)">`
+        : `<div style="width:48px;height:48px;border-radius:50%;background:#FEF2F2;display:flex;align-items:center;justify-content:center;color:#EF4444;font-size:24px">⚡</div>`;
+
+      card.className = 'promo-banner-grid';
+      card.style.cssText = `
+        background:${bg};border-radius:28px;padding:36px 40px;
+        box-shadow:0 12px 32px rgba(15,23,42,0.06);border:1px solid rgba(255,255,255,0.8);
+        display:flex;gap:24px;align-items:center;justify-content:space-between;max-width:1100px;margin:0 auto
+      `;
+
+      card.innerHTML = `
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+            ${cfg.badge1 ? `<span style="background:white;color:#374151;font-size:12px;font-weight:800;padding:6px 16px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,0.04)">${cfg.badge1}</span>` : ''}
+            ${cfg.badge2 ? `<span style="background:white;color:#EF4444;font-size:12px;font-weight:900;padding:6px 16px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,0.04)">${cfg.badge2}</span>` : ''}
+          </div>
+          <h2 style="font-size:clamp(20px,3vw,30px);font-weight:950;color:#0F172A;margin:0 0 10px;line-height:1.2">${title}</h2>
+          <p style="font-size:13.5px;color:#64748B;margin:0 0 24px;line-height:1.6">${desc}</p>
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <a href="${ctaUrl}" style="background:#B91C1C;color:white;font-weight:850;font-size:13.5px;padding:12px 24px;border-radius:12px;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(185,28,28,0.25);text-decoration:none;transition:transform 0.2s" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform='translateY(0)'">
+              ${ctaText} ➔
+            </a>
+            <button onclick="if(typeof openCourseModal==='function'&&typeof COURSES!=='undefined')openCourseModal(COURSES[0])" style="background:white;color:#374151;font-weight:800;font-size:13.5px;padding:12px 20px;border-radius:12px;border:1px solid #E2E8F0;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(0,0,0,0.03);transition:transform 0.2s" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform='translateY(0)'">
+              ดูรายละเอียด
+            </button>
+          </div>
+        </div>
+        <div style="background:white;border-radius:24px;padding:28px 20px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,0.03);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;flex-shrink:0;min-width:120px">
+          ${rightBox}
+          <span style="color:#B91C1C;font-size:12px;font-weight:900;letter-spacing:1px">${rightLabel}</span>
+        </div>
+      `;
+    }
+  };
+
+  // Initial render on load
+  window.renderPromoBanner();
+
+  // Background Cloud Sync
+  document.addEventListener('DOMContentLoaded', async () => {
+    if (window.CloudService && typeof window.CloudService.fetchPromoBannerFromCloud === 'function') {
+      try {
+        const cloudCfg = await window.CloudService.fetchPromoBannerFromCloud();
+        if (cloudCfg && typeof cloudCfg === 'object') {
+          const localStr = localStorage.getItem('inbiology_promo_banner');
+          const cloudStr = JSON.stringify(cloudCfg);
+          if (localStr !== cloudStr) {
+            localStorage.setItem('inbiology_promo_banner', cloudStr);
+            window.renderPromoBanner(cloudCfg);
+          }
+        }
+      } catch(e) {
+        console.warn('[PromoBanner] Background sync notice:', e);
+      }
+    }
+  });
+  </script>
+
+
 
   <!-- Categories Section -->
   <section style="padding:40px 24px;background:#F3F4F6">
@@ -315,7 +413,7 @@
   <section id="trial" style="padding:50px 24px">
     <div style="max-width:1100px;margin:0 auto">
       <div style="text-align:center;margin-bottom:32px">
-        <p style="color:var(--c-red);font-size:12px;font-weight:800;margin:0 0 4px;text-transform:uppercase">▶ Free Video Preview</p>
+        <p style="color:var(--c-red);font-size:12px;font-weight:800;margin:0 0 6px;letter-spacing:1px">ทดลองเรียนฟรี</p>
         <h2 style="font-size:26px;font-weight:950;color:var(--c-navy);margin:0">คลังวิดีโอและบทเรียนทดลองเรียนฟรี</h2>
       </div>
       <div id="trials-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;justify-content:center"></div>
@@ -323,7 +421,7 @@
   </section>
 
   <!-- Blog & Articles -->
-  <section style="padding:50px 24px;background:white;border-top:1px solid #E5E7EB">
+  <section id="articles-section" style="padding:50px 24px;background:white;border-top:1px solid #E5E7EB">
     <div style="max-width:1100px;margin:0 auto">
       <div style="text-align:center;margin-bottom:36px">
         <h2 style="font-size:26px;font-weight:950;color:var(--c-navy);margin:0">คลังความรู้และบทความชีวะ</h2>
@@ -370,21 +468,122 @@
   <!-- Universal Rich Multi-Column Footer -->
   <footer id="footer-container"></footer>
 
-  <script src="./js/mockData.js?v=20260921_v36"></script>
-  <script src="./js/supabaseConfig.js?v=20260921_v36"></script>
-  <script src="./js/cloudService.js?v=20260921_v36"></script>
-  <script src="./js/app.js?v=20260921_v36"></script>
+  <script src="./js/mockData.js?v=20260921_v38"></script>
+  <script src="./js/supabaseConfig.js?v=20260921_v38"></script>
+  <script src="./js/cloudService.js?v=20260921_v38"></script>
+  <script src="./js/app.js?v=20260921_v38"></script>
   <script>
+    // Helper function for sleek category icons
+    function getCategoryIconSvg(iconKey) {
+      switch(iconKey) {
+        case 'dna':
+          return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 15c6.667-6 13.333 0 20-6"/><path d="M9 22c1.798-1.998 2.518-3.995 2.807-5.993"/><path d="M15 2c-1.798 1.998-2.518 3.995-2.807 5.993"/><path d="M17 6l-2.5-2.5"/><path d="M14 8l-1-1"/><path d="M7 18l2.5 2.5"/><path d="M3.5 14.5l.5.5"/><path d="M20 9.5l.5.5"/><path d="M6.5 12.5l1 1"/><path d="M16.5 10.5l1 1"/><path d="M10 16l-1-1"/></svg>`;
+        case 'cell':
+          return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><circle cx="16" cy="8" r="1"/><circle cx="8" cy="16" r="1"/></svg>`;
+        case 'plant':
+          return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>`;
+        case 'anatomy':
+          return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`;
+        case 'brain':
+          return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04Z"/></svg>`;
+        case 'ecology':
+          return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`;
+        case 'award':
+          return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B91C1C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>`;
+        case 'book':
+          return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E3A8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>`;
+        default:
+          return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E11D48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`;
+      }
+    }
+
+    // Dynamic Free Trials renderer (Hides section if 0 items)
+    window.renderFreeTrials = function(customTrials) {
+      let trials = customTrials;
+      if (!trials) {
+        try {
+          const stored = localStorage.getItem('inbiology_free_trials');
+          trials = stored !== null ? JSON.parse(stored) : (window.FREE_TRIALS || []);
+        } catch(e) {
+          trials = window.FREE_TRIALS || [];
+        }
+      }
+      const section = document.getElementById('trial');
+      const container = document.getElementById('trials-grid');
+      if (!section || !container) return;
+
+      if (!trials || trials.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+      section.style.display = 'block';
+
+      container.innerHTML = trials.map((ft, idx) => `
+        <div data-reveal data-delay="${(idx % 3) * 0.08}s" onclick="openTrialModal(window.findTrialItem ? window.findTrialItem('${ft.id}') : ${JSON.stringify(ft).replace(/"/g, '&quot;')})" style="background:white;border-radius:20px;overflow:hidden;cursor:pointer;border:1px solid #E5E7EB;box-shadow:0 4px 12px rgba(0,0,0,0.03);transition:all 0.25s cubic-bezier(0.16,1,0.3,1)" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(0,0,0,0.08)'" onmouseleave="this.style.transform='none';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.03)'">
+          <div style="position:relative;height:190px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;padding:14px">
+            <img src="${ft.imageUrl || './course-cover-1.png'}" style="height:150px;max-width:85%;object-fit:contain;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.12)" alt="" />
+            <div class="card-duration-badge">${ft.duration}</div>
+          </div>
+          <div style="padding:16px">
+            <span style="font-size:10px;font-weight:800;color:var(--c-sky);display:block;margin-bottom:4px">${ft.course}</span>
+            <h4 style="font-weight:850;color:var(--c-navy);font-size:13px;margin:0;line-height:1.4">${ft.title}</h4>
+          </div>
+        </div>
+      `).join('');
+    };
+
+    // Dynamic Articles renderer (Hides section if 0 items)
+    window.renderArticles = function(customArticles) {
+      let articles = customArticles;
+      if (!articles) {
+        try {
+          const stored = localStorage.getItem('inbiology_articles');
+          articles = stored !== null ? JSON.parse(stored) : (window.ARTICLES || []);
+        } catch(e) {
+          articles = window.ARTICLES || [];
+        }
+      }
+      const section = document.getElementById('articles-section');
+      const container = document.getElementById('articles-grid');
+      if (!section || !container) return;
+
+      if (!articles || articles.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+      section.style.display = 'block';
+
+      container.innerHTML = articles.map((art, idx) => `
+        <div data-reveal data-delay="${(idx % 3) * 0.08}s" style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:20px;padding:24px;cursor:pointer;transition:all 0.25s cubic-bezier(0.16,1,0.3,1)" onmouseenter="this.style.background='white';this.style.borderColor='#CBD5E1';this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 24px rgba(0,0,0,0.06)'" onmouseleave="this.style.background='#F9FAFB';this.style.borderColor='#E5E7EB';this.style.transform='none';this.style.boxShadow='none'">
+          <span style="font-size:11px;font-weight:800;color:var(--c-sky);display:block;margin-bottom:6px">${art.date}</span>
+          <h4 style="font-size:14px;font-weight:850;color:var(--c-navy);margin:0 0 14px;line-height:1.45">${art.title}</h4>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:#94A3B8;font-weight:700">
+            <span style="display:inline-flex;align-items:center;gap:5px">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              ${art.views} ยอดอ่าน
+            </span>
+            <span style="display:inline-flex;align-items:center;gap:5px">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              ใช้เวลาอ่าน ${art.readTime}
+            </span>
+          </div>
+        </div>
+      `).join('');
+    };
+
     document.addEventListener('DOMContentLoaded', () => {
       renderHeader('home');
 
-      // Render categories
+      // Render categories with sleek modern SVG icons
       const catContainer = document.getElementById('category-grid');
-      if (catContainer) {
+      if (catContainer && typeof CATEGORIES !== 'undefined') {
         catContainer.innerHTML = CATEGORIES.map(c => `
-          <div onclick="location.href='courses.html'" style="background:white;border:1px solid #E5E7EB;border-radius:16px;padding:20px;text-align:center;cursor:pointer">
-            <span style="font-size:32px;display:block;margin-bottom:10px">${c.emoji}</span>
-            <span style="font-size:12px;font-weight:850;color:var(--c-navy)">${c.name}</span>
+          <div onclick="location.href='courses.html'" style="background:white;border:1px solid #E5E7EB;border-radius:18px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 0.22s cubic-bezier(0.16,1,0.3,1);box-shadow:0 2px 8px rgba(0,0,0,0.02)" onmouseenter="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 20px rgba(0,0,0,0.06)';this.style.borderColor='#BFDBFE'" onmouseleave="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.02)';this.style.borderColor='#E5E7EB'">
+            <div style="width:48px;height:48px;border-radius:12px;background:#F1F5F9;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px">
+              ${getCategoryIconSvg(c.icon)}
+            </div>
+            <span style="font-size:13px;font-weight:850;color:var(--c-navy);display:block;margin-bottom:4px">${c.name}</span>
+            <span style="font-size:10px;font-weight:800;color:#64748B;background:#F8FAFC;padding:2px 8px;border-radius:6px;border:1px solid #E2E8F0;display:inline-block">${c.badge || 'เนื้อหา'}</span>
           </div>
         `).join('');
       }
@@ -408,14 +607,9 @@
 
                 ${AppState.userRole === 'admin' ? `
                   <a href="admin.html?edit=${c.id}" style="position:absolute;top:12px;right:12px;background:rgba(30,58,138,0.92);color:white;font-size:10px;font-weight:800;padding:4px 10px;border-radius:8px;text-decoration:none;z-index:3;display:inline-flex;align-items:center;gap:4px;box-shadow:0 4px 10px rgba(0,0,0,0.15)">
-                    ✏️ แก้ไข
+                    แก้ไข
                   </a>
                 ` : ''}
-
-                <!-- Floating Bottom-Left Trial Button -->
-                <button onclick="openTrialModal(FREE_TRIALS[0])" style="position:absolute;bottom:10px;left:12px;background:#1E3A8A;color:white;font-size:10px;font-weight:800;padding:5px 12px;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px;z-index:2;box-shadow:0 4px 10px rgba(0,0,0,0.15)">
-                  ▶ ทดลองเรียนฟรี
-                </button>
 
                 <!-- Floating Bottom-Right Duration Badge (Rule 2) -->
                 <span class="card-duration-badge">
@@ -471,36 +665,28 @@
         }).join('');
       }
 
-      // Render free video trials (Matching exact user screenshot)
-      const trialsContainer = document.getElementById('trials-grid');
-      if (trialsContainer) {
-        trialsContainer.innerHTML = FREE_TRIALS.map((ft, idx) => `
-          <div data-reveal data-delay="${(idx % 3) * 0.08}s" onclick="openTrialModal(FREE_TRIALS.find(x=>x.id==='${ft.id}'))" style="background:white;border-radius:20px;overflow:hidden;cursor:pointer;border:1px solid #E5E7EB;box-shadow:0 4px 12px rgba(0,0,0,0.03)">
-            <div style="position:relative;height:190px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;padding:14px">
-              <img src="${ft.imageUrl}" style="height:150px;max-width:85%;object-fit:contain;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.12)" alt="" />
-              <div class="card-duration-badge">${ft.duration}</div>
-            </div>
-            <div style="padding:16px">
-              <span style="font-size:10px;font-weight:800;color:var(--c-sky);display:block;margin-bottom:4px">${ft.course}</span>
-              <h4 style="font-weight:850;color:var(--c-navy);font-size:13px;margin:0">${ft.title}</h4>
-            </div>
-          </div>
-        `).join('');
-      }
+      // Initial render for Free Trials & Articles
+      window.renderFreeTrials();
+      window.renderArticles();
 
-      // Render Articles/Blog
-      const articlesContainer = document.getElementById('articles-grid');
-      if (articlesContainer) {
-        articlesContainer.innerHTML = ARTICLES.map((art, idx) => `
-          <div data-reveal data-delay="${(idx % 3) * 0.08}s" style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:20px;padding:24px;cursor:pointer">
-            <span style="font-size:11px;font-weight:800;color:var(--c-sky);display:block;margin-bottom:6px">${art.date}</span>
-            <h4 style="font-size:14px;font-weight:850;color:var(--c-navy);margin:0 0 10px;line-height:1.4">${art.title}</h4>
-            <div style="display:flex;justify-content:space-between;font-size:11px;color:#9CA3AF;font-weight:700">
-              <span>🔍 ${art.views} ยอดอ่าน</span>
-              <span>⏳ ใช้เวลาอ่าน ${art.readTime}</span>
-            </div>
-          </div>
-        `).join('');
+      // Background Cloud Sync for Free Trials & Articles
+      if (window.CloudService && typeof window.CloudService.fetchSiteContent === 'function') {
+        (async () => {
+          try {
+            const cloudTrials = await window.CloudService.fetchSiteContent('free_trials');
+            if (cloudTrials && Array.isArray(cloudTrials)) {
+              localStorage.setItem('inbiology_free_trials', JSON.stringify(cloudTrials));
+              window.renderFreeTrials(cloudTrials);
+            }
+          } catch(e) {}
+          try {
+            const cloudArticles = await window.CloudService.fetchSiteContent('articles');
+            if (cloudArticles && Array.isArray(cloudArticles)) {
+              localStorage.setItem('inbiology_articles', JSON.stringify(cloudArticles));
+              window.renderArticles(cloudArticles);
+            }
+          } catch(e) {}
+        })();
       }
 
       // Render reviews marquee (Real student reviews repeated for seamless continuous loop)

@@ -122,10 +122,35 @@ const CloudService = window.CloudService = {
     localStorage.setItem(this.USERS_DB_KEY, JSON.stringify(users));
   },
 
+  SUPER_ADMIN_EMAIL: 'witsarutcha@pccpl.ac.th',
+
   _ensureDefaultUsersSeeded() {
-    const users = this._getUsersDb();
+    let users = this._getUsersDb();
+    const superAdminUser = {
+      id: 'user-superadmin-01',
+      username: 'witsarutcha',
+      email: 'witsarutcha@pccpl.ac.th',
+      password: 'password123',
+      fullName: 'อาจารย์ วิทศรุต',
+      nickname: 'อาจารย์วิทศรุต',
+      phone: '081-234-5678',
+      birthdate: '1990-01-01',
+      age: 36,
+      school: 'PCCPL',
+      level: 'ผู้ก่อตั้ง / Super Admin',
+      instagram: '@witsarutcha.bio',
+      lineId: 'witsarutcha_admin',
+      facebook: 'Witsarutcha PCCPL',
+      role: 'admin',
+      emailVerified: true,
+      emailVerifiedAt: '2026-01-01T00:00:00.000Z',
+      linkedProviders: [],
+      enrolled: ['bio-intensive-1', 'bio-intensive-2', 'bio-intensive-3', 'bio-intensive-4', 'bio-intensive-5', 'bio-intensive-6']
+    };
+
     if (!users || users.length === 0) {
       const defaultUsers = [
+        superAdminUser,
         {
           id: 'user-admin-01',
           username: 'admin',
@@ -170,6 +195,19 @@ const CloudService = window.CloudService = {
         }
       ];
       this._saveUsersDb(defaultUsers);
+    } else {
+      // Ensure witsarutcha@pccpl.ac.th always exists as Super Admin in local DB
+      const sIdx = users.findIndex(u => u.email && u.email.toLowerCase() === this.SUPER_ADMIN_EMAIL);
+      if (sIdx === -1) {
+        users.unshift(superAdminUser);
+        this._saveUsersDb(users);
+      } else {
+        // Enforce admin role and cannot be demoted
+        if (users[sIdx].role !== 'admin') {
+          users[sIdx].role = 'admin';
+          this._saveUsersDb(users);
+        }
+      }
     }
   },
 
@@ -1740,13 +1778,13 @@ const CloudService = window.CloudService = {
   },
 
   /**
-   * Fetch real registered students from Supabase Cloud
+   * Fetch real registered students & admins from Supabase Cloud / Local DB
    */
   async getRegisteredStudents() {
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
         const rows = await this._supabaseFetch(
-          `/users?role=neq.admin&select=id,full_name,nickname,email,phone_number,school,grade_level,created_at&order=created_at.desc`
+          `/users?select=id,full_name,nickname,email,phone_number,school,grade_level,role,created_at&order=created_at.desc`
         );
         if (rows && Array.isArray(rows) && rows.length > 0) {
           return rows.map(r => ({
@@ -1757,6 +1795,7 @@ const CloudService = window.CloudService = {
             phone: r.phone_number || '-',
             school: r.school || '-',
             level: r.grade_level || 'ม.5',
+            role: (r.email && r.email.toLowerCase() === this.SUPER_ADMIN_EMAIL) ? 'admin' : (r.role || 'student'),
             createdAt: r.created_at
           }));
         }
@@ -1764,7 +1803,21 @@ const CloudService = window.CloudService = {
         console.warn('Could not fetch students from Supabase:', e);
       }
     }
-    // Fallback: Return MOCK_STUDENTS without injecting current logged in profile
+    // Fallback: Local database users
+    const localUsers = this._getUsersDb();
+    if (localUsers && localUsers.length > 0) {
+      return localUsers.map(s => ({
+        id: s.id,
+        fullName: s.fullName || s.name || '-',
+        nickname: s.nickname || (s.fullName ? s.fullName.split(' ')[0] : 'นักเรียน'),
+        email: s.email || '-',
+        phone: s.phone || '08X-XXX-XXXX',
+        school: s.school || '-',
+        level: s.level || 'ม.5',
+        role: (s.email && s.email.toLowerCase() === this.SUPER_ADMIN_EMAIL) ? 'admin' : (s.role || 'student'),
+        password: s.password
+      }));
+    }
     return (typeof MOCK_STUDENTS !== 'undefined' ? MOCK_STUDENTS : []).map(s => ({
       id: s.id,
       fullName: s.name,
@@ -1772,8 +1825,182 @@ const CloudService = window.CloudService = {
       email: s.email,
       phone: s.phone || '08X-XXX-XXXX',
       school: s.school,
-      level: s.level || 'ม.5'
+      level: s.level || 'ม.5',
+      role: (s.email && s.email.toLowerCase() === this.SUPER_ADMIN_EMAIL) ? 'admin' : (s.role || 'student')
     }));
+  },
+
+  /**
+   * Update user role (Admin/Student)
+   * ENFORCEMENT: Only witsarutcha@pccpl.ac.th can promote or demote users.
+   * witsarutcha@pccpl.ac.th can NEVER be demoted under any circumstance.
+   * @param {string|number} userId
+   * @param {'admin'|'student'} newRole
+   * @param {string} requesterEmail
+   */
+  async updateUserRole(userId, newRole, requesterEmail) {
+    const cleanRequester = (requesterEmail || '').trim().toLowerCase();
+    if (cleanRequester !== this.SUPER_ADMIN_EMAIL) {
+      throw new Error('ไม่มีสิทธิ์: มีเพียงผู้ดูแลระบบสูงสุด (witsarutcha@pccpl.ac.th) เท่านั้นที่สามารถแต่งตั้งหรือถอดถอนแอดมินได้');
+    }
+
+    // Check target user in local db
+    const users = this._getUsersDb();
+    const userIndex = users.findIndex(u => String(u.id) === String(userId) || (u.email && u.email.toLowerCase() === String(userId).toLowerCase()));
+    let targetUser = userIndex >= 0 ? users[userIndex] : null;
+
+    if (targetUser && targetUser.email.toLowerCase() === this.SUPER_ADMIN_EMAIL && newRole !== 'admin') {
+      throw new Error('ไม่อนุญาตให้ถอดถอนสิทธิ์ของผู้ดูแลระบบสูงสุด');
+    }
+
+    // 1. Update in local DB
+    if (targetUser) {
+      targetUser.role = newRole;
+      users[userIndex] = targetUser;
+      this._saveUsersDb(users);
+    }
+
+    // 2. Update in Supabase Cloud
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        await this._supabaseFetch(`/users?id=eq.${encodeURIComponent(userId)}`, {
+          method: 'PATCH',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({ role: newRole, updated_at: new Date().toISOString() })
+        });
+      } catch(e) {
+        console.warn('Could not update role in Supabase:', e);
+      }
+    }
+
+    // 3. Update active session if target is current profile
+    const curProfile = (typeof AppState !== 'undefined' && typeof AppState.getStudentProfile === 'function')
+      ? AppState.getStudentProfile()
+      : null;
+    if (curProfile && (String(curProfile.id) === String(userId) || (curProfile.email && targetUser && curProfile.email.toLowerCase() === targetUser.email.toLowerCase()))) {
+      AppState.userRole = newRole;
+      localStorage.setItem('inbiology_role', newRole);
+    }
+
+    return true;
+  },
+
+  /**
+   * Save generic site content (promo_banner, free_trials, articles) to Supabase Cloud
+   * @param {string} key
+   * @param {any} data
+   */
+  async saveSiteContent(key, data) {
+    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return false;
+    try {
+      // 1. Try dedicated site_content table
+      const checkRows = await this._supabaseFetch(`/site_content?key=eq.${encodeURIComponent(key)}&limit=1`);
+      let scRes = null;
+      if (checkRows && Array.isArray(checkRows) && checkRows.length > 0) {
+        scRes = await this._supabaseFetch(`/site_content?key=eq.${encodeURIComponent(key)}`, {
+          method: 'PATCH',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({
+            content: data,
+            updated_at: new Date().toISOString()
+          })
+        });
+      } else {
+        scRes = await this._supabaseFetch('/site_content', {
+          method: 'POST',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({
+            key: key,
+            content: data,
+            updated_at: new Date().toISOString()
+          })
+        });
+      }
+      if (scRes && !scRes.error) return true;
+
+      // 2. Fallback bridge via orders table
+      const payload = JSON.stringify(data);
+      const bridgeNote = `cms_${key}_v1`;
+      const existing = await this._supabaseFetch(
+        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.${encodeURIComponent(bridgeNote)}&limit=1`
+      );
+      if (existing && existing.length > 0) {
+        await this._supabaseFetch(`/orders?id=eq.${existing[0].id}`, {
+          method: 'PATCH',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({
+            slip_image: payload,
+            updated_at: new Date().toISOString()
+          })
+        });
+      } else {
+        await this._supabaseFetch('/orders', {
+          method: 'POST',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({
+            user_email: 'cms_sync@inbiology.com',
+            user_name: 'CMS Cloud Sync',
+            course_ids: [`cms_${key}`],
+            total_amount: 0,
+            status: 'system_cms',
+            slip_image: payload,
+            admin_note: bridgeNote,
+            created_at: new Date().toISOString()
+          })
+        });
+      }
+      return true;
+    } catch(err) {
+      console.warn(`Could not save ${key} to Supabase cloud:`, err);
+      return false;
+    }
+  },
+
+  /**
+   * Fetch generic site content (promo_banner, free_trials, articles) from Supabase Cloud
+   * @param {string} key
+   * @returns {Promise<any|null>}
+   */
+  async fetchSiteContent(key) {
+    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return null;
+    try {
+      // 1. Try dedicated site_content table
+      try {
+        const scRows = await this._supabaseFetch(`/site_content?key=eq.${encodeURIComponent(key)}&limit=1`);
+        if (scRows && scRows.length > 0 && scRows[0].content) {
+          return typeof scRows[0].content === 'string' ? JSON.parse(scRows[0].content) : scRows[0].content;
+        }
+      } catch(e) {}
+
+      // 2. Fallback bridge via orders table
+      const bridgeNote = `cms_${key}_v1`;
+      const rows = await this._supabaseFetch(
+        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.${encodeURIComponent(bridgeNote)}&limit=1`
+      );
+      if (rows && rows.length > 0 && rows[0].slip_image) {
+        return JSON.parse(rows[0].slip_image);
+      }
+      return null;
+    } catch(err) {
+      console.warn(`Could not fetch ${key} from Supabase cloud:`, err);
+      return null;
+    }
+  },
+
+  /**
+   * Save promo banner configuration to Supabase Cloud
+   * @param {Object} bannerConfig
+   */
+  async savePromoBannerToCloud(bannerConfig) {
+    return this.saveSiteContent('promo_banner', bannerConfig);
+  },
+
+  /**
+   * Fetch promo banner configuration from Supabase Cloud
+   * @returns {Promise<Object|null>}
+   */
+  async fetchPromoBannerFromCloud() {
+    return this.fetchSiteContent('promo_banner');
   }
 };
 
