@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="UTF-8">
@@ -399,12 +399,18 @@
             <div class="course-card" data-reveal data-delay="${(idx % 4) * 0.08}s" style="background:white;border:1px solid #E5E7EB;border-radius:24px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.04);display:flex;flex-direction:column">
               <!-- Floating Portrait Book Cover Thumbnail Box (Matching User Screenshot) -->
               <div style="position:relative;height:200px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;padding:14px;overflow:hidden">
-                <img src="${c.imageUrl}" alt="${c.title}" loading="lazy" decoding="async" style="height:155px;max-width:85%;object-fit:contain;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.12)" />
+                <img src="${c.imageUrl}" alt="${c.title}" loading="lazy" decoding="async" onerror="this.src='./course-cover-1.png'" style="height:155px;max-width:85%;object-fit:contain;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.12)" />
 
                 <!-- Floating Top-Left Badge -->
                 <span style="position:absolute;top:12px;left:12px;background:${c.badgeBg || '#1E3A8A'};color:white;font-size:10px;font-weight:900;padding:4px 12px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,0.1);z-index:2">
                   ${c.badge}
                 </span>
+
+                ${AppState.userRole === 'admin' ? `
+                  <a href="admin.html?edit=${c.id}" style="position:absolute;top:12px;right:12px;background:rgba(30,58,138,0.92);color:white;font-size:10px;font-weight:800;padding:4px 10px;border-radius:8px;text-decoration:none;z-index:3;display:inline-flex;align-items:center;gap:4px;box-shadow:0 4px 10px rgba(0,0,0,0.15)">
+                    ✏️ แก้ไข
+                  </a>
+                ` : ''}
 
                 <!-- Floating Bottom-Left Trial Button -->
                 <button onclick="openTrialModal(FREE_TRIALS[0])" style="position:absolute;bottom:10px;left:12px;background:#1E3A8A;color:white;font-size:10px;font-weight:800;padding:5px 12px;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px;z-index:2;box-shadow:0 4px 10px rgba(0,0,0,0.15)">

@@ -66,6 +66,21 @@ function getDefaultMaterialsForCourse(course) {
 // Hydrate stored custom courses, course details overrides, lessons and materials on script load
 try {
   if (typeof COURSES !== 'undefined') {
+    // 0. Filter out deleted courses
+    const storedDeleted = localStorage.getItem('inbiology_deleted_courses');
+    if (storedDeleted) {
+      try {
+        const deletedIds = JSON.parse(storedDeleted);
+        if (Array.isArray(deletedIds) && deletedIds.length > 0) {
+          for (let i = COURSES.length - 1; i >= 0; i--) {
+            if (deletedIds.includes(COURSES[i].id)) {
+              COURSES.splice(i, 1);
+            }
+          }
+        }
+      } catch(e) {}
+    }
+
     // 1. Hydrate newly added courses created by admin
     const storedAdded = localStorage.getItem('inbiology_added_courses');
     if (storedAdded) {
@@ -381,6 +396,29 @@ const AppState = {
       }
       overrides[courseId] = { ...(overrides[courseId] || {}), ...updatedFields };
       localStorage.setItem('inbiology_course_overrides', JSON.stringify(overrides));
+
+      // Also update in inbiology_added_courses if this is a custom added course
+      const storedAdded = localStorage.getItem('inbiology_added_courses');
+      if (storedAdded) {
+        try {
+          let addedList = JSON.parse(storedAdded);
+          let modified = false;
+          addedList = addedList.map(item => {
+            if (item.id === courseId) {
+              modified = true;
+              return { ...item, ...updatedFields };
+            }
+            return item;
+          });
+          if (modified) {
+            localStorage.setItem('inbiology_added_courses', JSON.stringify(addedList));
+            if (window.CloudService && typeof window.CloudService.saveAddedCoursesToCloud === 'function') {
+              window.CloudService.saveAddedCoursesToCloud(addedList);
+            }
+          }
+        } catch(e) {}
+      }
+
       return true;
     } catch(e) {
       console.error('Failed to update course info:', e);
@@ -1025,6 +1063,11 @@ function openCourseModal(course) {
               <button onclick="AppState.addToCart(COURSES.find(c=>c.id==='${course.id}'));document.getElementById('global-course-modal').classList.remove('show')" ${isEnrolled ? 'disabled' : ''} style="width:100%;background:${isEnrolled ? '#D1FAE5' : 'var(--c-sky)'};color:${isEnrolled ? '#065F46' : 'white'};font-weight:800;font-size:14px;padding:14px;border-radius:12px;cursor:pointer;border:none">
                 ${isEnrolled ? '✓ คุณเป็นเจ้าของคอร์สนี้แล้ว' : '🛒 ซื้อคอร์สเรียนนี้เลย'}
               </button>
+              ${AppState.userRole === 'admin' ? `
+                <a href="admin.html?edit=${course.id}" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;width:100%;background:#EFF6FF;color:#1E3A8A;border:1.5px solid #BFDBFE;font-weight:800;font-size:12px;padding:10px 14px;border-radius:10px;text-decoration:none;transition:all 0.2s">
+                  ✏️ จัดการ/แก้ไขคอร์สนี้ในระบบแอดมิน
+                </a>
+              ` : ''}
             </div>
           </div>
         </div>
