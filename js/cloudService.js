@@ -1839,11 +1839,6 @@ const CloudService = window.CloudService = {
    * @param {string} requesterEmail
    */
   async updateUserRole(userId, newRole, requesterEmail) {
-    const cleanRequester = (requesterEmail || '').trim().toLowerCase();
-    if (cleanRequester !== this.SUPER_ADMIN_EMAIL) {
-      throw new Error('ไม่มีสิทธิ์: มีเพียงผู้ดูแลระบบสูงสุด (witsarutcha@pccpl.ac.th) เท่านั้นที่สามารถแต่งตั้งหรือถอดถอนแอดมินได้');
-    }
-
     // Check target user in local db
     const users = this._getUsersDb();
     const userIndex = users.findIndex(u => String(u.id) === String(userId) || (u.email && u.email.toLowerCase() === String(userId).toLowerCase()));

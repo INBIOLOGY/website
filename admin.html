@@ -878,6 +878,8 @@
         </div>
       </form>
     </div>
+  </div>
+
   <!-- Admin Free Trial Video Modal -->
   <div id="admin-trial-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;padding:16px;box-sizing:border-box">
     <div style="background:white;border-radius:24px;width:100%;max-width:min(540px,calc(100vw - 32px));padding:28px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);position:relative;box-sizing:border-box">
@@ -1365,13 +1367,25 @@
       renderAdminArticles();
       updateAdminOverviewStats();
 
-      // Check for ?edit=courseId in URL
+      // Check for ?edit=courseId, ?edit_trial=id, or ?edit_article=id in URL
       const urlParams = new URLSearchParams(window.location.search);
       const editCourseId = urlParams.get('edit');
+      const editTrialId = urlParams.get('edit_trial');
+      const editArticleId = urlParams.get('edit_article');
       if (editCourseId) {
         switchAdminTab('courses');
         setTimeout(() => {
           openCourseInfoModal(editCourseId);
+        }, 200);
+      } else if (editTrialId) {
+        switchAdminTab('trials');
+        setTimeout(() => {
+          openEditTrialModal(editTrialId);
+        }, 200);
+      } else if (editArticleId) {
+        switchAdminTab('articles');
+        setTimeout(() => {
+          openEditArticleModal(editArticleId);
         }, 200);
       }
 
@@ -2590,40 +2604,27 @@
 
       const currentProfile = (typeof AppState !== 'undefined' && typeof AppState.getStudentProfile === 'function') ? AppState.getStudentProfile() : null;
       const currentEmail = (currentProfile && currentProfile.email) ? currentProfile.email.trim().toLowerCase() : (localStorage.getItem('inbiology_user_email') || '').toLowerCase();
-      const isSuperAdmin = (currentEmail === 'witsarutcha@pccpl.ac.th');
 
-      // Super Admin Status Banner
+      // Admin Role Status Banner
       const bannerEl = document.getElementById('super-admin-status-banner');
       if (bannerEl) {
-        if (isSuperAdmin) {
-          bannerEl.innerHTML = `
-            <div style="background:linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);border:1.5px solid #93C5FD;border-radius:16px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
-              <div style="display:flex;align-items:center;gap:12px">
-                <div style="width:42px;height:42px;border-radius:12px;background:#1E3A8A;color:white;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">
-                  👑
-                </div>
-                <div>
-                  <div style="display:flex;align-items:center;gap:8px">
-                    <span style="font-size:14px;font-weight:900;color:var(--c-navy)">คุณคือ Super Admin (ผู้ดูแลระบบสูงสุด)</span>
-                    <span style="background:#2563EB;color:white;font-size:11px;font-weight:850;padding:2px 8px;border-radius:6px">witsarutcha@pccpl.ac.th</span>
-                  </div>
-                  <p style="font-size:12px;color:#475569;margin:2px 0 0">คุณมีสิทธิ์แต่งตั้งสมาชิกทุกคนเป็นแอดมิน หรือถอดถอนสิทธิ์แอดมินได้ตลอดเวลา โดยสิทธิ์ของคุณถูกคุ้มครองอย่างถาวร</p>
-                </div>
+        bannerEl.innerHTML = `
+          <div style="background:linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);border:1.5px solid #93C5FD;border-radius:16px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="width:42px;height:42px;border-radius:12px;background:#1E3A8A;color:white;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">
+                🛡️
               </div>
-              <span style="background:#DCFCE7;color:#166534;font-size:11px;font-weight:850;padding:4px 10px;border-radius:8px;border:1px solid #86EFAC">สิทธิ์เต็มขั้น (Full Permission)</span>
-            </div>
-          `;
-        } else {
-          bannerEl.innerHTML = `
-            <div style="background:#FFFBEB;border:1.5px solid #FCD34D;border-radius:16px;padding:14px 20px;display:flex;align-items:center;gap:12px;margin-bottom:16px">
-              <div style="font-size:22px;flex-shrink:0">🔒</div>
               <div>
-                <div style="font-size:13px;font-weight:850;color:#92400E">สิทธิ์การแต่งตั้ง/ถอดถอนผู้ดูแลระบบ สงวนสิทธิ์เฉพาะ Super Admin</div>
-                <div style="font-size:11.5px;color:#B45309;margin-top:2px">ผู้ดูแลระบบสูงสุดคือ <strong>witsarutcha@pccpl.ac.th</strong> เท่านั้นที่มีสิทธิ์มอบหมายหรือถอดถอนสิทธิ์แอดมินของสมาชิกท่านอื่น</div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="font-size:14px;font-weight:900;color:var(--c-navy)">ระบบจัดการสิทธิ์ผู้ดูแลระบบ (Admin Role Management)</span>
+                  <span style="background:#2563EB;color:white;font-size:11px;font-weight:850;padding:2px 8px;border-radius:6px">Active</span>
+                </div>
+                <p style="font-size:12px;color:#475569;margin:2px 0 0">คุณสามารถแต่งตั้งสมาชิกคนใดก็ได้เป็นแอดมิน หรือถอดถอนสิทธิ์แอดมินได้ตลอดเวลา ระบบจะซิงก์ข้อมูลทันที</p>
               </div>
             </div>
-          `;
-        }
+            <span style="background:#DCFCE7;color:#166534;font-size:11px;font-weight:850;padding:4px 10px;border-radius:8px;border:1px solid #86EFAC">พร้อมจัดการสิทธิ์</span>
+          </div>
+        `;
       }
 
       if (studentListCache.length === 0) {
@@ -2646,18 +2647,18 @@
           roleBadge = `<span style="background:#F1F5F9;color:#64748B;border:1px solid #E2E8F0;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px">🎓 นักเรียน</span>`;
         }
 
-        // Action Column
+        // Action Column: Any admin can grant or revoke admin permissions!
         let actionCol = '';
         if (isTargetSuper) {
           actionCol = `<span style="font-size:11px;color:#64748B;font-weight:800;background:#F1F5F9;padding:4px 10px;border-radius:8px;display:inline-block">🔒 สิทธิ์ถาวร (เจ้าของระบบ)</span>`;
-        } else if (isSuperAdmin) {
-          if (isTargetAdmin) {
-            actionCol = `<button type="button" onclick="changeAdminRole('${s.id}', 'student', '${s.email}')" style="background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;padding:6px 12px;border-radius:8px;font-weight:850;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:4px">ถอดสิทธิ์แอดมิน</button>`;
-          } else {
-            actionCol = `<button type="button" onclick="changeAdminRole('${s.id}', 'admin', '${s.email}')" style="background:#EFF6FF;color:#1E3A8A;border:1px solid #93C5FD;padding:6px 12px;border-radius:8px;font-weight:850;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:4px">+ ตั้งเป็นแอดมิน</button>`;
-          }
+        } else if (sEmail === currentEmail) {
+          actionCol = `<span style="font-size:11px;color:#1E3A8A;font-weight:800;background:#EFF6FF;padding:4px 10px;border-radius:8px;display:inline-block">👤 บัญชีที่คุณใช้อยู่</span>`;
         } else {
-          actionCol = `<span style="font-size:11px;color:#94A3B8;font-weight:600">สงวนสิทธิ์ Super Admin</span>`;
+          if (isTargetAdmin) {
+            actionCol = `<button type="button" onclick="changeAdminRole('${s.id}', 'student', '${s.email}')" style="background:#FEF2F2;color:#DC2626;border:1.5px solid #FECACA;padding:6px 14px;border-radius:8px;font-weight:850;font-size:11.5px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;box-shadow:0 2px 6px rgba(220,38,38,0.06);transition:all 0.2s">ถอดสิทธิ์แอดมิน</button>`;
+          } else {
+            actionCol = `<button type="button" onclick="changeAdminRole('${s.id}', 'admin', '${s.email}')" style="background:#EFF6FF;color:#1E3A8A;border:1.5px solid #93C5FD;padding:6px 14px;border-radius:8px;font-weight:850;font-size:11.5px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;box-shadow:0 2px 6px rgba(37,99,235,0.06);transition:all 0.2s">+ ตั้งเป็นแอดมิน</button>`;
+          }
         }
 
         return `

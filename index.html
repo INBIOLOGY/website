@@ -519,10 +519,15 @@
       section.style.display = 'block';
 
       container.innerHTML = trials.map((ft, idx) => `
-        <div data-reveal data-delay="${(idx % 3) * 0.08}s" onclick="openTrialModal(window.findTrialItem ? window.findTrialItem('${ft.id}') : ${JSON.stringify(ft).replace(/"/g, '&quot;')})" style="background:white;border-radius:20px;overflow:hidden;cursor:pointer;border:1px solid #E5E7EB;box-shadow:0 4px 12px rgba(0,0,0,0.03);transition:all 0.25s cubic-bezier(0.16,1,0.3,1)" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(0,0,0,0.08)'" onmouseleave="this.style.transform='none';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.03)'">
+        <div data-reveal data-delay="${(idx % 3) * 0.08}s" onclick="openTrialModal(window.findTrialItem ? window.findTrialItem('${ft.id}') : ${JSON.stringify(ft).replace(/"/g, '&quot;')})" style="background:white;border-radius:20px;overflow:hidden;cursor:pointer;border:1px solid #E5E7EB;box-shadow:0 4px 12px rgba(0,0,0,0.03);transition:all 0.25s cubic-bezier(0.16,1,0.3,1);position:relative" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(0,0,0,0.08)'" onmouseleave="this.style.transform='none';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.03)'">
           <div style="position:relative;height:190px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;padding:14px">
             <img src="${ft.imageUrl || './course-cover-1.png'}" style="height:150px;max-width:85%;object-fit:contain;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.12)" alt="" />
             <div class="card-duration-badge">${ft.duration}</div>
+            ${(typeof AppState !== 'undefined' && AppState.userRole === 'admin') ? `
+              <a href="admin.html?edit_trial=${ft.id}" onclick="event.stopPropagation()" style="position:absolute;top:12px;left:12px;background:rgba(30,58,138,0.92);color:white;font-size:10px;font-weight:800;padding:4px 10px;border-radius:8px;text-decoration:none;z-index:3;display:inline-flex;align-items:center;gap:4px;box-shadow:0 4px 10px rgba(0,0,0,0.15)">
+                ✏️ แก้ไข
+              </a>
+            ` : ''}
           </div>
           <div style="padding:16px">
             <span style="font-size:10px;font-weight:800;color:var(--c-sky);display:block;margin-bottom:4px">${ft.course}</span>
@@ -554,9 +559,14 @@
       section.style.display = 'block';
 
       container.innerHTML = articles.map((art, idx) => `
-        <div data-reveal data-delay="${(idx % 3) * 0.08}s" style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:20px;padding:24px;cursor:pointer;transition:all 0.25s cubic-bezier(0.16,1,0.3,1)" onmouseenter="this.style.background='white';this.style.borderColor='#CBD5E1';this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 24px rgba(0,0,0,0.06)'" onmouseleave="this.style.background='#F9FAFB';this.style.borderColor='#E5E7EB';this.style.transform='none';this.style.boxShadow='none'">
+        <div data-reveal data-delay="${(idx % 3) * 0.08}s" style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:20px;padding:24px;cursor:pointer;position:relative;transition:all 0.25s cubic-bezier(0.16,1,0.3,1)" onmouseenter="this.style.background='white';this.style.borderColor='#CBD5E1';this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 24px rgba(0,0,0,0.06)'" onmouseleave="this.style.background='#F9FAFB';this.style.borderColor='#E5E7EB';this.style.transform='none';this.style.boxShadow='none'">
+          ${(typeof AppState !== 'undefined' && AppState.userRole === 'admin') ? `
+            <a href="admin.html?edit_article=${art.id}" onclick="event.stopPropagation()" style="position:absolute;top:16px;right:16px;background:rgba(30,58,138,0.92);color:white;font-size:10px;font-weight:800;padding:4px 10px;border-radius:8px;text-decoration:none;z-index:3;display:inline-flex;align-items:center;gap:4px;box-shadow:0 4px 10px rgba(0,0,0,0.15)">
+              ✏️ แก้ไข
+            </a>
+          ` : ''}
           <span style="font-size:11px;font-weight:800;color:var(--c-sky);display:block;margin-bottom:6px">${art.date}</span>
-          <h4 style="font-size:14px;font-weight:850;color:var(--c-navy);margin:0 0 14px;line-height:1.45">${art.title}</h4>
+          <h4 style="font-size:14px;font-weight:850;color:var(--c-navy);margin:0 0 14px;line-height:1.45;padding-right:36px">${art.title}</h4>
           <div style="display:flex;justify-content:space-between;font-size:11px;color:#94A3B8;font-weight:700">
             <span style="display:inline-flex;align-items:center;gap:5px">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
