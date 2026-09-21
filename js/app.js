@@ -159,7 +159,18 @@ const AppState = {
   enrolled: [],
   lang: localStorage.getItem('inbiology_lang') || 'TH',
   appliedCoupon: null,
-  userRole: localStorage.getItem('inbiology_role') || null,
+  userRole: (() => {
+    try {
+      const p = JSON.parse(localStorage.getItem('inbiology_student_profile') || '{}');
+      const email = (p.email || localStorage.getItem('inbiology_user_email') || '').toLowerCase().trim();
+      const noDots = email.replace(/\./g, '');
+      if (email === 'witsarut.cha@pccpl.ac.th' || email === 'witsarutcha@pccpl.ac.th' || noDots.startsWith('witsarutcha@pccpl')) {
+        localStorage.setItem('inbiology_role', 'admin');
+        return 'admin';
+      }
+    } catch(e) {}
+    return localStorage.getItem('inbiology_role') || null;
+  })(),
 
   setSessionActive(active = true) {
     if (active) {
@@ -176,13 +187,32 @@ const AppState = {
   getStudentProfile() {
     const saved = localStorage.getItem('inbiology_student_profile');
     if (saved) {
-      try { return JSON.parse(saved); } catch(e){}
+      try {
+        const p = JSON.parse(saved);
+        if (p && p.email) {
+          const email = p.email.toLowerCase().trim();
+          const noDots = email.replace(/\./g, '');
+          if (email === 'witsarut.cha@pccpl.ac.th' || email === 'witsarutcha@pccpl.ac.th' || noDots.startsWith('witsarutcha@pccpl')) {
+            p.role = 'admin';
+            this.userRole = 'admin';
+            localStorage.setItem('inbiology_role', 'admin');
+          }
+        }
+        return p;
+      } catch(e){}
     }
     return null;
   },
 
   saveStudentProfile(profile) {
     sessionStorage.setItem('inbiology_session_active', 'true');
+    if (profile && profile.email) {
+      const email = profile.email.toLowerCase().trim();
+      const noDots = email.replace(/\./g, '');
+      if (email === 'witsarut.cha@pccpl.ac.th' || email === 'witsarutcha@pccpl.ac.th' || noDots.startsWith('witsarutcha@pccpl')) {
+        profile.role = 'admin';
+      }
+    }
     localStorage.setItem('inbiology_student_profile', JSON.stringify(profile));
     if (profile && profile.role) {
       this.userRole = profile.role;

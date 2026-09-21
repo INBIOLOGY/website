@@ -2596,7 +2596,7 @@
           phone: s.phone || '08X-XXX-XXXX',
           school: s.school,
           level: s.level || 'ม.5',
-          role: (s.email && s.email.toLowerCase() === 'witsarutcha@pccpl.ac.th') ? 'admin' : (s.role || 'student')
+          role: (s.email && (window.CloudService?.isSuperAdminEmail ? window.CloudService.isSuperAdminEmail(s.email) : s.email.toLowerCase().replace(/\./g, '').startsWith('witsarutcha@pccpl'))) ? 'admin' : (s.role || 'student')
         }));
       }
 
@@ -2608,21 +2608,25 @@
       // Admin Role Status Banner
       const bannerEl = document.getElementById('super-admin-status-banner');
       if (bannerEl) {
+        const isCurSuper = (window.CloudService && typeof window.CloudService.isSuperAdminEmail === 'function')
+          ? window.CloudService.isSuperAdminEmail(currentEmail)
+          : (currentEmail === 'witsarut.cha@pccpl.ac.th' || currentEmail === 'witsarutcha@pccpl.ac.th' || currentEmail.replace(/\./g, '').startsWith('witsarutcha@pccpl'));
+
         bannerEl.innerHTML = `
           <div style="background:linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);border:1.5px solid #93C5FD;border-radius:16px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px">
             <div style="display:flex;align-items:center;gap:12px">
               <div style="width:42px;height:42px;border-radius:12px;background:#1E3A8A;color:white;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">
-                🛡️
+                ${isCurSuper ? '👑' : '🛡️'}
               </div>
               <div>
                 <div style="display:flex;align-items:center;gap:8px">
-                  <span style="font-size:14px;font-weight:900;color:var(--c-navy)">ระบบจัดการสิทธิ์ผู้ดูแลระบบ (Admin Role Management)</span>
-                  <span style="background:#2563EB;color:white;font-size:11px;font-weight:850;padding:2px 8px;border-radius:6px">Active</span>
+                  <span style="font-size:14px;font-weight:900;color:var(--c-navy)">${isCurSuper ? 'คุณคือ Super Admin (ผู้ดูแลระบบสูงสุด)' : 'ระบบจัดการสิทธิ์ผู้ดูแลระบบ (Admin Role Management)'}</span>
+                  <span style="background:#2563EB;color:white;font-size:11px;font-weight:850;padding:2px 8px;border-radius:6px">${currentEmail || 'Active'}</span>
                 </div>
-                <p style="font-size:12px;color:#475569;margin:2px 0 0">คุณสามารถแต่งตั้งสมาชิกคนใดก็ได้เป็นแอดมิน หรือถอดถอนสิทธิ์แอดมินได้ตลอดเวลา ระบบจะซิงก์ข้อมูลทันที</p>
+                <p style="font-size:12px;color:#475569;margin:2px 0 0">คุณมีสิทธิ์แต่งตั้งสมาชิกทุกคนเป็นแอดมิน หรือถอดถอนสิทธิ์แอดมินได้ตลอดเวลา ระบบจะซิงก์ข้อมูลทันที</p>
               </div>
             </div>
-            <span style="background:#DCFCE7;color:#166534;font-size:11px;font-weight:850;padding:4px 10px;border-radius:8px;border:1px solid #86EFAC">พร้อมจัดการสิทธิ์</span>
+            <span style="background:#DCFCE7;color:#166534;font-size:11px;font-weight:850;padding:4px 10px;border-radius:8px;border:1px solid #86EFAC">สิทธิ์เต็มขั้น (Full Access)</span>
           </div>
         `;
       }
@@ -2634,7 +2638,9 @@
 
       tableEl.innerHTML = studentListCache.map(s => {
         const sEmail = (s.email || '').toLowerCase().trim();
-        const isTargetSuper = (sEmail === 'witsarutcha@pccpl.ac.th');
+        const isTargetSuper = (window.CloudService && typeof window.CloudService.isSuperAdminEmail === 'function')
+          ? window.CloudService.isSuperAdminEmail(sEmail)
+          : (sEmail === 'witsarut.cha@pccpl.ac.th' || sEmail === 'witsarutcha@pccpl.ac.th');
         const isTargetAdmin = isTargetSuper || (s.role === 'admin');
 
         // Role Badge
@@ -2687,7 +2693,7 @@
         const currentProfile = (typeof AppState !== 'undefined' && typeof AppState.getStudentProfile === 'function') ? AppState.getStudentProfile() : null;
         const requesterEmail = (currentProfile && currentProfile.email) ? currentProfile.email : (localStorage.getItem('inbiology_user_email') || '');
 
-        await window.CloudService.updateUserRole(userId, newRole, requesterEmail);
+        await window.CloudService.updateUserRole(userId, newRole, requesterEmail, targetEmail);
         showToast(`✅ ดำเนินการ${actionText} เรียบร้อยแล้ว`, 'success');
         await renderStudentsTable();
       } catch(err) {

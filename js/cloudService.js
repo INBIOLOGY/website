@@ -122,14 +122,23 @@ const CloudService = window.CloudService = {
     localStorage.setItem(this.USERS_DB_KEY, JSON.stringify(users));
   },
 
-  SUPER_ADMIN_EMAIL: 'witsarutcha@pccpl.ac.th',
+  SUPER_ADMIN_EMAIL: 'witsarut.cha@pccpl.ac.th',
+  SUPER_ADMIN_EMAILS: ['witsarut.cha@pccpl.ac.th', 'witsarutcha@pccpl.ac.th'],
+  isSuperAdminEmail(email) {
+    if (!email) return false;
+    const clean = String(email).trim().toLowerCase();
+    const noDots = clean.replace(/\./g, '');
+    return clean === 'witsarut.cha@pccpl.ac.th' || 
+           clean === 'witsarutcha@pccpl.ac.th' || 
+           noDots.startsWith('witsarutcha@pccpl');
+  },
 
   _ensureDefaultUsersSeeded() {
     let users = this._getUsersDb();
     const superAdminUser = {
       id: 'user-superadmin-01',
       username: 'witsarutcha',
-      email: 'witsarutcha@pccpl.ac.th',
+      email: 'witsarut.cha@pccpl.ac.th',
       password: 'password123',
       fullName: 'อาจารย์ วิทศรุต',
       nickname: 'อาจารย์วิทศรุต',
@@ -196,8 +205,8 @@ const CloudService = window.CloudService = {
       ];
       this._saveUsersDb(defaultUsers);
     } else {
-      // Ensure witsarutcha@pccpl.ac.th always exists as Super Admin in local DB
-      const sIdx = users.findIndex(u => u.email && u.email.toLowerCase() === this.SUPER_ADMIN_EMAIL);
+      // Ensure witsarut.cha@pccpl.ac.th always exists as Super Admin in local DB
+      const sIdx = users.findIndex(u => u.email && this.isSuperAdminEmail(u.email));
       if (sIdx === -1) {
         users.unshift(superAdminUser);
         this._saveUsersDb(users);
@@ -582,7 +591,7 @@ const CloudService = window.CloudService = {
             instagram: sbUser.instagram || '',
             lineId: sbUser.line_id || '',
             facebook: sbUser.facebook || '',
-            role: sbUser.role || 'student',
+            role: this.isSuperAdminEmail(sbUser.email) ? 'admin' : (sbUser.role || 'student'),
             linkedProviders: [],
             enrolled: (sbUser.enrolled && Array.isArray(sbUser.enrolled)) ? sbUser.enrolled : []
           };
@@ -627,7 +636,7 @@ const CloudService = window.CloudService = {
     }
 
     // Success
-    AppState.userRole = user.role || 'student';
+    AppState.userRole = this.isSuperAdminEmail(user.email) ? 'admin' : (user.role || 'student');
     sessionStorage.setItem('inbiology_session_active', 'true');
     localStorage.setItem('inbiology_role', AppState.userRole);
     AppState.saveStudentProfile(user);
@@ -663,7 +672,7 @@ const CloudService = window.CloudService = {
 
     if (user) {
       // Direct OAuth login match
-      AppState.userRole = user.role || 'student';
+      AppState.userRole = this.isSuperAdminEmail(user.email) ? 'admin' : (user.role || 'student');
       sessionStorage.setItem('inbiology_session_active', 'true');
       localStorage.setItem('inbiology_role', AppState.userRole);
       AppState.saveStudentProfile(user);
@@ -686,7 +695,7 @@ const CloudService = window.CloudService = {
       }
       this._saveUsersDb(users);
 
-      AppState.userRole = user.role || 'student';
+      AppState.userRole = this.isSuperAdminEmail(user.email) ? 'admin' : (user.role || 'student');
       sessionStorage.setItem('inbiology_session_active', 'true');
       localStorage.setItem('inbiology_role', AppState.userRole);
       AppState.saveStudentProfile(user);
@@ -712,7 +721,7 @@ const CloudService = window.CloudService = {
       instagram: '',
       lineId: '',
       facebook: '',
-      role: 'student',
+      role: this.isSuperAdminEmail(googleEmail) ? 'admin' : 'student',
       avatar: payload.picture || '',
       emailVerified: true,
       emailVerifiedAt: new Date().toISOString(),
@@ -1795,7 +1804,7 @@ const CloudService = window.CloudService = {
             phone: r.phone_number || '-',
             school: r.school || '-',
             level: r.grade_level || 'ม.5',
-            role: (r.email && r.email.toLowerCase() === this.SUPER_ADMIN_EMAIL) ? 'admin' : (r.role || 'student'),
+            role: (r.email && this.isSuperAdminEmail(r.email)) ? 'admin' : (r.role || 'student'),
             createdAt: r.created_at
           }));
         }
@@ -1814,7 +1823,7 @@ const CloudService = window.CloudService = {
         phone: s.phone || '08X-XXX-XXXX',
         school: s.school || '-',
         level: s.level || 'ม.5',
-        role: (s.email && s.email.toLowerCase() === this.SUPER_ADMIN_EMAIL) ? 'admin' : (s.role || 'student'),
+        role: (s.email && this.isSuperAdminEmail(s.email)) ? 'admin' : (s.role || 'student'),
         password: s.password
       }));
     }
@@ -1826,29 +1835,39 @@ const CloudService = window.CloudService = {
       phone: s.phone || '08X-XXX-XXXX',
       school: s.school,
       level: s.level || 'ม.5',
-      role: (s.email && s.email.toLowerCase() === this.SUPER_ADMIN_EMAIL) ? 'admin' : (s.role || 'student')
+      role: (s.email && this.isSuperAdminEmail(s.email)) ? 'admin' : (s.role || 'student')
     }));
   },
 
   /**
    * Update user role (Admin/Student)
-   * ENFORCEMENT: Only witsarutcha@pccpl.ac.th can promote or demote users.
-   * witsarutcha@pccpl.ac.th can NEVER be demoted under any circumstance.
+   * Both witsarut.cha@pccpl.ac.th and witsarutcha@pccpl.ac.th are protected from demotion.
    * @param {string|number} userId
    * @param {'admin'|'student'} newRole
    * @param {string} requesterEmail
+   * @param {string} [targetEmail]
    */
-  async updateUserRole(userId, newRole, requesterEmail) {
-    // Check target user in local db
-    const users = this._getUsersDb();
-    const userIndex = users.findIndex(u => String(u.id) === String(userId) || (u.email && u.email.toLowerCase() === String(userId).toLowerCase()));
-    let targetUser = userIndex >= 0 ? users[userIndex] : null;
+  async updateUserRole(userId, newRole, requesterEmail, targetEmail) {
+    const emailToMatch = (targetEmail || '').trim().toLowerCase();
 
-    if (targetUser && targetUser.email.toLowerCase() === this.SUPER_ADMIN_EMAIL && newRole !== 'admin') {
+    // Check if target is a super admin
+    if (this.isSuperAdminEmail(emailToMatch) && newRole !== 'admin') {
       throw new Error('ไม่อนุญาตให้ถอดถอนสิทธิ์ของผู้ดูแลระบบสูงสุด');
     }
 
     // 1. Update in local DB
+    const users = this._getUsersDb();
+    const userIndex = users.findIndex(u => 
+      String(u.id) === String(userId) || 
+      (u.email && u.email.toLowerCase() === String(userId).toLowerCase()) ||
+      (emailToMatch && u.email && u.email.toLowerCase() === emailToMatch)
+    );
+    let targetUser = userIndex >= 0 ? users[userIndex] : null;
+
+    if (targetUser && this.isSuperAdminEmail(targetUser.email) && newRole !== 'admin') {
+      throw new Error('ไม่อนุญาตให้ถอดถอนสิทธิ์ของผู้ดูแลระบบสูงสุด');
+    }
+
     if (targetUser) {
       targetUser.role = newRole;
       users[userIndex] = targetUser;
@@ -1858,11 +1877,23 @@ const CloudService = window.CloudService = {
     // 2. Update in Supabase Cloud
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
-        await this._supabaseFetch(`/users?id=eq.${encodeURIComponent(userId)}`, {
-          method: 'PATCH',
-          headers: { 'Prefer': 'return=representation' },
-          body: JSON.stringify({ role: newRole, updated_at: new Date().toISOString() })
-        });
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(userId));
+        let query = '';
+        if (isUuid) {
+          query = `/users?id=eq.${encodeURIComponent(userId)}`;
+        } else if (emailToMatch) {
+          query = `/users?email=ilike.${encodeURIComponent(emailToMatch)}`;
+        } else if (targetUser && targetUser.email) {
+          query = `/users?email=ilike.${encodeURIComponent(targetUser.email)}`;
+        }
+
+        if (query) {
+          await this._supabaseFetch(query, {
+            method: 'PATCH',
+            headers: { 'Prefer': 'return=representation' },
+            body: JSON.stringify({ role: newRole, updated_at: new Date().toISOString() })
+          });
+        }
       } catch(e) {
         console.warn('Could not update role in Supabase:', e);
       }
@@ -1872,7 +1903,11 @@ const CloudService = window.CloudService = {
     const curProfile = (typeof AppState !== 'undefined' && typeof AppState.getStudentProfile === 'function')
       ? AppState.getStudentProfile()
       : null;
-    if (curProfile && (String(curProfile.id) === String(userId) || (curProfile.email && targetUser && curProfile.email.toLowerCase() === targetUser.email.toLowerCase()))) {
+    if (curProfile && (
+      String(curProfile.id) === String(userId) || 
+      (curProfile.email && emailToMatch && curProfile.email.toLowerCase() === emailToMatch) ||
+      (curProfile.email && targetUser && curProfile.email.toLowerCase() === targetUser.email.toLowerCase())
+    )) {
       AppState.userRole = newRole;
       localStorage.setItem('inbiology_role', newRole);
     }

@@ -495,7 +495,7 @@ const FAQS = [
 ];
 
 const MOCK_STUDENTS = [
-  { id: 'sa-01', name: 'อาจารย์ วิทศรุต', email: 'witsarutcha@pccpl.ac.th', school: 'PCCPL', level: 'ผู้ก่อตั้ง / Super Admin', role: 'admin', enrolledCount: 6 },
+  { id: 'sa-01', name: 'อาจารย์ วิทศรุต', email: 'witsarut.cha@pccpl.ac.th', school: 'PCCPL', level: 'ผู้ก่อตั้ง / Super Admin', role: 'admin', enrolledCount: 6 },
   { id: 1, name: 'นาย ภูมิพัฒน์ รัตนชัย', email: 'phumiphat.r@gmail.com', school: 'สวนกุหลาบวิทยาลัย', level: 'ม.5', role: 'student', enrolledCount: 2 },
   { id: 2, name: 'นางสาว ณัฐนิชา สุขใจ', email: 'natnicha.s@hotmail.com', school: 'เตรียมอุดมศึกษา', level: 'ม.6', role: 'student', enrolledCount: 3 },
   { id: 3, name: 'นาย ปกรณ์ ดีเลิศ', email: 'pakorn.d@yahoo.com', school: 'สามเสนวิทยาลัย', level: 'ม.4', role: 'student', enrolledCount: 1 }
