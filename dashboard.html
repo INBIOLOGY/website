@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Mitr:wght@500;700&display=swap">
-  <link rel="stylesheet" href="./css/style.css?v=20260921_v36">
+  <link rel="stylesheet" href="./css/style.css?v=20260922_v40">
 </head>
 
 <body id="top">
@@ -397,11 +397,11 @@
   <footer id="footer-container"></footer>
 
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <script src="./js/mockData.js?v=20260921_v38"></script>
-  <script src="./js/supabaseConfig.js?v=20260921_v38"></script>
-  <script src="./js/googleConfig.js?v=20260921_v38"></script>
-  <script src="./js/cloudService.js?v=20260921_v38"></script>
-  <script src="./js/app.js?v=20260921_v38"></script>
+  <script src="./js/mockData.js?v=20260922_v40"></script>
+  <script src="./js/supabaseConfig.js?v=20260922_v40"></script>
+  <script src="./js/googleConfig.js?v=20260922_v40"></script>
+  <script src="./js/cloudService.js?v=20260922_v40"></script>
+  <script src="./js/app.js?v=20260922_v40"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       // 🔒 AUTH GUARD: Must be logged in to view dashboard
@@ -414,55 +414,64 @@
       loadStudentProfileToUI();
       renderGoogleLinkStatus();
 
-      // Sync enrolled courses & profile data from Supabase cloud before rendering
-      const profile = AppState.getStudentProfile();
-      if (profile && profile.email && window.CloudService) {
-        try {
-          if (typeof window.CloudService.fetchUserProfileByEmail === 'function') {
-            const cloudUser = await window.CloudService.fetchUserProfileByEmail(profile.email);
-            if (cloudUser) {
-              let changed = false;
-              if (cloudUser.phone_number && cloudUser.phone_number !== '0000000000' && (!profile.phone || profile.phone === '0000000000')) {
-                profile.phone = cloudUser.phone_number;
-                changed = true;
-              }
-              if (cloudUser.school && cloudUser.school !== 'ยังไม่ได้ระบุ' && (!profile.school || profile.school === 'ยังไม่ได้ระบุ')) {
-                profile.school = cloudUser.school;
-                changed = true;
-              }
-              if (cloudUser.full_name && (!profile.fullName || profile.fullName === 'ผู้ใช้งาน Google')) {
-                profile.fullName = cloudUser.full_name;
-                changed = true;
-              }
-              if (cloudUser.nickname && (!profile.nickname || profile.nickname === 'นักเรียน')) {
-                profile.nickname = cloudUser.nickname;
-                changed = true;
-              }
-              if (cloudUser.grade_level && !profile.level) {
-                profile.level = cloudUser.grade_level;
-                changed = true;
-              }
-              if (cloudUser.role && cloudUser.role !== profile.role) {
-                profile.role = cloudUser.role;
-                AppState.userRole = cloudUser.role;
-                localStorage.setItem('inbiology_role', cloudUser.role);
-                changed = true;
-              }
-              if (changed) {
-                AppState.saveStudentProfile(profile);
-                loadStudentProfileToUI();
-                renderHeader('dashboard');
-              }
-            }
-          }
-          await window.CloudService.syncEnrolledFromCloud(profile.email);
-        } catch (e) { console.warn('Sync profile/enrolled note:', e); }
-      }
-
+      // ⚡ INSTANT RENDER: Show current cached courses, notes, and profile immediately
       renderEnrolled();
       renderNotes();
       renderFAQs();
       updateProfileIncompleteBanner();
+
+      // 🔄 BACKGROUND ASYNC SYNC: Sync latest cloud enrollments & profile without blocking UI
+      const profile = AppState.getStudentProfile();
+      if (profile && profile.email && window.CloudService) {
+        (async () => {
+          try {
+            if (typeof window.CloudService.fetchUserProfileByEmail === 'function') {
+              const cloudUser = await window.CloudService.fetchUserProfileByEmail(profile.email);
+              if (cloudUser) {
+                let changed = false;
+                if (cloudUser.phone_number && cloudUser.phone_number !== '0000000000' && (!profile.phone || profile.phone === '0000000000')) {
+                  profile.phone = cloudUser.phone_number;
+                  changed = true;
+                }
+                if (cloudUser.school && cloudUser.school !== 'ยังไม่ได้ระบุ' && (!profile.school || profile.school === 'ยังไม่ได้ระบุ')) {
+                  profile.school = cloudUser.school;
+                  changed = true;
+                }
+                if (cloudUser.full_name && (!profile.fullName || profile.fullName === 'ผู้ใช้งาน Google')) {
+                  profile.fullName = cloudUser.full_name;
+                  changed = true;
+                }
+                if (cloudUser.nickname && (!profile.nickname || profile.nickname === 'นักเรียน')) {
+                  profile.nickname = cloudUser.nickname;
+                  changed = true;
+                }
+                if (cloudUser.grade_level && !profile.level) {
+                  profile.level = cloudUser.grade_level;
+                  changed = true;
+                }
+                if (cloudUser.role && cloudUser.role !== profile.role) {
+                  profile.role = cloudUser.role;
+                  AppState.userRole = cloudUser.role;
+                  localStorage.setItem('inbiology_role', cloudUser.role);
+                  changed = true;
+                }
+                if (changed) {
+                  AppState.saveStudentProfile(profile);
+                  loadStudentProfileToUI();
+                  renderHeader('dashboard');
+                  updateProfileIncompleteBanner();
+                }
+              }
+            }
+            if (typeof window.CloudService.syncEnrolledFromCloud === 'function') {
+              const updated = await window.CloudService.syncEnrolledFromCloud(profile.email);
+              if (updated) {
+                renderEnrolled();
+              }
+            }
+          } catch (e) { console.warn('Sync profile/enrolled note:', e); }
+        })();
+      }
 
       // Check for direct tab link in URL (e.g. dashboard.html?tab=orders or incomplete=1)
       const urlParams = new URLSearchParams(window.location.search);

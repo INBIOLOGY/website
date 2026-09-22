@@ -28,7 +28,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Mitr:wght@500;700&display=swap">
-  <link rel="stylesheet" href="./css/style.css?v=20260921_v36">
+  <link rel="stylesheet" href="./css/style.css?v=20260922_v40">
 </head>
 <body id="top">
 
@@ -473,10 +473,10 @@
   <!-- Universal Rich Multi-Column Footer -->
   <footer id="footer-container"></footer>
 
-  <script src="./js/mockData.js?v=20260921_v38"></script>
-  <script src="./js/supabaseConfig.js?v=20260921_v38"></script>
-  <script src="./js/cloudService.js?v=20260921_v38"></script>
-  <script src="./js/app.js?v=20260921_v38"></script>
+  <script src="./js/mockData.js?v=20260922_v40"></script>
+  <script src="./js/supabaseConfig.js?v=20260922_v40"></script>
+  <script src="./js/cloudService.js?v=20260922_v40"></script>
+  <script src="./js/app.js?v=20260922_v40"></script>
   <script>
     // Helper function for sleek category icons
     function getCategoryIconSvg(iconKey) {
@@ -757,10 +757,10 @@
         })();
       }
 
-      // Render reviews marquee (Real student reviews repeated for seamless continuous loop)
+      // Render reviews marquee (Optimized 2-cycle loop for smooth 60fps Safari animation)
       const marqueeContainer = document.getElementById('reviews-marquee');
       if (marqueeContainer) {
-        const repeatedReviews = [...REVIEWS, ...REVIEWS, ...REVIEWS, ...REVIEWS];
+        const repeatedReviews = [...REVIEWS, ...REVIEWS];
         marqueeContainer.innerHTML = repeatedReviews.map(r => `
           <div class="review-card-container">
             <div style="width:110px;height:110px;min-width:110px;min-height:110px;aspect-ratio:1/1;border-radius:50%;overflow:hidden;border:3px solid #B91C1C;box-shadow:0 4px 12px rgba(185,28,28,0.15);flex-shrink:0;background:#DEC8B3">

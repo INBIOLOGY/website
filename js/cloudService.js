@@ -78,6 +78,11 @@ const CloudService = window.CloudService = {
     console.log('ℹ️ [INBIOLOGY Cloud] Running in Local Storage Database Mode (Full Offline Support)');
   },
 
+  // ─── IN-MEMORY CLIENT CACHE TO ELIMINATE REDUNDANT ROUNDTRIPS ───────────
+  _siteContentCache: {},
+  _userProfileCache: {},
+  _userRoleCache: {},
+
   // ─── SUPABASE REST API CLIENT HELPER ─────────────────────────────────────
   async _supabaseFetch(endpoint, options = {}) {
     if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) {
@@ -89,12 +94,17 @@ const CloudService = window.CloudService = {
       'apikey': cfg.publishableKey,
       'Authorization': `Bearer ${cfg.publishableKey}`,
       'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
       ...(options.headers || {})
     };
+
+    // Fast-abort timeout (default 3500ms) to ensure Safari never hangs/freezes
+    const timeoutMs = options.timeout || 3500;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+
     try {
-      const res = await fetch(url, { cache: 'no-store', ...options, headers });
+      const res = await fetch(url, { ...options, signal: controller.signal, headers });
+      clearTimeout(timer);
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         console.warn(`[Supabase REST API Error] ${res.status}:`, err);
@@ -103,8 +113,13 @@ const CloudService = window.CloudService = {
       if (res.status === 204) return true;
       return await res.json().catch(() => true);
     } catch(err) {
-      console.warn('[Supabase Fetch Network Error]:', err);
-      return { error: err, networkError: true };
+      clearTimeout(timer);
+      if (err && err.name === 'AbortError') {
+        console.warn(`[Supabase Fetch Timeout] Aborted after ${timeoutMs}ms for ${endpoint}`);
+      } else {
+        console.warn('[Supabase Fetch Network Error]:', err);
+      }
+      return { error: err, networkError: true, timedOut: Boolean(err && err.name === 'AbortError') };
     }
   },
 
@@ -914,26 +929,39 @@ const CloudService = window.CloudService = {
   },
 
   /**
-   * Fetch latest profile from Supabase Cloud by email
+   * Fetch latest profile from Supabase Cloud by email (with 60s memory caching)
    * @param {string} email
    */
   async fetchUserProfileByEmail(email) {
     if (!email) return null;
     const clean = email.toLowerCase().trim();
+
+    // Check memory cache first (60s TTL)
+    if (this._userProfileCache[clean] && (Date.now() - this._userProfileCache[clean].time < 60000)) {
+      return this._userProfileCache[clean].data;
+    }
+
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
-        const rows = await this._supabaseFetch(`/users?email=ilike.${encodeURIComponent(clean)}&limit=1`);
-        if (rows && Array.isArray(rows) && rows.length > 0) return rows[0];
+        const rows = await this._supabaseFetch(`/users?email=ilike.${encodeURIComponent(clean)}&limit=1`, { timeout: 3000 });
+        if (rows && Array.isArray(rows) && rows.length > 0) {
+          this._userProfileCache[clean] = { data: rows[0], time: Date.now() };
+          return rows[0];
+        }
       } catch(e) {
         console.warn('Could not fetch user profile from cloud:', e);
       }
     }
     const users = this._getUsersDb();
-    return users.find(u => u.email && u.email.toLowerCase() === clean) || null;
+    const local = users.find(u => u.email && u.email.toLowerCase() === clean) || null;
+    if (local) {
+      this._userProfileCache[clean] = { data: local, time: Date.now() };
+    }
+    return local;
   },
 
   /**
-   * Fetch current user role with multi-tier cloud validation
+   * Fetch current user role with multi-tier cloud validation (with 60s memory caching)
    * @param {string} email
    */
   async fetchUserRole(email) {
@@ -941,24 +969,37 @@ const CloudService = window.CloudService = {
     const clean = email.toLowerCase().trim();
     if (this.isSuperAdminEmail(clean)) return 'admin';
 
+    // Check memory cache first (60s TTL)
+    if (this._userRoleCache[clean] && (Date.now() - this._userRoleCache[clean].time < 60000)) {
+      return this._userRoleCache[clean].role;
+    }
+
     // 1. Check user_roles_map in site_content (Fastest & multi-device bridge)
     try {
       const map = await this.fetchSiteContent('user_roles_map');
-      if (map && typeof map === 'object' && map[clean]) return map[clean];
+      if (map && typeof map === 'object' && map[clean]) {
+        this._userRoleCache[clean] = { role: map[clean], time: Date.now() };
+        return map[clean];
+      }
     } catch(e){}
 
     // 2. Query /users table
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
-        const rows = await this._supabaseFetch(`/users?email=ilike.${encodeURIComponent(clean)}&select=role&limit=1`);
-        if (rows && Array.isArray(rows) && rows.length > 0 && rows[0].role) return rows[0].role;
+        const rows = await this._supabaseFetch(`/users?email=ilike.${encodeURIComponent(clean)}&select=role&limit=1`, { timeout: 3000 });
+        if (rows && Array.isArray(rows) && rows.length > 0 && rows[0].role) {
+          this._userRoleCache[clean] = { role: rows[0].role, time: Date.now() };
+          return rows[0].role;
+        }
       } catch(e){}
     }
 
     // 3. Fallback to local DB
     const users = this._getUsersDb();
     const u = users.find(x => x.email && x.email.toLowerCase() === clean);
-    return (u && u.role) ? u.role : 'student';
+    const resolvedRole = (u && u.role) ? u.role : 'student';
+    this._userRoleCache[clean] = { role: resolvedRole, time: Date.now() };
+    return resolvedRole;
   },
 
   // ─── 5. ACCOUNT LINKING IN DASHBOARD ───────────────────────────────────────
@@ -2148,6 +2189,7 @@ const CloudService = window.CloudService = {
           })
         });
       }
+      delete this._siteContentCache[key];
       return true;
     } catch(err) {
       console.warn(`Could not save ${key} to Supabase cloud:`, err);
@@ -2157,27 +2199,39 @@ const CloudService = window.CloudService = {
 
   /**
    * Fetch generic site content (promo_banner, free_trials, articles) from Supabase Cloud
+   * Includes 120s client-side memory cache to eliminate redundant HTTP roundtrips across page views
    * @param {string} key
    * @returns {Promise<any|null>}
    */
   async fetchSiteContent(key) {
     if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return null;
+
+    // Check memory cache first (120s TTL)
+    if (this._siteContentCache[key] && (Date.now() - this._siteContentCache[key].time < 120000)) {
+      return this._siteContentCache[key].data;
+    }
+
     try {
       // 1. Try dedicated site_content table
       try {
-        const scRows = await this._supabaseFetch(`/site_content?key=eq.${encodeURIComponent(key)}&limit=1`);
-        if (scRows && scRows.length > 0 && scRows[0].content) {
-          return typeof scRows[0].content === 'string' ? JSON.parse(scRows[0].content) : scRows[0].content;
+        const scRows = await this._supabaseFetch(`/site_content?key=eq.${encodeURIComponent(key)}&limit=1`, { timeout: 3000 });
+        if (scRows && Array.isArray(scRows) && scRows.length > 0 && scRows[0].content) {
+          const parsed = typeof scRows[0].content === 'string' ? JSON.parse(scRows[0].content) : scRows[0].content;
+          this._siteContentCache[key] = { data: parsed, time: Date.now() };
+          return parsed;
         }
       } catch(e) {}
 
       // 2. Fallback bridge via orders table
       const bridgeNote = `cms_${key}_v1`;
       const rows = await this._supabaseFetch(
-        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.${encodeURIComponent(bridgeNote)}&limit=1`
+        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.${encodeURIComponent(bridgeNote)}&limit=1`,
+        { timeout: 3000 }
       );
-      if (rows && rows.length > 0 && rows[0].slip_image) {
-        return JSON.parse(rows[0].slip_image);
+      if (rows && Array.isArray(rows) && rows.length > 0 && rows[0].slip_image) {
+        const parsed = JSON.parse(rows[0].slip_image);
+        this._siteContentCache[key] = { data: parsed, time: Date.now() };
+        return parsed;
       }
       return null;
     } catch(err) {

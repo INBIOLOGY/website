@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Mitr:wght@500;700&display=swap">
-  <link rel="stylesheet" href="./css/style.css?v=20260921_v36">
+  <link rel="stylesheet" href="./css/style.css?v=20260922_v40">
   <style>
     /* Smooth mouse scrollable lessons sidebar */
     #lesson-list::-webkit-scrollbar {
@@ -300,15 +300,15 @@
   <!-- Universal Rich Multi-Column Footer -->
   <footer id="footer-container"></footer>
 
-  <script src="./js/mockData.js?v=20260921_v36"></script>
-  <script src="./js/supabaseConfig.js?v=20260921_v36"></script>
-  <script src="./js/cloudService.js?v=20260921_v36"></script>
-  <script src="./js/app.js?v=20260921_v36"></script>
+  <script src="./js/mockData.js?v=20260922_v40"></script>
+  <script src="./js/supabaseConfig.js?v=20260922_v40"></script>
+  <script src="./js/cloudService.js?v=20260922_v40"></script>
+  <script src="./js/app.js?v=20260922_v40"></script>
   <script>
     let currentCourse = COURSES[0];
     let currentLesson = currentCourse.lessons && currentCourse.lessons.length > 0 ? currentCourse.lessons[0] : null;
 
-    document.addEventListener('DOMContentLoaded', async () => {
+    document.addEventListener('DOMContentLoaded', () => {
       // 🔒 AUTH GUARD: Must be logged in to view my courses / classroom
       if (!AppState.isLoggedIn()) {
         const redirectUrl = window.location.search ? 'classroom.html' + window.location.search : 'classroom.html';
@@ -318,26 +318,12 @@
 
       renderHeader('classroom');
 
-      // Sync enrolled courses from Supabase cloud before rendering
-      const profile = AppState.getStudentProfile();
-      if (profile && profile.email && window.CloudService && typeof window.CloudService.syncEnrolledFromCloud === 'function') {
-        try {
-          await window.CloudService.syncEnrolledFromCloud(profile.email);
-        } catch(e) { console.warn('Sync enrolled note:', e); }
-      }
-
-      // Sync real-time courses and video lessons from Supabase Cloud
-      if (typeof AppState.syncCoursesAndLessonsFromCloud === 'function') {
-        try {
-          await AppState.syncCoursesAndLessonsFromCloud();
-        } catch(e) { console.warn('Sync cloud lessons note:', e); }
-      }
-
       // Check deep link URL parameter e.g. classroom.html?course=bio-intensive-2
       const urlParams = new URLSearchParams(window.location.search);
       const courseParam = urlParams.get('course');
       const lessonParam = urlParams.get('lesson');
 
+      // ⚡ INSTANT RENDER: Show classroom UI immediately with zero delay
       if (courseParam) {
         const target = COURSES.find(c => c.id === courseParam);
         if (target) {
@@ -350,6 +336,27 @@
       }
 
       renderNotes();
+
+      // 🔄 BACKGROUND ASYNC SYNC: Sync latest cloud enrollments & lessons without blocking UI
+      const profile = AppState.getStudentProfile();
+      if (profile && profile.email && window.CloudService && typeof window.CloudService.syncEnrolledFromCloud === 'function') {
+        window.CloudService.syncEnrolledFromCloud(profile.email).then(updated => {
+          if (updated && !courseParam) {
+            renderMyCoursesCatalog();
+          }
+        }).catch(() => {});
+      }
+
+      if (typeof AppState.syncCoursesAndLessonsFromCloud === 'function') {
+        AppState.syncCoursesAndLessonsFromCloud().then(() => {
+          if (courseParam) {
+            const freshTarget = COURSES.find(c => c.id === courseParam);
+            if (freshTarget) {
+              renderLessonsList(freshTarget);
+            }
+          }
+        }).catch(() => {});
+      }
     });
 
     function renderMyCoursesCatalog() {

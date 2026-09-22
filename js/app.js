@@ -220,9 +220,17 @@ const AppState = {
     }
   },
 
-  async syncUserProfileWithCloud() {
+  _lastProfileSyncTime: 0,
+  _lastCourseSyncTime: 0,
+
+  async syncUserProfileWithCloud(force = false) {
     const profile = this.getStudentProfile();
     if (!profile || !profile.email) return;
+    const now = Date.now();
+    if (!force && this._lastProfileSyncTime && (now - this._lastProfileSyncTime < 120000)) {
+      return;
+    }
+    this._lastProfileSyncTime = now;
     const email = profile.email.toLowerCase().trim();
 
     // 1. Super Admin Check
@@ -545,11 +553,25 @@ const AppState = {
     return this.getCourseProgress(courseId);
   },
 
-  async syncCoursesAndLessonsFromCloud() {
+  async syncCoursesAndLessonsFromCloud(force = false) {
     if (!window.CloudService) return;
+    const now = Date.now();
+    if (!force && this._lastCourseSyncTime && (now - this._lastCourseSyncTime < 180000)) {
+      return; // Already synced in this session within last 3 mins
+    }
+    this._lastCourseSyncTime = now;
+
     try {
-      // 1. Fetch real-time lessons from Supabase cloud
-      const cloudLessons = await window.CloudService.fetchCourseLessonsFromCloud();
+      // Parallelize all CMS fetches concurrently (reduces 5 sequential roundtrips to 1)
+      const [lessonsRes, materialsRes, overridesRes, addedRes] = await Promise.allSettled([
+        window.CloudService.fetchCourseLessonsFromCloud(),
+        (typeof window.CloudService.fetchCourseMaterialsFromCloud === 'function' ? window.CloudService.fetchCourseMaterialsFromCloud() : Promise.resolve(null)),
+        window.CloudService.fetchCourseOverridesFromCloud(),
+        window.CloudService.fetchAddedCoursesFromCloud()
+      ]);
+
+      // 1. Course Lessons
+      const cloudLessons = lessonsRes.status === 'fulfilled' ? lessonsRes.value : null;
       if (cloudLessons && typeof cloudLessons === 'object') {
         const localLessons = JSON.parse(localStorage.getItem('inbiology_course_lessons') || '{}');
         const merged = { ...localLessons, ...cloudLessons };
@@ -563,29 +585,25 @@ const AppState = {
             }
           });
         }
-        console.log('☁️ [Supabase Cloud] Real-time course lessons synced to this device');
       }
 
-      // 2. Fetch real-time course study materials from Supabase cloud
-      if (typeof window.CloudService.fetchCourseMaterialsFromCloud === 'function') {
-        const cloudMaterials = await window.CloudService.fetchCourseMaterialsFromCloud();
-        if (cloudMaterials && typeof cloudMaterials === 'object') {
-          const localMaterials = JSON.parse(localStorage.getItem('inbiology_course_materials') || '{}');
-          const mergedMaterials = { ...localMaterials, ...cloudMaterials };
-          localStorage.setItem('inbiology_course_materials', JSON.stringify(mergedMaterials));
-          if (typeof COURSES !== 'undefined') {
-            COURSES.forEach(c => {
-              if (mergedMaterials[c.id] && Array.isArray(mergedMaterials[c.id])) {
-                c.materials = mergedMaterials[c.id];
-              }
-            });
-          }
-          console.log('☁️ [Supabase Cloud] Real-time study materials synced to this device');
+      // 2. Study Materials
+      const cloudMaterials = materialsRes.status === 'fulfilled' ? materialsRes.value : null;
+      if (cloudMaterials && typeof cloudMaterials === 'object') {
+        const localMaterials = JSON.parse(localStorage.getItem('inbiology_course_materials') || '{}');
+        const mergedMaterials = { ...localMaterials, ...cloudMaterials };
+        localStorage.setItem('inbiology_course_materials', JSON.stringify(mergedMaterials));
+        if (typeof COURSES !== 'undefined') {
+          COURSES.forEach(c => {
+            if (mergedMaterials[c.id] && Array.isArray(mergedMaterials[c.id])) {
+              c.materials = mergedMaterials[c.id];
+            }
+          });
         }
       }
 
-      // 3. Fetch real-time course info overrides from Supabase cloud
-      const cloudOverrides = await window.CloudService.fetchCourseOverridesFromCloud();
+      // 3. Course Info Overrides
+      const cloudOverrides = overridesRes.status === 'fulfilled' ? overridesRes.value : null;
       if (cloudOverrides && typeof cloudOverrides === 'object') {
         const localOverrides = JSON.parse(localStorage.getItem('inbiology_course_overrides') || '{}');
         const mergedOverrides = { ...localOverrides, ...cloudOverrides };
@@ -599,8 +617,8 @@ const AppState = {
         }
       }
 
-      // 3. Fetch newly added courses from Supabase cloud
-      const cloudAdded = await window.CloudService.fetchAddedCoursesFromCloud();
+      // 4. Added Courses
+      const cloudAdded = addedRes.status === 'fulfilled' ? addedRes.value : null;
       if (cloudAdded && Array.isArray(cloudAdded) && cloudAdded.length > 0) {
         cloudAdded.forEach(ac => {
           if (!COURSES.find(x => x.id === ac.id)) {
@@ -1673,11 +1691,21 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// Scroll Reveal Observer Engine (supports prefers-reduced-motion)
+// Scroll Reveal Observer Engine (Instant viewport reveal for Safari & Mobile)
 function initScrollReveal() {
   const elements = document.querySelectorAll('[data-reveal]');
   if (!elements.length) return;
 
+  // 1. Immediately reveal elements already within the initial screen view (0ms delay for Safari)
+  const vh = window.innerHeight || document.documentElement.clientHeight || 800;
+  elements.forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < vh + 100 && rect.bottom > -50) {
+      el.classList.add('revealed');
+    }
+  });
+
+  // 2. Observe remaining off-screen elements
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver((entries, obs) => {
       entries.forEach(entry => {
@@ -1687,16 +1715,18 @@ function initScrollReveal() {
         }
       });
     }, {
-      threshold: 0.1,
-      rootMargin: '0px 0px -40px 0px'
+      threshold: 0.05,
+      rootMargin: '0px 0px 60px 0px'
     });
 
     elements.forEach(el => {
-      const delay = el.getAttribute('data-delay');
-      if (delay) {
-        el.style.transitionDelay = delay;
+      if (!el.classList.contains('revealed')) {
+        const delay = el.getAttribute('data-delay');
+        if (delay) {
+          el.style.transitionDelay = delay;
+        }
+        observer.observe(el);
       }
-      observer.observe(el);
     });
   } else {
     elements.forEach(el => el.classList.add('revealed'));
