@@ -25,15 +25,6 @@
       ]
     },
     {
-      "source": "/(favicon\\.(ico|png|svg)|logo\\.png)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
-    },
-    {
       "source": "/(.*)\\.(jpg|jpeg|png|gif|svg|webp|ico|woff2|woff|ttf)",
       "headers": [
         {
