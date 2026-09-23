@@ -85,6 +85,27 @@
         </div>
 
         <div>
+          <h3 style="font-weight:850;font-size:14px;color:var(--c-navy);margin:0 0 12px">หมวดหมู่ / แยกตามเรื่อง</h3>
+          <div style="display:flex;flex-direction:column;gap:8px" id="category-radio-group">
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;cursor:pointer">
+              <input type="radio" name="category" value="all" checked /> ทุกหมวดหมู่
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;cursor:pointer">
+              <input type="radio" name="category" value="bio-intensive" /> 🧬 Bio Intensive (ม.4-ม.6)
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;cursor:pointer">
+              <input type="radio" name="category" value="posn" /> 🏆 สอวน. ชีววิทยา
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;cursor:pointer">
+              <input type="radio" name="category" value="alevel" /> 🎯 A-Level ชีววิทยา
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;cursor:pointer">
+              <input type="radio" name="category" value="starter" /> ⚡ คอร์ส 99 บาท (Quick Review)
+            </label>
+          </div>
+        </div>
+
+        <div>
           <h3 style="font-weight:850;font-size:14px;color:var(--c-navy);margin:0 0 12px">ระดับชั้นเรียน</h3>
           <div style="display:flex;flex-direction:column;gap:8px">
             <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;cursor:pointer">
@@ -108,8 +129,30 @@
 
       <!-- Course Listing Grid -->
       <div>
+        <!-- Horizontal Topic Pills Bar -->
+        <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;margin-bottom:16px" id="courses-topic-pill-bar">
+          <button type="button" onclick="selectCourseCategory('all')" id="cpill-all" style="padding:8px 18px;border-radius:999px;font-size:12px;font-weight:850;border:none;background:var(--c-navy);color:white;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(30,58,138,0.15)">
+            ทุกเรื่อง (ทั้งหมด)
+          </button>
+          <button type="button" onclick="selectCourseCategory('bio-intensive')" id="cpill-bio-intensive" style="padding:8px 18px;border-radius:999px;font-size:12px;font-weight:850;border:1px solid #E2E8F0;background:white;color:#334155;cursor:pointer;white-space:nowrap">
+            🧬 Bio Intensive ม.ปลาย (แยก 6 เรื่อง)
+          </button>
+          <button type="button" onclick="selectCourseCategory('posn')" id="cpill-posn" style="padding:8px 18px;border-radius:999px;font-size:12px;font-weight:850;border:1px solid #E2E8F0;background:white;color:#334155;cursor:pointer;white-space:nowrap">
+            🏆 สอวน. ชีววิทยา
+          </button>
+          <button type="button" onclick="selectCourseCategory('alevel')" id="cpill-alevel" style="padding:8px 18px;border-radius:999px;font-size:12px;font-weight:850;border:1px solid #E2E8F0;background:white;color:#334155;cursor:pointer;white-space:nowrap">
+            🎯 A-Level ชีววิทยา
+          </button>
+          <button type="button" onclick="selectCourseCategory('starter')" id="cpill-starter" style="padding:8px 18px;border-radius:999px;font-size:12px;font-weight:850;border:1px solid #E2E8F0;background:white;color:#334155;cursor:pointer;white-space:nowrap">
+            ⚡ คอร์ส 99 บาท (Quick Review)
+          </button>
+        </div>
+
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;background:white;padding:12px 20px;border-radius:16px;border:1px solid #E5E7EB">
           <p id="course-count" style="font-size:13px;font-weight:800;color:#374151;margin:0">พบคอร์สเรียนชีววิทยา</p>
+          <span id="active-category-label" style="font-size:11.5px;color:var(--c-navy);font-weight:800;background:#EFF6FF;padding:4px 12px;border-radius:999px;border:1px solid #DBEAFE">
+            แสดงทุกหมวดหมู่
+          </span>
         </div>
 
         <div id="catalog-grid" class="courses-grid"></div>
@@ -125,32 +168,116 @@
   <script src="./js/cloudService.js?v=20260922_v40"></script>
   <script src="./js/app.js?v=20260922_v40"></script>
   <script>
+    let _activeCourseCategory = 'all';
+
+    function selectCourseCategory(categoryKey) {
+      _activeCourseCategory = categoryKey;
+      const categoryRadio = document.querySelector(`input[name="category"][value="${categoryKey}"]`);
+      if (categoryRadio) categoryRadio.checked = true;
+
+      // Update pills highlight
+      ['all', 'bio-intensive', 'posn', 'alevel', 'starter'].forEach(k => {
+        const pill = document.getElementById(`cpill-${k}`);
+        if (pill) {
+          if (k === categoryKey) {
+            pill.style.background = 'var(--c-navy)';
+            pill.style.color = 'white';
+            pill.style.border = 'none';
+            pill.style.boxShadow = '0 2px 8px rgba(30,58,138,0.15)';
+          } else {
+            pill.style.background = 'white';
+            pill.style.color = '#334155';
+            pill.style.border = '1px solid #E2E8F0';
+            pill.style.boxShadow = 'none';
+          }
+        }
+      });
+
+      // Update URL query quietly
+      try {
+        const u = new URL(window.location);
+        if (categoryKey === 'all') u.searchParams.delete('category');
+        else u.searchParams.set('category', categoryKey);
+        window.history.replaceState({}, '', u);
+      } catch(e){}
+
+      if (typeof window.filterAndRender === 'function') {
+        window.filterAndRender();
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       renderHeader('courses');
       
       const searchInput = document.getElementById('search-input');
       const levelRadios = document.querySelectorAll('input[name="level"]');
+      const categoryRadios = document.querySelectorAll('input[name="category"]');
 
-      // Check URL query parameters (e.g. ?search=A-Level from footer links)
+      // Check URL query parameters (e.g. ?category=bio-intensive or ?search=A-Level or ?course=...)
       const urlParams = new URLSearchParams(window.location.search);
       const searchParam = urlParams.get('search');
       if (searchParam) {
         searchInput.value = searchParam;
       }
 
-      function filterAndRender() {
+      const catParam = urlParams.get('category');
+      if (catParam && ['bio-intensive', 'posn', 'alevel', 'starter'].includes(catParam)) {
+        _activeCourseCategory = catParam;
+        const rad = document.querySelector(`input[name="category"][value="${catParam}"]`);
+        if (rad) rad.checked = true;
+        selectCourseCategory(catParam);
+      }
+
+      const courseIdParam = urlParams.get('course');
+      if (courseIdParam && typeof openCourseModal === 'function') {
+        const found = COURSES.find(x => x.id === courseIdParam);
+        if (found) {
+          setTimeout(() => openCourseModal(found), 300);
+        }
+      }
+
+      const categoryLabelsMap = {
+        all: 'แสดงทุกหมวดหมู่',
+        'bio-intensive': '🧬 Bio Intensive ม.ปลาย (แยก 6 เรื่อง)',
+        posn: '🏆 คอร์ส สอวน. ชีววิทยา',
+        alevel: '🎯 คอร์ส A-Level ชีววิทยา',
+        starter: '⚡ คอร์ส 99 บาท (Quick Review)'
+      };
+
+      window.filterAndRender = function() {
         const query = searchInput.value.toLowerCase().trim();
         const selectedLevel = document.querySelector('input[name="level"]:checked').value;
+        const selectedCategory = _activeCourseCategory;
 
         const filtered = COURSES.filter(c => {
-          const matchSearch = c.title.toLowerCase().includes(query) || c.description.toLowerCase().includes(query);
+          const matchSearch = c.title.toLowerCase().includes(query) ||
+            c.description.toLowerCase().includes(query) ||
+            (c.badge && c.badge.toLowerCase().includes(query)) ||
+            (c.topicHighlights && c.topicHighlights.some(th => th.toLowerCase().includes(query)));
           const matchLevel = selectedLevel === 'all' || c.Level === selectedLevel;
-          return matchSearch && matchLevel;
+          const matchCategory = selectedCategory === 'all' || c.categorySlug === selectedCategory;
+          return matchSearch && matchLevel && matchCategory;
         });
 
         document.getElementById('course-count').textContent = `พบคอร์สเรียนชีววิทยา ${filtered.length} คอร์ส`;
+        const catBadge = document.getElementById('active-category-label');
+        if (catBadge) {
+          catBadge.textContent = categoryLabelsMap[selectedCategory] || 'ทุกหมวดหมู่';
+        }
 
         const grid = document.getElementById('catalog-grid');
+        if (filtered.length === 0) {
+          grid.innerHTML = `
+            <div style="grid-column:1/-1;background:white;border:1.5px dashed #CBD5E1;border-radius:20px;padding:48px 20px;text-align:center">
+              <p style="color:#64748B;font-size:14px;font-weight:800;margin:0 0 12px">ไม่พบคอร์สเรียนในหมวดหมู่นี้</p>
+              <button onclick="selectCourseCategory('all');document.getElementById('search-input').value='';filterAndRender()" style="background:var(--c-navy);color:white;font-weight:850;font-size:12px;padding:10px 20px;border-radius:10px;border:none;cursor:pointer">
+                ดูคอร์สเรียนทั้งหมด
+              </button>
+            </div>
+          `;
+          return;
+        }
+
         grid.innerHTML = filtered.map((c, idx) => {
           const isEnrolled = AppState.enrolled.includes(c.id);
           const discountPercent = Math.round((1 - c.price / c.originalPrice) * 100);
@@ -183,7 +310,7 @@
                   <span style="background:${c.tagBg || '#FEF2F2'};color:${c.tagColor || '#991B1B'};font-size:10px;font-weight:800;padding:3px 10px;border-radius:6px">
                     ${c.tag || 'ติวสอบ'}
                   </span>
-                  <span style="font-size:11px;color:#9CA3AF;font-weight:700">${c.Level || 'ม.4'}</span>
+                  <span style="font-size:11px;color:#9CA3AF;font-weight:700">${c.termBadge || c.Level || 'ม.4'}</span>
                 </div>
 
                 <h3 onclick="openCourseModal(COURSES.find(x=>x.id==='${c.id}'))" style="cursor:pointer;font-weight:900;color:#B91C1C;font-size:15px;margin:0;line-height:1.35">
@@ -192,16 +319,33 @@
 
                 <p style="font-size:11px;color:#6B7280;margin:0">ผู้สอน: ${c.instructor}</p>
 
-                <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px">
+                <!-- Bullet points of topics covered in this specific course -->
+                ${c.topicHighlights ? `
+                  <div style="background:#F8FAFC;border:1px solid #F1F5F9;border-radius:12px;padding:10px 12px;margin:2px 0">
+                    <div style="font-size:10.5px;font-weight:850;color:#1E3A8A;margin-bottom:5px;display:flex;align-items:center;gap:4px">
+                      📖 เรื่องและบทเรียนในคอร์สนี้:
+                    </div>
+                    <ul style="margin:0;padding-left:16px;font-size:11.5px;color:#334155;line-height:1.55;font-weight:600">
+                      ${c.topicHighlights.slice(0, 3).map(th => `<li>${th}</li>`).join('')}
+                    </ul>
+                    ${c.topicHighlights.length > 3 ? `
+                      <div style="font-size:10.5px;color:#2563EB;font-weight:800;margin-top:4px;padding-left:16px">
+                        + อีก ${c.topicHighlights.length - 3} หัวข้อย่อย (คลิกดูรายละเอียด)
+                      </div>
+                    ` : ''}
+                  </div>
+                ` : `
+                  <p style="font-size:11.5px;color:#6B7280;line-height:1.5;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">
+                    ${c.description}
+                  </p>
+                `}
+
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;margin-top:auto">
                   <span style="font-weight:700;color:#111827">★ ${c.rating || 4.9} <span style="color:#9CA3AF;font-weight:500">(${c.reviewCount || 400})</span></span>
                   <span style="font-weight:800;color:#0F172A">${c.hours} ชั่วโมงเรียน</span>
                 </div>
 
-                <p style="font-size:11.5px;color:#6B7280;line-height:1.5;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">
-                  ${c.description}
-                </p>
-
-                <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:auto;padding-top:14px;border-top:1px solid #F3F4F6">
+                <div style="display:flex;align-items:flex-end;justify-content:space-between;padding-top:14px;border-top:1px solid #F3F4F6">
                   <div>
                     <span style="font-size:11px;color:#9CA3AF;text-decoration:line-through;display:block">฿${formatPrice(c.originalPrice)}</span>
                     <div style="display:flex;align-items:center;gap:6px">
@@ -225,12 +369,15 @@
         }).join('');
 
         initScrollReveal();
-      }
+      };
 
-      searchInput.addEventListener('input', filterAndRender);
-      levelRadios.forEach(r => r.addEventListener('change', filterAndRender));
+      searchInput.addEventListener('input', window.filterAndRender);
+      levelRadios.forEach(r => r.addEventListener('change', window.filterAndRender));
+      categoryRadios.forEach(r => r.addEventListener('change', (e) => {
+        selectCourseCategory(e.target.value);
+      }));
 
-      filterAndRender();
+      window.filterAndRender();
     });
   </script>
 </body>

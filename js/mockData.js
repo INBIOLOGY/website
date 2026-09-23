@@ -25,6 +25,16 @@ const COURSES = [
     tag: 'ม.4 & ติวสอบ', tagBg: '#FEF2F2', tagColor: '#991B1B',
     description: 'ปูพื้นฐานบทนำชีววิทยา เคมีที่เป็นพื้นฐานของสิ่งมีชีวิต (Biochemistry) โครงสร้างและหน้าที่ของเซลล์ ออร์แกเนลล์ เยื่อหุ้มเซลล์ การลำเลียงสาร และการแบ่งเซลล์อย่างลึกซึ้ง',
     hours: 30, validity: 365, ebook: true,
+    categorySlug: 'bio-intensive',
+    termBadge: 'ม.4 เทอม 1',
+    topicHighlights: [
+      'บทนำชีววิทยา & ทักษะการสืบเสาะ',
+      'เคมีพื้นฐานของสิ่งมีชีวิต (สารชีวโมเลกุล)',
+      'โครงสร้างและหน้าที่ของเซลล์ & ออร์แกเนลล์',
+      'กลไกการลำเลียงสารผ่านเยื่อหุ้มเซลล์',
+      'เอนไซม์และปฏิกิริยาเคมีในสิ่งมีชีวิต',
+      'วัฏจักรเซลล์และการแบ่งเซลล์ Mitosis / Meiosis'
+    ],
     ebookInfo: {
       title: 'e-Book สรุปเข้ม Bio Intensive I (ฉบับพิมพ์ 4 สี 140 หน้า)',
       pages: 140,
@@ -51,6 +61,16 @@ const COURSES = [
     tag: 'ม.4-ม.5 & ติวสอบ', tagBg: '#EDE9FE', tagColor: '#5B21B6',
     description: 'พันธุศาสตร์ของเมนเดล การถ่ายทอดลักษณะทางพันธุกรรม ดีเอ็นเอ สารพันธุกรรม รหัสพันธุกรรม เทคโนโลยีชีวภาพ และหลักการวิวัฒนาการของสิ่งมีชีวิต',
     hours: 32, validity: 365, ebook: true,
+    categorySlug: 'bio-intensive',
+    termBadge: 'ม.4 เทอม 2 - ม.5',
+    topicHighlights: [
+      'พันธุศาสตร์ของเมนเดล & กฎแห่งการแยกตัว',
+      'ส่วนขยายพันธุศาสตร์เมนเดล (Incomplete/Codominance)',
+      'โครงสร้าง DNA & RNA และการจำลองตัวของ DNA',
+      'กระบวนการถอดรหัสและการแปลรหัสพันธุกรรม',
+      'เทคโนโลยีทางดีเอ็นเอ (Recombinant, PCR, Gel)',
+      'หลักฐานและกลไกการเกิดวิวัฒนาการ'
+    ],
     ebookInfo: {
       title: 'e-Book เจาะลึกพันธุศาสตร์ & DNA Technology (135 หน้า)',
       pages: 135,
@@ -77,6 +97,14 @@ const COURSES = [
     tag: 'ม.5 & ติวสอบ', tagBg: '#D1FAE5', tagColor: '#065F46',
     description: 'เจาะลึกชีววิทยาของพืช โครงสร้างและเนื้อเยื่อพืช กระบวนการสังเคราะห์ด้วยแสง (Photosynthesis) การลำเลียงของพืช และฮอร์โมนพืช',
     hours: 28, validity: 365, ebook: true,
+    categorySlug: 'bio-intensive',
+    termBadge: 'ม.5 เทอม 1',
+    topicHighlights: [
+      'โครงสร้างและเนื้อเยื่อพืชไร้ท่อ/มีท่อลำเลียง',
+      'กระบวนการสังเคราะห์ด้วยแสง (Light Reaction & Calvin)',
+      'การลำเลียงน้ำและแร่ธาตุในพืช (Xylem & Phloem)',
+      'ฮอร์โมนพืช & การตอบสนองต่อสิ่งแวดล้อม'
+    ],
     ebookInfo: {
       title: 'e-Book สรุปพฤกษศาสตร์ & การสังเคราะห์ด้วยแสง (120 หน้า)',
       pages: 120,
@@ -101,6 +129,14 @@ const COURSES = [
     tag: 'ม.5-ม.6 & ติวสอบ', tagBg: '#FEF3C7', tagColor: '#92400E',
     description: 'กายวิภาคศาสตร์และสรีรวิทยาของสัตว์และมนุษย์ พาร์ต 1: ระบบย่อยอาหาร การหมุนเวียนเลือด ระบบหายใจ และระบบขับถ่าย',
     hours: 35, validity: 365, ebook: true,
+    categorySlug: 'bio-intensive',
+    termBadge: 'ม.5 เทอม 2',
+    topicHighlights: [
+      'ระบบย่อยอาหารและการดูดซึมสารอาหารในมนุษย์',
+      'โครงสร้างหัวใจ การหมุนเวียนเลือด และระบบน้ำเหลือง',
+      'ระบบการแลกเปลี่ยนแก๊สและการหายใจ',
+      'โครงสร้างไตและการรักษาสมดุลน้ำในร่างกาย (Nephron)'
+    ],
     ebookInfo: {
       title: 'e-Book สรีรวิทยาสัตว์ พาร์ต 1 ระบบร่างกายมนุษย์ (150 หน้า)',
       pages: 150,
@@ -125,6 +161,15 @@ const COURSES = [
     tag: 'ม.6 & ติวสอบ', tagBg: '#F3E8FF', tagColor: '#6B21A8',
     description: 'กายวิภาคศาสตร์และสรีรวิทยาของสัตว์และมนุษย์ พาร์ต 2: ระบบประสาทและอวัยวะรับความรู้สึก ระบบต่อมไร้ท่อและฮอร์โมน ระบบภูมิคุ้มกัน ระบบสืบพันธุ์ และการเจริญเติบโต',
     hours: 36, validity: 365, ebook: true,
+    categorySlug: 'bio-intensive',
+    termBadge: 'ม.6 เทอม 1',
+    topicHighlights: [
+      'การทำงานของเซลล์ประสาทและไซแนปส์ (Action Potential)',
+      'ระบบสมอง ไขสันหลัง และระบบประสาทอัตโนมัติ',
+      'ระบบต่อมไร้ท่อและการควบคุมสมดุลฮอร์โมน',
+      'ระบบภูมิคุ้มกันร่างกายและการตอบสนองต่อเชื้อโรค',
+      'ระบบสืบพันธุ์และการเจริญเติบโตของเอ็มบริโอ'
+    ],
     ebookInfo: {
       title: 'e-Book สรีรวิทยาสัตว์ พาร์ต 2 ระบบประสาทและฮอร์โมน (160 หน้า)',
       pages: 160,
@@ -150,6 +195,14 @@ const COURSES = [
     tag: 'ม.6 & ติวสอบ', tagBg: '#ECFDF5', tagColor: '#047857',
     description: 'นิเวศวิทยา ระบบนิเวศ การถ่ายทอดพลังงาน ประชากรศาสตร์ พฤติกรรมของสัตว์ ความหลากหลายทางชีวภาพ (Biodiversity) อาณาจักรสิ่งมีชีวิต และปัญหาสิ่งแวดล้อมโลก',
     hours: 32, validity: 365, ebook: true,
+    categorySlug: 'bio-intensive',
+    termBadge: 'ม.6 เทอม 2',
+    topicHighlights: [
+      'พฤติกรรมของสัตว์ (Innate & Learned Behavior)',
+      'ระบบนิเวศ การหมุนเวียนสาร และวัฏจักรชีวิต',
+      'ความหลากหลายทางชีวภาพและ 5 อาณาจักรสิ่งมีชีวิต',
+      'ประชากรศาสตร์และวิกฤตสิ่งแวดล้อมโลก'
+    ],
     ebookInfo: {
       title: 'e-Book นิเวศวิทยา & ความหลากหลายทางชีวภาพ (130 หน้า)',
       pages: 130,
@@ -174,6 +227,14 @@ const COURSES = [
     tag: 'ราคาโปรโมชั่น 390.-', tagBg: '#FEE2E2', tagColor: '#B91C1C',
     description: 'คอร์สตะลุยโจทย์ สอวน. ชีววิทยา คัดสรรโจทย์เข้มข้น 100 ข้อ พร้อมเฉลยรายละเอียดทุกข้อ ชี้จุดหลอก พิชิตคะแนนค่าย 1 (ราคาถูกพิเศษ)',
     hours: 18, validity: 365, ebook: true,
+    categorySlug: 'posn',
+    termBadge: 'ติวสอบโอลิมปิก',
+    topicHighlights: [
+      'ตะลุยโจทย์ สอวน. ข้อ 1-25 (Cell & Biochemistry)',
+      'ตะลุยโจทย์ สอวน. ข้อ 26-50 (Genetics & Plant)',
+      'ตะลุยโจทย์ สอวน. ข้อ 51-75 (Animal Physiology)',
+      'ตะลุยโจทย์ สอวน. ข้อ 76-100 (Ecology & Lab Skills)'
+    ],
     ebookInfo: {
       title: 'e-Book รวมโจทย์คัดเลือก สอวน. 100 ข้อ พร้อมเฉลยละเอียด',
       pages: 110,
@@ -198,6 +259,14 @@ const COURSES = [
     tag: 'โปรสุดคุ้ม 99.-', tagBg: '#FEE2E2', tagColor: '#991B1B',
     description: 'คอร์สราคาสุดประหยัดเพียง 99 บาท! รวมเทคนิคสกัดเข้มจุดออกสอบบ่อยชีววิทยา ม.ปลาย สรุปสูตรลัดและแผนภาพ Mind Map พร้อมลุยทุกสนามสอบ',
     hours: 10, validity: 365, ebook: true,
+    categorySlug: 'starter',
+    termBadge: 'สรุปเข้ม 10 บทสำคัญ',
+    topicHighlights: [
+      'สรุปจุดออกสอบบ่อย Cell & Biochemistry',
+      'สรุปเทคนิคทำโจทย์ Genetics & DNA ลัด',
+      'จุดหลอกยอดฮิต Plant & Human Physiology',
+      'Mind Map แผนภาพ 50 หน้าสำหรับทบทวนด่วน'
+    ],
     ebookInfo: {
       title: 'e-Book Quick Review ชีวะสกัดเข้ม Mind Map 50 หน้า',
       pages: 50,
@@ -221,6 +290,14 @@ const COURSES = [
     tag: 'ม.6 & ติวสอบ กสพท', tagBg: '#EFF6FF', tagColor: '#1E3A8A',
     description: 'คอร์สเตรียมสอบเข้ามหาวิทยาลัย กสพท / โควตา / Admission ครบทุกบทเรียน เจาะลึกแนวข้อสอบเสมือนจริง 500 ข้อตาม Test Blueprint ล่าสุด พร้อมเทคนิคตัดช้อยส์และจับเวลาสอบเสมือนจริง',
     hours: 42, validity: 365, ebook: true,
+    categorySlug: 'alevel',
+    termBadge: 'TCAS & กสพท',
+    topicHighlights: [
+      'วิเคราะห์ Blueprint A-Level ชีววิทยา สสวท. ล่าสุด',
+      'ตะลุยโจทย์เสมือนจริง 500 ข้อครบทุกระบบชีววิทยา',
+      'เทคนิควิเคราะห์โจทย์ประยุกต์และตัดช้อยส์ลวง',
+      'จับเวลาทำ Mock Exam ข้อสอบเก็งปีล่าสุด + เฉลยละเอียด'
+    ],
     ebookInfo: {
       title: 'e-Book คลังข้อสอบ A-Level ชีววิทยาเสมือนจริง 500 ข้อ (220 หน้า)',
       pages: 220,
@@ -247,6 +324,14 @@ const COURSES = [
     tag: 'ม.3-ม.5 & โอลิมปิกวิชาการ', tagBg: '#FEF2F2', tagColor: '#B91C1C',
     description: 'หลักสูตรเข้มข้นเจาะลึกเนื้อหาชีววิทยาเชิงลึกระดับมหาวิทยาลัย (Campbell Biology) ครอบคลุมทั้งภาคทฤษฎีและข้อสอบแล็บกริ๊ง สำหรับน้องๆ ม.ต้น-ม.ปลาย ที่มุ่งมั่นสอบติดค่าย 1 และค่าย 2',
     hours: 45, validity: 365, ebook: true,
+    categorySlug: 'posn',
+    termBadge: 'โอลิมปิกวิชาการ ค่าย 1',
+    topicHighlights: [
+      'ชีววิทยาเชิงลึกระดับมหาวิทยาลัย (Campbell Biology)',
+      'เจาะลึกทฤษฎีเข้มข้น + ข้อสอบแข่งขันโอลิมปิกจริง',
+      'ข้อสอบแล็บกริ๊ง & การวิเคราะห์ผลการทดลองทางชีวะ',
+      'เทคนิคพิชิตคะแนนค่าย 1 เพื่อเข้าค่าย 2'
+    ],
     ebookInfo: {
       title: 'e-Book ตำราและโจทย์เตรียมสอบ สอวน. ค่าย 1 (Campbell Edition 250 หน้า)',
       pages: 250,
@@ -540,6 +625,7 @@ const MOCK_STUDENTS = [
 const CATEGORIES = [
   {
     id: 'cat-bio-intensive-all',
+    slug: 'bio-intensive',
     name: 'Bio Intensive I - VI',
     subtext: 'ตะลุยเนื้อหา ม.ปลาย เข้มข้น',
     icon: 'dna',
@@ -548,30 +634,33 @@ const CATEGORIES = [
   },
   {
     id: 'cat-posn',
+    slug: 'posn',
     name: 'คอร์ส สอวน.',
     subtext: 'พิชิตเหรียญโอลิมปิก',
     icon: 'award',
     badge: 'โอลิมปิกวิชาการ',
     actionType: 'link',
-    targetUrl: 'courses.html?search=สอวน'
+    targetUrl: 'courses.html?category=posn'
   },
   {
     id: 'cat-alevel',
+    slug: 'alevel',
     name: 'คอร์ส A-Level',
     subtext: 'เก็งข้อสอบ สสวท. สอบเข้า ม.',
     icon: 'book',
     badge: 'TCAS & A-Level',
     actionType: 'link',
-    targetUrl: 'courses.html?search=A-Level'
+    targetUrl: 'courses.html?category=alevel'
   },
   {
     id: 'cat-starter',
+    slug: 'starter',
     name: 'คอร์ส 99 บาท',
     subtext: 'สรุปเข้ม 10 บทสำคัญ',
     icon: 'bolt',
     badge: 'ทดลองเรียนสุดคุ้ม',
     actionType: 'link',
-    targetUrl: 'courses.html?search=Starter'
+    targetUrl: 'courses.html?category=starter'
   }
 ];
 

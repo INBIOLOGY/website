@@ -1434,7 +1434,7 @@ function openBioIntensiveModal() {
             </div>
             <p style="font-size:12.5px;color:#475569;margin:0">สมัครครบเซตลดสูงสุด 30% จัดส่งเอกสารและรูปเล่มสรุปฟรีถึงบ้าน!</p>
           </div>
-          <button onclick="document.getElementById('global-bio-intensive-modal').classList.remove('show');location.href='courses.html?search=Intensive'" style="background:#EF4444;color:white;font-size:13px;font-weight:850;padding:10px 20px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 4px 12px rgba(239,68,68,0.3);white-space:nowrap;transition:transform 0.15s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+          <button onclick="document.getElementById('global-bio-intensive-modal').classList.remove('show');location.href='courses.html?category=bio-intensive'" style="background:#EF4444;color:white;font-size:13px;font-weight:850;padding:10px 20px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 4px 12px rgba(239,68,68,0.3);white-space:nowrap;transition:transform 0.15s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
             ดูคอร์สทั้งหมด ➔
           </button>
         </div>
