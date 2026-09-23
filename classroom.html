@@ -329,7 +329,7 @@
 
       // ⚡ INSTANT RENDER: Show classroom UI immediately with zero delay
       if (courseParam) {
-        const target = COURSES.find(c => c.id === courseParam);
+        const target = COURSES.find(c => c.id === courseParam || (courseParam === 'bio-intensive-2' && c.id === 'c-1790176559102') || (courseParam === 'c-1790176559102' && c.id === 'bio-intensive-2'));
         if (target) {
           openClassroomRoom(target.id, lessonParam);
         } else {
@@ -383,7 +383,7 @@
         return;
       }
 
-      const enrolled = COURSES.filter(c => AppState.enrolled.includes(c.id));
+      const enrolled = COURSES.filter(c => AppState.enrolled.includes(c.id) || (c.id === 'c-1790176559102' && AppState.enrolled.includes('bio-intensive-2')) || (c.id === 'bio-intensive-2' && AppState.enrolled.includes('c-1790176559102')));
 
       if (enrolled.length === 0) {
         container.innerHTML = `
@@ -451,7 +451,8 @@
     }
 
     function openClassroomRoom(courseId, lessonId = null) {
-      if (!AppState.enrolled.includes(courseId) && AppState.userRole !== 'admin') {
+      const isEnrolledInCourse = AppState.isEnrolled ? AppState.isEnrolled(courseId) : AppState.enrolled.includes(courseId);
+      if (!isEnrolledInCourse && AppState.userRole !== 'admin') {
         showToast('คุณยังไม่ได้ลงทะเบียนในคอร์สนี้ กรุณาสมัครคอร์สก่อนเข้าเรียน', 'warning');
         setTimeout(() => { location.href = 'courses.html'; }, 1000);
         return;
@@ -733,7 +734,8 @@
     }
 
     function downloadMaterialItem(idx) {
-      if (!currentCourse || (!AppState.enrolled.includes(currentCourse.id) && AppState.userRole !== 'admin')) {
+      const isEnrolledInCourse = currentCourse && (AppState.isEnrolled ? AppState.isEnrolled(currentCourse.id) : AppState.enrolled.includes(currentCourse.id));
+      if (!currentCourse || (!isEnrolledInCourse && AppState.userRole !== 'admin')) {
         showToast('คุณยังไม่ได้ลงทะเบียนในคอร์สนี้ ไม่สามารถดาวน์โหลดเอกสารได้', 'warning');
         return;
       }
@@ -768,7 +770,8 @@
     }
 
     function downloadEbookPdf() {
-      if (!currentCourse || (!AppState.enrolled.includes(currentCourse.id) && AppState.userRole !== 'admin')) {
+      const isEnrolledInCourse = currentCourse && (AppState.isEnrolled ? AppState.isEnrolled(currentCourse.id) : AppState.enrolled.includes(currentCourse.id));
+      if (!currentCourse || (!isEnrolledInCourse && AppState.userRole !== 'admin')) {
         showToast('คุณยังไม่ได้ลงทะเบียนในคอร์สนี้ ไม่สามารถดาวน์โหลดเอกสารได้', 'warning');
         return;
       }

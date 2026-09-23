@@ -823,7 +823,7 @@
     let _currentDashboardTopic = 'all';
 
     function renderEnrolled() {
-      const enrolled = COURSES.filter(c => AppState.enrolled.includes(c.id));
+      const enrolled = COURSES.filter(c => AppState.isEnrolled ? AppState.isEnrolled(c.id) : AppState.enrolled.includes(c.id));
       const container = document.getElementById('enrolled-list');
       if (enrolled.length === 0) {
         container.innerHTML = `
@@ -915,7 +915,7 @@
       }
 
       grid.innerHTML = filtered.map((c, idx) => {
-        const isEnrolled = AppState.enrolled.includes(c.id);
+        const isEnrolled = AppState.isEnrolled ? AppState.isEnrolled(c.id) : AppState.enrolled.includes(c.id);
         const discountPercent = Math.round((1 - c.price / c.originalPrice) * 100);
 
         return `

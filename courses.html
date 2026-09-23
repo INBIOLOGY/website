@@ -99,9 +99,6 @@
             <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;cursor:pointer">
               <input type="radio" name="category" value="alevel" /> 🎯 A-Level ชีววิทยา
             </label>
-            <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;cursor:pointer">
-              <input type="radio" name="category" value="starter" /> ⚡ คอร์ส 99 บาท (Quick Review)
-            </label>
           </div>
         </div>
 
@@ -142,9 +139,6 @@
           </button>
           <button type="button" onclick="selectCourseCategory('alevel')" id="cpill-alevel" style="padding:8px 18px;border-radius:999px;font-size:12px;font-weight:850;border:1px solid #E2E8F0;background:white;color:#334155;cursor:pointer;white-space:nowrap">
             🎯 A-Level ชีววิทยา
-          </button>
-          <button type="button" onclick="selectCourseCategory('starter')" id="cpill-starter" style="padding:8px 18px;border-radius:999px;font-size:12px;font-weight:850;border:1px solid #E2E8F0;background:white;color:#334155;cursor:pointer;white-space:nowrap">
-            ⚡ คอร์ส 99 บาท (Quick Review)
           </button>
         </div>
 
@@ -221,7 +215,7 @@
       }
 
       const catParam = urlParams.get('category');
-      if (catParam && ['bio-intensive', 'posn', 'alevel', 'starter'].includes(catParam)) {
+      if (catParam && ['bio-intensive', 'posn', 'alevel'].includes(catParam)) {
         _activeCourseCategory = catParam;
         const rad = document.querySelector(`input[name="category"][value="${catParam}"]`);
         if (rad) rad.checked = true;
@@ -240,8 +234,7 @@
         all: 'แสดงทุกหมวดหมู่',
         'bio-intensive': '🧬 Bio Intensive (ม.4 - ม.6)',
         posn: '🏆 คอร์ส สอวน. ชีววิทยา',
-        alevel: '🎯 คอร์ส A-Level ชีววิทยา',
-        starter: '⚡ คอร์ส 99 บาท (Quick Review)'
+        alevel: '🎯 คอร์ส A-Level ชีววิทยา'
       };
 
       window.filterAndRender = function() {
@@ -279,7 +272,7 @@
         }
 
         grid.innerHTML = filtered.map((c, idx) => {
-          const isEnrolled = AppState.enrolled.includes(c.id);
+          const isEnrolled = AppState.isEnrolled ? AppState.isEnrolled(c.id) : AppState.enrolled.includes(c.id);
           const discountPercent = Math.round((1 - c.price / c.originalPrice) * 100);
           return `
             <div class="course-card" data-reveal data-delay="${(idx % 4) * 0.08}s" style="background:white;border:1px solid #E5E7EB;border-radius:24px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.04);display:flex;flex-direction:column">

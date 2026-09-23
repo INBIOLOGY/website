@@ -703,7 +703,7 @@
         const courseContainer = document.getElementById('recommended-courses-grid');
         if (!courseContainer || typeof COURSES === 'undefined') return;
         courseContainer.innerHTML = COURSES.slice(0, 4).map((c, idx) => {
-          const isEnrolled = AppState.enrolled.includes(c.id);
+          const isEnrolled = AppState.isEnrolled ? AppState.isEnrolled(c.id) : AppState.enrolled.includes(c.id);
           const discountPercent = Math.round((1 - c.price / c.originalPrice) * 100);
           return `
             <div class="course-card" data-reveal data-delay="${(idx % 4) * 0.08}s" style="background:white;border:1px solid #E5E7EB;border-radius:24px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.04);display:flex;flex-direction:column">

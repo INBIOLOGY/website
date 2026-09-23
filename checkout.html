@@ -344,7 +344,8 @@
       const courseIdParam = urlParams.get('course');
       if (courseIdParam && AppState.cart.length === 0) {
         const found = COURSES.find(c => c.id === courseIdParam);
-        if (found && !AppState.enrolled.includes(found.id)) {
+        const isEnrolled = AppState.isEnrolled ? AppState.isEnrolled(found.id) : AppState.enrolled.includes(found.id);
+        if (found && !isEnrolled) {
           AppState.cart = [found];
           AppState.saveCart();
         }

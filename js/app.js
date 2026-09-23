@@ -63,6 +63,40 @@ function getDefaultMaterialsForCourse(course) {
   ];
 }
 
+// Helper to normalize course metadata (guarantees categorySlug exists for catalog filtering)
+function normalizeCourse(c) {
+  if (!c) return c;
+  if (!c.categorySlug) {
+    const text = `${c.Category || ''} ${c.category || ''} ${c.badge || ''} ${c.title || ''}`.toLowerCase();
+    if (text.includes('bio intensive') || text.includes('bio-intensive')) c.categorySlug = 'bio-intensive';
+    else if (text.includes('สอวน') || text.includes('posn')) c.categorySlug = 'posn';
+    else if (text.includes('a-level') || text.includes('alevel') || text.includes('tpat') || text.includes('pat2')) c.categorySlug = 'alevel';
+    else if (text.includes('99') || text.includes('starter')) c.categorySlug = 'starter';
+    else c.categorySlug = 'bio-intensive';
+  }
+  return c;
+}
+
+// Helper to sort courses naturally (Bio Intensive I, II, III... followed by A-Level, POSN, etc.)
+function sortCoursesNaturally(courses) {
+  if (!Array.isArray(courses)) return courses;
+  const romanMap = { 'I': 1, 'II': 2, 'III': 3, 'IV': 4, 'V': 5, 'VI': 6, 'VII': 7, 'VIII': 8, 'IX': 9, 'X': 10 };
+  const getWeight = (c) => {
+    const text = `${c.badge || ''} ${c.title || ''}`.trim();
+    const bioMatch = text.match(/Bio\s*Intensive\s*(I{1,3}|IV|V|VI{0,3}|IX|X|\d+)/i);
+    if (bioMatch) {
+      const roman = bioMatch[1].toUpperCase();
+      const num = romanMap[roman] || parseInt(bioMatch[1]) || 1;
+      return 100 + num;
+    }
+    if (/สอวน|posn/i.test(text)) return 300;
+    if (/a-level|tpat|pat2/i.test(text)) return 200;
+    if (/99|starter/i.test(text)) return 400;
+    return 500;
+  };
+  return courses.sort((a, b) => getWeight(a) - getWeight(b));
+}
+
 // Hydrate stored custom courses, course details overrides, lessons and materials on script load
 try {
   if (typeof COURSES !== 'undefined') {
@@ -90,13 +124,20 @@ try {
         const addedList = JSON.parse(storedAdded);
         if (Array.isArray(addedList)) {
           addedList.forEach(ac => {
-            if (!deletedIds.includes(ac.id) && !COURSES.some(c => c.id === ac.id)) {
-              COURSES.push(ac);
+            if (!deletedIds.includes(ac.id)) {
+              const existingIdx = COURSES.findIndex(c => c.id === ac.id);
+              if (existingIdx !== -1) {
+                COURSES[existingIdx] = { ...COURSES[existingIdx], ...normalizeCourse(ac) };
+              } else {
+                COURSES.push(normalizeCourse(ac));
+              }
             }
           });
         }
       } catch(e) {}
     }
+    COURSES.forEach(c => normalizeCourse(c));
+    sortCoursesNaturally(COURSES);
 
     // 2. Hydrate edited course information overrides (title, price, level, image, badge, etc.)
     const storedOverrides = localStorage.getItem('inbiology_course_overrides');
@@ -142,6 +183,18 @@ try {
       }
     });
   }
+
+  // 5. Hydrate coupons from localStorage
+  const storedCoupons = localStorage.getItem('inbiology_coupons');
+  if (storedCoupons) {
+    try {
+      const parsedCoupons = JSON.parse(storedCoupons);
+      if (Array.isArray(parsedCoupons) && parsedCoupons.length > 0 && typeof COUPONS !== 'undefined') {
+        COUPONS.length = 0;
+        COUPONS.push(...parsedCoupons);
+      }
+    } catch(e) {}
+  }
 } catch(e) { console.warn('Note: Could not hydrate stored course data:', e); }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -156,7 +209,7 @@ try {
 })();
 
 // Global Application State & Storage
-const AppState = {
+const AppState = window.AppState = {
   cart: JSON.parse(localStorage.getItem('inbiology_cart') || '[]'),
   enrolled: [],
   lang: localStorage.getItem('inbiology_lang') || 'TH',
@@ -490,7 +543,72 @@ const AppState = {
     }
   },
 
-  // ─── Course Information & Metadata Management ───
+  // ─── Course Creation, Information & Metadata Management ───
+  async addCourse(newCourse) {
+    try {
+      if (!newCourse || !newCourse.id) return false;
+
+      // 1. Normalize course metadata (slug, categories)
+      normalizeCourse(newCourse);
+
+      // 2. Unmark from deleted courses if it was ever in deleted list
+      let deletedList = [];
+      try {
+        deletedList = JSON.parse(localStorage.getItem('inbiology_deleted_courses') || '[]');
+      } catch(e) {}
+      if (Array.isArray(deletedList) && deletedList.includes(newCourse.id)) {
+        deletedList = deletedList.filter(id => id !== newCourse.id);
+        localStorage.setItem('inbiology_deleted_courses', JSON.stringify(deletedList));
+        if (window.CloudService && typeof window.CloudService.saveDeletedCoursesToCloud === 'function') {
+          await window.CloudService.saveDeletedCoursesToCloud(deletedList).catch(() => {});
+        }
+      }
+
+      // 3. Add / update in in-memory COURSES array and sort naturally
+      if (typeof COURSES !== 'undefined') {
+        const idx = COURSES.findIndex(c => c.id === newCourse.id);
+        if (idx !== -1) {
+          COURSES[idx] = { ...COURSES[idx], ...newCourse };
+        } else {
+          COURSES.push(newCourse);
+        }
+        sortCoursesNaturally(COURSES);
+      }
+
+      // 4. Save to inbiology_added_courses in localStorage
+      let addedList = [];
+      try {
+        addedList = JSON.parse(localStorage.getItem('inbiology_added_courses') || '[]');
+      } catch(e) {}
+      if (!Array.isArray(addedList)) addedList = [];
+      const exIdx = addedList.findIndex(c => c.id === newCourse.id);
+      if (exIdx !== -1) {
+        addedList[exIdx] = { ...addedList[exIdx], ...newCourse };
+      } else {
+        addedList.push(newCourse);
+      }
+      localStorage.setItem('inbiology_added_courses', JSON.stringify(addedList));
+
+      // 5. Sync to Supabase Cloud with immediate cache purge
+      let cloudOk = true;
+      if (window.CloudService && typeof window.CloudService.saveAddedCoursesToCloud === 'function') {
+        cloudOk = await window.CloudService.saveAddedCoursesToCloud(addedList);
+      }
+
+      // 6. Broadcast event & trigger live UI updates
+      window.dispatchEvent(new CustomEvent('coursesUpdated', { detail: { courses: COURSES, addedCourse: newCourse } }));
+      if (typeof window.filterAndRender === 'function') window.filterAndRender();
+      if (typeof window.renderRecommendedCourses === 'function') window.renderRecommendedCourses();
+      if (typeof window.renderDashboardCatalog === 'function') window.renderDashboardCatalog();
+      if (typeof window.renderAdminTable === 'function') window.renderAdminTable();
+
+      return cloudOk;
+    } catch(err) {
+      console.error('Failed to add course:', err);
+      return false;
+    }
+  },
+
   updateCourse(courseId, updatedFields) {
     try {
       if (typeof COURSES !== 'undefined') {
@@ -634,19 +752,20 @@ const AppState = {
   async syncCoursesAndLessonsFromCloud(force = false) {
     if (!window.CloudService) return;
     const now = Date.now();
-    if (!force && this._lastCourseSyncTime && (now - this._lastCourseSyncTime < 180000)) {
-      return; // Already synced in this session within last 3 mins
+    if (!force && this._lastCourseSyncTime && (now - this._lastCourseSyncTime < 2000)) {
+      return; // Light throttle to prevent duplicate triggers within 2s
     }
     this._lastCourseSyncTime = now;
 
     try {
-      // Parallelize all CMS fetches concurrently (reduces 5 sequential roundtrips to 1)
-      const [lessonsRes, materialsRes, overridesRes, addedRes, deletedRes] = await Promise.allSettled([
+      // Parallelize all CMS fetches concurrently (all 6 promises properly destructured)
+      const [lessonsRes, materialsRes, overridesRes, addedRes, deletedRes, couponsRes] = await Promise.allSettled([
         window.CloudService.fetchCourseLessonsFromCloud(),
         (typeof window.CloudService.fetchCourseMaterialsFromCloud === 'function' ? window.CloudService.fetchCourseMaterialsFromCloud() : Promise.resolve(null)),
         window.CloudService.fetchCourseOverridesFromCloud(),
-        (typeof window.CloudService.fetchAddedCoursesFromCloud === 'function' ? window.CloudService.fetchAddedCoursesFromCloud() : Promise.resolve(null)),
-        (typeof window.CloudService.fetchDeletedCoursesFromCloud === 'function' ? window.CloudService.fetchDeletedCoursesFromCloud() : Promise.resolve(null))
+        (typeof window.CloudService.fetchAddedCoursesFromCloud === 'function' ? window.CloudService.fetchAddedCoursesFromCloud(force) : Promise.resolve(null)),
+        (typeof window.CloudService.fetchDeletedCoursesFromCloud === 'function' ? window.CloudService.fetchDeletedCoursesFromCloud() : Promise.resolve(null)),
+        (typeof window.CloudService.fetchCouponsFromCloud === 'function' ? window.CloudService.fetchCouponsFromCloud() : Promise.resolve(null))
       ]);
 
       // 0. Deleted Courses Sync (Cloud + Local merge)
@@ -719,21 +838,39 @@ const AppState = {
         }
       }
 
-      // 4. Added Courses (Filtered against mergedDeleted)
+      // 4. Added Courses (Filtered against mergedDeleted, normalized, and naturally sorted)
       const cloudAdded = addedRes.status === 'fulfilled' ? addedRes.value : null;
       if (cloudAdded && Array.isArray(cloudAdded)) {
-        const validAdded = cloudAdded.filter(ac => ac && ac.id && !mergedDeleted.includes(ac.id));
+        const validAdded = cloudAdded
+          .filter(ac => ac && ac.id && !mergedDeleted.includes(ac.id))
+          .map(ac => normalizeCourse(ac));
         localStorage.setItem('inbiology_added_courses', JSON.stringify(validAdded));
         if (typeof COURSES !== 'undefined') {
           validAdded.forEach(ac => {
-            if (!COURSES.some(x => x.id === ac.id)) {
+            const exIdx = COURSES.findIndex(x => x.id === ac.id);
+            if (exIdx !== -1) {
+              COURSES[exIdx] = { ...COURSES[exIdx], ...ac };
+            } else {
               COURSES.push(ac);
             }
           });
+          COURSES.forEach(c => normalizeCourse(c));
+          sortCoursesNaturally(COURSES);
         }
       }
 
-      // 5. Broadcast live update to all subscribed pages
+      // 5. Coupons Sync from Cloud
+      const cloudCoupons = couponsRes.status === 'fulfilled' ? couponsRes.value : null;
+      if (cloudCoupons && Array.isArray(cloudCoupons) && cloudCoupons.length > 0) {
+        localStorage.setItem('inbiology_coupons', JSON.stringify(cloudCoupons));
+        if (typeof COUPONS !== 'undefined') {
+          COUPONS.length = 0;
+          COUPONS.push(...cloudCoupons);
+        }
+        if (typeof window.renderCouponsTable === 'function') window.renderCouponsTable();
+      }
+
+      // 6. Broadcast live update to all subscribed pages
       window.dispatchEvent(new CustomEvent('coursesUpdated', { detail: { courses: COURSES } }));
       if (typeof window.filterAndRender === 'function') window.filterAndRender();
       if (typeof window.renderRecommendedCourses === 'function') window.renderRecommendedCourses();
@@ -744,6 +881,16 @@ const AppState = {
     }
   },
   
+  isEnrolled(courseId) {
+    if (!this.enrolled || !Array.isArray(this.enrolled)) return false;
+    if (this.enrolled.includes(courseId)) return true;
+    const isBio2Target = (courseId === 'bio-intensive-2' || courseId === 'c-1790176559102' || courseId === 'c-1790179918330');
+    if (isBio2Target && (this.enrolled.includes('bio-intensive-2') || this.enrolled.includes('c-1790176559102') || this.enrolled.includes('c-1790179918330'))) {
+      return true;
+    }
+    return false;
+  },
+
   saveCart() {
     localStorage.setItem('inbiology_cart', JSON.stringify(this.cart));
     this.updateCartBadges();
@@ -775,7 +922,7 @@ const AppState = {
       showCompleteProfileModal(course);
       return;
     }
-    if (this.enrolled.includes(course.id)) {
+    if (this.isEnrolled(course.id)) {
       showToast('คุณได้ลงทะเบียนในห้องเรียนของคอร์สนี้แล้ว', 'info');
       return;
     }
@@ -829,20 +976,80 @@ if (AppState.isLoggedIn()) {
   AppState.enrolled = [];
 }
 
-// Coupon Discount Validator Engine
-function applyCouponCode(codeStr) {
+// Coupon Discount Validator Engine (Supports both Flat ฿ and Percentage % discounts with instant Cloud fetch)
+async function applyCouponCode(codeStr, currentSubtotal = null) {
   if (!codeStr || !codeStr.trim()) {
     showToast('กรุณากรอกโค้ดส่วนลด', 'error');
     return null;
   }
-  const found = COUPONS.find(c => c.code.toUpperCase() === codeStr.trim().toUpperCase());
+  const cleanCode = codeStr.trim().toUpperCase();
+
+  // 1. Check in-memory COUPONS and localStorage first
+  let list = (typeof COUPONS !== 'undefined' && Array.isArray(COUPONS)) ? COUPONS : [];
+  try {
+    const stored = JSON.parse(localStorage.getItem('inbiology_coupons') || '[]');
+    if (Array.isArray(stored) && stored.length > 0) {
+      stored.forEach(sc => {
+        if (!list.some(x => x && x.code && x.code.toUpperCase() === sc.code.toUpperCase())) {
+          list.push(sc);
+        }
+      });
+    }
+  } catch(e) {}
+
+  let found = list.find(c => c && c.code && c.code.toUpperCase() === cleanCode);
+
+  // 2. If not found locally, attempt fast live fetch from Cloud to ensure fresh codes work immediately
+  if (!found && window.CloudService && typeof window.CloudService.fetchCouponsFromCloud === 'function') {
+    try {
+      const cloudList = await window.CloudService.fetchCouponsFromCloud();
+      if (Array.isArray(cloudList) && cloudList.length > 0) {
+        localStorage.setItem('inbiology_coupons', JSON.stringify(cloudList));
+        if (typeof COUPONS !== 'undefined') {
+          COUPONS.length = 0;
+          COUPONS.push(...cloudList);
+        }
+        found = cloudList.find(c => c && c.code && c.code.toUpperCase() === cleanCode);
+      }
+    } catch(e) {}
+  }
+
   if (!found) {
-    showToast('โค้ดส่วนลดไม่ถูกต้องหรือหมดอายุแล้ว', 'error');
+    showToast(`ไม่พบโค้ดส่วนลด "${cleanCode}" หรือโค้ดหมดอายุแล้ว`, 'error');
     return null;
   }
-  AppState.appliedCoupon = found;
-  showToast(`ใช้ส่วนลด "${found.code}" สำเร็จ`, 'success');
-  return found;
+
+  const isPercent = found.type === 'percent';
+  const val = Number(found.discount) || 0;
+  let calcAmount = 0;
+
+  // Compute discount based on subtotal
+  const subtotal = currentSubtotal !== null ? currentSubtotal : (AppState.cart.reduce((s, c) => s + (Number(c.price) || 0), 0));
+  if (isPercent) {
+    calcAmount = subtotal > 0 ? Math.round((subtotal * val) / 100) : 0;
+  } else {
+    calcAmount = val;
+  }
+  // Discount cannot exceed subtotal
+  if (subtotal > 0 && calcAmount > subtotal) {
+    calcAmount = subtotal;
+  }
+
+  AppState.appliedCoupon = {
+    ...found,
+    code: cleanCode,
+    calculatedDiscount: calcAmount
+  };
+
+  const discountBadge = isPercent ? `ลด ${val}% (-฿${formatPrice(calcAmount)})` : `ลด ฿${formatPrice(calcAmount)}`;
+  showToast(`🎉 ใช้โค้ดส่วนลด "${cleanCode}" สำเร็จ (${discountBadge})`, 'success');
+  return {
+    ...found,
+    code: cleanCode,
+    discount: val,
+    type: isPercent ? 'percent' : 'flat',
+    discountAmount: calcAmount
+  };
 }
 
 // Toast Notifications System
@@ -1417,13 +1624,13 @@ function openBioIntensiveModal() {
 
   const termsData = [
     {
-      term: 'ม.4 (เทอม 1 & 2)',
+      term: 'ม.4 (เทอม 1)',
       badge: 'Bio Intensive I',
       badgeBg: '#1E3A8A',
       courseId: 'bio-intensive-1',
       title: 'Introbiology & Biochemistry & Cell Biology',
-      cover: './course-cover-1.png',
-      price: 1290,
+      cover: './course-cover-bio-intensive-1.jpg',
+      price: 1190,
       originalPrice: 2500,
       topics: [
         'บทนำชีววิทยา & ทักษะการสืบเสาะ',
@@ -1434,14 +1641,14 @@ function openBioIntensiveModal() {
       ]
     },
     {
-      term: 'ม.5 (เทอม 1)',
+      term: 'ม.4 (เทอม 2)',
       badge: 'Bio Intensive II',
       badgeBg: '#0284C7',
-      courseId: 'bio-intensive-2',
+      courseId: 'c-1790176559102',
       title: 'Genetics & Evolution (พันธุศาสตร์และวิวัฒนาการ)',
-      cover: './course-cover-2.png',
-      price: 1390,
-      originalPrice: 2700,
+      cover: './course-cover-c-1790176559102.jpg',
+      price: 1250,
+      originalPrice: 2500,
       topics: [
         'พันธุศาสตร์เมนเดล & ส่วนขยายเมนเดล',
         'โครงสร้าง DNA, RNA & การจำลองตัวของดีเอ็นเอ',
@@ -1451,7 +1658,7 @@ function openBioIntensiveModal() {
       ]
     },
     {
-      term: 'ม.5 (เทอม 2)',
+      term: 'ม.5 (เทอม 1)',
       badge: 'Bio Intensive III',
       badgeBg: '#10B981',
       courseId: 'bio-intensive-3',
@@ -1468,7 +1675,7 @@ function openBioIntensiveModal() {
       ]
     },
     {
-      term: 'ม.6 (เทอม 1)',
+      term: 'ม.5 (เทอม 2)',
       badge: 'Bio Intensive IV',
       badgeBg: '#F59E0B',
       courseId: 'bio-intensive-4',
@@ -1484,12 +1691,12 @@ function openBioIntensiveModal() {
       ]
     },
     {
-      term: 'ม.6 (เทอม 2 - พาร์ต 1)',
+      term: 'ม.6 (เทอม 1)',
       badge: 'Bio Intensive V',
       badgeBg: '#8B5CF6',
       courseId: 'bio-intensive-5',
       title: 'Animal Biology II (ระบบควบคุมและประสานงาน)',
-      cover: './course-cover-1.png',
+      cover: './course-cover-bio-intensive-5.jpg',
       price: 1490,
       originalPrice: 2800,
       topics: [
@@ -1501,12 +1708,12 @@ function openBioIntensiveModal() {
       ]
     },
     {
-      term: 'ม.6 (เทอม 2 - พาร์ต 2)',
+      term: 'ม.6 (เทอม 2)',
       badge: 'Bio Intensive VI',
       badgeBg: '#059669',
       courseId: 'bio-intensive-6',
       title: 'Ecology, Diversity & Animal Behavior (นิเวศวิทยาและความหลากหลาย)',
-      cover: './course-cover-3.jpg',
+      cover: './course-cover-bio-intensive-6.jpg',
       price: 1390,
       originalPrice: 2600,
       topics: [
@@ -1523,7 +1730,7 @@ function openBioIntensiveModal() {
   try {
     deletedList = JSON.parse(localStorage.getItem('inbiology_deleted_courses') || '[]');
   } catch(e) {}
-  const availableTerms = termsData.filter(t => !deletedList.includes(t.courseId) && (typeof COURSES === 'undefined' || COURSES.some(c => c.id === t.courseId)));
+  const availableTerms = termsData.filter(t => !deletedList.includes(t.courseId) && (typeof COURSES === 'undefined' || COURSES.some(c => c.id === t.courseId || (t.courseId === 'c-1790176559102' && c.id === 'bio-intensive-2'))));
 
   modal.innerHTML = `
     <div class="modal-backdrop" onclick="document.getElementById('global-bio-intensive-modal').classList.remove('show')"></div>
@@ -1611,7 +1818,7 @@ function openCourseModal(course) {
     document.body.appendChild(modal);
   }
 
-  const isEnrolled = AppState.enrolled.includes(course.id);
+  const isEnrolled = AppState.isEnrolled ? AppState.isEnrolled(course.id) : AppState.enrolled.includes(course.id);
   const discountPercent = (course.originalPrice && course.originalPrice > course.price)
     ? Math.round(((course.originalPrice - course.price) / course.originalPrice) * 100)
     : null;
@@ -1955,7 +2162,7 @@ function toggleMyCoursesMenu(e) {
     return;
   }
 
-  const enrolledCourses = COURSES.filter(c => AppState.enrolled.includes(c.id));
+  const enrolledCourses = COURSES.filter(c => AppState.isEnrolled ? AppState.isEnrolled(c.id) : AppState.enrolled.includes(c.id));
 
   if (enrolledCourses.length === 0) {
     menu.innerHTML = `

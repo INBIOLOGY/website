@@ -1990,13 +1990,14 @@ const CloudService = window.CloudService = {
 
   /**
    * Fetch added courses from Supabase Cloud (site_content + orders fallback)
+   * @param {boolean} forceFresh
    * @returns {Promise<Array|null>}
    */
-  async fetchAddedCoursesFromCloud() {
+  async fetchAddedCoursesFromCloud(forceFresh = false) {
     if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return null;
     try {
       // 1. Try site_content table first
-      const scData = await this.fetchSiteContent('added_courses');
+      const scData = await this.fetchSiteContent('added_courses', forceFresh);
       if (scData !== null && scData !== undefined && Array.isArray(scData)) {
         return scData;
       }
@@ -2006,7 +2007,8 @@ const CloudService = window.CloudService = {
         `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.added_courses_v1&limit=1`
       );
       if (rows && rows.length > 0 && rows[0].slip_image) {
-        return JSON.parse(rows[0].slip_image);
+        const parsed = JSON.parse(rows[0].slip_image);
+        if (Array.isArray(parsed)) return parsed;
       }
       return null;
     } catch(err) {
@@ -2086,6 +2088,36 @@ const CloudService = window.CloudService = {
       return null;
     } catch(err) {
       console.warn('Could not fetch deleted courses from cloud:', err);
+      return null;
+    }
+  },
+
+  /**
+   * Save promo discount coupons to Supabase Cloud
+   * @param {Array<{code: string, discount: number, type: string}>} couponsList
+   */
+  async saveCouponsToCloud(couponsList) {
+    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return false;
+    try {
+      return await this.saveSiteContent('coupons', couponsList || []);
+    } catch(err) {
+      console.warn('Could not sync coupons to cloud:', err);
+      return false;
+    }
+  },
+
+  /**
+   * Fetch promo discount coupons from Supabase Cloud
+   * @returns {Promise<Array<{code: string, discount: number, type: string}>|null>}
+   */
+  async fetchCouponsFromCloud() {
+    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return null;
+    try {
+      const data = await this.fetchSiteContent('coupons');
+      if (Array.isArray(data)) return data;
+      return null;
+    } catch(err) {
+      console.warn('Could not fetch coupons from cloud:', err);
       return null;
     }
   },
@@ -2338,90 +2370,110 @@ const CloudService = window.CloudService = {
    */
   async saveSiteContent(key, data) {
     if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return false;
-    try {
-      // 1. Try dedicated site_content table
-      const checkRows = await this._supabaseFetch(`/site_content?key=eq.${encodeURIComponent(key)}&limit=1`);
-      let scRes = null;
-      if (checkRows && Array.isArray(checkRows) && checkRows.length > 0) {
-        scRes = await this._supabaseFetch(`/site_content?key=eq.${encodeURIComponent(key)}`, {
-          method: 'PATCH',
-          headers: { 'Prefer': 'return=representation' },
-          body: JSON.stringify({
-            content: data,
-            updated_at: new Date().toISOString()
-          })
-        });
-      } else {
-        scRes = await this._supabaseFetch('/site_content', {
-          method: 'POST',
-          headers: { 'Prefer': 'return=representation' },
-          body: JSON.stringify({
-            key: key,
-            content: data,
-            updated_at: new Date().toISOString()
-          })
-        });
-      }
-      if (scRes && !scRes.error) return true;
+    // Invalidate local in-memory cache immediately
+    delete this._siteContentCache[key];
 
-      // 2. Fallback bridge via orders table
-      const payload = JSON.stringify(data);
-      const bridgeNote = `cms_${key}_v1`;
-      const existing = await this._supabaseFetch(
-        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.${encodeURIComponent(bridgeNote)}&limit=1`
-      );
-      if (existing && existing.length > 0) {
-        await this._supabaseFetch(`/orders?id=eq.${existing[0].id}`, {
-          method: 'PATCH',
-          headers: { 'Prefer': 'return=representation' },
-          body: JSON.stringify({
-            slip_image: payload,
-            updated_at: new Date().toISOString()
-          })
-        });
-      } else {
-        await this._supabaseFetch('/orders', {
-          method: 'POST',
-          headers: { 'Prefer': 'return=representation' },
-          body: JSON.stringify({
-            user_email: 'cms_sync@inbiology.com',
-            user_name: 'CMS Cloud Sync',
-            course_ids: [`cms_${key}`],
-            total_amount: 0,
-            status: 'system_cms',
-            slip_image: payload,
-            admin_note: bridgeNote,
-            created_at: new Date().toISOString()
-          })
-        });
+    try {
+      let savedOk = false;
+      // 1. Try dedicated site_content table
+      try {
+        const checkRows = await this._supabaseFetch(`/site_content?key=eq.${encodeURIComponent(key)}&limit=1`);
+        let scRes = null;
+        if (checkRows && Array.isArray(checkRows) && checkRows.length > 0) {
+          scRes = await this._supabaseFetch(`/site_content?key=eq.${encodeURIComponent(key)}`, {
+            method: 'PATCH',
+            headers: { 'Prefer': 'return=representation' },
+            body: JSON.stringify({
+              content: data,
+              updated_at: new Date().toISOString()
+            })
+          });
+        } else {
+          scRes = await this._supabaseFetch('/site_content', {
+            method: 'POST',
+            headers: { 'Prefer': 'return=representation' },
+            body: JSON.stringify({
+              key: key,
+              content: data,
+              updated_at: new Date().toISOString()
+            })
+          });
+        }
+        if (scRes && !scRes.error) savedOk = true;
+      } catch(scErr) {
+        console.warn(`site_content save error for ${key}:`, scErr);
       }
+
+      // 2. Fallback bridge via orders table (always keep in sync for dual redundancy)
+      try {
+        const payload = JSON.stringify(data);
+        const bridgeNote = `cms_${key}_v1`;
+        const existing = await this._supabaseFetch(
+          `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.${encodeURIComponent(bridgeNote)}&limit=1`
+        );
+        if (existing && existing.length > 0) {
+          await this._supabaseFetch(`/orders?id=eq.${existing[0].id}`, {
+            method: 'PATCH',
+            headers: { 'Prefer': 'return=representation' },
+            body: JSON.stringify({
+              slip_image: payload,
+              updated_at: new Date().toISOString()
+            })
+          });
+        } else {
+          await this._supabaseFetch('/orders', {
+            method: 'POST',
+            headers: { 'Prefer': 'return=representation' },
+            body: JSON.stringify({
+              user_email: 'cms_sync@inbiology.com',
+              user_name: 'CMS Cloud Sync',
+              course_ids: [`cms_${key}`],
+              total_amount: 0,
+              status: 'system_cms',
+              slip_image: payload,
+              admin_note: bridgeNote,
+              created_at: new Date().toISOString()
+            })
+          });
+        }
+        savedOk = true;
+      } catch(bridgeErr) {
+        console.warn(`orders bridge save error for ${key}:`, bridgeErr);
+      }
+
       delete this._siteContentCache[key];
-      return true;
+      return savedOk;
     } catch(err) {
       console.warn(`Could not save ${key} to Supabase cloud:`, err);
+      delete this._siteContentCache[key];
       return false;
     }
   },
 
   /**
-   * Fetch generic site content (promo_banner, free_trials, articles) from Supabase Cloud
-   * Includes 120s client-side memory cache to eliminate redundant HTTP roundtrips across page views
+   * Fetch generic site content (promo_banner, free_trials, articles, added_courses, coupons) from Supabase Cloud
+   * Uses near real-time 2s TTL for dynamic content to ensure multi-device synchronization
    * @param {string} key
+   * @param {boolean} forceFresh
    * @returns {Promise<any|null>}
    */
-  async fetchSiteContent(key) {
+  async fetchSiteContent(key, forceFresh = false) {
     if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return null;
 
-    // Check memory cache first (120s TTL)
-    if (this._siteContentCache[key] && (Date.now() - this._siteContentCache[key].time < 120000)) {
+    // Dynamic keys that can be updated by admin use short 2s cache
+    const dynamicKeys = ['coupons', 'added_courses', 'deleted_courses', 'course_lessons', 'course_materials', 'course_overrides'];
+    const maxTtl = (dynamicKeys.includes(key) || forceFresh) ? 2000 : 30000;
+
+    // Check memory cache
+    if (!forceFresh && this._siteContentCache[key] && (Date.now() - this._siteContentCache[key].time < maxTtl)) {
       return this._siteContentCache[key].data;
     }
 
     try {
-      // 1. Try dedicated site_content table
+      // 1. Try dedicated site_content table first
       try {
-        const scRows = await this._supabaseFetch(`/site_content?key=eq.${encodeURIComponent(key)}&limit=1`, { timeout: 3000 });
-        if (scRows && Array.isArray(scRows) && scRows.length > 0 && scRows[0].content) {
+        const scRows = await this._supabaseFetch(`/site_content?key=eq.${encodeURIComponent(key)}&limit=1`, { timeout: 3500 });
+        if (scRows && Array.isArray(scRows) && scRows.length > 0 && scRows[0].content !== undefined && scRows[0].content !== null) {
           const parsed = typeof scRows[0].content === 'string' ? JSON.parse(scRows[0].content) : scRows[0].content;
           this._siteContentCache[key] = { data: parsed, time: Date.now() };
           return parsed;
@@ -2432,7 +2484,7 @@ const CloudService = window.CloudService = {
       const bridgeNote = `cms_${key}_v1`;
       const rows = await this._supabaseFetch(
         `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.${encodeURIComponent(bridgeNote)}&limit=1`,
-        { timeout: 3000 }
+        { timeout: 3500 }
       );
       if (rows && Array.isArray(rows) && rows.length > 0 && rows[0].slip_image) {
         const parsed = JSON.parse(rows[0].slip_image);
