@@ -505,7 +505,11 @@
         <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px">
           <div>
             <h3 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 4px">การจัดการข้อมูลและสิทธิ์ผู้ดูแลระบบ (Admin Role Control)</h3>
-            <p style="font-size:12px;color:#6B7280;margin:0">รายชื่อสมาชิกทั้งหมดในระบบ พร้อมระบบกำหนดสิทธิ์แอดมินโดย Super Admin</p>
+            <p style="font-size:12px;color:#6B7280;margin:0">รายชื่อสมาชิกทั้งหมดในระบบ พร้อมระบบแต่งตั้ง/ถอดถอนสิทธิ์แอดมิน และระบบลบบัญชีนักเรียน</p>
+          </div>
+          <div style="position:relative;min-width:260px;flex:1;max-width:380px">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:13px;color:#94A3B8;pointer-events:none">🔍</span>
+            <input type="text" id="admin-student-search" oninput="handleStudentSearch()" placeholder="ค้นหานักเรียน (ชื่อ, อีเมล, โรงเรียน)..." style="width:100%;border:1.5px solid #E2E8F0;border-radius:12px;padding:9px 14px 9px 38px;font-size:12px;outline:none;background:#F8FAFC;transition:all 0.2s" onfocus="this.style.background='white';this.style.borderColor='var(--c-sky)'" onblur="this.style.background='#F8FAFC';this.style.borderColor='#E2E8F0'" />
           </div>
         </div>
 
@@ -513,7 +517,7 @@
 
         <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden">
           <div class="admin-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%">
-            <table style="width:100%;min-width:850px;border-collapse:collapse;font-size:12px">
+            <table style="width:100%;min-width:880px;border-collapse:collapse;font-size:12px">
               <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
                 <tr>
                   <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ชื่อจริง - นามสกุล</th>
@@ -522,7 +526,7 @@
                   <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">โรงเรียน / ชั้น</th>
                   <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280">สิทธิ์ในระบบ</th>
                   <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280">จัดการสิทธิ์แอดมิน</th>
-                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280">แก้ไขข้อมูล</th>
+                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280">การจัดการ (แก้ไข / ลบ)</th>
                 </tr>
               </thead>
               <tbody id="admin-students-table"></tbody>
@@ -899,9 +903,14 @@
           </div>
         </div>
 
-        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:10px">
-          <button type="button" onclick="closeAdminStudentModal()" style="background:#F3F4F6;color:#374151;font-weight:800;font-size:12px;padding:8px 16px;border-radius:8px;border:none;cursor:pointer">ยกเลิก</button>
-          <button type="submit" style="background:var(--c-navy);color:white;font-weight:800;font-size:12px;padding:8px 20px;border-radius:8px;border:none;cursor:pointer">💾 บันทึกข้อมูลนักเรียน</button>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid #F1F5F9;flex-wrap:wrap">
+          <button type="button" id="btn-delete-student-modal" onclick="deleteStudentFromModal()" style="background:#FFF1F2;color:#DC2626;border:1.5px solid #FECDD3;font-weight:850;font-size:11.5px;padding:8px 14px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all 0.2s" title="ลบบัญชีนักเรียนนี้ออกจากระบบอย่างถาวร">
+            🗑️ ลบบัญชีนักเรียนนี้
+          </button>
+          <div style="display:flex;gap:10px;margin-left:auto">
+            <button type="button" onclick="closeAdminStudentModal()" style="background:#F3F4F6;color:#374151;font-weight:800;font-size:12px;padding:8px 16px;border-radius:8px;border:none;cursor:pointer">ยกเลิก</button>
+            <button type="submit" style="background:var(--c-navy);color:white;font-weight:800;font-size:12px;padding:8px 20px;border-radius:8px;border:none;cursor:pointer">💾 บันทึกข้อมูลนักเรียน</button>
+          </div>
         </div>
       </form>
     </div>
@@ -2986,6 +2995,13 @@
     }
 
     let studentListCache = [];
+    let _studentSearchQuery = '';
+
+    function handleStudentSearch() {
+      const searchInput = document.getElementById('admin-student-search');
+      _studentSearchQuery = (searchInput ? searchInput.value : '').trim().toLowerCase();
+      renderStudentsTable();
+    }
 
     async function renderStudentsTable() {
       const tableEl = document.getElementById('admin-students-table');
@@ -3030,7 +3046,7 @@
                   <span style="font-size:14px;font-weight:900;color:var(--c-navy)">${isCurSuper ? 'คุณคือ Super Admin (ผู้ดูแลระบบสูงสุด)' : 'ระบบจัดการสิทธิ์ผู้ดูแลระบบ (Admin Role Management)'}</span>
                   <span style="background:#2563EB;color:white;font-size:11px;font-weight:850;padding:2px 8px;border-radius:6px">${currentEmail || 'Active'}</span>
                 </div>
-                <p style="font-size:12px;color:#475569;margin:2px 0 0">คุณมีสิทธิ์แต่งตั้งสมาชิกทุกคนเป็นแอดมิน หรือถอดถอนสิทธิ์แอดมินได้ตลอดเวลา ระบบจะซิงก์ข้อมูลทันที</p>
+                <p style="font-size:12px;color:#475569;margin:2px 0 0">คุณมีสิทธิ์แต่งตั้งสมาชิกทุกคนเป็นแอดมิน ถอดถอนสิทธิ์ หรือลบบัญชีนักเรียนออกจากระบบได้ตลอดเวลา</p>
               </div>
             </div>
             <span style="background:#DCFCE7;color:#166534;font-size:11px;font-weight:850;padding:4px 10px;border-radius:8px;border:1px solid #86EFAC">สิทธิ์เต็มขั้น (Full Access)</span>
@@ -3038,17 +3054,33 @@
         `;
       }
 
-      if (studentListCache.length === 0) {
-        tableEl.innerHTML = `<tr><td colspan="7" style="padding:24px;text-align:center;color:#94A3B8">ยังไม่มีข้อมูลนักเรียน</td></tr>`;
+      // Filter by search query if any
+      let filteredStudents = studentListCache;
+      if (_studentSearchQuery) {
+        const q = _studentSearchQuery;
+        filteredStudents = filteredStudents.filter(s => {
+          const fn = (s.fullName || '').toLowerCase();
+          const nn = (s.nickname || '').toLowerCase();
+          const em = (s.email || '').toLowerCase();
+          const sc = (s.school || '').toLowerCase();
+          const lv = (s.level || '').toLowerCase();
+          return fn.includes(q) || nn.includes(q) || em.includes(q) || sc.includes(q) || lv.includes(q);
+        });
+      }
+
+      if (filteredStudents.length === 0) {
+        tableEl.innerHTML = `<tr><td colspan="7" style="padding:28px;text-align:center;color:#94A3B8;font-size:13px">${_studentSearchQuery ? '🔍 ไม่พบรายชื่อนักเรียนที่ตรงกับคำค้นหา' : 'ยังไม่มีข้อมูลนักเรียน'}</td></tr>`;
         return;
       }
 
-      tableEl.innerHTML = studentListCache.map(s => {
+      tableEl.innerHTML = filteredStudents.map(s => {
         const sEmail = (s.email || '').toLowerCase().trim();
         const isTargetSuper = (window.CloudService && typeof window.CloudService.isSuperAdminEmail === 'function')
           ? window.CloudService.isSuperAdminEmail(sEmail)
           : (sEmail === 'witsarut.cha@pccpl.ac.th' || sEmail === 'witsarutcha@pccpl.ac.th');
         const isTargetAdmin = isTargetSuper || (s.role === 'admin');
+        const isCurrentAccount = (sEmail === currentEmail);
+        const canDelete = !isTargetSuper && !isCurrentAccount;
 
         // Role Badge
         let roleBadge = '';
@@ -3064,7 +3096,7 @@
         let actionCol = '';
         if (isTargetSuper) {
           actionCol = `<span style="font-size:11px;color:#64748B;font-weight:800;background:#F1F5F9;padding:4px 10px;border-radius:8px;display:inline-block">🔒 สิทธิ์ถาวร (เจ้าของระบบ)</span>`;
-        } else if (sEmail === currentEmail) {
+        } else if (isCurrentAccount) {
           actionCol = `<span style="font-size:11px;color:#1E3A8A;font-weight:800;background:#EFF6FF;padding:4px 10px;border-radius:8px;display:inline-block">👤 บัญชีที่คุณใช้อยู่</span>`;
         } else {
           if (isTargetAdmin) {
@@ -3083,9 +3115,20 @@
             <td style="padding:12px 16px;text-align:center">${roleBadge}</td>
             <td style="padding:12px 16px;text-align:center">${actionCol}</td>
             <td style="padding:12px 16px;text-align:center">
-              <button onclick="openAdminEditStudentModal('${s.id}')" style="background:#F8FAFC;color:#475569;border:1px solid #CBD5E1;padding:6px 12px;border-radius:8px;font-weight:800;font-size:11px;cursor:pointer">
-                ✏️ แก้ไขข้อมูล
-              </button>
+              <div style="display:flex;align-items:center;justify-content:center;gap:6px">
+                <button type="button" onclick="openAdminEditStudentModal('${s.id}')" style="background:#F8FAFC;color:#475569;border:1px solid #CBD5E1;padding:6px 11px;border-radius:8px;font-weight:800;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
+                  ✏️ แก้ไข
+                </button>
+                ${canDelete ? `
+                  <button type="button" onclick="confirmDeleteStudentById('${s.id}')" style="background:#FFF1F2;color:#DC2626;border:1px solid #FECDD3;padding:6px 10px;border-radius:8px;font-weight:850;font-size:11px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;box-shadow:0 1px 3px rgba(220,38,38,0.06);transition:all 0.2s" title="ลบบัญชีนักเรียนนี้">
+                    🗑️ ลบ
+                  </button>
+                ` : `
+                  <button type="button" disabled style="background:#F8FAFC;color:#CBD5E1;border:1px solid #E2E8F0;padding:6px 10px;border-radius:8px;font-weight:800;font-size:11px;cursor:not-allowed;opacity:0.6" title="ไม่สามารถลบบัญชีนี้ได้">
+                    🔒 ลบ
+                  </button>
+                `}
+              </div>
             </td>
           </tr>
         `;
@@ -3119,11 +3162,80 @@
       document.getElementById('admin-edit-school').value = s.school;
       document.getElementById('admin-edit-level').value = s.level || 'ม.5';
 
+      // Configure delete button visibility in modal
+      const currentProfile = (typeof AppState !== 'undefined' && typeof AppState.getStudentProfile === 'function') ? AppState.getStudentProfile() : null;
+      const currentEmail = (currentProfile && currentProfile.email) ? currentProfile.email.trim().toLowerCase() : (localStorage.getItem('inbiology_user_email') || '').toLowerCase();
+      const sEmail = (s.email || '').toLowerCase().trim();
+      const isSuper = (window.CloudService && typeof window.CloudService.isSuperAdminEmail === 'function')
+        ? window.CloudService.isSuperAdminEmail(sEmail)
+        : (sEmail === 'witsarut.cha@pccpl.ac.th' || sEmail === 'witsarutcha@pccpl.ac.th');
+      const isCurAccount = (sEmail === currentEmail);
+
+      const delBtn = document.getElementById('btn-delete-student-modal');
+      if (delBtn) {
+        if (isSuper || isCurAccount) {
+          delBtn.style.display = 'none';
+        } else {
+          delBtn.style.display = 'inline-flex';
+        }
+      }
+
       document.getElementById('admin-student-modal').style.display = 'flex';
     }
 
     function closeAdminStudentModal() {
       document.getElementById('admin-student-modal').style.display = 'none';
+    }
+
+    function deleteStudentFromModal() {
+      const id = document.getElementById('admin-edit-student-id').value;
+      confirmDeleteStudentById(id);
+    }
+
+    function confirmDeleteStudentById(id) {
+      const s = studentListCache.find(x => String(x.id) === String(id));
+      if (!s) return;
+      deleteStudent(s.id, s.email, s.fullName || s.nickname);
+    }
+
+    async function deleteStudent(id, email, name) {
+      const currentProfile = (typeof AppState !== 'undefined' && typeof AppState.getStudentProfile === 'function') ? AppState.getStudentProfile() : null;
+      const currentEmail = (currentProfile && currentProfile.email) ? currentProfile.email.trim().toLowerCase() : (localStorage.getItem('inbiology_user_email') || '').toLowerCase();
+      const cleanEmail = (email || '').trim().toLowerCase();
+
+      // Safety checks
+      if (window.CloudService && typeof window.CloudService.isSuperAdminEmail === 'function' && window.CloudService.isSuperAdminEmail(cleanEmail)) {
+        alert('⛔ ไม่สามารถลบบัญชีผู้ดูแลระบบสูงสุด (Super Admin) ได้');
+        return;
+      }
+      if (cleanEmail && cleanEmail === currentEmail) {
+        alert('⛔ ไม่สามารถลบบัญชีที่คุณกำลังเข้าสู่ระบบและใช้งานอยู่ในขณะนี้ได้');
+        return;
+      }
+
+      const studentDisplayName = name || cleanEmail || 'นักเรียนท่านนี้';
+      const confirmed = confirm(`⚠️ ยืนยันการลบบัญชีสมาชิก/นักเรียน:\n\n"${studentDisplayName}" (${cleanEmail})\n\nเมื่อลบแล้ว ข้อมูลการสมัครและประวัติการเรียนของน้องจะถูกลบออกจากระบบอย่างถาวร\n\nต้องการยืนยันที่จะลบหรือไม่?`);
+      if (!confirmed) return;
+
+      try {
+        if (window.CloudService && typeof window.CloudService.deleteStudent === 'function') {
+          await window.CloudService.deleteStudent(id, cleanEmail);
+        } else {
+          const localUsers = JSON.parse(localStorage.getItem('inbiology_users_db') || '[]');
+          const filtered = localUsers.filter(u => String(u.id) !== String(id) && (!cleanEmail || u.email?.toLowerCase() !== cleanEmail));
+          localStorage.setItem('inbiology_users_db', JSON.stringify(filtered));
+        }
+
+        // Update in-memory cache
+        studentListCache = studentListCache.filter(s => String(s.id) !== String(id) && (!cleanEmail || (s.email || '').toLowerCase().trim() !== cleanEmail));
+
+        closeAdminStudentModal();
+        await renderStudentsTable();
+        updateAdminOverviewStats();
+        showToast(`🗑️ ลบบัญชี "${studentDisplayName}" เรียบร้อยแล้ว`, 'info');
+      } catch(err) {
+        alert('❌ เกิดข้อผิดพลาดในการลบ: ' + (err.message || err));
+      }
     }
 
     function saveAdminStudentEdit(e) {

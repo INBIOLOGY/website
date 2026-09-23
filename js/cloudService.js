@@ -2167,6 +2167,81 @@ const CloudService = window.CloudService = {
   },
 
   /**
+   * Admin: Delete student account from Supabase Cloud and Local DB
+   * @param {string|number} userId
+   * @param {string} userEmail
+   */
+  async deleteStudent(userId, userEmail) {
+    const cleanEmail = (userEmail || '').trim().toLowerCase();
+
+    // 1. Safety check: Never delete Super Admin
+    if (this.isSuperAdminEmail(cleanEmail)) {
+      throw new Error('ไม่อนุญาตให้ลบบัญชีผู้ดูแลระบบสูงสุด (Super Admin)');
+    }
+
+    // 2. Remove from Supabase Cloud if configured
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(userId));
+        // Delete from oauth_accounts first to prevent foreign key constraint issues
+        if (isUuid) {
+          await this._supabaseFetch(`/oauth_accounts?user_id=eq.${encodeURIComponent(userId)}`, {
+            method: 'DELETE'
+          }).catch(() => {});
+        }
+        if (cleanEmail) {
+          await this._supabaseFetch(`/oauth_accounts?provider_email=ilike.${encodeURIComponent(cleanEmail)}`, {
+            method: 'DELETE'
+          }).catch(() => {});
+        }
+
+        // Delete from users table
+        if (isUuid) {
+          await this._supabaseFetch(`/users?id=eq.${encodeURIComponent(userId)}`, {
+            method: 'DELETE'
+          });
+        }
+        if (cleanEmail) {
+          await this._supabaseFetch(`/users?email=ilike.${encodeURIComponent(cleanEmail)}`, {
+            method: 'DELETE'
+          });
+        }
+        console.log('☁️ [Supabase Cloud] Deleted user from /users:', userId, cleanEmail);
+
+        // Also clean up roles map in site_content if exists
+        if (cleanEmail) {
+          try {
+            let rolesMap = (await this.fetchSiteContent('user_roles_map')) || {};
+            if (typeof rolesMap === 'object' && rolesMap[cleanEmail]) {
+              delete rolesMap[cleanEmail];
+              await this.saveSiteContent('user_roles_map', rolesMap);
+            }
+          } catch(e) {}
+        }
+      } catch(e) {
+        console.warn('Could not delete user from Supabase:', e);
+      }
+    }
+
+    // 3. Remove from Local DB
+    const users = this._getUsersDb();
+    const filtered = users.filter(u => {
+      const matchId = String(u.id) === String(userId);
+      const matchEmail = cleanEmail && u.email && u.email.trim().toLowerCase() === cleanEmail;
+      return !matchId && !matchEmail;
+    });
+    this._saveUsersDb(filtered);
+
+    // Invalidate caches
+    if (cleanEmail) {
+      delete this._userProfileCache[cleanEmail];
+      delete this._userRoleCache[cleanEmail];
+    }
+
+    return { success: true };
+  },
+
+  /**
    * Save generic site content (promo_banner, free_trials, articles) to Supabase Cloud
    * @param {string} key
    * @param {any} data
