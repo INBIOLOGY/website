@@ -896,8 +896,18 @@
       } catch(e) { return null; }
     }
 
+    // 🔒 SECURITY: Prevent Open Redirect attacks (blocks external domains like gambling/phishing sites)
+    function getSafeRedirectUrl(param) {
+      if (!param) return 'dashboard.html';
+      const clean = String(param).trim();
+      if (clean.startsWith('//') || clean.includes('://') || clean.toLowerCase().startsWith('javascript:')) {
+        return 'dashboard.html';
+      }
+      return clean;
+    }
+
     async function handleGsiCredentialResponse(response) {
-      const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || 'dashboard.html';
+      const redirectUrl = getSafeRedirectUrl(new URLSearchParams(window.location.search).get('redirect'));
       try {
         const payload = decodeGoogleJwt(response.credential);
         if (!payload) throw new Error('ถอดรหัส Google ID Token ไม่สำเร็จ');
@@ -1026,7 +1036,7 @@
     // ─── FORM SUBMIT HANDLER (LOGIN OR REGISTER) ──────────────────────────────
     document.getElementById('auth-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || 'dashboard.html';
+      const redirectUrl = getSafeRedirectUrl(new URLSearchParams(window.location.search).get('redirect'));
 
       // ─── 1. REGISTER FLOW ──────────────────────────────────────────────────
       if (currentAuthTab === 'register') {
@@ -1151,7 +1161,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       const isSwitch = urlParams.get('switch') === '1' || urlParams.get('action') === 'switch';
-      const redirectUrl = urlParams.get('redirect');
+      const redirectUrl = getSafeRedirectUrl(urlParams.get('redirect'));
 
       // 1. If explicit switch account requested, allow entering new credentials without auto-redirecting
       if (isSwitch) {
