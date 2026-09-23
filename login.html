@@ -492,11 +492,16 @@
               <div style="display:flex;flex-direction:column;gap:12px;margin-top:10px">
                 <!-- Email + In-page OTP Verification -->
                 <div class="form-group">
-                  <label class="form-label" for="input-reg-email">
-                    อีเมล (Email) สำหรับเข้าสู่ระบบ <span class="required-dot">*</span>
-                  </label>
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                    <label class="form-label" for="input-reg-email" style="margin-bottom:0">
+                      อีเมล (Email) สำหรับเข้าสู่ระบบ <span class="required-dot">*</span>
+                    </label>
+                    <button type="button" id="btn-edit-email" onclick="handleEditRegEmail()" style="display:none;background:none;border:none;color:#1E3A8A;font-size:11.5px;font-weight:800;cursor:pointer;text-decoration:underline">
+                      ✏️ แก้ไขอีเมล
+                    </button>
+                  </div>
                   <div class="otp-row">
-                    <input type="email" id="input-reg-email" placeholder="student@gmail.com" class="form-input" style="flex:1" />
+                    <input type="email" id="input-reg-email" placeholder="student@gmail.com" class="form-input" style="flex:1" oninput="handleRegEmailChanged()" />
                     <button type="button" id="btn-send-otp" onclick="handleSendOtp()" class="btn-otp-action">
                       ส่งรหัส OTP
                     </button>
@@ -822,12 +827,52 @@
         document.getElementById('input-reg-email').disabled = true;
         document.getElementById('otp-input-box').style.display = 'none';
         document.getElementById('btn-send-otp').style.display = 'none';
-        document.getElementById('otp-demo-hint').style.display = 'none';
+        const demoHint = document.getElementById('otp-demo-hint');
+        if (demoHint) demoHint.style.display = 'none';
+        const btnEdit = document.getElementById('btn-edit-email');
+        if (btnEdit) btnEdit.style.display = 'inline-block';
 
         showToast('ยืนยันอีเมลสำเร็จ กรุณากรอกข้อมูลส่วนตัวเพื่อบันทึกการสมัคร', 'success');
 
       } catch(err) {
         showToast(err.message, 'error');
+      }
+    }
+
+    function handleEditRegEmail() {
+      const emailInput = document.getElementById('input-reg-email');
+      emailInput.disabled = false;
+      emailInput.focus();
+      isEmailVerifiedState = false;
+
+      const btnSend = document.getElementById('btn-send-otp');
+      btnSend.style.display = 'block';
+      btnSend.disabled = false;
+      btnSend.textContent = 'ส่งรหัส OTP';
+
+      document.getElementById('otp-input-box').style.display = 'none';
+      const btnEdit = document.getElementById('btn-edit-email');
+      if (btnEdit) btnEdit.style.display = 'none';
+
+      const statusBadge = document.getElementById('otp-status-pill');
+      statusBadge.className = 'otp-status-badge unverified';
+      statusBadge.innerHTML = `<span>•</span> ยังไม่ได้ยืนยันอีเมล (ระบบส่งรหัส 6 หลักเข้าอีเมลของคุณ)`;
+      
+      showToast('ปลดล็อกอีเมลแล้ว คุณสามารถแก้ไขและขอรหัส OTP ยืนยันใหม่ได้ครับ', 'info');
+    }
+
+    function handleRegEmailChanged() {
+      if (isEmailVerifiedState) {
+        isEmailVerifiedState = false;
+        const statusBadge = document.getElementById('otp-status-pill');
+        statusBadge.className = 'otp-status-badge unverified';
+        statusBadge.innerHTML = `<span>•</span> ยังไม่ได้ยืนยันอีเมล (ระบบส่งรหัส 6 หลักเข้าอีเมลของคุณ)`;
+        const btnSend = document.getElementById('btn-send-otp');
+        btnSend.style.display = 'block';
+        btnSend.disabled = false;
+        btnSend.textContent = 'ส่งรหัส OTP';
+        const btnEdit = document.getElementById('btn-edit-email');
+        if (btnEdit) btnEdit.style.display = 'none';
       }
     }
 
