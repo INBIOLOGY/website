@@ -1292,6 +1292,195 @@ function openReviewModal(studentName) {
   modal.classList.add('show');
 }
 
+// Bio Intensive I - VI Terms Detail Modal
+function openBioIntensiveModal() {
+  let modal = document.getElementById('global-bio-intensive-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'global-bio-intensive-modal';
+    modal.className = 'modal-overlay';
+    document.body.appendChild(modal);
+  }
+
+  const termsData = [
+    {
+      term: 'ม.4 (เทอม 1 & 2)',
+      badge: 'Bio Intensive I',
+      badgeBg: '#1E3A8A',
+      courseId: 'bio-intensive-1',
+      title: 'Introbiology & Biochemistry & Cell Biology',
+      cover: './course-cover-1.png',
+      price: 1290,
+      originalPrice: 2500,
+      topics: [
+        'บทนำชีววิทยา & ทักษะการสืบเสาะ',
+        'สารชีวโมเลกุล (คาร์โบไฮเดรต, โปรตีน, ลิพิด, กรดนิวคลีอิก)',
+        'โครงสร้างและหน้าที่ของเซลล์ & ออร์แกเนลล์',
+        'การลำเลียงสารผ่านเยื่อหุ้มเซลล์ & เอนไซม์',
+        'การแบ่งเซลล์ Mitosis & Meiosis'
+      ]
+    },
+    {
+      term: 'ม.5 (เทอม 1)',
+      badge: 'Bio Intensive II',
+      badgeBg: '#0284C7',
+      courseId: 'bio-intensive-2',
+      title: 'Genetics & Evolution (พันธุศาสตร์และวิวัฒนาการ)',
+      cover: './course-cover-2.png',
+      price: 1390,
+      originalPrice: 2700,
+      topics: [
+        'พันธุศาสตร์เมนเดล & ส่วนขยายเมนเดล',
+        'โครงสร้าง DNA, RNA & การจำลองตัวของดีเอ็นเอ',
+        'การถอดรหัสและการแปลรหัสพันธุกรรม',
+        'เทคโนโลยีทางดีเอ็นเอ (PCR, Gel Electrophoresis)',
+        'หลักการและกลไกการเกิดวิวัฒนาการ'
+      ]
+    },
+    {
+      term: 'ม.5 (เทอม 2)',
+      badge: 'Bio Intensive III',
+      badgeBg: '#10B981',
+      courseId: 'bio-intensive-3',
+      title: 'Plant Biology (ชีววิทยาของพืช)',
+      cover: './course-cover-3.jpg',
+      price: 1290,
+      originalPrice: 2400,
+      topics: [
+        'โครงสร้างและเนื้อเยื่อพืชมีท่อลำเลียง',
+        'กระบวนการสังเคราะห์ด้วยแสง (Photosynthesis)',
+        'การลำเลียงน้ำและอาหารในพืช (Xylem & Phloem)',
+        'การสืบพันธุ์และการเจริญเติบโตของพืชดอก',
+        'ฮอร์โมนพืช (Auxin, Gibberellin, Cytokinin)'
+      ]
+    },
+    {
+      term: 'ม.6 (เทอม 1)',
+      badge: 'Bio Intensive IV',
+      badgeBg: '#F59E0B',
+      courseId: 'bio-intensive-4',
+      title: 'Animal Biology I (สรีรวิทยาสัตว์และมนุษย์ พาร์ต 1)',
+      cover: './course-cover-4.jpg',
+      price: 1490,
+      originalPrice: 2800,
+      topics: [
+        'ระบบย่อยอาหารและการดูดซึมสารอาหาร',
+        'โครงสร้างหัวใจและระบบหมุนเวียนเลือด/น้ำเหลือง',
+        'ระบบแลกเปลี่ยนแก๊สและการหายใจ',
+        'โครงสร้างไต ระบบขับถ่าย และการรักษาสมดุลร่างกาย'
+      ]
+    },
+    {
+      term: 'ม.6 (เทอม 2 - พาร์ต 1)',
+      badge: 'Bio Intensive V',
+      badgeBg: '#8B5CF6',
+      courseId: 'bio-intensive-5',
+      title: 'Animal Biology II (ระบบควบคุมและประสานงาน)',
+      cover: './course-cover-1.png',
+      price: 1490,
+      originalPrice: 2800,
+      topics: [
+        'เซลล์ประสาท การส่งกระแสประสาท (Action Potential)',
+        'ระบบสมอง ไขสันหลัง และระบบประสาทอัตโนมัติ',
+        'ระบบต่อมไร้ท่อและการควบคุมฮอร์โมน',
+        'ระบบภูมิคุ้มกันร่างกายและการป้องกันเชื้อโรค',
+        'ระบบสืบพันธุ์และการเจริญเติบโตของเอ็มบริโอ'
+      ]
+    },
+    {
+      term: 'ม.6 (เทอม 2 - พาร์ต 2)',
+      badge: 'Bio Intensive VI',
+      badgeBg: '#059669',
+      courseId: 'bio-intensive-6',
+      title: 'Ecology, Diversity & Animal Behavior (นิเวศวิทยาและความหลากหลาย)',
+      cover: './course-cover-3.jpg',
+      price: 1390,
+      originalPrice: 2600,
+      topics: [
+        'พฤติกรรมของสัตว์ (Innate & Learned Behavior)',
+        'ระบบนิเวศ ไบโอม และการถ่ายทอดพลังงาน',
+        'ประชากรศาสตร์และปฏิสัมพันธ์สิ่งมีชีวิต',
+        'ความหลากหลายทางชีวภาพและ 5 อาณาจักร',
+        'การอนุรักษ์ทรัพยากรธรรมชาติและสิ่งแวดล้อม'
+      ]
+    }
+  ];
+
+  modal.innerHTML = `
+    <div class="modal-backdrop" onclick="document.getElementById('global-bio-intensive-modal').classList.remove('show')"></div>
+    <div class="modal-box wide animate-fade-in-up" onclick="event.stopPropagation()" style="max-width:980px;max-height:90vh;display:flex;flex-direction:column;padding:0;overflow:hidden;border-radius:24px">
+      <!-- Modal Header -->
+      <div style="background:linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%);color:white;padding:24px 28px;position:relative">
+        <button onclick="document.getElementById('global-bio-intensive-modal').classList.remove('show')" style="position:absolute;top:20px;right:20px;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(255,255,255,0.15);border:none;font-size:18px;color:white;transition:background 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">✕</button>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(250,204,21,0.2);border:1px solid rgba(250,204,21,0.4);color:#FDE047;font-size:11px;font-weight:900;padding:4px 12px;border-radius:999px;margin-bottom:10px">
+          🧬 เจาะลึกชีววิทยา ม.ปลาย ครบทุกเทอม (สสวท.)
+        </div>
+        <h2 style="font-size:24px;font-weight:950;margin:0 0 6px;color:white;line-height:1.3">
+          Bio Intensive I - VI ตะลุยเนื้อหา ม.ปลาย เข้มข้น
+        </h2>
+        <p style="font-size:13.5px;color:#CBD5E1;margin:0;line-height:1.6">
+          โครงสร้างเนื้อหาแบ่งตามระดับชั้นและรายเทอม ชัดเจน ตรงประเด็น เตรียมพร้อมทั้งสอบเพิ่มเกรดและสอบเข้ามหาวิทยาลัย
+        </p>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div style="padding:22px 24px;overflow-y:auto;background:#F8FAFC;flex:1">
+        <!-- Promo Bundle Callout Banner -->
+        <div style="background:linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);border:1.5px solid #BFDBFE;border-radius:18px;padding:18px 22px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <span style="background:#EF4444;color:white;font-size:10px;font-weight:900;padding:2px 8px;border-radius:6px">FLASH SALE</span>
+              <strong style="color:#1E3A8A;font-size:15px;font-weight:900">Bio Intensive I - VI Complete Set (ครบชุด 6 คอร์ส)</strong>
+            </div>
+            <p style="font-size:12.5px;color:#475569;margin:0">สมัครครบเซตลดสูงสุด 30% จัดส่งเอกสารและรูปเล่มสรุปฟรีถึงบ้าน!</p>
+          </div>
+          <button onclick="document.getElementById('global-bio-intensive-modal').classList.remove('show');location.href='courses.html?search=Intensive'" style="background:#EF4444;color:white;font-size:13px;font-weight:850;padding:10px 20px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 4px 12px rgba(239,68,68,0.3);white-space:nowrap;transition:transform 0.15s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+            ดูคอร์สทั้งหมด ➔
+          </button>
+        </div>
+
+        <!-- Terms Cards Grid -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px">
+          ${termsData.map(t => `
+            <div style="background:white;border:1px solid #E2E8F0;border-radius:18px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,0.03);display:flex;flex-direction:column;justify-content:space-between;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 20px rgba(0,0,0,0.06)'" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.03)'">
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+                  <span style="background:${t.badgeBg};color:white;font-size:10.5px;font-weight:900;padding:3px 10px;border-radius:6px">${t.badge}</span>
+                  <span style="font-size:11.5px;font-weight:850;color:#1E3A8A;background:#EFF6FF;padding:3px 10px;border-radius:999px;border:1px solid #DBEAFE">📅 ${t.term}</span>
+                </div>
+                <h3 style="font-size:14.5px;font-weight:900;color:#0F172A;margin:0 0 10px;line-height:1.4">${t.title}</h3>
+                <div style="background:#F8FAFC;border:1px solid #F1F5F9;border-radius:12px;padding:10px 12px;margin-bottom:14px">
+                  <p style="font-size:11px;font-weight:800;color:#64748B;margin:0 0 6px">เนื้อหาสำคัญประจำเทอม:</p>
+                  <ul style="margin:0;padding-left:16px;font-size:11.5px;color:#334155;line-height:1.65;font-weight:600">
+                    ${t.topics.map(tp => `<li>${tp}</li>`).join('')}
+                  </ul>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid #F1F5F9;margin-top:auto">
+                <div>
+                  <span style="font-size:11px;color:#94A3B8;text-decoration:line-through;margin-right:4px">฿${t.originalPrice.toLocaleString()}</span>
+                  <span style="font-size:16px;font-weight:950;color:#B91C1C">฿${t.price.toLocaleString()}</span>
+                </div>
+                <div style="display:flex;gap:6px">
+                  <button onclick="document.getElementById('global-bio-intensive-modal').classList.remove('show');if(window.openCourseModal && (typeof COURSES!=='undefined')){const c=COURSES.find(x=>x.id==='${t.courseId}');if(c)openCourseModal(c);else location.href='courses.html';}" style="background:#EFF6FF;color:#1E3A8A;border:1px solid #BFDBFE;font-size:11px;font-weight:800;padding:6px 10px;border-radius:8px;cursor:pointer">
+                    รายละเอียด
+                  </button>
+                  <button onclick="document.getElementById('global-bio-intensive-modal').classList.remove('show');if(typeof AppState!=='undefined' && (typeof COURSES!=='undefined')){const c=COURSES.find(x=>x.id==='${t.courseId}');if(c)AppState.addToCart(c);else location.href='courses.html';}" style="background:#1E3A8A;color:white;border:none;font-size:11px;font-weight:800;padding:6px 12px;border-radius:8px;cursor:pointer">
+                    🛒 สมัคร
+                  </button>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
+  modal.classList.add('show');
+}
+window.openBioIntensiveModal = openBioIntensiveModal;
+
 // Course Detail Modal Helper
 function openCourseModal(course) {
   let modal = document.getElementById('global-course-modal');

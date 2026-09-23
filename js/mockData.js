@@ -538,15 +538,41 @@ const MOCK_STUDENTS = [
 ];
 
 const CATEGORIES = [
-  { id: 'cat-bio-1', name: 'Bio Intensive I', icon: 'cell', badge: 'ม.4' },
-  { id: 'cat-bio-2', name: 'Bio Intensive II', icon: 'dna', badge: 'ม.5' },
-  { id: 'cat-bio-3', name: 'Bio Intensive III', icon: 'plant', badge: 'ม.5' },
-  { id: 'cat-bio-4', name: 'Bio Intensive IV', icon: 'anatomy', badge: 'ม.6' },
-  { id: 'cat-bio-5', name: 'Bio Intensive V', icon: 'brain', badge: 'ม.6' },
-  { id: 'cat-bio-6', name: 'Bio Intensive VI', icon: 'ecology', badge: 'ม.6' },
-  { id: 'cat-posn', name: 'คอร์ส สอวน.', icon: 'award', badge: 'โอลิมปิก' },
-  { id: 'cat-alevel', name: 'คอร์ส A-Level', icon: 'book', badge: 'สอบเข้า ม.' },
-  { id: 'cat-starter', name: 'คอร์ส 99 บาท', icon: 'bolt', badge: 'สรุปเข้ม' }
+  {
+    id: 'cat-bio-intensive-all',
+    name: 'Bio Intensive I - VI',
+    subtext: 'ตะลุยเนื้อหา ม.ปลาย เข้มข้น',
+    icon: 'dna',
+    badge: 'ม.4 - ม.6 (ครบทุกเทอม)',
+    actionType: 'modal'
+  },
+  {
+    id: 'cat-posn',
+    name: 'คอร์ส สอวน.',
+    subtext: 'พิชิตเหรียญโอลิมปิก',
+    icon: 'award',
+    badge: 'โอลิมปิกวิชาการ',
+    actionType: 'link',
+    targetUrl: 'courses.html?search=สอวน'
+  },
+  {
+    id: 'cat-alevel',
+    name: 'คอร์ส A-Level',
+    subtext: 'เก็งข้อสอบ สสวท. สอบเข้า ม.',
+    icon: 'book',
+    badge: 'TCAS & A-Level',
+    actionType: 'link',
+    targetUrl: 'courses.html?search=A-Level'
+  },
+  {
+    id: 'cat-starter',
+    name: 'คอร์ส 99 บาท',
+    subtext: 'สรุปเข้ม 10 บทสำคัญ',
+    icon: 'bolt',
+    badge: 'ทดลองเรียนสุดคุ้ม',
+    actionType: 'link',
+    targetUrl: 'courses.html?search=Starter'
+  }
 ];
 
 const REVIEWS = [

@@ -435,7 +435,7 @@
         <h2 style="font-size:26px;font-weight:950;color:var(--c-navy);margin:0">หมวดหมู่เนื้อหาชีวะ</h2>
         <p style="font-size:13px;color:#6B7280;margin-top:6px">เจาะลึกทุกระบบชีววิทยา ตรงตามเกณฑ์สอบใหม่ล่าสุด</p>
       </div>
-      <div id="category-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px"></div>
+      <div id="category-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px"></div>
     </div>
   </section>
 
@@ -682,12 +682,14 @@
       const catContainer = document.getElementById('category-grid');
       if (catContainer && typeof CATEGORIES !== 'undefined') {
         catContainer.innerHTML = CATEGORIES.map(c => `
-          <div onclick="location.href='courses.html'" style="background:white;border:1px solid #E5E7EB;border-radius:18px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 0.22s cubic-bezier(0.16,1,0.3,1);box-shadow:0 2px 8px rgba(0,0,0,0.02)" onmouseenter="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 20px rgba(0,0,0,0.06)';this.style.borderColor='#BFDBFE'" onmouseleave="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.02)';this.style.borderColor='#E5E7EB'">
-            <div style="width:48px;height:48px;border-radius:12px;background:#F1F5F9;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px">
+          <div onclick="${c.actionType === 'modal' ? 'openBioIntensiveModal()' : `location.href='${c.targetUrl || 'courses.html'}'`}" style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:24px 20px;text-align:center;cursor:pointer;transition:all 0.22s cubic-bezier(0.16,1,0.3,1);box-shadow:0 2px 8px rgba(0,0,0,0.02);display:flex;flex-direction:column;align-items:center;justify-content:center" onmouseenter="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 24px rgba(0,0,0,0.06)';this.style.borderColor='#BFDBFE'" onmouseleave="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.02)';this.style.borderColor='#E5E7EB'">
+            <div style="width:54px;height:54px;border-radius:16px;background:#F1F5F9;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px">
               ${getCategoryIconSvg(c.icon)}
             </div>
-            <span style="font-size:13px;font-weight:850;color:var(--c-navy);display:block;margin-bottom:4px">${c.name}</span>
-            <span style="font-size:10px;font-weight:800;color:#64748B;background:#F8FAFC;padding:2px 8px;border-radius:6px;border:1px solid #E2E8F0;display:inline-block">${c.badge || 'เนื้อหา'}</span>
+            <span style="font-size:15px;font-weight:950;color:var(--c-navy);display:block;margin-bottom:4px">${c.name}</span>
+            ${c.subtext ? `<span style="font-size:12px;font-weight:800;color:#B91C1C;display:block;margin-bottom:8px">${c.subtext}</span>` : ''}
+            <span style="font-size:11px;font-weight:800;color:#1E3A8A;background:#EFF6FF;padding:4px 12px;border-radius:999px;border:1px solid #DBEAFE;display:inline-block">${c.badge || 'เนื้อหา'}</span>
+            ${c.actionType === 'modal' ? `<span style="font-size:11.5px;font-weight:800;color:#2563EB;margin-top:12px;display:inline-flex;align-items:center;gap:4px">คลิกดูข้อมูลแต่ละเทอม ➔</span>` : ''}
           </div>
         `).join('');
       }
