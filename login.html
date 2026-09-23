@@ -492,12 +492,12 @@
               <div style="display:flex;flex-direction:column;gap:12px;margin-top:10px">
                 <!-- Email + In-page OTP Verification -->
                 <div class="form-group">
-                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
                     <label class="form-label" for="input-reg-email" style="margin-bottom:0">
                       อีเมล (Email) สำหรับเข้าสู่ระบบ <span class="required-dot">*</span>
                     </label>
-                    <button type="button" id="btn-edit-email" onclick="handleEditRegEmail()" style="display:none;background:none;border:none;color:#1E3A8A;font-size:11.5px;font-weight:800;cursor:pointer;text-decoration:underline">
-                      ✏️ แก้ไขอีเมล
+                    <button type="button" id="btn-edit-email" onclick="handleEditRegEmail()" style="display:none;background:#EFF6FF;color:#1E3A8A;border:1.5px solid #BFDBFE;padding:4px 10px;border-radius:8px;font-size:11.5px;font-weight:850;cursor:pointer;align-items:center;gap:4px;box-shadow:0 1px 3px rgba(30,58,138,0.08);transition:all 0.2s">
+                      ✏️ เปลี่ยน / แก้ไขอีเมล
                     </button>
                   </div>
                   <div class="otp-row">
@@ -519,8 +519,16 @@
                       </button>
                     </div>
 
+                    <!-- Change email quick button inside OTP box -->
+                    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:8px;padding:8px 12px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px">
+                      <span style="font-size:11.5px;color:#64748B">พิมพ์อีเมลผิด หรือต้องการเปลี่ยนอีเมล?</span>
+                      <button type="button" onclick="handleEditRegEmail()" style="background:#EFF6FF;color:#1E3A8A;border:1px solid #BFDBFE;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:850;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
+                        ✏️ เปลี่ยนอีเมลใหม่
+                      </button>
+                    </div>
+
                     <!-- Helpful Notice about Spam / Junk / Trash -->
-                    <div style="margin-top:10px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:9px 12px;font-size:11.5px;color:#92400E;line-height:1.55;display:flex;align-items:flex-start;gap:8px">
+                    <div style="margin-top:8px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:9px 12px;font-size:11.5px;color:#92400E;line-height:1.55;display:flex;align-items:flex-start;gap:8px">
                       <span style="font-size:15px;line-height:1">📬</span>
                       <div>
                         <strong>คำแนะนำ:</strong> หากไม่พบอีเมลในกล่องข้อความหลัก (Inbox) กรุณาเข้าไปดูที่กล่อง <strong>"จดหมายขยะ (Spam / Junk)"</strong> หรือ <strong>"ถังขยะ (Trash / Bin)"</strong> นะครับ
@@ -788,6 +796,10 @@
         // Start 60s cooldown timer
         startOtpCooldown(res.cooldownSeconds || 60);
 
+        // Immediately reveal Edit Email button so user can change email anytime!
+        const btnEdit = document.getElementById('btn-edit-email');
+        if (btnEdit) btnEdit.style.display = 'inline-flex';
+
       } catch(err) {
         showToast(err.message, 'error');
         btnSend.disabled = false;
@@ -838,7 +850,7 @@
         const demoHint = document.getElementById('otp-demo-hint');
         if (demoHint) demoHint.style.display = 'none';
         const btnEdit = document.getElementById('btn-edit-email');
-        if (btnEdit) btnEdit.style.display = 'inline-block';
+        if (btnEdit) btnEdit.style.display = 'inline-flex';
 
         showToast('ยืนยันอีเมลสำเร็จ กรุณากรอกข้อมูลส่วนตัวเพื่อบันทึกการสมัคร', 'success');
 
@@ -848,25 +860,37 @@
     }
 
     function handleEditRegEmail() {
+      // 1. Immediately cancel any running cooldown timer!
+      clearInterval(otpCooldownTimer);
+      otpCooldownRemaining = 0;
+
+      // 2. Unlock and focus email input
       const emailInput = document.getElementById('input-reg-email');
       emailInput.disabled = false;
       emailInput.focus();
+      emailInput.select();
       isEmailVerifiedState = false;
 
+      // 3. Reset send OTP button
       const btnSend = document.getElementById('btn-send-otp');
       btnSend.style.display = 'block';
       btnSend.disabled = false;
       btnSend.textContent = 'ส่งรหัส OTP';
 
+      // 4. Hide OTP input box and clear OTP field
       document.getElementById('otp-input-box').style.display = 'none';
+      document.getElementById('input-reg-otp').value = '';
+
+      // 5. Hide edit button until next OTP send or verification
       const btnEdit = document.getElementById('btn-edit-email');
       if (btnEdit) btnEdit.style.display = 'none';
 
+      // 6. Reset status badge
       const statusBadge = document.getElementById('otp-status-pill');
       statusBadge.className = 'otp-status-badge unverified';
       statusBadge.innerHTML = `<span>•</span> ยังไม่ได้ยืนยันอีเมล (ระบบส่งรหัส 6 หลักเข้าอีเมลของคุณ)`;
       
-      showToast('ปลดล็อกอีเมลแล้ว คุณสามารถแก้ไขและขอรหัส OTP ยืนยันใหม่ได้ครับ', 'info');
+      showToast('ปลดล็อกอีเมลแล้ว คุณสามารถแก้ไขและขอรหัส OTP ยืนยันใหม่ได้ทันทีครับ', 'info');
     }
 
     function handleRegEmailChanged() {
@@ -881,6 +905,18 @@
         btnSend.textContent = 'ส่งรหัส OTP';
         const btnEdit = document.getElementById('btn-edit-email');
         if (btnEdit) btnEdit.style.display = 'none';
+      }
+
+      // If user typed in email while cooldown/OTP box was open, reset button & cooldown
+      const otpBox = document.getElementById('otp-input-box');
+      if (otpBox && otpBox.style.display !== 'none') {
+        clearInterval(otpCooldownTimer);
+        otpCooldownRemaining = 0;
+        const btnSend = document.getElementById('btn-send-otp');
+        if (btnSend) {
+          btnSend.disabled = false;
+          btnSend.textContent = 'ส่งรหัส OTP';
+        }
       }
     }
 
