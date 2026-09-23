@@ -23,8 +23,9 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing email or otpCode parameter' });
   }
 
-  const gmailUser = process.env.GMAIL_USER || 'inbiology.academy@gmail.com';
-  const gmailPass = process.env.GMAIL_APP_PASS || Buffer.from('am1vemF5Z2Job2NkcXp6eg==', 'base64').toString('ascii');
+  const gmailUser = (process.env.GMAIL_USER || 'inbiology.academy@gmail.com').trim();
+  const rawPass = process.env.GMAIL_APP_PASS || Buffer.from('am1vemF5Z2Job2NkcXp6eg==', 'base64').toString('ascii');
+  const gmailPass = rawPass.replace(/\s+/g, '');
 
   try {
     const studentName = nickname ? `น้อง${nickname}` : 'นักเรียน';
@@ -95,6 +96,10 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('Gmail SMTP error sending OTP:', error);
-    return res.status(500).json({ error: error.message || 'ไม่สามารถส่งอีเมล OTP ได้ในขณะนี้' });
+    let friendlyError = 'ไม่สามารถส่งอีเมล OTP ได้ในขณะนี้ กรุณาตรวจสอบอีเมลหรือลองใหม่อีกครั้ง';
+    if (error.message && (error.message.includes('535') || error.message.includes('BadCredentials') || error.message.includes('Username and Password not accepted'))) {
+      friendlyError = 'ระบบส่งอีเมลขัดข้องชั่วคราว (Gmail App Password ไม่ถูกต้องหรือหมดอายุ) แนะนำให้เข้าสู่ระบบด้วย Google หรือแจ้งแอดมินทาง LINE @inbiology ครับ';
+    }
+    return res.status(500).json({ error: friendlyError, rawError: error.message });
   }
 }
