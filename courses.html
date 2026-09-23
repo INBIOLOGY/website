@@ -85,7 +85,7 @@
         </div>
 
         <div>
-          <h3 style="font-weight:850;font-size:14px;color:var(--c-navy);margin:0 0 12px">หมวดหมู่ / แยกตามเรื่อง</h3>
+          <h3 style="font-weight:850;font-size:14px;color:var(--c-navy);margin:0 0 12px">หมวดหมู่หลักสูตร</h3>
           <div style="display:flex;flex-direction:column;gap:8px" id="category-radio-group">
             <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;cursor:pointer">
               <input type="radio" name="category" value="all" checked /> ทุกหมวดหมู่
@@ -132,10 +132,10 @@
         <!-- Horizontal Topic Pills Bar -->
         <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;margin-bottom:16px" id="courses-topic-pill-bar">
           <button type="button" onclick="selectCourseCategory('all')" id="cpill-all" style="padding:8px 18px;border-radius:999px;font-size:12px;font-weight:850;border:none;background:var(--c-navy);color:white;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(30,58,138,0.15)">
-            ทุกเรื่อง (ทั้งหมด)
+            ทั้งหมด
           </button>
           <button type="button" onclick="selectCourseCategory('bio-intensive')" id="cpill-bio-intensive" style="padding:8px 18px;border-radius:999px;font-size:12px;font-weight:850;border:1px solid #E2E8F0;background:white;color:#334155;cursor:pointer;white-space:nowrap">
-            🧬 Bio Intensive ม.ปลาย (แยก 6 เรื่อง)
+            🧬 Bio Intensive (ม.4 - ม.6)
           </button>
           <button type="button" onclick="selectCourseCategory('posn')" id="cpill-posn" style="padding:8px 18px;border-radius:999px;font-size:12px;font-weight:850;border:1px solid #E2E8F0;background:white;color:#334155;cursor:pointer;white-space:nowrap">
             🏆 สอวน. ชีววิทยา
@@ -238,7 +238,7 @@
 
       const categoryLabelsMap = {
         all: 'แสดงทุกหมวดหมู่',
-        'bio-intensive': '🧬 Bio Intensive ม.ปลาย (แยก 6 เรื่อง)',
+        'bio-intensive': '🧬 Bio Intensive (ม.4 - ม.6)',
         posn: '🏆 คอร์ส สอวน. ชีววิทยา',
         alevel: '🎯 คอร์ส A-Level ชีววิทยา',
         starter: '⚡ คอร์ส 99 บาท (Quick Review)'
@@ -323,14 +323,14 @@
                 ${c.topicHighlights ? `
                   <div style="background:#F8FAFC;border:1px solid #F1F5F9;border-radius:12px;padding:10px 12px;margin:2px 0">
                     <div style="font-size:10.5px;font-weight:850;color:#1E3A8A;margin-bottom:5px;display:flex;align-items:center;gap:4px">
-                      📖 เรื่องและบทเรียนในคอร์สนี้:
+                      📖 เนื้อหาและบทเรียนสำคัญ:
                     </div>
                     <ul style="margin:0;padding-left:16px;font-size:11.5px;color:#334155;line-height:1.55;font-weight:600">
                       ${c.topicHighlights.slice(0, 3).map(th => `<li>${th}</li>`).join('')}
                     </ul>
                     ${c.topicHighlights.length > 3 ? `
-                      <div style="font-size:10.5px;color:#2563EB;font-weight:800;margin-top:4px;padding-left:16px">
-                        + อีก ${c.topicHighlights.length - 3} หัวข้อย่อย (คลิกดูรายละเอียด)
+                      <div style="font-size:10.5px;color:#2563EB;font-weight:850;margin-top:4px;padding-left:16px">
+                        + ดูเนื้อหาเพิ่มเติมในคอร์ส
                       </div>
                     ` : ''}
                   </div>
