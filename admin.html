@@ -44,7 +44,7 @@
 
   <header class="site-header"></header>
 
-  <div style="min-height:100vh;background:var(--c-page);padding-top:80px;padding-bottom:60px">
+  <div id="admin-root-container" style="display:none;min-height:100vh;background:var(--c-page);padding-top:80px;padding-bottom:60px">
     <div style="max-width:1100px;margin:0 auto;padding:0 24px">
       <h2 style="font-size:22px;font-weight:950;color:var(--c-navy);margin-bottom:16px">แดชบอร์ดผู้ดูแลระบบ (Admin CMS)</h2>
 
@@ -1471,6 +1471,9 @@
         window.location.replace('login.html?redirect=admin.html&switch=1');
         return;
       }
+
+      const adminRoot = document.getElementById('admin-root-container');
+      if (adminRoot) adminRoot.style.display = 'block';
 
       renderHeader('admin');
       renderAdminTable();

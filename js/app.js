@@ -1782,7 +1782,7 @@ function renderFooter() {
             <ul class="footer-links">
               <li><a href="about.html">เกี่ยวกับพี่ต้น</a></li>
               <li><a href="faq.html">คำถามพบบ่อย</a></li>
-              <li><a href="https://line.me" target="_blank" style="color:#38BDF8;font-weight:800">LINE: @inbiology</a></li>
+              <li><a href="https://line.me/ti/p/@inbiology" target="_blank" rel="noopener" style="color:#38BDF8;font-weight:800">LINE: @inbiology</a></li>
             </ul>
           </div>
         </div>

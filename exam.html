@@ -108,10 +108,10 @@
   <!-- Universal Rich Multi-Column Footer -->
   <footer id="footer-container"></footer>
 
-  <script src="./js/mockData.js?v=20260919_v9"></script>
-  <script src="./js/supabaseConfig.js?v=20260919_v9"></script>
-  <script src="./js/cloudService.js?v=20260919_v11"></script>
-  <script src="./js/app.js?v=20260919_v12"></script>
+  <script src="./js/mockData.js?v=20260922_v40"></script>
+  <script src="./js/supabaseConfig.js?v=20260922_v40"></script>
+  <script src="./js/cloudService.js?v=20260922_v40"></script>
+  <script src="./js/app.js?v=20260922_v40"></script>
   <script>
     let activeTopic = null;
     let activeQuestions = [];
@@ -125,7 +125,7 @@
       const p = AppState.getStudentProfile();
       const userBadge = document.getElementById('current-user-badge');
       if (userBadge) {
-        userBadge.textContent = p ? `เธเธนเนเธ—เธณเธชเธญเธ: ๐“ เธเนเธญเธ${p.nickname || p.fullName || 'เธเธฑเธเน€เธฃเธตเธขเธ'}` : 'เธเธนเนเธ—เธณเธชเธญเธ: ๐“ เธเธธเธเธเธฅเธ—เธฑเนเธงเนเธ';
+        userBadge.textContent = p ? `ผู้ทำข้อสอบ: 🎓 น้อง${p.nickname || p.fullName || 'นักเรียน'}` : 'ผู้ทำข้อสอบ: 🎓 บุคคลทั่วไป';
       }
       renderTopicsMenu();
     });
@@ -135,7 +135,7 @@
       const enrolledIds = AppState.enrolled || [];
 
       container.innerHTML = EXAM_TOPICS.map((topic, idx) => {
-        const isUnlocked = topic.isFree || enrolledIds.includes(topic.courseId);
+        const isUnlocked = topic.isFree || enrolledIds.includes(topic.courseId) || AppState.userRole === 'admin';
         const questionsCount = topic.category === 'all' 
           ? EXAM_QUESTIONS.length 
           : EXAM_QUESTIONS.filter(q => q.category === topic.category).length;
@@ -147,7 +147,7 @@
                 ${topic.badge}
               </span>
               <span style="font-size:10px;font-weight:800;padding:4px 10px;border-radius:12px;background:${isUnlocked ? '#D1FAE5' : '#FFEDD5'};color:${isUnlocked ? '#065F46' : '#C2410C'}">
-                ${isUnlocked ? '๐”“ เธเธฅเธ”เธฅเนเธญเธเนเธฅเนเธง' : '๐”’ เธ•เนเธญเธเธเธทเนเธญเธเธญเธฃเนเธชเธเนเธญเธ'}
+                ${isUnlocked ? '🔓 ปลดล็อกแล้ว' : '🔒 ต้องซื้อคอร์สก่อน'}
               </span>
             </div>
 
@@ -157,10 +157,10 @@
             </div>
 
             <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid #F3F4F6;padding-top:12px;margin-top:auto">
-              <span style="font-size:11px;font-weight:800;color:var(--c-sky)">๐“ เธเธณเธเธงเธ ${questionsCount} เธเนเธญ</span>
+              <span style="font-size:11px;font-weight:800;color:var(--c-sky)">📝 จำนวน ${questionsCount} ข้อ</span>
               ${isUnlocked
-                ? `<button onclick="startExam('${topic.id}')" style="background:var(--c-sky);color:white;font-weight:850;font-size:12px;padding:8px 16px;border-radius:10px;border:none;cursor:pointer">โ–ถ เน€เธฃเธดเนเธกเธ—เธณเธเนเธญเธชเธญเธ</button>`
-                : `<a href="courses.html" style="background:var(--c-red);color:white;font-weight:850;font-size:11px;padding:8px 14px;border-radius:10px;text-decoration:none">๐’ เธเธทเนเธญเธเธญเธฃเนเธชเน€เธเธทเนเธญเธเธฅเธ”เธฅเนเธญเธ</a>`
+                ? `<button onclick="startExam('${topic.id}')" style="background:var(--c-sky);color:white;font-weight:850;font-size:12px;padding:8px 16px;border-radius:10px;border:none;cursor:pointer">▶ เริ่มทำข้อสอบ</button>`
+                : `<a href="courses.html" style="background:var(--c-red);color:white;font-weight:850;font-size:11px;padding:8px 14px;border-radius:10px;text-decoration:none">🛒 ซื้อคอร์สเพื่อปลดล็อก</a>`
               }
             </div>
           </div>
@@ -180,6 +180,14 @@
       activeTopic = EXAM_TOPICS.find(t => t.id === topicId);
       if (!activeTopic) return;
 
+      // 🔒 SECURITY GUARD: Check course enrollment before starting exam
+      const enrolledIds = AppState.enrolled || [];
+      const isUnlocked = activeTopic.isFree || enrolledIds.includes(activeTopic.courseId) || AppState.userRole === 'admin';
+      if (!isUnlocked) {
+        showToast('คลังข้อสอบชุดนี้สำหรับผู้ที่สมัครคอร์สเรียนแล้วเท่านั้น กรุณาสมัครคอร์สเพื่อปลดล็อก', 'warning');
+        return;
+      }
+
       if (activeTopic.category === 'all') {
         activeQuestions = [...EXAM_QUESTIONS];
       } else {
@@ -187,7 +195,7 @@
       }
 
       if (activeQuestions.length === 0) {
-        showToast('เธขเธฑเธเนเธกเนเธกเธตเธเนเธญเธชเธญเธเนเธเธเธ—เน€เธฃเธตเธขเธเธเธตเน', 'info');
+        showToast('ยังไม่มีข้อสอบในบทเรียนนี้', 'info');
         return;
       }
 
@@ -198,7 +206,7 @@
       selectedAnswers = {};
       
       document.getElementById('quiz-topic-title').textContent = activeTopic.title;
-      document.getElementById('quiz-topic-subtitle').textContent = `เธเธฅเธฑเธเธเนเธญเธชเธญเธเน€เธเธเธฒเธฐเธเธ—เน€เธฃเธตเธขเธเธเธณเธเธงเธ ${activeQuestions.length} เธเนเธญ (เธฃเธฐเธเธเธเธฑเธเน€เธงเธฅเธฒเธเธฃเธดเธ)`;
+      document.getElementById('quiz-topic-subtitle').textContent = `คลังข้อสอบเฉพาะบทเรียนจำนวน ${activeQuestions.length} ข้อ (ระบบจับเวลาจริง)`;
 
       resetTimer();
       renderQuestion();
@@ -231,8 +239,8 @@
 
       card.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #F3F4F6;padding-bottom:12px">
-          <span style="background:var(--c-sky);color:white;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px">เธเนเธญเธ—เธตเน ${qIndex + 1} / ${activeQuestions.length}</span>
-          <span style="background:#F3F4F6;color:#4B5563;font-size:10px;font-weight:800;padding:3px 10px;border-radius:8px">${q.categoryName || 'เธเธตเธงเธงเธดเธ—เธขเธฒ'}</span>
+          <span style="background:var(--c-sky);color:white;font-size:11px;font-weight:800;padding:4px 10px;border-radius:20px">ข้อที่ ${qIndex + 1} / ${activeQuestions.length}</span>
+          <span style="background:#F3F4F6;color:#4B5563;font-size:10px;font-weight:800;padding:3px 10px;border-radius:8px">${q.categoryName || 'ชีววิทยา'}</span>
         </div>
         <h3 style="font-size:15px;font-weight:850;color:#111827;line-height:1.6;margin:0">${q.question}</h3>
         <div style="display:flex;flex-direction:column;gap:10px">
@@ -243,10 +251,10 @@
           `).join('')}
         </div>
         <div style="display:flex;justify-content:space-between;margin-top:10px">
-          <button onclick="prevQ()" ${qIndex === 0 ? 'disabled style="opacity:0.4;cursor:not-allowed"' : ''} style="padding:10px 20px;border-radius:10px;border:1px solid #E5E7EB;background:white;font-weight:800;font-size:12px;cursor:pointer">เธเนเธญเธเนเธญเธเธซเธเนเธฒ</button>
+          <button onclick="prevQ()" ${qIndex === 0 ? 'disabled style="opacity:0.4;cursor:not-allowed"' : ''} style="padding:10px 20px;border-radius:10px;border:1px solid #E5E7EB;background:white;font-weight:800;font-size:12px;cursor:pointer">ข้อก่อนหน้า</button>
           ${qIndex === activeQuestions.length - 1 
-            ? `<button onclick="submitExam()" style="padding:10px 24px;border-radius:10px;border:none;background:var(--c-red);color:white;font-weight:800;font-size:12px;cursor:pointer">เธชเนเธเธเนเธญเธชเธญเธ</button>`
-            : `<button onclick="nextQ()" style="padding:10px 24px;border-radius:10px;border:none;background:var(--c-sky);color:white;font-weight:800;font-size:12px;cursor:pointer">เธเนเธญเธ–เธฑเธ”เนเธ</button>`
+            ? `<button onclick="submitExam()" style="padding:10px 24px;border-radius:10px;border:none;background:var(--c-red);color:white;font-weight:800;font-size:12px;cursor:pointer">ส่งข้อสอบ</button>`
+            : `<button onclick="nextQ()" style="padding:10px 24px;border-radius:10px;border:none;background:var(--c-sky);color:white;font-weight:800;font-size:12px;cursor:pointer">ข้อถัดไป</button>`
           }
         </div>
       `;
@@ -281,27 +289,27 @@
       const card = document.getElementById('quiz-card');
       card.innerHTML = `
         <div style="text-align:center;padding:20px 0">
-          <h2 style="font-size:24px;font-weight:950;color:var(--c-navy);margin:0 0 8px">๐ เธเธฅเธเธฒเธฃเธ—เธณเธเนเธญเธชเธญเธเธเธณเธฅเธญเธ</h2>
+          <h2 style="font-size:24px;font-weight:950;color:var(--c-navy);margin:0 0 8px">🎉 ผลการทำข้อสอบจำลอง</h2>
           <div style="font-size:48px;font-weight:950;color:var(--c-sky);margin:12px 0">${score} / ${activeQuestions.length}</div>
-          <p style="font-size:13px;color:#6B7280;margin:0 0 24px">เธ—เธณเธเธฐเนเธเธเนเธ”เน ${Math.round((score/activeQuestions.length)*100)}%</p>
+          <p style="font-size:13px;color:#6B7280;margin:0 0 24px">ทำคะแนนได้ ${Math.round((score/activeQuestions.length)*100)}%</p>
           <div style="display:flex;flex-direction:column;gap:12px;text-align:left">
-            <h4 style="font-weight:900;color:var(--c-navy);font-size:14px;margin:0">เน€เธเธฅเธขเนเธฅเธฐเธเธณเธญเธเธดเธเธฒเธขเธญเธขเนเธฒเธเธฅเธฐเน€เธญเธตเธขเธ”:</h4>
+            <h4 style="font-weight:900;color:var(--c-navy);font-size:14px;margin:0">เฉลยและคำอธิบายอย่างละเอียด:</h4>
             ${activeQuestions.map((q, i) => `
               <div style="background:#F9FAFB;padding:12px 16px;border-radius:12px;border:1px solid #E5E7EB">
-                <p style="font-weight:800;font-size:12px;color:#374151;margin:0 0 4px">เธเนเธญ ${i+1}: ${q.question}</p>
+                <p style="font-weight:800;font-size:12px;color:#374151;margin:0 0 4px">ข้อ ${i+1}: ${q.question}</p>
                 <p style="font-size:11px;color:${selectedAnswers[i] === q.correct ? '#10B981' : '#EF4444'};font-weight:800;margin:0">
-                  เธเธณเธ•เธญเธเธ—เธตเนเธ–เธนเธเธ•เนเธญเธ: ${q.options[q.correct]} ${selectedAnswers[i] === q.correct ? 'โ“ (เธ•เธญเธเธ–เธนเธเธ•เนเธญเธ)' : 'โ• (เธ•เธญเธเธเธดเธ”)'}
+                  คำตอบที่ถูกต้อง: ${q.options[q.correct]} ${selectedAnswers[i] === q.correct ? '✓ (ตอบถูกต้อง)' : '✕ (ตอบผิด)'}
                 </p>
-                <p style="font-size:11px;color:#6B7280;margin:4px 0 0">๐’ก ${q.explanation}</p>
+                <p style="font-size:11px;color:#6B7280;margin:4px 0 0">💡 ${q.explanation}</p>
               </div>
             `).join('')}
           </div>
           <div style="display:flex;gap:12px;justify-content:center;margin-top:24px">
             <button onclick="showTopicSelector()" style="background:#EFF6FF;color:var(--c-sky);font-weight:800;font-size:12px;padding:12px 20px;border-radius:10px;border:none;cursor:pointer">
-              โฌ… เน€เธฅเธทเธญเธเธเธ—เน€เธฃเธตเธขเธเธญเธทเนเธ
+              ← เลือกบทเรียนอื่น
             </button>
             <button onclick="startExam('${activeTopic.id}')" style="background:var(--c-navy);color:white;font-weight:800;font-size:12px;padding:12px 24px;border-radius:10px;border:none;cursor:pointer">
-              ๐” เธฅเธญเธเธ—เธณเนเธซเธกเนเธญเธตเธเธเธฃเธฑเนเธ
+              🔄 ลองทำใหม่อีกครั้ง
             </button>
           </div>
         </div>
@@ -309,3 +317,4 @@
     }
   </script>
 </body>
+</html>

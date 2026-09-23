@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /admin.html
+Disallow: /classroom.html
+Disallow: /dashboard.html
 
 Sitemap: https://inbiology-official.vercel.app/sitemap.xml

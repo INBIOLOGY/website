@@ -733,6 +733,10 @@
     }
 
     function downloadMaterialItem(idx) {
+      if (!currentCourse || (!AppState.enrolled.includes(currentCourse.id) && AppState.userRole !== 'admin')) {
+        showToast('คุณยังไม่ได้ลงทะเบียนในคอร์สนี้ ไม่สามารถดาวน์โหลดเอกสารได้', 'warning');
+        return;
+      }
       const materials = AppState.getCourseMaterials(currentCourse.id);
       const m = materials[idx];
       if (!m) return;
@@ -764,6 +768,10 @@
     }
 
     function downloadEbookPdf() {
+      if (!currentCourse || (!AppState.enrolled.includes(currentCourse.id) && AppState.userRole !== 'admin')) {
+        showToast('คุณยังไม่ได้ลงทะเบียนในคอร์สนี้ ไม่สามารถดาวน์โหลดเอกสารได้', 'warning');
+        return;
+      }
       const materials = AppState.getCourseMaterials(currentCourse.id);
       const primary = materials.find(m => m.isPrimary) || materials[0];
       if (primary && primary.url && primary.url.trim()) {
