@@ -1145,10 +1145,12 @@ h6 {
 }
 
 .review-card-container {
+  box-sizing: border-box;
   background: white;
   border-radius: 24px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
-  width: 310px;
+  width: 300px;
+  max-width: 85vw;
   flex-shrink: 0;
   padding: 20px 16px;
   display: flex;
@@ -1156,6 +1158,8 @@ h6 {
   align-items: center;
   border: 1px solid #E5E7EB;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .review-card-container:hover {
