@@ -547,32 +547,33 @@
     }
 
     // Dynamic Free Trials renderer (Hides section if 0 items)
+    // Dynamic Free Trials renderer (Hides section if disabled or 0 items)
     window.renderFreeTrials = function(customTrials) {
+      const section = document.getElementById('trial');
+      const container = document.getElementById('trials-grid');
+      if (!section || !container) return;
+
+      const isEnabled = localStorage.getItem('inbiology_setting_show_trials') !== 'false';
+      if (!isEnabled) {
+        section.style.display = 'none';
+        return;
+      }
+
       let trials = customTrials;
-      if (!trials) {
+      if (trials === undefined || trials === null) {
         try {
           const stored = localStorage.getItem('inbiology_free_trials');
           if (stored !== null) {
             const list = JSON.parse(stored);
-            if (Array.isArray(list) && list.length > 0) {
-              const hasDummy = list.some(x => x.videoUrl && x.videoUrl.includes('w3schools'));
-              if (!hasDummy) {
-                const defs = (typeof FREE_TRIALS !== 'undefined' ? FREE_TRIALS : (window.FREE_TRIALS || []));
-                trials = list.map(item => {
-                  const def = defs.find(d => String(d.id) === String(item.id));
-                  return def ? { ...def, ...item, sheetUrl: item.sheetUrl || def.sheetUrl, sheetTitle: item.sheetTitle || def.sheetTitle } : item;
-                });
-              }
+            if (Array.isArray(list)) {
+              trials = list;
             }
           }
         } catch(e) {}
-        if (!trials) {
+        if (trials === undefined || trials === null) {
           trials = (typeof FREE_TRIALS !== 'undefined' ? FREE_TRIALS : (window.FREE_TRIALS || []));
         }
       }
-      const section = document.getElementById('trial');
-      const container = document.getElementById('trials-grid');
-      if (!section || !container) return;
 
       if (!trials || trials.length === 0) {
         section.style.display = 'none';
@@ -604,30 +605,33 @@
       `).join('');
     };
 
-    // Dynamic Articles renderer (Hides section if 0 items)
+    // Dynamic Articles renderer (Hides section if disabled or 0 items)
     window.renderArticles = function(customArticles) {
+      const section = document.getElementById('articles-section');
+      const container = document.getElementById('articles-grid');
+      if (!section || !container) return;
+
+      const isEnabled = localStorage.getItem('inbiology_setting_show_articles') !== 'false';
+      if (!isEnabled) {
+        section.style.display = 'none';
+        return;
+      }
+
       let articles = customArticles;
-      if (!articles) {
+      if (articles === undefined || articles === null) {
         try {
           const stored = localStorage.getItem('inbiology_articles');
           if (stored !== null) {
             const list = JSON.parse(stored);
-            if (Array.isArray(list) && list.length > 0) {
-              const defs = (typeof ARTICLES !== 'undefined' ? ARTICLES : (window.ARTICLES || []));
-              articles = list.map(art => {
-                const def = defs.find(d => String(d.id) === String(art.id));
-                return def ? { ...def, ...art, documentUrl: art.documentUrl || def.documentUrl, documentName: art.documentName || def.documentName, articleUrl: art.articleUrl || def.articleUrl, summary: art.summary || def.summary, category: art.category || def.category, content: art.content || def.content } : art;
-              });
+            if (Array.isArray(list)) {
+              articles = list;
             }
           }
         } catch(e) {}
-        if (!articles) {
+        if (articles === undefined || articles === null) {
           articles = (typeof ARTICLES !== 'undefined' ? ARTICLES : (window.ARTICLES || []));
         }
       }
-      const section = document.getElementById('articles-section');
-      const container = document.getElementById('articles-grid');
-      if (!section || !container) return;
 
       if (!articles || articles.length === 0) {
         section.style.display = 'none';
@@ -779,27 +783,36 @@
       if (window.CloudService && typeof window.CloudService.fetchSiteContent === 'function') {
         (async () => {
           try {
+            // Sync visibility settings from Cloud
+            const cloudTrialsSetting = await window.CloudService.fetchSiteContent('setting_show_trials');
+            if (cloudTrialsSetting !== null && cloudTrialsSetting !== undefined) {
+              localStorage.setItem('inbiology_setting_show_trials', String(cloudTrialsSetting));
+            }
+            const cloudArticlesSetting = await window.CloudService.fetchSiteContent('setting_show_articles');
+            if (cloudArticlesSetting !== null && cloudArticlesSetting !== undefined) {
+              localStorage.setItem('inbiology_setting_show_articles', String(cloudArticlesSetting));
+            }
+
+            // Sync Free Trials (accepts empty array [] when deleted)
             const cloudTrials = await window.CloudService.fetchSiteContent('free_trials');
-            if (cloudTrials && Array.isArray(cloudTrials) && cloudTrials.length > 0) {
-              const hasDummy = cloudTrials.some(x => x.videoUrl && x.videoUrl.includes('w3schools'));
-              if (!hasDummy) {
-                localStorage.setItem('inbiology_free_trials', JSON.stringify(cloudTrials));
-                window.renderFreeTrials(cloudTrials);
-              }
+            if (cloudTrials !== null && Array.isArray(cloudTrials)) {
+              localStorage.setItem('inbiology_free_trials', JSON.stringify(cloudTrials));
+              window.renderFreeTrials(cloudTrials);
+            } else {
+              window.renderFreeTrials();
             }
-          } catch(e) {}
-          try {
+
+            // Sync Articles (accepts empty array [] when deleted)
             const cloudArticles = await window.CloudService.fetchSiteContent('articles');
-            if (cloudArticles && Array.isArray(cloudArticles) && cloudArticles.length > 0) {
-              const defs = (typeof ARTICLES !== 'undefined' ? ARTICLES : (window.ARTICLES || []));
-              const mergedArticles = cloudArticles.map(art => {
-                const def = defs.find(d => String(d.id) === String(art.id));
-                return def ? { ...def, ...art, documentUrl: art.documentUrl || def.documentUrl, documentName: art.documentName || def.documentName, articleUrl: art.articleUrl || def.articleUrl, summary: art.summary || def.summary, category: art.category || def.category, content: art.content || def.content } : art;
-              });
-              localStorage.setItem('inbiology_articles', JSON.stringify(mergedArticles));
-              window.renderArticles(mergedArticles);
+            if (cloudArticles !== null && Array.isArray(cloudArticles)) {
+              localStorage.setItem('inbiology_articles', JSON.stringify(cloudArticles));
+              window.renderArticles(cloudArticles);
+            } else {
+              window.renderArticles();
             }
-          } catch(e) {}
+          } catch(e) {
+            console.warn('Cloud Sync error in index.html:', e);
+          }
         })();
       }
 

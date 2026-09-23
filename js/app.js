@@ -1228,23 +1228,23 @@ function openArticleModal(article) {
 
 // Helpers to find item by ID
 window.findArticleItem = function(id) {
-  let articles = [];
+  let articles = null;
   try {
     const s = localStorage.getItem('inbiology_articles');
-    if (s) articles = JSON.parse(s);
+    if (s !== null) articles = JSON.parse(s);
   } catch(e) {}
-  if (!articles.length && typeof ARTICLES !== 'undefined') articles = ARTICLES;
-  return articles.find(a => String(a.id) === String(id));
+  if (!Array.isArray(articles) && typeof ARTICLES !== 'undefined') articles = ARTICLES;
+  return (articles || []).find(a => String(a.id) === String(id));
 };
 
 window.findTrialItem = function(id) {
-  let trials = [];
+  let trials = null;
   try {
     const s = localStorage.getItem('inbiology_free_trials');
-    if (s) trials = JSON.parse(s);
+    if (s !== null) trials = JSON.parse(s);
   } catch(e) {}
-  if (!trials.length && typeof FREE_TRIALS !== 'undefined') trials = FREE_TRIALS;
-  return trials.find(t => String(t.id) === String(id));
+  if (!Array.isArray(trials) && typeof FREE_TRIALS !== 'undefined') trials = FREE_TRIALS;
+  return (trials || []).find(t => String(t.id) === String(id));
 };
 
 // Review Detail Modal Helper

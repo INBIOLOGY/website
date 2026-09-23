@@ -415,11 +415,17 @@
             </div>
             <p style="font-size:12.5px;color:#64748B;margin:0">กำหนดคลิปตัวอย่างและบทเรียนทดลองเรียนฟรีบนหน้าแรก หากลบจนหมด (0 รายการ) ส่วนนี้จะถูกซ่อนจากหน้าแรกโดยอัตโนมัติ</p>
           </div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <button type="button" onclick="resetDefaultTrials()" style="background:#F1F5F9;color:#475569;border:1px solid #CBD5E1;border-radius:12px;padding:10px 16px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
-              🔄 คืนค่าวิดีโอทดลองเรียนมาตรฐาน
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <button type="button" id="btn-toggle-show-trials" onclick="toggleTrialsVisibility()" style="border-radius:12px;padding:9px 15px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s">
+              <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10B981"></span> 👁️ แสดงบนหน้าแรก
             </button>
-            <button type="button" onclick="openAddTrialModal()" style="background:#1E3A8A;color:white;border:none;border-radius:12px;padding:10px 18px;font-size:13px;font-weight:850;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(30,58,138,0.2)">
+            <button type="button" onclick="clearAllTrials()" style="background:#FFF1F2;color:#E11D48;border:1px solid #FECDD3;border-radius:12px;padding:9px 14px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px" title="ลบวิดีโอทดลองเรียนทั้งหมดเพื่อซ่อนจากหน้าแรกทันที">
+              🗑️ ลบทั้งหมด (ซ่อนทันที)
+            </button>
+            <button type="button" onclick="resetDefaultTrials()" style="background:#F1F5F9;color:#475569;border:1px solid #CBD5E1;border-radius:12px;padding:9px 14px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+              🔄 คืนค่ามาตรฐาน
+            </button>
+            <button type="button" onclick="openAddTrialModal()" style="background:#1E3A8A;color:white;border:none;border-radius:12px;padding:9px 18px;font-size:12.5px;font-weight:850;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(30,58,138,0.2)">
               + เพิ่มวิดีโอทดลองเรียน
             </button>
           </div>
@@ -456,11 +462,17 @@
             </div>
             <p style="font-size:12.5px;color:#64748B;margin:0">สร้างและปรับปรุงบทความวิชาการ แนบไฟล์เอกสาร/ชีทสรุป PDF และลิงก์อ้างอิงภายนอก</p>
           </div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <button type="button" onclick="resetDefaultArticles()" style="background:#F1F5F9;color:#475569;border:1px solid #CBD5E1;border-radius:12px;padding:10px 16px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
-              🔄 คืนค่าบทความมาตรฐาน
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <button type="button" id="btn-toggle-show-articles" onclick="toggleArticlesVisibility()" style="border-radius:12px;padding:9px 15px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s">
+              <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10B981"></span> 👁️ แสดงบนหน้าแรก
             </button>
-            <button type="button" onclick="openAddArticleModal()" style="background:#1E3A8A;color:white;border:none;border-radius:12px;padding:10px 18px;font-size:13px;font-weight:850;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(30,58,138,0.2)">
+            <button type="button" onclick="clearAllArticles()" style="background:#FFF1F2;color:#E11D48;border:1px solid #FECDD3;border-radius:12px;padding:9px 14px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px" title="ลบบทความทั้งหมดเพื่อซ่อนจากหน้าแรกทันที">
+              🗑️ ลบทั้งหมด (ซ่อนทันที)
+            </button>
+            <button type="button" onclick="resetDefaultArticles()" style="background:#F1F5F9;color:#475569;border:1px solid #CBD5E1;border-radius:12px;padding:9px 14px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
+              🔄 คืนค่ามาตรฐาน
+            </button>
+            <button type="button" onclick="openAddArticleModal()" style="background:#1E3A8A;color:white;border:none;border-radius:12px;padding:9px 18px;font-size:12.5px;font-weight:850;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(30,58,138,0.2)">
               + เพิ่มบทความใหม่
             </button>
           </div>
@@ -1714,16 +1726,8 @@
         const stored = localStorage.getItem('inbiology_free_trials');
         if (stored !== null) {
           const list = JSON.parse(stored);
-          if (Array.isArray(list) && list.length > 0) {
-            // Auto-upgrade if old items use dummy w3schools or lack sheet attachments
-            const hasDummy = list.some(x => x.videoUrl && x.videoUrl.includes('w3schools'));
-            if (!hasDummy) {
-              const defs = (typeof FREE_TRIALS !== 'undefined' ? FREE_TRIALS : (window.FREE_TRIALS || []));
-              return list.map(item => {
-                const def = defs.find(d => String(d.id) === String(item.id));
-                return def ? { ...def, ...item, sheetUrl: item.sheetUrl || def.sheetUrl, sheetTitle: item.sheetTitle || def.sheetTitle } : item;
-              });
-            }
+          if (Array.isArray(list)) {
+            return list; // Return array even if empty (0 items)! Do NOT revive defaults automatically.
           }
         }
       } catch(e) {}
@@ -1732,12 +1736,68 @@
       return defs;
     }
 
+    function updateTrialsToggleUI() {
+      const btn = document.getElementById('btn-toggle-show-trials');
+      if (!btn) return;
+      const isEnabled = localStorage.getItem('inbiology_setting_show_trials') !== 'false';
+      const trials = getTrialsData();
+      const count = trials ? trials.length : 0;
+
+      if (!isEnabled) {
+        btn.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#EF4444"></span> 🙈 ซ่อนจากหน้าแรก (ปิดอยู่)`;
+        btn.style.background = '#FEF2F2';
+        btn.style.color = '#B91C1C';
+        btn.style.border = '1.5px solid #FCA5A5';
+        btn.title = 'คลิกเพื่อเปิดให้แสดงบนหน้าแรก';
+      } else if (count === 0) {
+        btn.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#F59E0B"></span> ⚠️ ไม่มีรายการ (ซ่อนอัตโนมัติ)`;
+        btn.style.background = '#FFFBEB';
+        btn.style.color = '#B45309';
+        btn.style.border = '1.5px solid #FCD34D';
+        btn.title = 'เปิดใช้งานอยู่ แต่มี 0 รายการ ระบบจึงซ่อนจากหน้าแรกอัตโนมัติ';
+      } else {
+        btn.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10B981"></span> 👁️ แสดงบนหน้าแรก (${count} คลิป)`;
+        btn.style.background = '#ECFDF5';
+        btn.style.color = '#065F46';
+        btn.style.border = '1.5px solid #6EE7B7';
+        btn.title = 'คลิกหากต้องการปิดซ่อนส่วนนี้จากหน้าแรก';
+      }
+    }
+
+    async function toggleTrialsVisibility() {
+      const current = localStorage.getItem('inbiology_setting_show_trials') !== 'false';
+      const next = !current;
+      localStorage.setItem('inbiology_setting_show_trials', String(next));
+      if (window.CloudService && typeof window.CloudService.saveSiteContent === 'function') {
+        window.CloudService.saveSiteContent('setting_show_trials', next).catch(err => console.warn(err));
+      }
+      updateTrialsToggleUI();
+      if (next) {
+        showToast('👁️ เปิดแสดงหัวข้อวิดีโอทดลองเรียนบนหน้าแรกเรียบร้อยแล้ว', 'success');
+      } else {
+        showToast('🙈 ซ่อนหัวข้อวิดีโอทดลองเรียนจากหน้าแรกเรียบร้อยแล้ว', 'info');
+      }
+    }
+
+    async function clearAllTrials() {
+      if (!confirm('คุณต้องการลบวิดีโอทดลองเรียนทั้งหมดใช่หรือไม่?\n\n(เมื่อลบจนเหลือ 0 รายการ ส่วนนี้จะถูกซ่อนออกจากหน้าแรกทันที และสามารถกดปุ่ม "คืนค่ามาตรฐาน" ได้ตลอดเวลา)')) return;
+      const empty = [];
+      localStorage.setItem('inbiology_free_trials', JSON.stringify(empty));
+      if (window.CloudService && typeof window.CloudService.saveSiteContent === 'function') {
+        window.CloudService.saveSiteContent('free_trials', empty).catch(err => console.warn(err));
+      }
+      renderAdminTrials();
+      showToast('🗑️ ลบวิดีโอทดลองเรียนทั้งหมดแล้ว (ซ่อนจากหน้าแรกเรียบร้อย)', 'info');
+    }
+
     function resetDefaultTrials() {
       if (!confirm('คุณต้องการรีเซ็ตวิดีโอทดลองเรียนกลับเป็นชุดมาตรฐานของพี่ต้น (วิดีโอ YouTube ตรวจสอบแล้ว พร้อมชีทเรียน) ใช่หรือไม่?')) return;
       const defs = (typeof FREE_TRIALS !== 'undefined' ? FREE_TRIALS : (window.FREE_TRIALS || []));
       localStorage.setItem('inbiology_free_trials', JSON.stringify(defs));
+      localStorage.setItem('inbiology_setting_show_trials', 'true');
       if (window.CloudService && typeof window.CloudService.saveSiteContent === 'function') {
         window.CloudService.saveSiteContent('free_trials', defs).catch(err => console.warn(err));
+        window.CloudService.saveSiteContent('setting_show_trials', true).catch(err => console.warn(err));
       }
       renderAdminTrials();
       showToast('🔄 คืนค่าวิดีโอทดลองเรียนมาตรฐานเรียบร้อยแล้ว', 'success');
@@ -1748,9 +1808,10 @@
       if (!tableEl) return;
 
       adminTrialsCache = getTrialsData();
+      updateTrialsToggleUI();
 
       if (!adminTrialsCache || adminTrialsCache.length === 0) {
-        tableEl.innerHTML = `<tr><td colspan="6" style="padding:28px;text-align:center;color:#94A3B8;font-size:13px">ยังไม่มีรายการวิดีโอทดลองเรียน (ระบบจะซ่อนส่วนนี้จากหน้าแรกโดยอัตโนมัติเมื่อไม่มีข้อมูล)</td></tr>`;
+        tableEl.innerHTML = `<tr><td colspan="6" style="padding:28px;text-align:center;color:#94A3B8;font-size:13px">ยังไม่มีรายการวิดีโอทดลองเรียน (ระบบได้ซ่อนส่วนนี้จากหน้าแรกเรียบร้อยแล้ว)</td></tr>`;
         return;
       }
 
@@ -1903,12 +1964,8 @@
         const stored = localStorage.getItem('inbiology_articles');
         if (stored !== null) {
           const list = JSON.parse(stored);
-          if (Array.isArray(list) && list.length > 0) {
-            const defs = (typeof ARTICLES !== 'undefined' ? ARTICLES : (window.ARTICLES || []));
-            return list.map(art => {
-              const def = defs.find(d => String(d.id) === String(art.id));
-              return def ? { ...def, ...art, documentUrl: art.documentUrl || def.documentUrl, documentName: art.documentName || def.documentName, articleUrl: art.articleUrl || def.articleUrl, summary: art.summary || def.summary, category: art.category || def.category, content: art.content || def.content } : art;
-            });
+          if (Array.isArray(list)) {
+            return list; // Return array even if empty (0 items)! Do NOT revive defaults automatically.
           }
         }
       } catch(e) {}
@@ -1917,12 +1974,68 @@
       return defs;
     }
 
+    function updateArticlesToggleUI() {
+      const btn = document.getElementById('btn-toggle-show-articles');
+      if (!btn) return;
+      const isEnabled = localStorage.getItem('inbiology_setting_show_articles') !== 'false';
+      const articles = getArticlesData();
+      const count = articles ? articles.length : 0;
+
+      if (!isEnabled) {
+        btn.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#EF4444"></span> 🙈 ซ่อนจากหน้าแรก (ปิดอยู่)`;
+        btn.style.background = '#FEF2F2';
+        btn.style.color = '#B91C1C';
+        btn.style.border = '1.5px solid #FCA5A5';
+        btn.title = 'คลิกเพื่อเปิดให้แสดงบนหน้าแรก';
+      } else if (count === 0) {
+        btn.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#F59E0B"></span> ⚠️ ไม่มีบทความ (ซ่อนอัตโนมัติ)`;
+        btn.style.background = '#FFFBEB';
+        btn.style.color = '#B45309';
+        btn.style.border = '1.5px solid #FCD34D';
+        btn.title = 'เปิดใช้งานอยู่ แต่มี 0 รายการ ระบบจึงซ่อนจากหน้าแรกอัตโนมัติ';
+      } else {
+        btn.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10B981"></span> 👁️ แสดงบนหน้าแรก (${count} บทความ)`;
+        btn.style.background = '#ECFDF5';
+        btn.style.color = '#065F46';
+        btn.style.border = '1.5px solid #6EE7B7';
+        btn.title = 'คลิกหากต้องการปิดซ่อนส่วนนี้จากหน้าแรก';
+      }
+    }
+
+    async function toggleArticlesVisibility() {
+      const current = localStorage.getItem('inbiology_setting_show_articles') !== 'false';
+      const next = !current;
+      localStorage.setItem('inbiology_setting_show_articles', String(next));
+      if (window.CloudService && typeof window.CloudService.saveSiteContent === 'function') {
+        window.CloudService.saveSiteContent('setting_show_articles', next).catch(err => console.warn(err));
+      }
+      updateArticlesToggleUI();
+      if (next) {
+        showToast('👁️ เปิดแสดงหัวข้อบทความชีวะบนหน้าแรกเรียบร้อยแล้ว', 'success');
+      } else {
+        showToast('🙈 ซ่อนหัวข้อบทความชีวะจากหน้าแรกเรียบร้อยแล้ว', 'info');
+      }
+    }
+
+    async function clearAllArticles() {
+      if (!confirm('คุณต้องการลบบทความชีวะทั้งหมดใช่หรือไม่?\n\n(เมื่อลบจนเหลือ 0 รายการ ส่วนนี้จะถูกซ่อนออกจากหน้าแรกทันที และสามารถกดปุ่ม "คืนค่ามาตรฐาน" ได้ตลอดเวลา)')) return;
+      const empty = [];
+      localStorage.setItem('inbiology_articles', JSON.stringify(empty));
+      if (window.CloudService && typeof window.CloudService.saveSiteContent === 'function') {
+        window.CloudService.saveSiteContent('articles', empty).catch(err => console.warn(err));
+      }
+      renderAdminArticles();
+      showToast('🗑️ ลบบทความทั้งหมดแล้ว (ซ่อนจากหน้าแรกเรียบร้อย)', 'info');
+    }
+
     function resetDefaultArticles() {
       if (!confirm('คุณต้องการรีเซ็ตบทความกลับเป็นชุดมาตรฐาน (พร้อมเอกสารชีท PDF ดาวน์โหลดฟรี) ใช่หรือไม่?')) return;
       const defs = (typeof ARTICLES !== 'undefined' ? ARTICLES : (window.ARTICLES || []));
       localStorage.setItem('inbiology_articles', JSON.stringify(defs));
+      localStorage.setItem('inbiology_setting_show_articles', 'true');
       if (window.CloudService && typeof window.CloudService.saveSiteContent === 'function') {
         window.CloudService.saveSiteContent('articles', defs).catch(err => console.warn(err));
+        window.CloudService.saveSiteContent('setting_show_articles', true).catch(err => console.warn(err));
       }
       renderAdminArticles();
       showToast('🔄 คืนค่าบทความมาตรฐานเรียบร้อยแล้ว', 'success');
@@ -1933,9 +2046,10 @@
       if (!tableEl) return;
 
       adminArticlesCache = getArticlesData();
+      updateArticlesToggleUI();
 
       if (!adminArticlesCache || adminArticlesCache.length === 0) {
-        tableEl.innerHTML = `<tr><td colspan="6" style="padding:28px;text-align:center;color:#94A3B8;font-size:13px">ยังไม่มีบทความชีวะในระบบ (ระบบจะซ่อนส่วนนี้จากหน้าแรกโดยอัตโนมัติเมื่อไม่มีข้อมูล)</td></tr>`;
+        tableEl.innerHTML = `<tr><td colspan="6" style="padding:28px;text-align:center;color:#94A3B8;font-size:13px">ยังไม่มีบทความชีวะในระบบ (ระบบได้ซ่อนส่วนนี้จากหน้าแรกเรียบร้อยแล้ว)</td></tr>`;
         return;
       }
 
@@ -3969,10 +4083,22 @@
           if (added.length > 0 && typeof window.CloudService.saveAddedCoursesToCloud === 'function') {
             await window.CloudService.saveAddedCoursesToCloud(added);
           }
+
+          // Sync Free Trials, Articles, and Visibility Settings
+          if (typeof window.CloudService.saveSiteContent === 'function') {
+            const currentTrials = getTrialsData();
+            const currentArticles = getArticlesData();
+            const showTrials = localStorage.getItem('inbiology_setting_show_trials') !== 'false';
+            const showArticles = localStorage.getItem('inbiology_setting_show_articles') !== 'false';
+            await window.CloudService.saveSiteContent('free_trials', currentTrials);
+            await window.CloudService.saveSiteContent('articles', currentArticles);
+            await window.CloudService.saveSiteContent('setting_show_trials', showTrials);
+            await window.CloudService.saveSiteContent('setting_show_articles', showArticles);
+          }
         }
 
         if (syncOk) {
-          showToast('🎉 ซิงก์ทุกคอร์ส, วิดีโอคลิป และเอกสารขึ้น Supabase Cloud สำเร็จ 100%! มือถือและทุกเครื่องเห็นทันที', 'success');
+          showToast('🎉 ซิงก์ทุกคอร์ส, วิดีโอคลิป, บทความ และการตั้งค่าขึ้น Supabase Cloud สำเร็จ 100%! มือถือและทุกเครื่องเห็นทันที', 'success');
           alert('🎉 ซิงก์ข้อมูลคอร์สเรียนและคลิปวิดีโอทั้งหมดขึ้น Supabase Cloud สำเร็จ 100% แล้ว!\n\nขณะนี้ข้อมูลถูกบันทึกลงในตาราง site_content เรียบร้อยแล้ว ทุกเครื่องและแท็บเล็ตนักเรียนจะเห็นคลิปทันทีครับ');
         } else {
           showToast('⚠️ การซิงก์ Cloud ไม่สมบูรณ์ (ติดสิทธิ์ RLS ใน Supabase)', 'error');
