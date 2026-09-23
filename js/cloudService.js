@@ -320,7 +320,7 @@ const CloudService = window.CloudService = {
 
     return {
       success: true,
-      message: `ส่งรหัส OTP 6 หลักไปยังอีเมล ${cleanEmail} เรียบร้อยแล้ว กรุณาเปิดเช็คในกล่องข้อความหรือโฟลเดอร์ Junk/Spam`,
+      message: `ส่งรหัส OTP 6 หลักไปยังอีเมล ${cleanEmail} เรียบร้อยแล้ว (หากไม่พบในกล่องข้อความหลัก กรุณาตรวจสอบในโฟลเดอร์ "จดหมายขยะ (Spam)" หรือ "ถังขยะ (Trash)" นะครับ)`,
       cooldownSeconds: 60
     };
   },
