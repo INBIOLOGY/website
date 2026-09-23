@@ -68,10 +68,12 @@ try {
   if (typeof COURSES !== 'undefined') {
     // 0. Filter out deleted courses
     const storedDeleted = localStorage.getItem('inbiology_deleted_courses');
+    let deletedIds = [];
     if (storedDeleted) {
       try {
-        const deletedIds = JSON.parse(storedDeleted);
-        if (Array.isArray(deletedIds) && deletedIds.length > 0) {
+        const parsed = JSON.parse(storedDeleted);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          deletedIds = parsed;
           for (let i = COURSES.length - 1; i >= 0; i--) {
             if (deletedIds.includes(COURSES[i].id)) {
               COURSES.splice(i, 1);
@@ -81,14 +83,14 @@ try {
       } catch(e) {}
     }
 
-    // 1. Hydrate newly added courses created by admin
+    // 1. Hydrate newly added courses created by admin (excluding any deleted ones)
     const storedAdded = localStorage.getItem('inbiology_added_courses');
     if (storedAdded) {
       try {
         const addedList = JSON.parse(storedAdded);
         if (Array.isArray(addedList)) {
           addedList.forEach(ac => {
-            if (!COURSES.some(c => c.id === ac.id)) {
+            if (!deletedIds.includes(ac.id) && !COURSES.some(c => c.id === ac.id)) {
               COURSES.push(ac);
             }
           });
@@ -534,6 +536,82 @@ const AppState = {
     }
   },
 
+  /**
+   * Delete course (from in-memory, localStorage, and Cloud Supabase)
+   * @param {string} courseId
+   */
+  async deleteCourse(courseId) {
+    try {
+      // 1. Remove from in-memory COURSES
+      if (typeof COURSES !== 'undefined') {
+        const idx = COURSES.findIndex(x => x.id === courseId);
+        if (idx > -1) {
+          COURSES.splice(idx, 1);
+        }
+      }
+
+      // 2. Add to inbiology_deleted_courses in localStorage
+      let deletedList = [];
+      try {
+        const storedDeleted = localStorage.getItem('inbiology_deleted_courses');
+        if (storedDeleted) deletedList = JSON.parse(storedDeleted) || [];
+      } catch(e) {}
+      if (!Array.isArray(deletedList)) deletedList = [];
+      if (!deletedList.includes(courseId)) {
+        deletedList.push(courseId);
+        localStorage.setItem('inbiology_deleted_courses', JSON.stringify(deletedList));
+      }
+
+      // 3. Remove from inbiology_added_courses if exists
+      let addedList = [];
+      try {
+        const storedAdded = localStorage.getItem('inbiology_added_courses');
+        if (storedAdded) {
+          addedList = JSON.parse(storedAdded) || [];
+          if (Array.isArray(addedList)) {
+            addedList = addedList.filter(item => item.id !== courseId);
+            localStorage.setItem('inbiology_added_courses', JSON.stringify(addedList));
+          }
+        }
+      } catch(e) {}
+
+      // 4. Clean up from overrides
+      try {
+        const storedOverrides = localStorage.getItem('inbiology_course_overrides');
+        if (storedOverrides) {
+          let ov = JSON.parse(storedOverrides) || {};
+          delete ov[courseId];
+          localStorage.setItem('inbiology_course_overrides', JSON.stringify(ov));
+          if (window.CloudService && typeof window.CloudService.saveCourseOverridesToCloud === 'function') {
+            window.CloudService.saveCourseOverridesToCloud(ov);
+          }
+        }
+      } catch(e) {}
+
+      // 5. Sync deleted & added courses to Supabase Cloud
+      if (window.CloudService) {
+        if (typeof window.CloudService.saveDeletedCoursesToCloud === 'function') {
+          await window.CloudService.saveDeletedCoursesToCloud(deletedList);
+        }
+        if (typeof window.CloudService.saveAddedCoursesToCloud === 'function') {
+          await window.CloudService.saveAddedCoursesToCloud(addedList);
+        }
+      }
+
+      // 6. Broadcast event & trigger live UI updates
+      window.dispatchEvent(new CustomEvent('coursesUpdated', { detail: { courses: COURSES, deletedId: courseId } }));
+      if (typeof window.filterAndRender === 'function') window.filterAndRender();
+      if (typeof window.renderRecommendedCourses === 'function') window.renderRecommendedCourses();
+      if (typeof window.renderDashboardCatalog === 'function') window.renderDashboardCatalog();
+      if (typeof window.renderAdminTable === 'function') window.renderAdminTable();
+
+      return true;
+    } catch(err) {
+      console.error('Failed to delete course:', err);
+      return false;
+    }
+  },
+
   toggleLessonProgress(courseId, lessonId) {
     const userKey = this.getUserStorageKey();
     const storageKey = `inbiology_progress_${userKey}_${courseId}`;
@@ -563,12 +641,36 @@ const AppState = {
 
     try {
       // Parallelize all CMS fetches concurrently (reduces 5 sequential roundtrips to 1)
-      const [lessonsRes, materialsRes, overridesRes, addedRes] = await Promise.allSettled([
+      const [lessonsRes, materialsRes, overridesRes, addedRes, deletedRes] = await Promise.allSettled([
         window.CloudService.fetchCourseLessonsFromCloud(),
         (typeof window.CloudService.fetchCourseMaterialsFromCloud === 'function' ? window.CloudService.fetchCourseMaterialsFromCloud() : Promise.resolve(null)),
         window.CloudService.fetchCourseOverridesFromCloud(),
-        window.CloudService.fetchAddedCoursesFromCloud()
+        (typeof window.CloudService.fetchAddedCoursesFromCloud === 'function' ? window.CloudService.fetchAddedCoursesFromCloud() : Promise.resolve(null)),
+        (typeof window.CloudService.fetchDeletedCoursesFromCloud === 'function' ? window.CloudService.fetchDeletedCoursesFromCloud() : Promise.resolve(null))
       ]);
+
+      // 0. Deleted Courses Sync (Cloud + Local merge)
+      const cloudDeleted = deletedRes.status === 'fulfilled' ? deletedRes.value : null;
+      let localDeleted = [];
+      try {
+        localDeleted = JSON.parse(localStorage.getItem('inbiology_deleted_courses') || '[]');
+      } catch(e) {}
+      if (!Array.isArray(localDeleted)) localDeleted = [];
+
+      const mergedDeleted = Array.from(new Set([
+        ...localDeleted,
+        ...((cloudDeleted && Array.isArray(cloudDeleted)) ? cloudDeleted : [])
+      ]));
+      localStorage.setItem('inbiology_deleted_courses', JSON.stringify(mergedDeleted));
+
+      // Remove any deleted courses from COURSES array immediately
+      if (typeof COURSES !== 'undefined') {
+        for (let i = COURSES.length - 1; i >= 0; i--) {
+          if (mergedDeleted.includes(COURSES[i].id)) {
+            COURSES.splice(i, 1);
+          }
+        }
+      }
 
       // 1. Course Lessons
       const cloudLessons = lessonsRes.status === 'fulfilled' ? lessonsRes.value : null;
@@ -617,15 +719,26 @@ const AppState = {
         }
       }
 
-      // 4. Added Courses
+      // 4. Added Courses (Filtered against mergedDeleted)
       const cloudAdded = addedRes.status === 'fulfilled' ? addedRes.value : null;
-      if (cloudAdded && Array.isArray(cloudAdded) && cloudAdded.length > 0) {
-        cloudAdded.forEach(ac => {
-          if (!COURSES.find(x => x.id === ac.id)) {
-            COURSES.push(ac);
-          }
-        });
+      if (cloudAdded && Array.isArray(cloudAdded)) {
+        const validAdded = cloudAdded.filter(ac => ac && ac.id && !mergedDeleted.includes(ac.id));
+        localStorage.setItem('inbiology_added_courses', JSON.stringify(validAdded));
+        if (typeof COURSES !== 'undefined') {
+          validAdded.forEach(ac => {
+            if (!COURSES.some(x => x.id === ac.id)) {
+              COURSES.push(ac);
+            }
+          });
+        }
       }
+
+      // 5. Broadcast live update to all subscribed pages
+      window.dispatchEvent(new CustomEvent('coursesUpdated', { detail: { courses: COURSES } }));
+      if (typeof window.filterAndRender === 'function') window.filterAndRender();
+      if (typeof window.renderRecommendedCourses === 'function') window.renderRecommendedCourses();
+      if (typeof window.renderDashboardCatalog === 'function') window.renderDashboardCatalog();
+      if (typeof window.renderAdminTable === 'function') window.renderAdminTable();
     } catch(err) {
       console.warn('Note: Cloud CMS background sync error:', err);
     }
@@ -1406,6 +1519,12 @@ function openBioIntensiveModal() {
     }
   ];
 
+  let deletedList = [];
+  try {
+    deletedList = JSON.parse(localStorage.getItem('inbiology_deleted_courses') || '[]');
+  } catch(e) {}
+  const availableTerms = termsData.filter(t => !deletedList.includes(t.courseId) && (typeof COURSES === 'undefined' || COURSES.some(c => c.id === t.courseId)));
+
   modal.innerHTML = `
     <div class="modal-backdrop" onclick="document.getElementById('global-bio-intensive-modal').classList.remove('show')"></div>
     <div class="modal-box wide animate-fade-in-up" onclick="event.stopPropagation()" style="max-width:980px;max-height:90vh;display:flex;flex-direction:column;padding:0;overflow:hidden;border-radius:24px">
@@ -1441,7 +1560,7 @@ function openBioIntensiveModal() {
 
         <!-- Terms Cards Grid -->
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px">
-          ${termsData.map(t => `
+          ${availableTerms.map(t => `
             <div style="background:white;border:1px solid #E2E8F0;border-radius:18px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,0.03);display:flex;flex-direction:column;justify-content:space-between;transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 20px rgba(0,0,0,0.06)'" onmouseout="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.03)'">
               <div>
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">

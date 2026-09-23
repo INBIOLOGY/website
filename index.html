@@ -698,9 +698,10 @@
         `).join('');
       }
 
-      // Render recommended courses (With full cover images matching user screenshot)
-      const courseContainer = document.getElementById('recommended-courses-grid');
-      if (courseContainer) {
+      // Render recommended courses (Dynamic and reactive to deletions & cloud sync)
+      window.renderRecommendedCourses = function() {
+        const courseContainer = document.getElementById('recommended-courses-grid');
+        if (!courseContainer || typeof COURSES === 'undefined') return;
         courseContainer.innerHTML = COURSES.slice(0, 4).map((c, idx) => {
           const isEnrolled = AppState.enrolled.includes(c.id);
           const discountPercent = Math.round((1 - c.price / c.originalPrice) * 100);
@@ -773,7 +774,11 @@
             </div>
           `;
         }).join('');
-      }
+      };
+
+      // Initial render & live sync event listener
+      window.renderRecommendedCourses();
+      window.addEventListener('coursesUpdated', () => window.renderRecommendedCourses());
 
       // Initial render for Free Trials & Articles
       window.renderFreeTrials();

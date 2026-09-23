@@ -378,6 +378,9 @@
       }));
 
       window.filterAndRender();
+      window.addEventListener('coursesUpdated', () => {
+        if (typeof window.filterAndRender === 'function') window.filterAndRender();
+      });
     });
   </script>
 </body>

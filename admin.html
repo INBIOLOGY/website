@@ -3468,46 +3468,17 @@
       }
     }
 
-    function deleteCourse(id) {
+    async function deleteCourse(id) {
       const c = COURSES.find(x => x.id === id);
       const courseTitle = c ? c.title : id;
-      if (confirm(`⚠️ ยืนยันลบคอร์ส "${courseTitle}" หรือไม่?\n\n(การลบคอร์สจะมีผลทันทีและคอร์สจะไม่แสดงอีก)`)) {
-        const idx = COURSES.findIndex(item => item.id === id);
-        if (idx > -1) COURSES.splice(idx, 1);
-
-        try {
-          // 1. Add to inbiology_deleted_courses
-          const storedDeleted = localStorage.getItem('inbiology_deleted_courses') || '[]';
-          let deletedList = JSON.parse(storedDeleted);
-          if (!deletedList.includes(id)) {
-            deletedList.push(id);
-            localStorage.setItem('inbiology_deleted_courses', JSON.stringify(deletedList));
-          }
-
-          // 2. Remove from inbiology_added_courses if exists
-          const storedAdded = localStorage.getItem('inbiology_added_courses');
-          if (storedAdded) {
-            let list = JSON.parse(storedAdded);
-            list = list.filter(item => item.id !== id);
-            localStorage.setItem('inbiology_added_courses', JSON.stringify(list));
-            if (window.CloudService && typeof window.CloudService.saveAddedCoursesToCloud === 'function') {
-              window.CloudService.saveAddedCoursesToCloud(list);
-            }
-          }
-
-          // 3. Clean up from overrides
-          const storedOverrides = localStorage.getItem('inbiology_course_overrides');
-          if (storedOverrides) {
-            let ov = JSON.parse(storedOverrides);
-            delete ov[id];
-            localStorage.setItem('inbiology_course_overrides', JSON.stringify(ov));
-            if (window.CloudService && typeof window.CloudService.saveCourseOverridesToCloud === 'function') {
-              window.CloudService.saveCourseOverridesToCloud(ov);
-            }
-          }
-        } catch(e) {}
-
-        showToast('🗑 ลบคอร์สแล้ว', 'info');
+      if (confirm(`⚠️ ยืนยันลบคอร์ส "${courseTitle}" หรือไม่?\n\n(การลบคอร์สจะมีผลทันทีและคอร์สจะไม่แสดงอีกในทุกหน้า)`)) {
+        if (AppState && typeof AppState.deleteCourse === 'function') {
+          await AppState.deleteCourse(id);
+        } else {
+          const idx = COURSES.findIndex(item => item.id === id);
+          if (idx > -1) COURSES.splice(idx, 1);
+        }
+        showToast('🗑 ลบคอร์สแล้ว (และซิงก์ขึ้น Cloud เรียบร้อย)', 'info');
         renderAdminTable();
       }
     }
@@ -4230,8 +4201,12 @@
           if (typeof window.CloudService.saveCourseOverridesToCloud === 'function') {
             await window.CloudService.saveCourseOverridesToCloud(overrides);
           }
+          const deleted = JSON.parse(localStorage.getItem('inbiology_deleted_courses') || '[]');
+          if (typeof window.CloudService.saveDeletedCoursesToCloud === 'function') {
+            await window.CloudService.saveDeletedCoursesToCloud(deleted);
+          }
           const added = JSON.parse(localStorage.getItem('inbiology_added_courses') || '[]');
-          if (added.length > 0 && typeof window.CloudService.saveAddedCoursesToCloud === 'function') {
+          if (typeof window.CloudService.saveAddedCoursesToCloud === 'function') {
             await window.CloudService.saveAddedCoursesToCloud(added);
           }
 

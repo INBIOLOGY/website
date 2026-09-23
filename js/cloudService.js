@@ -1941,39 +1941,46 @@ const CloudService = window.CloudService = {
   },
 
   /**
-   * Save added courses to Supabase Cloud
+   * Save added courses to Supabase Cloud (site_content + orders fallback)
+   * @param {Array} addedCourses
    */
   async saveAddedCoursesToCloud(addedCourses) {
     if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return false;
     try {
-      const payload = JSON.stringify(addedCourses);
-      const existing = await this._supabaseFetch(
-        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.added_courses_v1&limit=1`
-      );
-      if (existing && existing.length > 0) {
-        await this._supabaseFetch(`/orders?id=eq.${existing[0].id}`, {
-          method: 'PATCH',
-          headers: { 'Prefer': 'return=representation' },
-          body: JSON.stringify({
-            slip_image: payload,
-            updated_at: new Date().toISOString()
-          })
-        });
-      } else {
-        await this._supabaseFetch('/orders', {
-          method: 'POST',
-          headers: { 'Prefer': 'return=representation' },
-          body: JSON.stringify({
-            user_email: 'cms_sync@inbiology.com',
-            user_name: 'CMS Cloud Sync',
-            course_ids: ['cms_added'],
-            total_amount: 0,
-            status: 'system_cms',
-            admin_note: 'added_courses_v1',
-            slip_image: payload
-          })
-        });
-      }
+      // 1. Try dedicated site_content table
+      await this.saveSiteContent('added_courses', addedCourses || []);
+
+      // 2. Also keep orders table bridge in sync for backward compatibility
+      try {
+        const payload = JSON.stringify(addedCourses || []);
+        const existing = await this._supabaseFetch(
+          `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.added_courses_v1&limit=1`
+        );
+        if (existing && existing.length > 0) {
+          await this._supabaseFetch(`/orders?id=eq.${existing[0].id}`, {
+            method: 'PATCH',
+            headers: { 'Prefer': 'return=representation' },
+            body: JSON.stringify({
+              slip_image: payload,
+              updated_at: new Date().toISOString()
+            })
+          });
+        } else {
+          await this._supabaseFetch('/orders', {
+            method: 'POST',
+            headers: { 'Prefer': 'return=representation' },
+            body: JSON.stringify({
+              user_email: 'cms_sync@inbiology.com',
+              user_name: 'CMS Cloud Sync',
+              course_ids: ['cms_added'],
+              total_amount: 0,
+              status: 'system_cms',
+              admin_note: 'added_courses_v1',
+              slip_image: payload
+            })
+          });
+        }
+      } catch(e) {}
       return true;
     } catch(err) {
       console.warn('Could not sync added courses to cloud:', err);
@@ -1982,11 +1989,19 @@ const CloudService = window.CloudService = {
   },
 
   /**
-   * Fetch added courses from Supabase Cloud
+   * Fetch added courses from Supabase Cloud (site_content + orders fallback)
+   * @returns {Promise<Array|null>}
    */
   async fetchAddedCoursesFromCloud() {
     if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return null;
     try {
+      // 1. Try site_content table first
+      const scData = await this.fetchSiteContent('added_courses');
+      if (scData !== null && scData !== undefined && Array.isArray(scData)) {
+        return scData;
+      }
+
+      // 2. Fallback bridge via orders table
       const rows = await this._supabaseFetch(
         `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.added_courses_v1&limit=1`
       );
@@ -1996,6 +2011,81 @@ const CloudService = window.CloudService = {
       return null;
     } catch(err) {
       console.warn('Could not fetch added courses from cloud:', err);
+      return null;
+    }
+  },
+
+  /**
+   * Save deleted course IDs to Supabase Cloud (site_content + orders fallback)
+   * @param {Array<string>} deletedCourseIds
+   */
+  async saveDeletedCoursesToCloud(deletedCourseIds) {
+    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return false;
+    try {
+      // 1. Try dedicated site_content table
+      await this.saveSiteContent('deleted_courses', deletedCourseIds || []);
+
+      // 2. Also keep orders table bridge in sync for backward compatibility
+      try {
+        const payload = JSON.stringify(deletedCourseIds || []);
+        const existing = await this._supabaseFetch(
+          `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.deleted_courses_v1&limit=1`
+        );
+        if (existing && existing.length > 0) {
+          await this._supabaseFetch(`/orders?id=eq.${existing[0].id}`, {
+            method: 'PATCH',
+            headers: { 'Prefer': 'return=representation' },
+            body: JSON.stringify({
+              slip_image: payload,
+              updated_at: new Date().toISOString()
+            })
+          });
+        } else {
+          await this._supabaseFetch('/orders', {
+            method: 'POST',
+            headers: { 'Prefer': 'return=representation' },
+            body: JSON.stringify({
+              user_email: 'cms_sync@inbiology.com',
+              user_name: 'CMS Cloud Sync',
+              course_ids: ['cms_deleted'],
+              total_amount: 0,
+              status: 'system_cms',
+              admin_note: 'deleted_courses_v1',
+              slip_image: payload
+            })
+          });
+        }
+      } catch(e) {}
+      return true;
+    } catch(err) {
+      console.warn('Could not sync deleted courses to cloud:', err);
+      return false;
+    }
+  },
+
+  /**
+   * Fetch deleted course IDs from Supabase Cloud (site_content + orders fallback)
+   * @returns {Promise<Array<string>|null>}
+   */
+  async fetchDeletedCoursesFromCloud() {
+    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return null;
+    try {
+      // 1. Try site_content table first
+      const scData = await this.fetchSiteContent('deleted_courses');
+      if (scData !== null && scData !== undefined && Array.isArray(scData)) {
+        return scData;
+      }
+
+      // 2. Fallback bridge via orders table
+      const rows = await this._supabaseFetch(
+        `/orders?user_email=eq.cms_sync@inbiology.com&admin_note=eq.deleted_courses_v1&limit=1`
+      );
+      if (rows && rows.length > 0 && rows[0].slip_image) {
+        return JSON.parse(rows[0].slip_image);
+      }
+      return null;
+    } catch(err) {
+      console.warn('Could not fetch deleted courses from cloud:', err);
       return null;
     }
   },

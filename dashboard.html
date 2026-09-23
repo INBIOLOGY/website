@@ -894,6 +894,13 @@
       renderDashboardCatalog(categorySlug);
     }
 
+    window.renderDashboardCatalog = renderDashboardCatalog;
+    window.renderEnrolled = renderEnrolled;
+    window.addEventListener('coursesUpdated', () => {
+      renderEnrolled();
+      renderDashboardCatalog(_currentDashboardTopic);
+    });
+
     function renderDashboardCatalog(categorySlug = 'all') {
       const grid = document.getElementById('dashboard-catalog-grid');
       if (!grid) return;
