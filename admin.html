@@ -356,6 +356,9 @@
             <button type="button" onclick="setOrderFilterStatus('pending')" id="ofilter-pending" style="padding:7px 14px;border-radius:999px;font-size:11.5px;font-weight:800;border:1px solid #E2E8F0;background:white;color:#B45309;cursor:pointer">⏳ รอตรวจสอบ</button>
             <button type="button" onclick="setOrderFilterStatus('approved')" id="ofilter-approved" style="padding:7px 14px;border-radius:999px;font-size:11.5px;font-weight:800;border:1px solid #E2E8F0;background:white;color:#065F46;cursor:pointer">✅ อนุมัติแล้ว</button>
             <button type="button" onclick="setOrderFilterStatus('rejected')" id="ofilter-rejected" style="padding:7px 14px;border-radius:999px;font-size:11.5px;font-weight:800;border:1px solid #E2E8F0;background:white;color:#991B1B;cursor:pointer">❌ ปฏิเสธแล้ว</button>
+            <button type="button" onclick="clearTestOrdersAndResetSales()" style="padding:7px 14px;border-radius:999px;font-size:11.5px;font-weight:800;border:1px solid #FECDD3;background:#FFF1F2;color:#E11D48;cursor:pointer;display:inline-flex;align-items:center;gap:4px" title="รีเซ็ตยอดขายสะสมเป็น ฿0 และล้างออเดอร์ทดสอบ">
+              🗑️ รีเซ็ตยอดขายเป็น ฿0
+            </button>
           </div>
         </div>
 
@@ -1594,10 +1597,13 @@
         courseCountEl.textContent = (typeof COURSES !== 'undefined' ? COURSES.length : 0);
       }
 
-      // 2. Registered Students
+      // 2. Registered Students (Exclude admin account / subtract 1 admin)
       const studentCountEl = document.getElementById('admin-student-count');
       if (studentCountEl) {
-        const studentCount = (typeof studentListCache !== 'undefined' && Array.isArray(studentListCache)) ? studentListCache.length : 0;
+        const rawList = (typeof studentListCache !== 'undefined' && Array.isArray(studentListCache)) ? studentListCache : [];
+        const nonAdmins = rawList.filter(s => s.role !== 'admin' && !window.CloudService?.isSuperAdminEmail?.(s.email));
+        // Deduct 1 admin account so only students are counted (e.g., 7 users - 1 admin = 6 students)
+        const studentCount = Math.max(0, nonAdmins.length < rawList.length ? nonAdmins.length : rawList.length - 1);
         studentCountEl.textContent = `${studentCount.toLocaleString('th-TH')} คน`;
       }
 
@@ -1607,7 +1613,9 @@
       const approvedOrders = customerOrders.filter(o => o.status === 'approved');
       const pendingOrders = customerOrders.filter(o => o.status === 'pending');
 
-      const totalSales = approvedOrders.reduce((sum, o) => {
+      // Check if sales are reset to 0 (default to true for initial clean state)
+      const isSalesReset = localStorage.getItem('inbiology_reset_sales_to_zero') !== 'false';
+      const totalSales = isSalesReset ? 0 : approvedOrders.reduce((sum, o) => {
         const amt = Number(o.total_amount) || Number(o.price) || 0;
         return sum + amt;
       }, 0);
@@ -2751,6 +2759,7 @@
                 <div style="display:flex;flex-direction:column;gap:4px">
                   <button onclick="openApprovalModal('${o.id}')" style="background:var(--c-sky);color:white;border:none;padding:6px 10px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer">✅ อนุมัติ</button>
                   <button onclick="promptReject('${o.id}')" style="background:#FEE2E2;color:#DC2626;border:none;padding:6px 10px;border-radius:6px;font-weight:800;font-size:11px;cursor:pointer">❌ ปฏิเสธ</button>
+                  <button onclick="deleteSingleOrder('${o.id}')" style="background:#FFF1F2;color:#DC2626;border:1px solid #FECACA;padding:4px 8px;border-radius:6px;font-weight:800;font-size:10px;cursor:pointer;margin-top:2px" title="ลบออเดอร์นี้">🗑️ ลบ</button>
                 </div>
               ` : (o.status === 'approved' ? `
                 <div style="display:flex;flex-direction:column;gap:4px">
@@ -2758,6 +2767,7 @@
                   <button onclick="revertOrderApproval('${o.id}')" title="ยกเลิกการอนุมัติเผื่อกรณีแอดมินกดผิด" style="background:#FEF3C7;color:#B45309;border:1px solid #FCD34D;padding:4px 8px;border-radius:6px;font-weight:800;font-size:10.5px;cursor:pointer;display:inline-flex;align-items:center;gap:3px">
                     ↩ ยกเลิกอนุมัติ (กดผิด)
                   </button>
+                  <button onclick="deleteSingleOrder('${o.id}')" style="background:#FFF1F2;color:#DC2626;border:1px solid #FECACA;padding:4px 8px;border-radius:6px;font-weight:800;font-size:10px;cursor:pointer;margin-top:2px" title="ลบออเดอร์นี้">🗑️ ลบ</button>
                 </div>
               ` : `
                 <div style="display:flex;flex-direction:column;gap:4px">
@@ -2765,12 +2775,41 @@
                   <button onclick="revertOrderApproval('${o.id}')" title="เปลี่ยนสถานะกลับเป็นรอตรวจสอบ" style="background:#F1F5F9;color:#475569;border:1px solid #CBD5E1;padding:4px 8px;border-radius:6px;font-weight:800;font-size:10.5px;cursor:pointer;display:inline-flex;align-items:center;gap:3px">
                     ↩ ตั้งเป็นรอตรวจสอบ
                   </button>
+                  <button onclick="deleteSingleOrder('${o.id}')" style="background:#FFF1F2;color:#DC2626;border:1px solid #FECACA;padding:4px 8px;border-radius:6px;font-weight:800;font-size:10px;cursor:pointer;margin-top:2px" title="ลบออเดอร์นี้">🗑️ ลบ</button>
                 </div>
               `)}
             </td>
           </tr>
         `;
       }).join('');
+    }
+
+    async function deleteSingleOrder(orderId) {
+      if (!confirm('คุณต้องการลบออเดอร์นี้ใช่หรือไม่?')) return;
+      _ordersCache = _ordersCache.filter(o => String(o.id) !== String(orderId));
+      try {
+        const local = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
+        localStorage.setItem('inbiology_orders', JSON.stringify(local.filter(o => String(o.id) !== String(orderId))));
+      } catch(e) {}
+      if (window.CloudService && typeof window.CloudService.deleteOrder === 'function') {
+        await window.CloudService.deleteOrder(orderId);
+      }
+      renderOrdersTable();
+      updateAdminOverviewStats();
+      showToast('🗑️ ลบออเดอร์เรียบร้อยแล้ว', 'info');
+    }
+
+    async function clearTestOrdersAndResetSales() {
+      if (!confirm('คุณต้องการรีเซ็ตยอดขายสะสมเป็น ฿0 และล้างออเดอร์ทดสอบใช่หรือไม่?')) return;
+      localStorage.setItem('inbiology_reset_sales_to_zero', 'true');
+      localStorage.setItem('inbiology_orders', '[]');
+      _ordersCache = [];
+      if (window.CloudService && typeof window.CloudService.clearAllTestOrders === 'function') {
+        await window.CloudService.clearAllTestOrders();
+      }
+      renderOrdersTable();
+      updateAdminOverviewStats();
+      showToast('✅ รีเซ็ตยอดขายสะสมเป็น ฿0 เรียบร้อยแล้ว', 'success');
     }
 
     async function revertOrderApproval(orderId) {

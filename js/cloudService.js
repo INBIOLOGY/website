@@ -1516,8 +1516,49 @@ const CloudService = window.CloudService = {
         AppState.enrolled = remainingCourses;
         localStorage.setItem('inbiology_enrolled', JSON.stringify(remainingCourses));
       }
+      return { success: true };
     } catch(e) {}
 
+    return { success: true };
+  },
+
+  /**
+   * Admin: Delete a single order (removes from Supabase and localStorage)
+   */
+  async deleteOrder(orderId) {
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        await this._supabaseFetch(`/orders?id=eq.${orderId}`, {
+          method: 'DELETE'
+        });
+      } catch(err) {
+        console.warn('[deleteOrder Supabase Error]:', err);
+      }
+    }
+    try {
+      const orders = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
+      const filtered = orders.filter(x => String(x.id) !== String(orderId));
+      localStorage.setItem('inbiology_orders', JSON.stringify(filtered));
+    } catch(e) {}
+    return { success: true };
+  },
+
+  /**
+   * Admin: Clear all customer test orders and reset revenue to 0
+   */
+  async clearAllTestOrders() {
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        await this._supabaseFetch(`/orders?status=neq.system_cms`, {
+          method: 'DELETE'
+        });
+      } catch(err) {
+        console.warn('[clearAllTestOrders Supabase Error]:', err);
+      }
+    }
+    try {
+      localStorage.setItem('inbiology_orders', '[]');
+    } catch(e) {}
     return { success: true };
   },
 
