@@ -3,5 +3,8 @@ Allow: /
 Disallow: /admin.html
 Disallow: /classroom.html
 Disallow: /dashboard.html
+Disallow: /login.html
+Disallow: /checkout.html
+Disallow: /line-callback.html
 
 Sitemap: https://inbiology-official.vercel.app/sitemap.xml
