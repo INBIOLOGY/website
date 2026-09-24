@@ -20,6 +20,27 @@
     .status-approved { background:#D1FAE5;color:#065F46; }
     .status-rejected { background:#FEE2E2;color:#991B1B; }
 
+    /* ── Course Drag-and-Drop Reorder ── */
+    .course-drag-row { transition: background 0.15s; }
+    .course-drag-row:hover .drag-handle { opacity: 1; }
+    .drag-handle {
+      cursor: grab;
+      opacity: 0.35;
+      transition: opacity 0.2s;
+      user-select: none;
+      -webkit-user-select: none;
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 6px;
+      border-radius: 6px;
+      color: #94A3B8;
+    }
+    .drag-handle:hover { opacity:1; color:#1E3A8A; background:#EFF6FF; }
+    .drag-handle:active { cursor: grabbing; }
+    .course-drag-row.drag-over-top { border-top: 2.5px solid #1E3A8A !important; }
+    .course-drag-row.drag-over-bottom { border-bottom: 2.5px solid #1E3A8A !important; }
+    .course-drag-row.dragging { opacity: 0.4; background: #EFF6FF; }
+
     /* Custom smooth scrollbar for lesson and material manager lists */
     #cms-lessons-list::-webkit-scrollbar,
     #cms-materials-list::-webkit-scrollbar {
@@ -326,14 +347,26 @@
         </div>
 
         <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden">
+          <!-- Reorder info bar -->
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px;background:#F8FAFC;border-bottom:1px solid #E5E7EB;flex-wrap:wrap;gap:8px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:12px;font-weight:800;color:#374151">📋 รายการคอร์สทั้งหมด</span>
+              <span style="font-size:11px;color:#94A3B8;font-weight:600">≡ ลากแถวเพื่อเรียงลำดับ</span>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button type="button" onclick="resetCourseOrder()" style="background:#F1F5F9;color:#475569;border:1px solid #CBD5E1;padding:5px 12px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer">↺ คืนค่าลำดับอัตโนมัติ</button>
+              <button type="button" id="btn-save-course-order" onclick="saveCourseOrder()" style="background:#1E3A8A;color:white;border:none;padding:5px 14px;border-radius:8px;font-size:11px;font-weight:850;cursor:pointer;display:none">💾 บันทึกลำดับ</button>
+            </div>
+          </div>
           <div class="admin-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%">
-            <table style="width:100%;min-width:600px;border-collapse:collapse;font-size:12px">
+            <table style="width:100%;min-width:620px;border-collapse:collapse;font-size:12px">
               <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
                 <tr>
+                  <th style="padding:12px 8px;text-align:center;font-weight:800;color:#6B7280;width:40px">≡</th>
                   <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ชื่อวิชา</th>
                   <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ระดับชั้น</th>
                   <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ราคา</th>
-                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">วิดีโอบทเรียน (YouTube Cloud)</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">วิดีโอบทเรียน</th>
                   <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">การจัดการ</th>
                 </tr>
               </thead>
@@ -383,21 +416,46 @@
 
       <!-- Tab: Coupons -->
       <div id="apanel-coupons" style="display:none;flex-direction:column;gap:20px">
-        <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px">
-          <h3 style="font-size:14px;font-weight:900;color:var(--c-navy);margin:0 0 12px">+ สร้างคูปองส่วนลดใหม่</h3>
-          <form id="add-coupon-form" style="display:flex;gap:10px;flex-wrap:wrap">
-            <input type="text" id="coupon-code" placeholder="โค้ดส่วนลด" required style="border:1px solid #E5E7EB;border-radius:8px;padding:8px 12px;font-size:12px;outline:none" />
-            <input type="number" id="coupon-discount" placeholder="ส่วนลด (บาท)" required style="border:1px solid #E5E7EB;border-radius:8px;padding:8px 12px;font-size:12px;outline:none" />
-            <button type="submit" style="background:var(--c-sky);color:white;font-weight:800;font-size:12px;padding:8px 16px;border-radius:8px;border:none;cursor:pointer">สร้างคูปอง</button>
+        <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:22px 24px;box-shadow:0 2px 10px rgba(0,0,0,0.02)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+            <div>
+              <h3 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0 0 4px">🎫 จัดการโค้ดส่วนลด (Coupons & Discounts)</h3>
+              <p style="font-size:12px;color:#64748B;margin:0">สร้างโค้ดส่วนลดได้ทั้งแบบลดเป็นบาท (฿) หรือลดเป็นเปอร์เซ็นต์ (%) และซิงก์ขึ้น Cloud ทันที ทุกเครื่องจะใช้งานได้พร้อมกัน</p>
+            </div>
+            <button type="button" onclick="syncCouponsToCloudManual()" id="btn-sync-coupons" style="background:#EFF6FF;color:#1E3A8A;border:1.5px solid #93C5FD;padding:8px 16px;border-radius:10px;font-size:12px;font-weight:850;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s">
+              ☁️ ซิงก์โค้ดขึ้น Cloud ทันที
+            </button>
+          </div>
+          <form id="add-coupon-form" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+            <div style="flex:1;min-width:180px">
+              <label style="display:block;font-size:11.5px;font-weight:800;color:#475569;margin-bottom:5px">โค้ดส่วนลด (Code)</label>
+              <input type="text" id="coupon-code" placeholder="เช่น BIO50, EARLYBIRD" required style="width:100%;border:1.5px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:12.5px;font-weight:800;text-transform:uppercase;outline:none;background:white" />
+            </div>
+            <div style="width:160px">
+              <label style="display:block;font-size:11.5px;font-weight:800;color:#475569;margin-bottom:5px">ประเภทส่วนลด</label>
+              <select id="coupon-type" onchange="updateCouponInputPlaceholder()" style="width:100%;border:1.5px solid #CBD5E1;border-radius:10px;padding:9px 10px;font-size:12.5px;font-weight:800;outline:none;background:white">
+                <option value="flat">฿ ลดเป็นบาท (฿)</option>
+                <option value="percent">% ลดเป็นเปอร์เซ็นต์ (%)</option>
+              </select>
+            </div>
+            <div style="flex:1;min-width:160px">
+              <label id="coupon-val-label" style="display:block;font-size:11.5px;font-weight:800;color:#475569;margin-bottom:5px">มูลค่าส่วนลด (บาท)</label>
+              <input type="number" id="coupon-discount" min="1" placeholder="เช่น 200 (ลด 200 บาท)" required style="width:100%;border:1.5px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:12.5px;font-weight:800;outline:none;background:white" />
+            </div>
+            <button type="submit" id="btn-add-coupon-submit" style="background:var(--c-navy);color:white;font-weight:900;font-size:12.5px;padding:10px 22px;border-radius:10px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(185,28,28,0.2);transition:all 0.2s">
+              + สร้างและบันทึกขึ้น Cloud
+            </button>
           </form>
         </div>
         <div style="background:white;border:1px solid #E5E7EB;border-radius:20px;overflow:hidden">
           <div class="admin-table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%">
-            <table style="width:100%;min-width:360px;border-collapse:collapse;font-size:12px">
+            <table style="width:100%;min-width:480px;border-collapse:collapse;font-size:12px">
               <thead style="background:#F9FAFB;border-bottom:1px solid #E5E7EB">
                 <tr>
-                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">โค้ด</th>
-                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">มูลค่า</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">โค้ดส่วนลด</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">ประเภท</th>
+                  <th style="padding:12px 16px;text-align:left;font-weight:800;color:#6B7280">มูลค่าที่ลด</th>
+                  <th style="padding:12px 16px;text-align:center;font-weight:800;color:#6B7280">การจัดการ</th>
                 </tr>
               </thead>
               <tbody id="admin-coupons-table"></tbody>
@@ -1508,6 +1566,13 @@
       renderAdminArticles();
       updateAdminOverviewStats();
 
+      // Live reactive Cloud Sync listener
+      window.addEventListener('coursesUpdated', () => {
+        renderAdminTable();
+        renderCouponsTable();
+        updateAdminOverviewStats();
+      });
+
       // Check for ?edit=courseId, ?edit_trial=id, or ?edit_article=id in URL
       const urlParams = new URLSearchParams(window.location.search);
       const editCourseId = urlParams.get('edit');
@@ -1530,71 +1595,139 @@
         }, 200);
       }
 
-      document.getElementById('add-course-form').addEventListener('submit', (e) => {
+      document.getElementById('add-course-form').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const title = document.getElementById('new-title').value.trim();
-        const level = document.getElementById('new-level').value;
-        const category = document.getElementById('new-category').value;
-        const price = +document.getElementById('new-price').value || 0;
-        const origPrice = +document.getElementById('new-orig-price').value || Math.round(price * 1.8);
-        const hours = +document.getElementById('new-hours').value || 30;
-        const validity = +document.getElementById('new-validity').value || 365;
-        const badge = document.getElementById('new-badge').value.trim() || title;
-        const badgeBg = document.getElementById('new-course-badge-bg').value || '#1E3A8A';
-        const imageUrl = document.getElementById('new-course-image').value.trim() || './course-cover-1.png';
-        const instructor = document.getElementById('new-instructor').value.trim() || 'พี่ต้น (เกียรตินิยมอันดับ 1)';
-        const description = document.getElementById('new-desc').value.trim() || title;
-
-        const newCourse = {
-          id: 'c-' + Date.now(),
-          title,
-          price,
-          originalPrice: origPrice,
-          badge,
-          badgeBg,
-          tag: level + ' & ติวสอบ',
-          tagBg: '#FEF2F2',
-          tagColor: '#991B1B',
-          instructor,
-          hours,
-          validity,
-          description,
-          imageUrl,
-          Level: level,
-          Category: category,
-          rating: 5.0,
-          reviewCount: 1,
-          lessons: [],
-          materials: []
-        };
-        COURSES.push(newCourse);
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const origBtnText = submitBtn ? submitBtn.innerHTML : '';
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '⏳ กำลังบันทึกและซิงก์คอร์สขึ้น Cloud...';
+        }
 
         try {
-          const stored = localStorage.getItem('inbiology_added_courses') || '[]';
-          const list = JSON.parse(stored);
-          list.push(newCourse);
-          localStorage.setItem('inbiology_added_courses', JSON.stringify(list));
-          if (window.CloudService && typeof window.CloudService.saveAddedCoursesToCloud === 'function') {
-            window.CloudService.saveAddedCoursesToCloud(list);
-          }
-        } catch(err) {}
+          const title = document.getElementById('new-title').value.trim();
+          const level = document.getElementById('new-level').value;
+          const category = document.getElementById('new-category').value;
+          const price = +document.getElementById('new-price').value || 0;
+          const origPrice = +document.getElementById('new-orig-price').value || Math.round(price * 1.8);
+          const hours = +document.getElementById('new-hours').value || 30;
+          const validity = +document.getElementById('new-validity').value || 365;
+          const badge = document.getElementById('new-badge').value.trim() || title;
+          const badgeBg = document.getElementById('new-course-badge-bg').value || '#1E3A8A';
+          const imageUrl = document.getElementById('new-course-image').value.trim() || './course-cover-1.png';
+          const instructor = document.getElementById('new-instructor').value.trim() || 'พี่ต้น (เกียรตินิยมอันดับ 1)';
+          const description = document.getElementById('new-desc').value.trim() || title;
 
-        showToast(`✅ เพิ่มคอร์ส "${title}" เรียบร้อยแล้ว!`, 'success');
-        document.getElementById('add-course-form').reset();
-        document.getElementById('new-course-img-preview').src = './course-cover-1.png';
-        document.getElementById('new-course-image').value = './course-cover-1.png';
-        document.getElementById('new-course-file-status').textContent = '';
-        renderAdminTable();
+          let catSlug = 'bio-intensive';
+          const catLower = (category + ' ' + title).toLowerCase();
+          if (catLower.includes('bio intensive') || catLower.includes('bio-intensive')) catSlug = 'bio-intensive';
+          else if (catLower.includes('สอวน') || catLower.includes('posn')) catSlug = 'posn';
+          else if (catLower.includes('a-level') || catLower.includes('alevel') || catLower.includes('tpat') || catLower.includes('pat2')) catSlug = 'alevel';
+          else if (catLower.includes('99') || catLower.includes('starter')) catSlug = 'starter';
+
+          const newCourse = {
+            id: 'c-' + Date.now(),
+            title,
+            price,
+            originalPrice: origPrice,
+            badge,
+            badgeBg,
+            tag: level + ' & ติวสอบ',
+            tagBg: '#FEF2F2',
+            tagColor: '#991B1B',
+            instructor,
+            hours,
+            validity,
+            description,
+            imageUrl,
+            Level: level,
+            Category: category,
+            category: category,
+            categorySlug: catSlug,
+            rating: 5.0,
+            reviewCount: 1,
+            lessons: [],
+            materials: []
+          };
+
+          // Use AppState.addCourse which handles normalization, natural sorting, local & cloud sync
+          let savedCloud = false;
+          if (AppState && typeof AppState.addCourse === 'function') {
+            savedCloud = await AppState.addCourse(newCourse);
+          } else {
+            COURSES.push(newCourse);
+            const stored = localStorage.getItem('inbiology_added_courses') || '[]';
+            const list = JSON.parse(stored);
+            list.push(newCourse);
+            localStorage.setItem('inbiology_added_courses', JSON.stringify(list));
+            if (window.CloudService && typeof window.CloudService.saveAddedCoursesToCloud === 'function') {
+              savedCloud = await window.CloudService.saveAddedCoursesToCloud(list);
+            }
+          }
+
+          if (savedCloud) {
+            showToast(`✅ เพิ่มคอร์ส "${title}" และซิงก์ขึ้น Cloud สำเร็จ 100%!`, 'success');
+            alert(`✅ เพิ่มคอร์ส "${title}" เรียบร้อยแล้ว!\n\nขณะนี้คอร์สถูกซิงก์ขึ้น Supabase Cloud เรียบร้อยแล้ว ทุกเครื่องและแท็บเล็ตนักเรียนจะมองเห็นคอร์สนี้ทันทีครับ`);
+          } else {
+            showToast(`✅ เพิ่มคอร์ส "${title}" ในเครื่องแล้ว (กำลังซิงก์ Cloud ในพื้นหลัง)`, 'info');
+          }
+
+          document.getElementById('add-course-form').reset();
+          document.getElementById('new-course-img-preview').src = './course-cover-1.png';
+          document.getElementById('new-course-image').value = './course-cover-1.png';
+          document.getElementById('new-course-file-status').textContent = '';
+          renderAdminTable();
+        } catch(err) {
+          console.error('Error adding course:', err);
+          showToast('❌ เกิดข้อผิดพลาด: ' + err.message, 'error');
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = origBtnText;
+          }
+        }
       });
 
-      document.getElementById('add-coupon-form').addEventListener('submit', (e) => {
+      document.getElementById('add-coupon-form').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const code = document.getElementById('coupon-code').value.toUpperCase();
-        const discount = +document.getElementById('coupon-discount').value;
-        COUPONS.push({ code, discount, type: 'flat' });
-        showToast('🎫 เพิ่มคูปองแล้ว', 'success');
-        document.getElementById('add-coupon-form').reset();
+        const codeInput = document.getElementById('coupon-code');
+        const discInput = document.getElementById('coupon-discount');
+        const typeSelect = document.getElementById('coupon-type');
+        const btn = document.getElementById('btn-add-coupon-submit') || e.target.querySelector('button[type="submit"]');
+
+        const code = codeInput.value.trim().toUpperCase();
+        const discount = +discInput.value;
+        const type = typeSelect ? typeSelect.value : 'flat';
+
+        if (!code || isNaN(discount) || discount <= 0) {
+          showToast('กรุณากรอกโค้ดและมูลค่าส่วนลดให้ถูกต้อง', 'error');
+          return;
+        }
+
+        const existing = COUPONS.find(c => c.code.toUpperCase() === code);
+        if (existing) {
+          existing.discount = discount;
+          existing.type = type;
+        } else {
+          COUPONS.push({ code, discount, type });
+        }
+
+        localStorage.setItem('inbiology_coupons', JSON.stringify(COUPONS));
         renderCouponsTable();
+
+        const origBtnText = btn ? btn.innerHTML : '';
+        if (btn) { btn.disabled = true; btn.textContent = '⏳ กำลังซิงก์ขึ้น Cloud...'; }
+        if (window.CloudService && typeof window.CloudService.saveCouponsToCloud === 'function') {
+          try {
+            await window.CloudService.saveCouponsToCloud(COUPONS);
+            showToast(`🎫 สร้างโค้ด "${code}" (${type === 'percent' ? discount + '%' : '฿' + discount}) และซิงก์ขึ้น Cloud สำเร็จ!`, 'success');
+          } catch(err) {
+            showToast('บันทึกในเครื่องแล้ว แต่การซิงก์ขึ้น Cloud ขัดข้อง', 'warning');
+          }
+        }
+        if (btn) { btn.disabled = false; btn.innerHTML = origBtnText; }
+
+        document.getElementById('add-coupon-form').reset();
       });
     });
 
@@ -1732,6 +1865,19 @@
       if (tName === 'banner') {
         loadBannerConfig();
         updateBannerPreview();
+      }
+      if (tName === 'coupons') {
+        renderCouponsTable();
+        if (window.CloudService && typeof window.CloudService.fetchCouponsFromCloud === 'function') {
+          window.CloudService.fetchCouponsFromCloud(true).then(cloudList => {
+            if (Array.isArray(cloudList) && cloudList.length > 0) {
+              COUPONS.length = 0;
+              COUPONS.push(...cloudList);
+              localStorage.setItem('inbiology_coupons', JSON.stringify(cloudList));
+              renderCouponsTable();
+            }
+          }).catch(() => {});
+        }
       }
     }
 
@@ -2620,12 +2766,17 @@
     function renderAdminTable() {
       document.getElementById('admin-course-count').textContent = COURSES.length;
       updateAdminOverviewStats();
-      document.getElementById('admin-course-table').innerHTML = COURSES.map(c => {
+      document.getElementById('admin-course-table').innerHTML = COURSES.map((c, idx) => {
         const lessons = AppState.getCourseLessons(c.id);
         const materials = AppState.getCourseMaterials(c.id);
         const ytCount = lessons.filter(l => Boolean(extractYouTubeId(l.videoUrl))).length;
         return `
-          <tr style="border-bottom:1px solid #F3F4F6">
+          <tr class="course-drag-row" draggable="true" data-course-id="${c.id}" data-idx="${idx}" style="border-bottom:1px solid #F3F4F6">
+            <td style="padding:8px;text-align:center;width:40px">
+              <span class="drag-handle" title="ลากเพื่อเรียงลำดับ">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="5" r="1.8"/><circle cx="15" cy="5" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="19" r="1.8"/><circle cx="15" cy="19" r="1.8"/></svg>
+              </span>
+            </td>
             <td style="padding:12px 16px;font-weight:700;color:var(--c-navy)">
               <div style="display:flex;align-items:center;gap:10px">
                 <img src="${c.imageUrl}" alt="" style="width:36px;height:36px;border-radius:6px;object-fit:cover;box-shadow:0 2px 6px rgba(0,0,0,0.1)" />
@@ -2662,6 +2813,75 @@
           </tr>
         `;
       }).join('');
+      initCourseRowDragDrop();
+    }
+
+    let _draggedCourseRow = null;
+
+    function initCourseRowDragDrop() {
+      const tbody = document.getElementById('admin-course-table');
+      if (!tbody) return;
+      tbody.querySelectorAll('.course-drag-row').forEach(row => {
+        row.addEventListener('dragstart', e => {
+          _draggedCourseRow = row;
+          row.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+        row.addEventListener('dragend', () => {
+          row.classList.remove('dragging');
+          tbody.querySelectorAll('.course-drag-row').forEach(r => r.classList.remove('drag-over-top','drag-over-bottom'));
+          _draggedCourseRow = null;
+        });
+        row.addEventListener('dragover', e => {
+          e.preventDefault();
+          if (!_draggedCourseRow || _draggedCourseRow === row) return;
+          const midY = row.getBoundingClientRect().top + row.getBoundingClientRect().height / 2;
+          tbody.querySelectorAll('.course-drag-row').forEach(r => r.classList.remove('drag-over-top','drag-over-bottom'));
+          row.classList.add(e.clientY < midY ? 'drag-over-top' : 'drag-over-bottom');
+        });
+        row.addEventListener('dragleave', () => row.classList.remove('drag-over-top','drag-over-bottom'));
+        row.addEventListener('drop', e => {
+          e.preventDefault();
+          if (!_draggedCourseRow || _draggedCourseRow === row) return;
+          row.classList.remove('drag-over-top','drag-over-bottom');
+          const insertBefore = e.clientY < (row.getBoundingClientRect().top + row.getBoundingClientRect().height / 2);
+          const fromId = _draggedCourseRow.dataset.courseId;
+          const toId = row.dataset.courseId;
+          const fromIdx = COURSES.findIndex(c => c.id === fromId);
+          if (fromIdx < 0) return;
+          const [moved] = COURSES.splice(fromIdx, 1);
+          const toIdx = COURSES.findIndex(c => c.id === toId);
+          COURSES.splice(insertBefore ? toIdx : toIdx + 1, 0, moved);
+          const saveBtn = document.getElementById('btn-save-course-order');
+          if (saveBtn) saveBtn.style.display = 'inline-flex';
+          renderAdminTable();
+        });
+      });
+    }
+
+    async function saveCourseOrder() {
+      const btn = document.getElementById('btn-save-course-order');
+      if (btn) { btn.textContent = '⏳ กำลังบันทึก...'; btn.disabled = true; }
+      const orderedIds = COURSES.map(c => c.id);
+      localStorage.setItem('inbiology_course_order', JSON.stringify(orderedIds));
+      if (window.CloudService && typeof window.CloudService.saveSiteContent === 'function') {
+        try { await window.CloudService.saveSiteContent('course_order', { ids: orderedIds }); } catch(e) {}
+      }
+      showToast('✅ บันทึกลำดับคอร์สเรียบร้อยแล้ว!', 'success');
+      if (btn) { btn.textContent = '✓ บันทึกแล้ว'; btn.style.background = '#10B981'; btn.disabled = false; }
+      setTimeout(() => {
+        if (btn) { btn.style.display = 'none'; btn.textContent = '💾 บันทึกลำดับ'; btn.style.background = '#1E3A8A'; }
+      }, 2000);
+    }
+
+    function resetCourseOrder() {
+      if (!confirm('คืนลำดับคอร์สกลับเป็นอัตโนมัติ (เรียงตามชื่อ/รหัส) ใช่ไหมครับ?')) return;
+      localStorage.removeItem('inbiology_course_order');
+      if (typeof sortCoursesNaturally === 'function') sortCoursesNaturally(COURSES);
+      renderAdminTable();
+      const saveBtn = document.getElementById('btn-save-course-order');
+      if (saveBtn) saveBtn.style.display = 'none';
+      showToast('↺ คืนลำดับคอร์สอัตโนมัติแล้ว', 'info');
     }
 
     // ─── REAL ORDERS from Supabase ───────────────────────────────────────────
@@ -2985,13 +3205,81 @@
       }
     }
 
+    function updateCouponInputPlaceholder() {
+      const type = document.getElementById('coupon-type').value;
+      const label = document.getElementById('coupon-val-label');
+      const input = document.getElementById('coupon-discount');
+      if (type === 'percent') {
+        if (label) label.textContent = 'มูลค่าส่วนลด (เปอร์เซ็นต์ %)';
+        if (input) {
+          input.placeholder = 'เช่น 20 (สำหรับลด 20%)';
+          input.max = '100';
+        }
+      } else {
+        if (label) label.textContent = 'มูลค่าส่วนลด (บาท)';
+        if (input) {
+          input.placeholder = 'เช่น 200 (ลด 200 บาท)';
+          input.removeAttribute('max');
+        }
+      }
+    }
+
     function renderCouponsTable() {
-      document.getElementById('admin-coupons-table').innerHTML = COUPONS.map(c => `
-        <tr style="border-bottom:1px solid #F3F4F6">
-          <td style="padding:12px 16px;font-family:monospace;font-weight:800;color:var(--c-navy)">${c.code}</td>
-          <td style="padding:12px 16px;font-weight:800;color:#10B981">฿${c.discount}</td>
-        </tr>
-      `).join('');
+      const tbody = document.getElementById('admin-coupons-table');
+      if (!tbody) return;
+      if (!COUPONS || COUPONS.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="padding:28px;text-align:center;color:#94A3B8">ยังไม่มีโค้ดส่วนลดในระบบ</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = COUPONS.map(c => {
+        const isPercent = c.type === 'percent';
+        const typeBadge = isPercent
+          ? `<span style="background:#FEF3C7;color:#92400E;font-size:11px;font-weight:800;padding:3px 10px;border-radius:6px">% ลดเป็นเปอร์เซ็นต์</span>`
+          : `<span style="background:#EFF6FF;color:#1E3A8A;font-size:11px;font-weight:800;padding:3px 10px;border-radius:6px">฿ ลดเป็นบาท</span>`;
+        const valText = isPercent ? `${c.discount}%` : `฿${formatPrice(c.discount)}`;
+        return `
+          <tr style="border-bottom:1px solid #F3F4F6">
+            <td style="padding:12px 16px;font-family:monospace;font-weight:900;color:var(--c-navy);font-size:13px">${c.code}</td>
+            <td style="padding:12px 16px">${typeBadge}</td>
+            <td style="padding:12px 16px;font-weight:900;color:#DC2626;font-size:13px">${valText}</td>
+            <td style="padding:12px 16px;text-align:center">
+              <button type="button" onclick="deleteCoupon('${c.code}')" style="background:#FFF1F2;color:#DC2626;border:1px solid #FECDD3;padding:6px 12px;border-radius:8px;font-weight:850;font-size:11px;cursor:pointer;transition:all 0.2s" title="ลบคูปองนี้">
+                🗑️ ลบ
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function deleteCoupon(code) {
+      if (!confirm(`คุณต้องการลบโค้ดส่วนลด "${code}" ใช่หรือไม่?`)) return;
+      const idx = COUPONS.findIndex(c => c.code.toUpperCase() === code.toUpperCase());
+      if (idx > -1) {
+        COUPONS.splice(idx, 1);
+        localStorage.setItem('inbiology_coupons', JSON.stringify(COUPONS));
+        renderCouponsTable();
+        if (window.CloudService && typeof window.CloudService.saveCouponsToCloud === 'function') {
+          await window.CloudService.saveCouponsToCloud(COUPONS);
+          showToast(`🗑️ ลบโค้ด "${code}" และอัปเดตขึ้น Cloud เรียบร้อยแล้ว`, 'info');
+        }
+      }
+    }
+
+    async function syncCouponsToCloudManual() {
+      const btn = document.getElementById('btn-sync-coupons');
+      const origText = btn ? btn.innerHTML : '';
+      if (btn) { btn.disabled = true; btn.textContent = '⏳ กำลังซิงก์...'; }
+      try {
+        if (window.CloudService && typeof window.CloudService.saveCouponsToCloud === 'function') {
+          await window.CloudService.saveCouponsToCloud(COUPONS);
+          showToast('☁️ ซิงก์โค้ดส่วนลดทั้งหมดขึ้น Cloud สำเร็จ 100%! ทุกเครื่องใช้ได้ทันที', 'success');
+        }
+      } catch(e) {
+        showToast('❌ การซิงก์ขัดข้อง: ' + e.message, 'error');
+      } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = origText; }
+      }
     }
 
     let studentListCache = [];
@@ -4208,6 +4496,11 @@
           const added = JSON.parse(localStorage.getItem('inbiology_added_courses') || '[]');
           if (typeof window.CloudService.saveAddedCoursesToCloud === 'function') {
             await window.CloudService.saveAddedCoursesToCloud(added);
+          }
+
+          // Sync Coupons to Cloud
+          if (typeof window.CloudService.saveCouponsToCloud === 'function' && typeof COUPONS !== 'undefined') {
+            await window.CloudService.saveCouponsToCloud(COUPONS);
           }
 
           // Sync Free Trials, Articles, and Visibility Settings

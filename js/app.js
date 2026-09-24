@@ -83,7 +83,7 @@ function sortCoursesNaturally(courses) {
   const romanMap = { 'I': 1, 'II': 2, 'III': 3, 'IV': 4, 'V': 5, 'VI': 6, 'VII': 7, 'VIII': 8, 'IX': 9, 'X': 10 };
   const getWeight = (c) => {
     const text = `${c.badge || ''} ${c.title || ''}`.trim();
-    const bioMatch = text.match(/Bio\s*Intensive\s*(I{1,3}|IV|V|VI{0,3}|IX|X|\d+)/i);
+    const bioMatch = text.match(/Bio\s*Intensive\s*(VIII|VII|VI|IV|V|III|II|IX|X|I|\d+)\b/i);
     if (bioMatch) {
       const roman = bioMatch[1].toUpperCase();
       const num = romanMap[roman] || parseInt(bioMatch[1]) || 1;
@@ -138,6 +138,23 @@ try {
     }
     COURSES.forEach(c => normalizeCourse(c));
     sortCoursesNaturally(COURSES);
+
+    // Apply admin custom order if saved
+    const savedOrder = localStorage.getItem('inbiology_course_order');
+    if (savedOrder) {
+      try {
+        const orderedIds = JSON.parse(savedOrder);
+        if (Array.isArray(orderedIds) && orderedIds.length > 0) {
+          const idxMap = {};
+          orderedIds.forEach((id, i) => { idxMap[id] = i; });
+          COURSES.sort((a, b) => {
+            const ia = idxMap[a.id] !== undefined ? idxMap[a.id] : 9999;
+            const ib = idxMap[b.id] !== undefined ? idxMap[b.id] : 9999;
+            return ia - ib;
+          });
+        }
+      } catch(e) {}
+    }
 
     // 2. Hydrate edited course information overrides (title, price, level, image, badge, etc.)
     const storedOverrides = localStorage.getItem('inbiology_course_overrides');
@@ -572,6 +589,7 @@ const AppState = window.AppState = {
         } else {
           COURSES.push(newCourse);
         }
+        COURSES.forEach(c => normalizeCourse(c));
         sortCoursesNaturally(COURSES);
       }
 
@@ -758,18 +776,21 @@ const AppState = window.AppState = {
     this._lastCourseSyncTime = now;
 
     try {
-      // Parallelize all CMS fetches concurrently (all 6 promises properly destructured)
-      const [lessonsRes, materialsRes, overridesRes, addedRes, deletedRes, couponsRes] = await Promise.allSettled([
-        window.CloudService.fetchCourseLessonsFromCloud(),
-        (typeof window.CloudService.fetchCourseMaterialsFromCloud === 'function' ? window.CloudService.fetchCourseMaterialsFromCloud() : Promise.resolve(null)),
-        window.CloudService.fetchCourseOverridesFromCloud(),
-        (typeof window.CloudService.fetchAddedCoursesFromCloud === 'function' ? window.CloudService.fetchAddedCoursesFromCloud(force) : Promise.resolve(null)),
-        (typeof window.CloudService.fetchDeletedCoursesFromCloud === 'function' ? window.CloudService.fetchDeletedCoursesFromCloud() : Promise.resolve(null)),
-        (typeof window.CloudService.fetchCouponsFromCloud === 'function' ? window.CloudService.fetchCouponsFromCloud() : Promise.resolve(null))
-      ]);
+      // High-performance single roundtrip CMS fetch
+      let allCms = {};
+      if (typeof window.CloudService.fetchAllSiteContent === 'function') {
+        allCms = await window.CloudService.fetchAllSiteContent(force);
+      }
+
+      // Extract each CMS slice with fallback
+      const cloudDeleted = allCms['deleted_courses'] !== undefined ? allCms['deleted_courses'] : (typeof window.CloudService.fetchDeletedCoursesFromCloud === 'function' ? await window.CloudService.fetchDeletedCoursesFromCloud() : null);
+      const cloudAdded = allCms['added_courses'] !== undefined ? allCms['added_courses'] : (typeof window.CloudService.fetchAddedCoursesFromCloud === 'function' ? await window.CloudService.fetchAddedCoursesFromCloud(force) : null);
+      const cloudLessons = allCms['course_lessons'] !== undefined ? allCms['course_lessons'] : (typeof window.CloudService.fetchCourseLessonsFromCloud === 'function' ? await window.CloudService.fetchCourseLessonsFromCloud() : null);
+      const cloudMaterials = allCms['course_materials'] !== undefined ? allCms['course_materials'] : (typeof window.CloudService.fetchCourseMaterialsFromCloud === 'function' ? await window.CloudService.fetchCourseMaterialsFromCloud() : null);
+      const cloudOverrides = allCms['course_overrides'] !== undefined ? allCms['course_overrides'] : (typeof window.CloudService.fetchCourseOverridesFromCloud === 'function' ? await window.CloudService.fetchCourseOverridesFromCloud() : null);
+      const cloudCoupons = allCms['coupons'] !== undefined ? allCms['coupons'] : (typeof window.CloudService.fetchCouponsFromCloud === 'function' ? await window.CloudService.fetchCouponsFromCloud() : null);
 
       // 0. Deleted Courses Sync (Cloud + Local merge)
-      const cloudDeleted = deletedRes.status === 'fulfilled' ? deletedRes.value : null;
       let localDeleted = [];
       try {
         localDeleted = JSON.parse(localStorage.getItem('inbiology_deleted_courses') || '[]');
@@ -792,7 +813,6 @@ const AppState = window.AppState = {
       }
 
       // 1. Course Lessons
-      const cloudLessons = lessonsRes.status === 'fulfilled' ? lessonsRes.value : null;
       if (cloudLessons && typeof cloudLessons === 'object') {
         const localLessons = JSON.parse(localStorage.getItem('inbiology_course_lessons') || '{}');
         const merged = { ...localLessons, ...cloudLessons };
@@ -809,7 +829,6 @@ const AppState = window.AppState = {
       }
 
       // 2. Study Materials
-      const cloudMaterials = materialsRes.status === 'fulfilled' ? materialsRes.value : null;
       if (cloudMaterials && typeof cloudMaterials === 'object') {
         const localMaterials = JSON.parse(localStorage.getItem('inbiology_course_materials') || '{}');
         const mergedMaterials = { ...localMaterials, ...cloudMaterials };
@@ -824,7 +843,6 @@ const AppState = window.AppState = {
       }
 
       // 3. Course Info Overrides
-      const cloudOverrides = overridesRes.status === 'fulfilled' ? overridesRes.value : null;
       if (cloudOverrides && typeof cloudOverrides === 'object') {
         const localOverrides = JSON.parse(localStorage.getItem('inbiology_course_overrides') || '{}');
         const mergedOverrides = { ...localOverrides, ...cloudOverrides };
@@ -839,7 +857,6 @@ const AppState = window.AppState = {
       }
 
       // 4. Added Courses (Filtered against mergedDeleted, normalized, and naturally sorted)
-      const cloudAdded = addedRes.status === 'fulfilled' ? addedRes.value : null;
       if (cloudAdded && Array.isArray(cloudAdded)) {
         const validAdded = cloudAdded
           .filter(ac => ac && ac.id && !mergedDeleted.includes(ac.id))
@@ -860,7 +877,6 @@ const AppState = window.AppState = {
       }
 
       // 5. Coupons Sync from Cloud
-      const cloudCoupons = couponsRes.status === 'fulfilled' ? couponsRes.value : null;
       if (cloudCoupons && Array.isArray(cloudCoupons) && cloudCoupons.length > 0) {
         localStorage.setItem('inbiology_coupons', JSON.stringify(cloudCoupons));
         if (typeof COUPONS !== 'undefined') {
@@ -876,6 +892,7 @@ const AppState = window.AppState = {
       if (typeof window.renderRecommendedCourses === 'function') window.renderRecommendedCourses();
       if (typeof window.renderDashboardCatalog === 'function') window.renderDashboardCatalog();
       if (typeof window.renderAdminTable === 'function') window.renderAdminTable();
+      if (typeof window.renderCouponsTable === 'function') window.renderCouponsTable();
     } catch(err) {
       console.warn('Note: Cloud CMS background sync error:', err);
     }
@@ -1051,6 +1068,52 @@ async function applyCouponCode(codeStr, currentSubtotal = null) {
     discountAmount: calcAmount
   };
 }
+
+// ─── NOT READY MODAL POPUP (เริ่มเรียนฟรี / คลังข้อสอบ) ──────────────────────
+function showNotReadyModal(type = 'trial') {
+  let modal = document.getElementById('not-ready-modal-container');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'not-ready-modal-container';
+    document.body.appendChild(modal);
+  }
+
+  const isExam = type === 'exam';
+  const iconEmoji = isExam ? '📝' : '🎬';
+  const title = 'ขออภัยในความไม่สะดวก';
+  const message = isExam
+    ? 'ขณะนี้ระบบคลังข้อสอบและคลิปเฉลยละเอียดกำลังอยู่ระหว่างการจัดทำและอัปเดตระบบใหม่ เพื่อให้ได้มาตรฐานข้อสอบที่ดีที่สุดครับ<br><br>คลิปและระบบยังไม่พร้อมใช้งานในขณะนี้ กรุณารอติดตามเร็วๆ นี้นะครับ 🙏✨'
+    : 'ขณะนี้คลิปและระบบบทเรียนทดลองเรียนฟรียังไม่พร้อมใช้งาน กำลังอยู่ระหว่างการจัดเตรียมและอัปเดตบทเรียนใหม่ครับ<br><br>ขออภัยในความไม่สะดวก กรุณารอติดตามเร็วๆ นี้นะครับ 🙏✨';
+
+  modal.innerHTML = `
+    <div style="position:fixed;inset:0;background:rgba(15,23,42,0.68);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.2s ease">
+      <div style="background:white;border-radius:24px;padding:32px 28px;max-width:440px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.25);border:1.5px solid #F1F5F9;position:relative;animation:modalScaleUp 0.25s cubic-bezier(0.16,1,0.3,1)">
+        <button onclick="closeNotReadyModal()" style="position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:#F1F5F9;border:none;color:#64748B;font-size:16px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:all 0.2s" aria-label="ปิด">✕</button>
+        <div style="width:68px;height:68px;border-radius:22px;background:#FEF2F2;border:2px solid #FEE2E2;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:34px">
+          ${iconEmoji}
+        </div>
+        <h3 style="font-size:20px;font-weight:950;color:#1E293B;margin:0 0 10px;line-height:1.3">${title}</h3>
+        <p style="font-size:13.5px;color:#64748B;line-height:1.65;margin:0 0 24px">${message}</p>
+        <div style="display:flex;gap:10px">
+          <button onclick="closeNotReadyModal()" style="flex:1;background:var(--c-navy);color:white;font-weight:900;font-size:13.5px;padding:12px 20px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(185,28,28,0.25);transition:all 0.2s">
+            ตกลง / เข้าใจแล้ว
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.style.overflow = 'hidden';
+}
+
+function closeNotReadyModal() {
+  const modal = document.getElementById('not-ready-modal-container');
+  if (modal) {
+    modal.innerHTML = '';
+  }
+  document.body.style.overflow = '';
+}
+window.showNotReadyModal = showNotReadyModal;
+window.closeNotReadyModal = closeNotReadyModal;
 
 // Toast Notifications System
 let _toastId = 0;
@@ -1975,7 +2038,7 @@ function renderHeader(activePage = 'home') {
       <nav class="desktop-nav" aria-label="เมนูหลัก">
         <a href="index.html" class="nav-link ${activePage === 'home' ? 'active' : ''}">หน้าแรก</a>
         <a href="courses.html" class="nav-link ${activePage === 'courses' ? 'active' : ''}">คอร์สเรียน</a>
-        <a href="exam.html" class="nav-link ${activePage === 'exam' ? 'active' : ''}">คลังข้อสอบ</a>
+        <a href="javascript:void(0)" onclick="showNotReadyModal('exam')" class="nav-link ${activePage === 'exam' ? 'active' : ''}">คลังข้อสอบ</a>
         <a href="about.html" class="nav-link ${activePage === 'about' ? 'active' : ''}">เกี่ยวกับเรา</a>
         <a href="faq.html" class="nav-link ${activePage === 'faq' ? 'active' : ''}">คำถามพบบ่อย</a>
         ${isLoggedIn ? `
@@ -2012,7 +2075,7 @@ function renderHeader(activePage = 'home') {
         <div id="nav-dropdown" class="dropdown-panel">
           <a href="index.html" class="dropdown-item">หน้าแรก</a>
           <a href="courses.html" class="dropdown-item">คอร์สเรียนทั้งหมด</a>
-          <a href="exam.html" class="dropdown-item">คลังข้อสอบ A-Level</a>
+          <a href="javascript:void(0)" onclick="showNotReadyModal('exam')" class="dropdown-item">คลังข้อสอบ A-Level</a>
           <a href="about.html" class="dropdown-item">เกี่ยวกับเรา</a>
           <a href="faq.html" class="dropdown-item">คำถามพบบ่อย</a>
           <a href="guide.html" class="dropdown-item">คู่มือการใช้งาน</a>
@@ -2080,7 +2143,7 @@ function renderFooter() {
             <a href="https://www.facebook.com/share/1K2bmAys3f/?mibextid=wwXIfr" target="_blank" rel="noopener" class="footer-social-btn" title="Facebook INBIOLOGY" aria-label="Facebook">
               <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" style="color:#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
             </a>
-            <a href="https://line.me/ti/p/@inbiology" target="_blank" rel="noopener" class="footer-social-btn" title="LINE Official @inbiology" aria-label="LINE Official">
+            <a href="https://lin.ee/qQ4gbkO" target="_blank" rel="noopener" class="footer-social-btn" title="LINE Official @inbiology" aria-label="LINE Official">
               <img src="./social_line.png" alt="LINE" style="width:18px;height:18px;object-fit:contain" />
             </a>
             <a href="https://www.tiktok.com/@tonnarabbit" target="_blank" rel="noopener" class="footer-social-btn" title="TikTok @ครูต้นInbiology" aria-label="TikTok">
@@ -2108,7 +2171,7 @@ function renderFooter() {
             <ul class="footer-links">
               <li><a href="about.html">เกี่ยวกับพี่ต้น</a></li>
               <li><a href="faq.html">คำถามพบบ่อย</a></li>
-              <li><a href="https://line.me/ti/p/@inbiology" target="_blank" rel="noopener" style="color:#38BDF8;font-weight:800">LINE: @inbiology</a></li>
+              <li><a href="https://lin.ee/qQ4gbkO" target="_blank" rel="noopener" style="color:#38BDF8;font-weight:800">LINE: @inbiology</a></li>
             </ul>
           </div>
         </div>
