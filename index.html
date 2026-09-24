@@ -54,7 +54,7 @@
           "jobTitle": "ผู้สอนชีววิทยา"
         },
         "sameAs": [
-          "https://line.me/ti/p/@inbiology",
+          "https://lin.ee/sYQ6MIn",
           "https://www.tiktok.com/@tonnarabbit",
           "https://www.facebook.com/share/1K2bmAys3f/?mibextid=wwXIfr"
         ]
@@ -93,7 +93,7 @@
       <nav class="desktop-nav" aria-label="เมนูหลัก">
         <a href="index.html" class="nav-link active">หน้าแรก</a>
         <a href="courses.html" class="nav-link">คอร์สเรียน</a>
-        <a href="exam.html" class="nav-link">คลังข้อสอบ</a>
+        <a href="javascript:void(0)" onclick="showNotReadyModal('exam')" class="nav-link">คลังข้อสอบ</a>
         <a href="about.html" class="nav-link">เกี่ยวกับเรา</a>
         <a href="faq.html" class="nav-link">คำถามพบบ่อย</a>
       </nav>
@@ -115,7 +115,7 @@
         <div id="nav-dropdown" class="dropdown-panel">
           <a href="index.html" class="dropdown-item">หน้าแรก</a>
           <a href="courses.html" class="dropdown-item">คอร์สเรียนทั้งหมด</a>
-          <a href="exam.html" class="dropdown-item">คลังข้อสอบ A-Level</a>
+          <a href="javascript:void(0)" onclick="showNotReadyModal('exam')" class="dropdown-item">คลังข้อสอบ A-Level</a>
           <a href="about.html" class="dropdown-item">เกี่ยวกับเรา</a>
           <a href="faq.html" class="dropdown-item">คำถามพบบ่อย</a>
           <a href="guide.html" class="dropdown-item">คู่มือการใช้งาน</a>
@@ -146,7 +146,7 @@
             <a href="courses.html" class="hero-btn-primary">
               ดูคอร์สทั้งหมด ➔
             </a>
-            <a href="#trial" class="hero-btn-secondary">
+            <a href="javascript:void(0)" onclick="showNotReadyModal('trial')" class="hero-btn-secondary">
               ▶ เริ่มเรียนฟรี
             </a>
           </div>
@@ -500,7 +500,7 @@
         </div>
         <div style="background:#FFF;border:1.5px solid #F3F4F6;border-radius:24px;padding:32px 20px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.02)">
           <p style="font-size:16px;font-weight:850;color:#374151;margin:0">LINE Official</p>
-          <a href="https://line.me/ti/p/@inbiology" target="_blank" rel="noopener" style="margin-top:14px;display:block;background:#06C755;color:white;padding:12px;border-radius:12px;font-weight:800;text-decoration:none;transition:transform 0.2s">@INBIOLOGY</a>
+          <a href="https://lin.ee/sYQ6MIn" target="_blank" rel="noopener" style="margin-top:14px;display:block;background:#06C755;color:white;padding:12px;border-radius:12px;font-weight:800;text-decoration:none;transition:transform 0.2s">@INBIOLOGY</a>
         </div>
         <div style="background:#FFF;border:1.5px solid #F3F4F6;border-radius:24px;padding:32px 20px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.02)">
           <p style="font-size:16px;font-weight:850;color:#374151;margin:0">TikTok</p>
@@ -698,11 +698,11 @@
         `).join('');
       }
 
-      // Render recommended courses (Dynamic and reactive to deletions & cloud sync)
+      // Render recommended courses (Dynamic and reactive to additions, deletions & cloud sync)
       window.renderRecommendedCourses = function() {
         const courseContainer = document.getElementById('recommended-courses-grid');
         if (!courseContainer || typeof COURSES === 'undefined') return;
-        courseContainer.innerHTML = COURSES.slice(0, 4).map((c, idx) => {
+        courseContainer.innerHTML = COURSES.map((c, idx) => {
           const isEnrolled = AppState.isEnrolled ? AppState.isEnrolled(c.id) : AppState.enrolled.includes(c.id);
           const discountPercent = Math.round((1 - c.price / c.originalPrice) * 100);
           return `

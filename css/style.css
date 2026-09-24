@@ -1134,14 +1134,23 @@ h6 {
   display: flex;
   gap: 20px;
   width: max-content;
-  animation: marquee 45s linear infinite;
+  animation: marquee 30s linear infinite;
   will-change: transform;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
 }
 
-.marquee-content:hover {
-  animation-play-state: paused;
+/* Only pause on hover if device has a precise pointer (mouse), preventing sticky pause on phones */
+@media (hover: hover) and (pointer: fine) {
+  .marquee-content:hover {
+    animation-play-state: paused;
+  }
+}
+
+@media (max-width: 768px) {
+  .marquee-content {
+    animation-duration: 20s !important;
+  }
 }
 
 .review-card-container {

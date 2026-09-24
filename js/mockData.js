@@ -1627,6 +1627,16 @@ const REVIEWS = [
     imagePosition: '45% 28%',
     school: 'แพทย์ มข.',
     course: 'Bio Intensive & A-Level ชีววิทยา'
+  },
+  {
+    id: 'rev-7',
+    name: 'น้องพรีม',
+    text: 'ตั้งแต่รู้จัก Inbio ก็ไม่ say no ชีวะอีกเลย',
+    score: 'คณะแพทยศาสตร์ มหาวิทยาลัยขอนแก่น',
+    avatar: './student_preme.png',
+    imagePosition: 'center 20%',
+    school: 'แพทย์ มข.',
+    course: 'Bio Intensive & A-Level ชีววิทยา'
   }
 ];
 

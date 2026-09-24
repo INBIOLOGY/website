@@ -97,8 +97,8 @@ const CloudService = window.CloudService = {
       ...(options.headers || {})
     };
 
-    // Fast-abort timeout (default 3500ms) to ensure Safari never hangs/freezes
-    const timeoutMs = options.timeout || 3500;
+    // Abort timeout (default 10000ms) to ensure mobile networks have enough time to establish TLS
+    const timeoutMs = options.timeout || 10000;
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -1947,8 +1947,21 @@ const CloudService = window.CloudService = {
   async saveAddedCoursesToCloud(addedCourses) {
     if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return false;
     try {
+      // Merge with latest courses on cloud to prevent multi-device overwrites
+      let mergedList = Array.isArray(addedCourses) ? [...addedCourses] : [];
+      try {
+        const cloudExisting = await this.fetchAddedCoursesFromCloud(true);
+        if (Array.isArray(cloudExisting) && cloudExisting.length > 0) {
+          cloudExisting.forEach(cc => {
+            if (cc && cc.id && !mergedList.some(x => x && x.id === cc.id)) {
+              mergedList.push(cc);
+            }
+          });
+        }
+      } catch(e) {}
+
       // 1. Try dedicated site_content table
-      await this.saveSiteContent('added_courses', addedCourses || []);
+      await this.saveSiteContent('added_courses', mergedList);
 
       // 2. Also keep orders table bridge in sync for backward compatibility
       try {
@@ -2512,6 +2525,47 @@ const CloudService = window.CloudService = {
    */
   async fetchPromoBannerFromCloud() {
     return this.fetchSiteContent('promo_banner');
+  },
+
+  /**
+   * High-Performance Single-Roundtrip CMS Fetch
+   * Fetches ALL keys from site_content in a single GET /site_content?select=*
+   * Populates cache and returns a dictionary of { [key]: content }
+   * @param {boolean} forceFresh
+   * @returns {Promise<Object>}
+   */
+  async fetchAllSiteContent(forceFresh = false) {
+    if (!window.isSupabaseConfigured || !window.isSupabaseConfigured()) return {};
+
+    if (!forceFresh && this._lastFullSiteContentFetch && (Date.now() - this._lastFullSiteContentFetch < 2000)) {
+      const result = {};
+      Object.keys(this._siteContentCache).forEach(k => {
+        result[k] = this._siteContentCache[k].data;
+      });
+      return result;
+    }
+
+    try {
+      const rows = await this._supabaseFetch('/site_content?select=*', { timeout: 10000 });
+      if (Array.isArray(rows) && rows.length > 0) {
+        this._lastFullSiteContentFetch = Date.now();
+        const dict = {};
+        rows.forEach(r => {
+          if (r && r.key) {
+            let val = r.content;
+            if (typeof val === 'string') {
+              try { val = JSON.parse(val); } catch(e) {}
+            }
+            dict[r.key] = val;
+            this._siteContentCache[r.key] = { data: val, time: Date.now() };
+          }
+        });
+        return dict;
+      }
+    } catch(err) {
+      console.warn('fetchAllSiteContent error:', err);
+    }
+    return {};
   }
 };
 
