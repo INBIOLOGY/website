@@ -180,3 +180,18 @@ CREATE TABLE IF NOT EXISTS public.site_content (
 );
 ALTER TABLE public.site_content DISABLE ROW LEVEL SECURITY;
 
+-- =============================================================================
+-- 7. DATA API GRANTS (PostgreSQL Permissions for Supabase PostgREST Data API)
+-- =============================================================================
+-- Supabase Oct 30 Security Requirement: Explicit grants for public tables
+GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
+
+GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL ROUTINES IN SCHEMA public TO anon, authenticated, service_role;
+
+-- Ensure future tables also inherit these permissions automatically
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO anon, authenticated, service_role;
+
+
