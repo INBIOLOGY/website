@@ -105,7 +105,7 @@
   <!-- Universal Header -->
   <header class="site-header"></header>
 
-  <main style="min-height:80vh;background:var(--c-page);padding-top:40px;padding-bottom:60px">
+  <main style="min-height:80vh;background:var(--c-page);padding-top:88px;padding-bottom:60px">
     <div id="checkout-grid-container" class="checkout-grid-layout" style="max-width:960px;margin:0 auto;padding:0 20px">
 
       <!-- ══ LEFT: Payment Instructions ══ -->
@@ -191,7 +191,7 @@
               <strong>ขั้นตอนการตรวจสอบ:</strong><br>
               • Admin จะตรวจสลิปและเปิดสิทธิ์คอร์สให้ภายใน <strong>24 ชั่วโมง</strong><br>
               • สามารถติดตามสถานะใน Dashboard → คำสั่งซื้อของฉัน<br>
-              • ติดต่อสอบถาม LINE: <a href="https://line.me/ti/p/@inbiology" target="_blank" rel="noopener"
+              • ติดต่อสอบถาม LINE: <a href="https://lin.ee/qQ4gbkO" target="_blank" rel="noopener"
                 style="color:#1E3A8A;font-weight:700">@inbiology</a>
             </div>
           </div>
@@ -313,7 +313,7 @@
         </div>
 
         <p style="font-size:11.5px;color:#94A3B8;margin:0">
-          หากมีข้อสงสัยหรือต้องการสอบถามสถานะด่วน ทัก LINE: <a href="https://line.me/ti/p/@inbiology" target="_blank" rel="noopener" style="color:#1E3A8A;font-weight:700;text-decoration:underline">@inbiology</a>
+          หากมีข้อสงสัยหรือต้องการสอบถามสถานะด่วน ทัก LINE: <a href="https://lin.ee/qQ4gbkO" target="_blank" rel="noopener" style="color:#1E3A8A;font-weight:700;text-decoration:underline">@inbiology</a>
         </p>
 
       </div>
@@ -411,18 +411,24 @@
       if (qrAmountEl) qrAmountEl.textContent = `฿${formatPrice(finalTotal)}`;
     }
 
-    function handleCouponSubmit() {
-      const code = document.getElementById('coupon-input').value;
-      const res = applyCouponCode(code);
-      if (res) {
-        appliedCouponCode = res.code;
-        const subtotal = AppState.cart.reduce((s, c) => s + c.price, 0);
-        if (res.type === 'percent') {
-          discount = Math.round((subtotal * res.discount) / 100);
-        } else {
-          discount = res.discount;
+    async function handleCouponSubmit() {
+      const code = (document.getElementById('coupon-input').value || '').trim();
+      if (!code) {
+        showToast('กรุณากรอกโค้ดส่วนลด', 'error');
+        return;
+      }
+      const btn = document.querySelector('button[onclick*="handleCouponSubmit"]');
+      const origText = btn ? btn.innerHTML : '';
+      if (btn) { btn.disabled = true; btn.textContent = '⏳ ตรวจสอบ...'; }
+      try {
+        const res = await applyCouponCode(code);
+        if (res) {
+          appliedCouponCode = res.code;
+          discount = res.discountAmount !== undefined ? res.discountAmount : (res.type === 'percent' ? Math.round((AppState.cart.reduce((s, c) => s + c.price, 0) * res.discount) / 100) : res.discount);
+          renderSummary();
         }
-        renderSummary();
+      } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = origText; }
       }
     }
 

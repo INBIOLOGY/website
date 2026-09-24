@@ -43,7 +43,7 @@
       <nav class="desktop-nav" aria-label="เมนูหลัก">
         <a href="index.html" class="nav-link">หน้าแรก</a>
         <a href="courses.html" class="nav-link active">คอร์สเรียน</a>
-        <a href="exam.html" class="nav-link">คลังข้อสอบ</a>
+        <a href="javascript:void(0)" onclick="showNotReadyModal('exam')" class="nav-link">คลังข้อสอบ</a>
         <a href="about.html" class="nav-link">เกี่ยวกับเรา</a>
         <a href="faq.html" class="nav-link">คำถามพบบ่อย</a>
       </nav>
@@ -65,7 +65,7 @@
         <div id="nav-dropdown" class="dropdown-panel">
           <a href="index.html" class="dropdown-item">หน้าแรก</a>
           <a href="courses.html" class="dropdown-item">คอร์สเรียนทั้งหมด</a>
-          <a href="exam.html" class="dropdown-item">คลังข้อสอบ A-Level</a>
+          <a href="javascript:void(0)" onclick="showNotReadyModal('exam')" class="dropdown-item">คลังข้อสอบ A-Level</a>
           <a href="about.html" class="dropdown-item">เกี่ยวกับเรา</a>
           <a href="faq.html" class="dropdown-item">คำถามพบบ่อย</a>
           <a href="guide.html" class="dropdown-item">คู่มือการใช้งาน</a>
@@ -75,7 +75,7 @@
     </div>
   </header>
 
-  <div style="min-height:100vh;background:var(--c-page);padding-top:40px;padding-bottom:60px">
+  <div style="min-height:100vh;background:var(--c-page);padding-top:88px;padding-bottom:60px">
     <div class="courses-page-layout" style="max-width:1280px;margin:0 auto;padding:0 24px">
       <!-- Sidebar Filters -->
       <aside style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:20px;height:fit-content">
