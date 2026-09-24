@@ -1631,8 +1631,8 @@ window.findTrialItem = function(id) {
 };
 
 // Review Detail Modal Helper
-function openReviewModal(studentName) {
-  const r = REVIEWS.find(x => x.name === studentName);
+function openReviewModal(studentNameOrId) {
+  const r = (typeof REVIEWS !== 'undefined' ? REVIEWS : []).find(x => x.id === studentNameOrId || x.name === studentNameOrId);
   if (!r) return;
 
   let modal = document.getElementById('review-detail-modal');
@@ -1658,8 +1658,8 @@ function openReviewModal(studentName) {
           </div>
           <div>
             <h3 style="color:#B91C1C;margin:0 0 4px;font-size:18px;font-weight:900">${r.name}</h3>
-            <p style="color:#1E3A8A;font-weight:800;font-size:13px;margin:4px 0">${r.school}</p>
-            <span style="background:#FEE2E2;color:#B91C1C;font-size:11px;font-weight:850;padding:4px 12px;border-radius:20px;border:1px solid rgba(185,28,28,0.1);display:inline-block;margin-top:6px">${r.score}</span>
+            ${r.school ? `<p style="color:#1E3A8A;font-weight:800;font-size:13px;margin:4px 0">${r.school}</p>` : ''}
+            <span style="background:#FEE2E2;color:#B91C1C;font-size:11px;font-weight:850;padding:6px 14px;border-radius:20px;border:1px solid rgba(185,28,28,0.1);display:inline-block;margin-top:6px;line-height:1.4">${r.score}</span>
           </div>
           <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:16px;padding:20px;width:100%;text-align:left">
             <p style="color:#374151;font-size:13.5px;line-height:1.7;margin:0;white-space:pre-line">"${r.text}"</p>

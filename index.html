@@ -831,9 +831,9 @@
               <img src="${r.avatar}" alt="${r.name}" style="width:100%;height:100%;object-fit:cover;object-position:${r.imagePosition || 'center top'}" />
             </div>
             <div style="text-align:center;margin-top:12px;width:100%">
-              <h3 style="font-size:15px;font-weight:900;color:#B91C1C;margin:0 0 2px;line-height:1.3">${r.name}</h3>
-              <p style="font-size:12px;font-weight:700;color:#1E3A8A;margin:0 0 8px;word-break:break-word;line-height:1.4">${r.school}</p>
-              <span style="background:#FEE2E2;color:#B91C1C;font-size:11px;font-weight:800;padding:4px 14px;border-radius:20px;display:inline-block">${r.score}</span>
+              <h3 style="font-size:15px;font-weight:900;color:#B91C1C;margin:0 0 4px;line-height:1.3">${r.name}</h3>
+              ${r.school ? `<p style="font-size:12px;font-weight:700;color:#1E3A8A;margin:0 0 8px;word-break:break-word;line-height:1.4">${r.school}</p>` : ''}
+              <span style="background:#FEE2E2;color:#B91C1C;font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px;display:inline-block;line-height:1.4;margin-top:${r.school ? '0' : '4px'}">${r.score}</span>
             </div>
             <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:16px;padding:12px 14px;margin-top:12px;width:100%;flex:1;box-sizing:border-box">
               <p style="font-size:12px;color:#4B5563;line-height:1.6;margin:0;text-align:left;word-break:break-word">"${r.text}"</p>
