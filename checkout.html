@@ -561,7 +561,7 @@
       const origText = btn ? btn.innerHTML : '';
       if (btn) { btn.disabled = true; btn.textContent = '⏳ ตรวจสอบ...'; }
       try {
-        const res = await applyCouponCode(code);
+        const res = await applyCouponCode(code, null, AppState.cart);
         if (res) {
           appliedCouponCode = res.code;
           discount = res.discountAmount !== undefined ? res.discountAmount : (res.type === 'percent' ? Math.round((AppState.cart.reduce((s, c) => s + c.price, 0) * res.discount) / 100) : res.discount);

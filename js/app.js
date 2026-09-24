@@ -1001,8 +1001,8 @@ if (AppState.isLoggedIn()) {
   AppState.enrolled = [];
 }
 
-// Coupon Discount Validator Engine (Supports both Flat ฿ and Percentage % discounts with instant Cloud fetch)
-async function applyCouponCode(codeStr, currentSubtotal = null) {
+// Coupon Discount Validator Engine (Supports both Flat ฿ and Percentage % discounts with course-specific filtering)
+async function applyCouponCode(codeStr, currentSubtotal = null, cartItems = null) {
   if (!codeStr || !codeStr.trim()) {
     showToast('กรุณากรอกโค้ดส่วนลด', 'error');
     return null;
@@ -1015,7 +1015,10 @@ async function applyCouponCode(codeStr, currentSubtotal = null) {
     const stored = JSON.parse(localStorage.getItem('inbiology_coupons') || '[]');
     if (Array.isArray(stored) && stored.length > 0) {
       stored.forEach(sc => {
-        if (!list.some(x => x && x.code && x.code.toUpperCase() === sc.code.toUpperCase())) {
+        const exIdx = list.findIndex(x => x && x.code && x.code.toUpperCase() === sc.code.toUpperCase());
+        if (exIdx !== -1) {
+          list[exIdx] = { ...list[exIdx], ...sc };
+        } else {
           list.push(sc);
         }
       });
@@ -1044,36 +1047,64 @@ async function applyCouponCode(codeStr, currentSubtotal = null) {
     return null;
   }
 
+  // 3. Check Applicable Courses restriction (All courses vs specific courses)
+  const items = cartItems || (typeof AppState !== 'undefined' && AppState.cart ? AppState.cart : []);
+  const applicableCourses = found.applicableCourses || ['all'];
+  const isAllCourses = !applicableCourses || applicableCourses.includes('all') || applicableCourses.length === 0;
+
+  let eligibleCourses = [];
+  if (isAllCourses) {
+    eligibleCourses = items;
+  } else {
+    eligibleCourses = items.filter(item => applicableCourses.includes(item.id));
+  }
+
+  if (!isAllCourses && eligibleCourses.length === 0) {
+    // Look up eligible course titles for clear user feedback
+    const eligibleNames = applicableCourses.map(id => {
+      const cr = (typeof COURSES !== 'undefined') ? COURSES.find(x => x.id === id) : null;
+      return cr ? (cr.badge || cr.title) : id;
+    }).join(', ');
+    showToast(`⚠️ โค้ด "${cleanCode}" ใช้ได้เฉพาะกับคอร์ส: ${eligibleNames}`, 'warning');
+    return null;
+  }
+
   const isPercent = found.type === 'percent';
   const val = Number(found.discount) || 0;
   let calcAmount = 0;
 
-  // Compute discount based on subtotal
-  const subtotal = currentSubtotal !== null ? currentSubtotal : (AppState.cart.reduce((s, c) => s + (Number(c.price) || 0), 0));
+  // Compute discount based on eligible courses subtotal
+  const totalSubtotal = currentSubtotal !== null ? currentSubtotal : items.reduce((s, c) => s + (Number(c.price) || 0), 0);
+  const eligibleSubtotal = isAllCourses ? totalSubtotal : eligibleCourses.reduce((s, c) => s + (Number(c.price) || 0), 0);
+
   if (isPercent) {
-    calcAmount = subtotal > 0 ? Math.round((subtotal * val) / 100) : 0;
+    calcAmount = eligibleSubtotal > 0 ? Math.round((eligibleSubtotal * val) / 100) : 0;
   } else {
-    calcAmount = val;
+    calcAmount = Math.min(val, eligibleSubtotal);
   }
+
   // Discount cannot exceed subtotal
-  if (subtotal > 0 && calcAmount > subtotal) {
-    calcAmount = subtotal;
+  if (totalSubtotal > 0 && calcAmount > totalSubtotal) {
+    calcAmount = totalSubtotal;
   }
 
   AppState.appliedCoupon = {
     ...found,
     code: cleanCode,
-    calculatedDiscount: calcAmount
+    calculatedDiscount: calcAmount,
+    applicableCourses: applicableCourses
   };
 
   const discountBadge = isPercent ? `ลด ${val}% (-฿${formatPrice(calcAmount)})` : `ลด ฿${formatPrice(calcAmount)}`;
-  showToast(`🎉 ใช้โค้ดส่วนลด "${cleanCode}" สำเร็จ (${discountBadge})`, 'success');
+  const scopeMsg = isAllCourses ? '' : ' (เฉพาะคอร์สที่ร่วมรายการ)';
+  showToast(`🎉 ใช้โค้ดส่วนลด "${cleanCode}" สำเร็จ (${discountBadge}${scopeMsg})`, 'success');
   return {
     ...found,
     code: cleanCode,
     discount: val,
     type: isPercent ? 'percent' : 'flat',
-    discountAmount: calcAmount
+    discountAmount: calcAmount,
+    applicableCourses: applicableCourses
   };
 }
 
