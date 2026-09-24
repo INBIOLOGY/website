@@ -33,7 +33,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Mitr:wght@500;700&display=swap">
-  <link rel="stylesheet" href="./css/style.css?v=20260922_v40">
+  <link rel="stylesheet" href="./css/style.css?v=20260924_v44">
 
   <!-- Schema.org Structured Data for Google Search -->
   <script type="application/ld+json">
@@ -517,10 +517,10 @@
   <!-- Universal Rich Multi-Column Footer -->
   <footer id="footer-container"></footer>
 
-  <script src="./js/mockData.js?v=20260922_v40"></script>
-  <script src="./js/supabaseConfig.js?v=20260922_v40"></script>
-  <script src="./js/cloudService.js?v=20260922_v40"></script>
-  <script src="./js/app.js?v=20260922_v40"></script>
+  <script src="./js/mockData.js?v=20260924_v44"></script>
+  <script src="./js/supabaseConfig.js?v=20260924_v44"></script>
+  <script src="./js/cloudService.js?v=20260924_v44"></script>
+  <script src="./js/app.js?v=20260924_v44"></script>
   <script>
     // Helper function for sleek category icons
     function getCategoryIconSvg(iconKey) {
@@ -840,6 +840,43 @@
             </div>
           </div>
         `).join('');
+
+        // Touch swipe support for mobile marquee
+        const marqueeWrapper = document.querySelector('.marquee-container');
+        if (marqueeWrapper) {
+          let touchStartX = 0;
+          let startTransformX = 0;
+          let isSwiping = false;
+
+          marqueeWrapper.addEventListener('touchstart', (e) => {
+            if (!e.touches || e.touches.length === 0) return;
+            touchStartX = e.touches[0].clientX;
+            isSwiping = true;
+            try {
+              const style = window.getComputedStyle(marqueeContainer);
+              const matrix = new DOMMatrixReadOnly(style.transform);
+              startTransformX = matrix.m41;
+              marqueeContainer.style.animationPlayState = 'paused';
+            } catch(err) {}
+          }, { passive: true });
+
+          marqueeWrapper.addEventListener('touchmove', (e) => {
+            if (!isSwiping || !e.touches || e.touches.length === 0) return;
+            const currentX = e.touches[0].clientX;
+            const deltaX = currentX - touchStartX;
+            marqueeContainer.style.transform = `translateX(${startTransformX + deltaX}px)`;
+          }, { passive: true });
+
+          const endSwipe = () => {
+            if (!isSwiping) return;
+            isSwiping = false;
+            marqueeContainer.style.transform = '';
+            marqueeContainer.style.animationPlayState = 'running';
+          };
+
+          marqueeWrapper.addEventListener('touchend', endSwipe, { passive: true });
+          marqueeWrapper.addEventListener('touchcancel', endSwipe, { passive: true });
+        }
       }
 
       initScrollReveal();
