@@ -38,7 +38,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Mitr:wght@500;700&display=swap">
-  <link rel="stylesheet" href="./css/style.css?v=20260924_v45">
+  <link rel="stylesheet" href="./css/style.css?v=20260924_v46">
 
   <!-- Schema.org Structured Data for Google Search -->
   <script type="application/ld+json">
@@ -391,10 +391,18 @@
       const dots = document.querySelectorAll('.promo-slider-dot');
       dots.forEach((d, i) => {
         if (i === promoCurrentIndex) {
-          d.style.width = '24px';
+          d.classList.add('active');
+          d.style.width = '18px';
+          d.style.height = '6px';
+          d.style.minHeight = '0px';
+          d.style.maxHeight = '6px';
           d.style.background = '#1E3A8A';
         } else {
+          d.classList.remove('active');
           d.style.width = '6px';
+          d.style.height = '6px';
+          d.style.minHeight = '0px';
+          d.style.maxHeight = '6px';
           d.style.background = '#CBD5E1';
         }
       });
@@ -497,7 +505,7 @@
       if (dotsContainer) {
         dotsContainer.style.display = 'flex';
         dotsContainer.innerHTML = activeBanners.map((_, i) => `
-          <button type="button" onclick="promoSliderGoTo(${i})" class="promo-slider-dot" aria-label="Slide ${i+1}" style="border:none;padding:0;cursor:pointer;width:${i === 0 ? '24px' : '6px'};height:6px;border-radius:10px;background:${i === 0 ? '#1E3A8A' : '#CBD5E1'};transition:all 0.3s cubic-bezier(0.16,1,0.3,1)"></button>
+          <button type="button" onclick="promoSliderGoTo(${i})" class="promo-slider-dot ${i === 0 ? 'active' : ''}" aria-label="Slide ${i+1}" style="border:none;padding:0;cursor:pointer;width:${i === 0 ? '18px' : '6px'};height:6px;min-height:0;max-height:6px;border-radius:999px;background:${i === 0 ? '#1E3A8A' : '#CBD5E1'};transition:all 0.3s cubic-bezier(0.16,1,0.3,1)"></button>
         `).join('');
       }
 

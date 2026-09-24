@@ -1643,6 +1643,44 @@ h6 {
   }
 }
 
+/* Promo Banner Slider Dots Pagination */
+#promo-banner-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.promo-slider-dot {
+  min-height: 0 !important;
+  max-height: 6px !important;
+  height: 6px !important;
+  width: 6px;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 999px !important;
+  cursor: pointer !important;
+  outline: none !important;
+  box-shadow: none !important;
+  line-height: 0 !important;
+  font-size: 0 !important;
+  background: #CBD5E1;
+  display: inline-block !important;
+  vertical-align: middle;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease !important;
+  flex-shrink: 0 !important;
+}
+
+.promo-slider-dot.active {
+  width: 20px !important;
+  background: #1E3A8A !important;
+}
+
+.promo-slider-dot:hover:not(.active) {
+  background: #94A3B8 !important;
+}
+
 
 /* Student Dashboard Tabs & Profile Form */
 .dash-tabs-scroll {
@@ -1811,7 +1849,7 @@ p {
 }
 
 /* Accessibility Touch Targets Minimum (>= 44px) */
-button,
+button:not(.promo-slider-dot),
 .btn,
 .btn-primary,
 .btn-secondary,
@@ -2461,7 +2499,7 @@ textarea {
   }
 
   /* Buttons on Mobile: Comfortable 44px+ tap target */
-  button,
+  button:not(.promo-slider-dot),
   .btn,
   .btn-submit,
   .btn-login {
