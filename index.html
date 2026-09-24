@@ -33,7 +33,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Mitr:wght@500;700&display=swap">
-  <link rel="stylesheet" href="./css/style.css?v=20260924_v44">
+  <link rel="stylesheet" href="./css/style.css?v=20260924_v45">
 
   <!-- Schema.org Structured Data for Google Search -->
   <script type="application/ld+json">
@@ -278,18 +278,15 @@
 
   <!-- Promo Sale Banner Card Section — managed by admin from admin.html → แบนเนอร์ -->
   <section id="promo-banner-section" style="padding:32px 24px 10px;background:var(--c-page);position:relative;margin-top:-1px;border:none">
-    <div style="max-width:1100px;margin:0 auto">
-      <div id="promo-banner-card" class="promo-banner-grid" data-reveal></div>
+    <div style="max-width:1100px;margin:0 auto;position:relative">
+      <div id="promo-banner-card"></div>
       <!-- Slider Dots Pagination -->
-      <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:20px">
-        <span style="width:24px;height:6px;border-radius:10px;background:#1E3A8A;display:inline-block"></span>
-        <span style="width:6px;height:6px;border-radius:50%;background:#CBD5E1;display:inline-block"></span>
-      </div>
+      <div id="promo-banner-dots" style="display:none;align-items:center;justify-content:center;gap:6px;margin-top:16px"></div>
     </div>
   </section>
 
   <script>
-  window.renderPromoBanner = function(customCfg) {
+  (function() {
     const BG_GRADIENTS = {
       blue:   'linear-gradient(135deg,#E0F2FE 0%,#EFF6FF 100%)',
       red:    'linear-gradient(135deg,#FEF2F2 0%,#FFF1F2 100%)',
@@ -318,112 +315,237 @@
       isVisible: true
     };
 
-    let cfg = DEFAULTS;
-    if (customCfg) {
-      cfg = { ...DEFAULTS, ...customCfg };
-    } else {
-      try {
-        const stored = localStorage.getItem('inbiology_promo_banner');
-        if (stored) cfg = { ...DEFAULTS, ...JSON.parse(stored) };
-      } catch(e) {}
+    let promoSliderTimer = null;
+    let promoCurrentIndex = 0;
+    let promoActiveCount = 0;
+
+    function renderSingleBannerHtml(cfg) {
+      const mode = cfg.mode || 'full_image';
+      if (mode === 'full_image') {
+        const imgSrc = cfg.fullImageBase64 || cfg.fullImageUrl || cfg.imageBase64 || cfg.imageUrl || 'promo-banner-sample.jpg';
+        const targetUrl = cfg.targetUrl || cfg.ctaUrl || 'courses.html';
+        const targetAttr = cfg.openNewTab ? 'target="_blank" rel="noopener noreferrer"' : '';
+        const altText = cfg.fullImageAlt || cfg.title || 'โปรโมชั่น INBIOLOGY Academy';
+        return `
+          <a href="${targetUrl}" ${targetAttr} style="display:block;text-decoration:none;border-radius:24px;overflow:hidden;box-shadow:0 12px 32px rgba(15,23,42,0.08);transition:all 0.28s cubic-bezier(0.16,1,0.3,1);background:#F8FAFC;border:1px solid rgba(226,232,240,0.85);cursor:pointer;position:relative" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 20px 40px rgba(15,23,42,0.13)'" onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 12px 32px rgba(15,23,42,0.08)'">
+            <img src="${imgSrc}" alt="${altText}" style="width:100%;max-height:360px;object-fit:cover;display:block;border-radius:24px" onerror="this.onerror=null;this.src='promo-banner-sample.jpg'">
+          </a>
+        `;
+      } else {
+        const bg = BG_GRADIENTS[cfg.bgPreset] || BG_GRADIENTS.blue;
+        const imgSrc = cfg.cardImageBase64 || cfg.cardImageUrl || cfg.imageBase64 || cfg.imageUrl;
+        const title = cfg.title || DEFAULTS.title;
+        const desc = cfg.description || DEFAULTS.description;
+        const ctaText = cfg.ctaText || DEFAULTS.ctaText;
+        const ctaUrl = cfg.ctaUrl || DEFAULTS.ctaUrl;
+        const rightLabel = cfg.rightLabel || DEFAULTS.rightLabel;
+
+        const rightBox = imgSrc
+          ? `<img src="${imgSrc}" alt="โปรโมชั่น INBIOLOGY" style="max-height:140px;max-width:100%;object-fit:contain;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.1)">`
+          : `<div style="width:48px;height:48px;border-radius:50%;background:#FEF2F2;display:flex;align-items:center;justify-content:center;color:#EF4444"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>`;
+
+        return `
+          <div class="promo-banner-grid" style="background:${bg};border-radius:28px;padding:36px 40px;box-shadow:0 12px 32px rgba(15,23,42,0.06);border:1px solid rgba(255,255,255,0.8);display:flex;gap:24px;align-items:center;justify-content:space-between;max-width:1100px;margin:0 auto">
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+                ${cfg.badge1 ? `<span style="background:white;color:#374151;font-size:12px;font-weight:800;padding:6px 16px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,0.04)">${cfg.badge1}</span>` : ''}
+                ${cfg.badge2 ? `<span style="background:white;color:#EF4444;font-size:12px;font-weight:900;padding:6px 16px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,0.04)">${cfg.badge2}</span>` : ''}
+              </div>
+              <h2 style="font-size:clamp(20px,3vw,30px);font-weight:950;color:#0F172A;margin:0 0 10px;line-height:1.2">${title}</h2>
+              <p style="font-size:13.5px;color:#64748B;margin:0 0 24px;line-height:1.6">${desc}</p>
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                <a href="${ctaUrl}" style="background:#B91C1C;color:white;font-weight:850;font-size:13.5px;padding:12px 24px;border-radius:12px;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(185,28,28,0.25);text-decoration:none;transition:transform 0.2s" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform='translateY(0)'">
+                  ${ctaText} ➔
+                </a>
+                <button onclick="if(typeof openCourseModal==='function'&&typeof COURSES!=='undefined')openCourseModal(COURSES[0])" style="background:white;color:#374151;font-weight:800;font-size:13.5px;padding:12px 20px;border-radius:12px;border:1px solid #E2E8F0;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(0,0,0,0.03);transition:transform 0.2s" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform='translateY(0)'">
+                  ดูรายละเอียด
+                </button>
+              </div>
+            </div>
+            <div style="background:white;border-radius:24px;padding:28px 20px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,0.03);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;flex-shrink:0;min-width:120px">
+              ${rightBox}
+              <span style="color:#B91C1C;font-size:12px;font-weight:900;letter-spacing:1px">${rightLabel}</span>
+            </div>
+          </div>
+        `;
+      }
     }
 
-    const section = document.getElementById('promo-banner-section');
-    const card = document.getElementById('promo-banner-card');
-    if (!section || !card) return;
+    window.promoSliderGoTo = function(idx) {
+      if (promoActiveCount <= 1) return;
+      promoCurrentIndex = (idx + promoActiveCount) % promoActiveCount;
+      const track = document.getElementById('promo-slider-track');
+      if (track) {
+        track.style.transform = `translateX(-${promoCurrentIndex * 100}%)`;
+      }
+      const dots = document.querySelectorAll('.promo-slider-dot');
+      dots.forEach((d, i) => {
+        if (i === promoCurrentIndex) {
+          d.style.width = '24px';
+          d.style.background = '#1E3A8A';
+        } else {
+          d.style.width = '6px';
+          d.style.background = '#CBD5E1';
+        }
+      });
+    };
 
-    // Visibility check
-    if (cfg.isVisible === false) {
-      section.style.display = 'none';
-      return;
+    window.promoSliderNext = function() {
+      window.promoSliderGoTo(promoCurrentIndex + 1);
+    };
+
+    window.promoSliderPrev = function() {
+      window.promoSliderGoTo(promoCurrentIndex - 1);
+    };
+
+    function startAutoSlide() {
+      stopAutoSlide();
+      if (promoActiveCount > 1) {
+        promoSliderTimer = setInterval(() => {
+          window.promoSliderNext();
+        }, 5000);
+      }
     }
-    section.style.display = 'block';
 
-    const mode = cfg.mode || 'full_image';
+    function stopAutoSlide() {
+      if (promoSliderTimer) {
+        clearInterval(promoSliderTimer);
+        promoSliderTimer = null;
+      }
+    }
 
-    // ─── MODE 1: FULL BANNER GRAPHIC ─────────────────────────────
-    if (mode === 'full_image') {
-      const imgSrc = cfg.fullImageBase64 || cfg.fullImageUrl || cfg.imageBase64 || cfg.imageUrl || 'promo-banner-sample.jpg';
-      const targetUrl = cfg.targetUrl || cfg.ctaUrl || 'courses.html';
-      const targetAttr = cfg.openNewTab ? 'target="_blank" rel="noopener noreferrer"' : '';
-      const altText = cfg.fullImageAlt || cfg.title || 'โปรโมชั่น INBIOLOGY Academy';
+    window.renderPromoBanner = function(customCfg) {
+      let banners = [];
+      if (Array.isArray(customCfg)) {
+        banners = customCfg;
+      } else if (customCfg && typeof customCfg === 'object') {
+        if (Array.isArray(customCfg.banners)) banners = customCfg.banners;
+        else banners = [customCfg];
+      } else {
+        try {
+          const stored = localStorage.getItem('inbiology_promo_banner');
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (Array.isArray(parsed)) banners = parsed;
+            else if (parsed && typeof parsed === 'object') banners = [parsed];
+          }
+        } catch(e) {}
+      }
 
+      if (!banners || !banners.length) banners = [DEFAULTS];
+
+      const section = document.getElementById('promo-banner-section');
+      const card = document.getElementById('promo-banner-card');
+      const dotsContainer = document.getElementById('promo-banner-dots');
+      if (!section || !card) return;
+
+      const activeBanners = banners.filter(b => b && b.isVisible !== false);
+      promoActiveCount = activeBanners.length;
+
+      if (promoActiveCount === 0) {
+        section.style.display = 'none';
+        stopAutoSlide();
+        return;
+      }
+      section.style.display = 'block';
+
+      // ── Single Banner Mode ──
+      if (promoActiveCount === 1) {
+        stopAutoSlide();
+        card.className = '';
+        card.style.cssText = 'padding:0;background:transparent;border:none;box-shadow:none;display:block;margin:0 auto;max-width:1100px';
+        card.innerHTML = renderSingleBannerHtml(activeBanners[0]);
+        if (dotsContainer) dotsContainer.style.display = 'none';
+        return;
+      }
+
+      // ── Multiple Banners Slider Mode ──
       card.className = '';
       card.style.cssText = 'padding:0;background:transparent;border:none;box-shadow:none;display:block;margin:0 auto;max-width:1100px';
 
       card.innerHTML = `
-        <a href="${targetUrl}" ${targetAttr} style="display:block;text-decoration:none;border-radius:24px;overflow:hidden;box-shadow:0 12px 32px rgba(15,23,42,0.08);transition:all 0.28s cubic-bezier(0.16,1,0.3,1);background:#F8FAFC;border:1px solid rgba(226,232,240,0.85);cursor:pointer;position:relative" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 20px 40px rgba(15,23,42,0.13)'" onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 12px 32px rgba(15,23,42,0.08)'">
-          <img src="${imgSrc}" alt="${altText}" style="width:100%;max-height:360px;object-fit:cover;display:block;border-radius:24px" onerror="this.onerror=null;this.src='promo-banner-sample.jpg'">
-        </a>
-      `;
-
-    // ─── MODE 2: CUSTOM CARD BANNER ──────────────────────────────
-    } else {
-      const bg = BG_GRADIENTS[cfg.bgPreset] || BG_GRADIENTS.blue;
-      const imgSrc = cfg.cardImageBase64 || cfg.cardImageUrl || cfg.imageBase64 || cfg.imageUrl;
-      const title = cfg.title || DEFAULTS.title;
-      const desc = cfg.description || DEFAULTS.description;
-      const ctaText = cfg.ctaText || DEFAULTS.ctaText;
-      const ctaUrl = cfg.ctaUrl || DEFAULTS.ctaUrl;
-      const rightLabel = cfg.rightLabel || DEFAULTS.rightLabel;
-
-      const rightBox = imgSrc
-        ? `<img src="${imgSrc}" alt="โปรโมชั่น INBIOLOGY" style="max-height:140px;max-width:100%;object-fit:contain;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.1)">`
-        : `<div style="width:48px;height:48px;border-radius:50%;background:#FEF2F2;display:flex;align-items:center;justify-content:center;color:#EF4444"><svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>`;
-
-      card.className = 'promo-banner-grid';
-      card.style.cssText = `
-        background:${bg};border-radius:28px;padding:36px 40px;
-        box-shadow:0 12px 32px rgba(15,23,42,0.06);border:1px solid rgba(255,255,255,0.8);
-        display:flex;gap:24px;align-items:center;justify-content:space-between;max-width:1100px;margin:0 auto
-      `;
-
-      card.innerHTML = `
-        <div style="flex:1;min-width:0">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
-            ${cfg.badge1 ? `<span style="background:white;color:#374151;font-size:12px;font-weight:800;padding:6px 16px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,0.04)">${cfg.badge1}</span>` : ''}
-            ${cfg.badge2 ? `<span style="background:white;color:#EF4444;font-size:12px;font-weight:900;padding:6px 16px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,0.04)">${cfg.badge2}</span>` : ''}
+        <div class="promo-slider-container" id="promo-slider-wrapper" style="position:relative;overflow:hidden;border-radius:26px">
+          <div id="promo-slider-track" style="display:flex;transition:transform 0.5s cubic-bezier(0.16,1,0.3,1);width:100%">
+            ${activeBanners.map(b => `
+              <div style="flex:0 0 100%;width:100%;min-width:100%;box-sizing:border-box">
+                ${renderSingleBannerHtml(b)}
+              </div>
+            `).join('')}
           </div>
-          <h2 style="font-size:clamp(20px,3vw,30px);font-weight:950;color:#0F172A;margin:0 0 10px;line-height:1.2">${title}</h2>
-          <p style="font-size:13.5px;color:#64748B;margin:0 0 24px;line-height:1.6">${desc}</p>
-          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-            <a href="${ctaUrl}" style="background:#B91C1C;color:white;font-weight:850;font-size:13.5px;padding:12px 24px;border-radius:12px;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(185,28,28,0.25);text-decoration:none;transition:transform 0.2s" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform='translateY(0)'">
-              ${ctaText} ➔
-            </a>
-            <button onclick="if(typeof openCourseModal==='function'&&typeof COURSES!=='undefined')openCourseModal(COURSES[0])" style="background:white;color:#374151;font-weight:800;font-size:13.5px;padding:12px 20px;border-radius:12px;border:1px solid #E2E8F0;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(0,0,0,0.03);transition:transform 0.2s" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform='translateY(0)'">
-              ดูรายละเอียด
-            </button>
-          </div>
-        </div>
-        <div style="background:white;border-radius:24px;padding:28px 20px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,0.03);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;flex-shrink:0;min-width:120px">
-          ${rightBox}
-          <span style="color:#B91C1C;font-size:12px;font-weight:900;letter-spacing:1px">${rightLabel}</span>
+
+          <!-- Navigation Arrows -->
+          <button type="button" onclick="promoSliderPrev()" class="promo-slider-arrow prev" aria-label="Previous Slide">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button type="button" onclick="promoSliderNext()" class="promo-slider-arrow next" aria-label="Next Slide">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
         </div>
       `;
-    }
-  };
 
-  // Initial render on load
-  window.renderPromoBanner();
-
-  // Background Cloud Sync
-  document.addEventListener('DOMContentLoaded', async () => {
-    if (window.CloudService && typeof window.CloudService.fetchPromoBannerFromCloud === 'function') {
-      try {
-        const cloudCfg = await window.CloudService.fetchPromoBannerFromCloud();
-        if (cloudCfg && typeof cloudCfg === 'object') {
-          const localStr = localStorage.getItem('inbiology_promo_banner');
-          const cloudStr = JSON.stringify(cloudCfg);
-          if (localStr !== cloudStr) {
-            localStorage.setItem('inbiology_promo_banner', cloudStr);
-            window.renderPromoBanner(cloudCfg);
-          }
-        }
-      } catch(e) {
-        console.warn('[PromoBanner] Background sync notice:', e);
+      // Render Dots
+      if (dotsContainer) {
+        dotsContainer.style.display = 'flex';
+        dotsContainer.innerHTML = activeBanners.map((_, i) => `
+          <button type="button" onclick="promoSliderGoTo(${i})" class="promo-slider-dot" aria-label="Slide ${i+1}" style="border:none;padding:0;cursor:pointer;width:${i === 0 ? '24px' : '6px'};height:6px;border-radius:10px;background:${i === 0 ? '#1E3A8A' : '#CBD5E1'};transition:all 0.3s cubic-bezier(0.16,1,0.3,1)"></button>
+        `).join('');
       }
-    }
-  });
+
+      promoCurrentIndex = 0;
+      window.promoSliderGoTo(0);
+      startAutoSlide();
+
+      // Pause on hover
+      const wrapper = document.getElementById('promo-slider-wrapper');
+      if (wrapper) {
+        wrapper.onmouseenter = stopAutoSlide;
+        wrapper.onmouseleave = startAutoSlide;
+
+        // Mobile touch swipe gesture
+        let touchStartX = 0;
+        wrapper.addEventListener('touchstart', (e) => {
+          stopAutoSlide();
+          if (e.touches && e.touches.length > 0) {
+            touchStartX = e.touches[0].clientX;
+          }
+        }, { passive: true });
+
+        wrapper.addEventListener('touchend', (e) => {
+          startAutoSlide();
+          if (e.changedTouches && e.changedTouches.length > 0) {
+            const diffX = e.changedTouches[0].clientX - touchStartX;
+            if (diffX > 40) {
+              window.promoSliderPrev();
+            } else if (diffX < -40) {
+              window.promoSliderNext();
+            }
+          }
+        }, { passive: true });
+      }
+    };
+
+    // Initial render on load
+    window.renderPromoBanner();
+
+    // Background Cloud Sync
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (window.CloudService && typeof window.CloudService.fetchPromoBannerFromCloud === 'function') {
+        try {
+          const cloudCfg = await window.CloudService.fetchPromoBannerFromCloud();
+          if (cloudCfg) {
+            const localStr = localStorage.getItem('inbiology_promo_banner');
+            const cloudStr = JSON.stringify(cloudCfg);
+            if (localStr !== cloudStr) {
+              localStorage.setItem('inbiology_promo_banner', cloudStr);
+              window.renderPromoBanner(cloudCfg);
+            }
+          }
+        } catch(e) {
+          console.warn('[PromoBanner] Background sync notice:', e);
+        }
+      }
+    });
+  })();
   </script>
 
 

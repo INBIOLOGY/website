@@ -1584,6 +1584,65 @@ h6 {
   }
 }
 
+/* Promo Banner Slider Controls */
+.promo-slider-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 26px;
+  width: 100%;
+}
+
+.promo-slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(226, 232, 240, 0.9);
+  color: #1E3A8A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
+  transition: all 0.2s ease;
+  opacity: 0.85;
+}
+
+.promo-slider-arrow:hover {
+  opacity: 1;
+  background: white;
+  transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 8px 24px rgba(30, 58, 138, 0.2);
+}
+
+.promo-slider-arrow.prev {
+  left: 14px;
+}
+
+.promo-slider-arrow.next {
+  right: 14px;
+}
+
+@media (max-width: 640px) {
+  .promo-slider-arrow {
+    width: 36px;
+    height: 36px;
+    opacity: 0.9;
+  }
+  .promo-slider-arrow.prev {
+    left: 8px;
+  }
+  .promo-slider-arrow.next {
+    right: 8px;
+  }
+}
+
 
 /* Student Dashboard Tabs & Profile Form */
 .dash-tabs-scroll {
