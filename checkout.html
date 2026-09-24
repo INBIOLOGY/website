@@ -98,6 +98,69 @@
       display: inline-block;
       margin: 12px auto;
     }
+
+    /* Hide floating back-to-top on checkout to avoid obstructing forms on mobile */
+    #back-to-top,
+    .back-to-top {
+      display: none !important;
+    }
+
+    /* Transfer Date & Time inputs responsive layout */
+    .transfer-datetime-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 520px) {
+      .transfer-datetime-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+
+    .transfer-input-box {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .transfer-input-field {
+      width: 100%;
+      min-width: 0;
+      min-height: 48px;
+      height: 48px;
+      padding: 10px 14px;
+      font-size: 15px;
+      font-family: inherit;
+      font-weight: 700;
+      color: #1E293B;
+      background: #FFFFFF;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 12px;
+      outline: none;
+      box-sizing: border-box;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      transition: all 0.2s ease;
+    }
+
+    .transfer-input-field:focus {
+      border-color: var(--c-sky);
+      box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+    }
+
+    .transfer-input-field::-webkit-date-and-time-value {
+      text-align: left;
+      line-height: 26px;
+      margin: 0;
+      padding: 0;
+    }
   </style>
 </head>
 
@@ -161,32 +224,28 @@
             </div>
 
             <!-- Mandatory Date & Time Card -->
-            <div style="background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px">
+            <div style="background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:12px">
               <div style="display:flex;align-items:center;gap:6px">
-                <span style="font-size:14px">⏱️</span>
-                <span style="font-size:12px;font-weight:800;color:var(--c-navy)">ระบุวันและเวลาที่โอนเงินจริงตามสลิป</span>
+                <span style="font-size:16px">⏱️</span>
+                <span style="font-size:13px;font-weight:850;color:var(--c-navy)">ระบุวันและเวลาที่โอนเงินจริงตามสลิป</span>
               </div>
-              <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:12px">
-                <div>
-                  <label for="transfer-date" style="display:block;font-size:12px;font-weight:750;color:#334155;margin-bottom:6px">
-                    วันที่โอนเงิน <span style="color:#DC2626;font-weight:900">*</span>
+              <div class="transfer-datetime-grid">
+                <div class="transfer-input-box">
+                  <label for="transfer-date" style="display:flex;align-items:center;gap:5px;font-size:12.5px;font-weight:800;color:#334155;margin-bottom:6px">
+                    <span>📅 วันที่โอนเงินตามสลิป</span>
+                    <span style="color:#DC2626;font-weight:900">*</span>
                   </label>
-                  <input type="date" id="transfer-date" required
-                    style="width:100%;border:1.5px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:13px;font-family:inherit;font-weight:700;color:#1E293B;outline:none;background:white;box-sizing:border-box;transition:all 0.2s"
-                    onfocus="this.style.borderColor='var(--c-sky)';this.style.boxShadow='0 0 0 3px rgba(30,58,138,0.1)'"
-                    onblur="this.style.borderColor='#CBD5E1';this.style.boxShadow='none'" />
+                  <input type="date" id="transfer-date" class="transfer-input-field" required />
                 </div>
-                <div>
-                  <label for="transfer-time" style="display:block;font-size:12px;font-weight:750;color:#334155;margin-bottom:6px">
-                    เวลาที่โอนเงิน <span style="color:#DC2626;font-weight:900">*</span>
+                <div class="transfer-input-box">
+                  <label for="transfer-time" style="display:flex;align-items:center;gap:5px;font-size:12.5px;font-weight:800;color:#334155;margin-bottom:6px">
+                    <span>⏰ เวลาที่โอนเงินตามสลิป</span>
+                    <span style="color:#DC2626;font-weight:900">*</span>
                   </label>
-                  <input type="time" id="transfer-time" required
-                    style="width:100%;border:1.5px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:13px;font-family:inherit;font-weight:700;color:#1E293B;outline:none;background:white;box-sizing:border-box;transition:all 0.2s"
-                    onfocus="this.style.borderColor='var(--c-sky)';this.style.boxShadow='0 0 0 3px rgba(30,58,138,0.1)'"
-                    onblur="this.style.borderColor='#CBD5E1';this.style.boxShadow='none'" />
+                  <input type="time" id="transfer-time" class="transfer-input-field" required />
                 </div>
               </div>
-              <span style="font-size:11px;color:#64748B;line-height:1.4">💡 กรุณาระบุวันที่และเวลาให้ตรงกับสลิปที่แนบ เพื่อให้เจ้าหน้าที่ตรวจสอบความถูกต้องได้อย่างรวดเร็ว</span>
+              <span style="font-size:11.5px;color:#64748B;line-height:1.45">💡 กรุณาระบุวันที่และเวลาให้ตรงกับสลิปที่แนบ เพื่อให้เจ้าหน้าที่ตรวจสอบความถูกต้องได้อย่างรวดเร็ว</span>
             </div>
 
             <!-- Upload Slip Dropzone -->
@@ -362,10 +421,10 @@
 
   <footer id="footer-container"></footer>
 
-  <script src="./js/mockData.js?v=20260922_v40"></script>
-  <script src="./js/supabaseConfig.js?v=20260922_v40"></script>
-  <script src="./js/cloudService.js?v=20260922_v40"></script>
-  <script src="./js/app.js?v=20260922_v40"></script>
+  <script src="./js/mockData.js?v=20260924_v45"></script>
+  <script src="./js/supabaseConfig.js?v=20260924_v45"></script>
+  <script src="./js/cloudService.js?v=20260924_v45"></script>
+  <script src="./js/app.js?v=20260924_v45"></script>
   <script>
     let discount = 0;
     let appliedCouponCode = null;
