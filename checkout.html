@@ -133,29 +133,63 @@
               <span id="qr-pay-amount" style="font-size:22px;font-weight:950;color:#B91C1C;display:block;margin-top:2px">฿0</span>
             </div>
 
-            <!-- QR Code — Krungthai PromptPay อัปเดตจริง -->
-            <div style="width:220px;border:2px solid #CBD5E1;border-radius:16px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,0.08);background:white">
-              <img src="./promptpay-qr.jpg" id="qr-img" style="width:100%;display:block" alt="QR PromptPay นายวิทย์ศรุต INBIOLOGY" />
+            <!-- QR Code — PromptPay อัปเดตจริง -->
+            <div style="width:260px;max-width:100%;border:2px solid #CBD5E1;border-radius:16px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,0.08);background:white">
+              <img src="./promptpay-qr.jpg?v=20260924_v1" id="qr-img" style="width:100%;display:block" alt="QR PromptPay นายพิสิษฐ์ สายตา INBIOLOGY" />
             </div>
 
             <div style="text-align:center;font-size:12.5px;color:#475569;line-height:1.9;width:100%">
-              <div><strong>ชื่อบัญชี:</strong> นายวิทย์ศรุต จันทร์บ้านโต้น</div>
+              <div><strong>ชื่อบัญชี:</strong> นายพิสิษฐ์ สายตา</div>
               <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin:4px 0">
                 <span><strong>เลขพร้อมเพย์:</strong></span>
                 <code id="promptpay-number"
-                  style="font-size:14px;font-weight:900;color:#1E3A8A;background:#EFF6FF;padding:3px 10px;border-radius:8px;letter-spacing:0.5px">098-675-1052</code>
+                  style="font-size:14px;font-weight:900;color:#1E3A8A;background:#EFF6FF;padding:3px 10px;border-radius:8px;letter-spacing:0.5px">081-354-5415</code>
                 <button type="button" onclick="copyPromptPayNumber()" id="btn-copy-pp"
                   style="background:#1E3A8A;color:white;border:none;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:all 0.2s">
                   คัดลอก
                 </button>
               </div>
-              <div><strong>ธนาคาร:</strong> กรุงไทย (Krungthai)</div>
+              <div><strong>ธนาคาร:</strong> กสิกรไทย (KBank) • บัญชี xxx-x-x1840-x</div>
             </div>
           </div>
 
-          <!-- Step 2: Upload Slip -->
-          <div>
-            <p style="font-size:13px;font-weight:800;color:var(--c-navy);margin:0 0 10px">ขั้นตอนที่ 2 — แนบหลักฐานการโอนเงิน (สลิป)</p>
+          <!-- Step 2: Transfer Details & Upload Slip -->
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <p style="font-size:13px;font-weight:800;color:var(--c-navy);margin:0">ขั้นตอนที่ 2 — ข้อมูลการโอนและแนบหลักฐานสลิป</p>
+              <span style="font-size:11px;color:#DC2626;font-weight:800">* จำเป็นต้องระบุ</span>
+            </div>
+
+            <!-- Mandatory Date & Time Card -->
+            <div style="background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="font-size:14px">⏱️</span>
+                <span style="font-size:12px;font-weight:800;color:var(--c-navy)">ระบุวันและเวลาที่โอนเงินจริงตามสลิป</span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));gap:12px">
+                <div>
+                  <label for="transfer-date" style="display:block;font-size:12px;font-weight:750;color:#334155;margin-bottom:6px">
+                    วันที่โอนเงิน <span style="color:#DC2626;font-weight:900">*</span>
+                  </label>
+                  <input type="date" id="transfer-date" required
+                    style="width:100%;border:1.5px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:13px;font-family:inherit;font-weight:700;color:#1E293B;outline:none;background:white;box-sizing:border-box;transition:all 0.2s"
+                    onfocus="this.style.borderColor='var(--c-sky)';this.style.boxShadow='0 0 0 3px rgba(30,58,138,0.1)'"
+                    onblur="this.style.borderColor='#CBD5E1';this.style.boxShadow='none'" />
+                </div>
+                <div>
+                  <label for="transfer-time" style="display:block;font-size:12px;font-weight:750;color:#334155;margin-bottom:6px">
+                    เวลาที่โอนเงิน <span style="color:#DC2626;font-weight:900">*</span>
+                  </label>
+                  <input type="time" id="transfer-time" required
+                    style="width:100%;border:1.5px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:13px;font-family:inherit;font-weight:700;color:#1E293B;outline:none;background:white;box-sizing:border-box;transition:all 0.2s"
+                    onfocus="this.style.borderColor='var(--c-sky)';this.style.boxShadow='0 0 0 3px rgba(30,58,138,0.1)'"
+                    onblur="this.style.borderColor='#CBD5E1';this.style.boxShadow='none'" />
+                </div>
+              </div>
+              <span style="font-size:11px;color:#64748B;line-height:1.4">💡 กรุณาระบุวันที่และเวลาให้ตรงกับสลิปที่แนบ เพื่อให้เจ้าหน้าที่ตรวจสอบความถูกต้องได้อย่างรวดเร็ว</span>
+            </div>
+
+            <!-- Upload Slip Dropzone -->
             <div class="slip-dropzone" id="slip-dropzone"
               ondragover="event.preventDefault();this.classList.add('dragover')"
               ondragleave="this.classList.remove('dragover')" ondrop="handleSlipDrop(event)"
@@ -165,7 +199,7 @@
               <div id="slip-dropzone-content">
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 6px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                 <p style="font-size:13px;font-weight:700;color:#64748B;margin:0">คลิกหรือลากไฟล์สลิปมาวางที่นี่</p>
-                <p style="font-size:11px;color:#94A3B8;margin:4px 0 0">รองรับ JPG, PNG, GIF (ขนาดไม่เกิน 5MB)</p>
+                <p style="font-size:11px;color:#94A3B8;margin:4px 0 0">รองรับ JPG, PNG, GIF (ขนาดไม่เกิน 15MB)</p>
               </div>
               <div id="slip-preview" style="display:none;flex-direction:column;align-items:center;gap:8px">
                 <img id="slip-preview-img"
@@ -289,6 +323,11 @@
             <span id="success-course-titles" style="font-size:12.5px;font-weight:700;color:#0F172A;text-align:right;max-width:60%">—</span>
           </div>
 
+          <div id="success-transfer-row" style="display:none;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:12.5px;color:#64748B">วัน-เวลาที่โอน</span>
+            <span id="success-transfer-time" style="font-size:12.5px;font-weight:750;color:#0F172A">—</span>
+          </div>
+
           <div id="success-slip-row" style="display:none;justify-content:space-between;align-items:center;margin-bottom:8px">
             <span style="font-size:12.5px;color:#64748B">หลักฐานการโอน (สลิป)</span>
             <div style="display:flex;align-items:center;gap:8px">
@@ -354,13 +393,54 @@
 
       renderHeader('checkout');
       renderSummary();
+
+      // Initialize Transfer Date & Time
+      initTransferDateTime();
+      const transferDateInput = document.getElementById('transfer-date');
+      const transferTimeInput = document.getElementById('transfer-time');
+      if (transferDateInput) {
+        transferDateInput.addEventListener('input', updateSubmitButtonState);
+        transferDateInput.addEventListener('change', updateSubmitButtonState);
+      }
+      if (transferTimeInput) {
+        transferTimeInput.addEventListener('input', updateSubmitButtonState);
+        transferTimeInput.addEventListener('change', updateSubmitButtonState);
+      }
+      updateSubmitButtonState();
     });
 
+    function initTransferDateTime() {
+      const now = new Date();
+      const dateEl = document.getElementById('transfer-date');
+      const timeEl = document.getElementById('transfer-time');
+      if (dateEl && !dateEl.value) {
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        dateEl.value = `${year}-${month}-${day}`;
+      }
+      if (timeEl && !timeEl.value) {
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        timeEl.value = `${hours}:${minutes}`;
+      }
+    }
+
+    function updateSubmitButtonState() {
+      const confirmBtn = document.getElementById('confirm-btn');
+      if (!confirmBtn) return;
+      const dateVal = document.getElementById('transfer-date')?.value?.trim();
+      const timeVal = document.getElementById('transfer-time')?.value?.trim();
+      const hasAll = !!slipBase64 && !!dateVal && !!timeVal;
+      confirmBtn.disabled = !hasAll;
+      confirmBtn.style.opacity = hasAll ? '1' : '0.5';
+    }
+
     function copyPromptPayNumber() {
-      const rawNumber = '0986751052';
+      const rawNumber = '0813545415';
       const btn = document.getElementById('btn-copy-pp');
       navigator.clipboard.writeText(rawNumber).then(() => {
-        showToast('คัดลอกเลขพร้อมเพย์ 098-675-1052 แล้ว', 'success');
+        showToast('คัดลอกเลขพร้อมเพย์ 081-354-5415 แล้ว', 'success');
         if (btn) {
           const original = btn.innerHTML;
           btn.innerHTML = 'คัดลอกแล้ว';
@@ -378,7 +458,7 @@
         temp.select();
         document.execCommand('copy');
         document.body.removeChild(temp);
-        showToast('คัดลอกเลขพร้อมเพย์แล้ว', 'success');
+        showToast('คัดลอกเลขพร้อมเพย์ 081-354-5415 แล้ว', 'success');
       });
     }
 
@@ -499,11 +579,10 @@
           document.getElementById('slip-preview-name').textContent = `${file.name} (แนบแล้ว)`;
           document.getElementById('slip-dropzone').classList.add('has-file');
 
-          // Enable submit button
-          const confirmBtn = document.getElementById('confirm-btn');
-          confirmBtn.disabled = false;
-          confirmBtn.style.opacity = '1';
-          showToast('แนบสลิปเรียบร้อย กดยืนยันเพื่อส่งคำสั่งซื้อ', 'success');
+          // Update submit button state
+          initTransferDateTime();
+          updateSubmitButtonState();
+          showToast('แนบสลิปเรียบร้อย กรุณาตรวจสอบวัน-เวลาโอนแล้วกดยืนยัน', 'success');
         };
         img.onerror = () => {
           showToast('ไม่สามารถอ่านไฟล์รูปภาพได้ กรุณาลองใหม่อีกครั้ง', 'error');
@@ -520,8 +599,7 @@
       document.getElementById('slip-dropzone-content').style.display = 'block';
       document.getElementById('slip-preview').style.display = 'none';
       document.getElementById('slip-dropzone').classList.remove('has-file');
-      document.getElementById('confirm-btn').disabled = true;
-      document.getElementById('confirm-btn').style.opacity = '0.5';
+      updateSubmitButtonState();
     }
 
     // ── Submit Order ─────────────────────────────────────────────────────────
@@ -545,6 +623,20 @@
         return;
       }
 
+      const transferDate = document.getElementById('transfer-date')?.value?.trim();
+      const transferTime = document.getElementById('transfer-time')?.value?.trim();
+
+      if (!transferDate) {
+        showToast('กรุณาระบุวันที่โอนเงินตามสลิป', 'error');
+        document.getElementById('transfer-date')?.focus();
+        return;
+      }
+      if (!transferTime) {
+        showToast('กรุณาระบุเวลาที่โอนเงินตามสลิป', 'error');
+        document.getElementById('transfer-time')?.focus();
+        return;
+      }
+
       const btn = document.getElementById('confirm-btn');
       btn.disabled = true;
       btn.textContent = 'กำลังส่งข้อมูลคำสั่งซื้อ...';
@@ -555,7 +647,16 @@
         const finalTotal = Math.max(0, subtotal - discount);
         const courseIds = AppState.cart.map(c => c.id);
         const courseTitles = AppState.cart.map(c => c.title).join(', ');
-        const note = document.getElementById('order-note').value.trim();
+        const note = (document.getElementById('order-note')?.value || '').trim();
+
+        // Format transfer datetime display
+        let dateDisplay = transferDate;
+        if (transferDate.includes('-')) {
+          const parts = transferDate.split('-');
+          if (parts.length === 3) dateDisplay = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+        const transferSummary = `วันที่โอน: ${dateDisplay} เวลา: ${transferTime} น.`;
+        const combinedNote = note ? `${transferSummary} | หมายเหตุ: ${note}` : transferSummary;
 
         const result = await CloudService.submitOrder({
           userEmail: profile.email,
@@ -567,7 +668,9 @@
           couponCode: appliedCouponCode,
           discountAmount: discount,
           slipBase64: slipBase64,
-          userNote: note
+          transferDate: transferDate,
+          transferTime: transferTime,
+          userNote: combinedNote
         });
 
         if (result && result.success) {
@@ -597,6 +700,14 @@
             const totalEl = document.getElementById('success-total-amount');
             if (totalEl) totalEl.textContent = `฿${formatPrice(finalTotal)}`;
             
+            // Show transfer date & time in receipt
+            const transferEl = document.getElementById('success-transfer-time');
+            const transferRow = document.getElementById('success-transfer-row');
+            if (transferEl && transferRow) {
+              transferEl.textContent = transferSummary;
+              transferRow.style.display = 'flex';
+            }
+
             // Show attached slip in receipt box for student confidence
             const slipImgEl = document.getElementById('success-slip-img');
             const slipRowEl = document.getElementById('success-slip-row');

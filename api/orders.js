@@ -65,7 +65,9 @@ export default async function handler(req, res) {
         couponCode,
         discountAmount,
         slipBase64,
-        userNote
+        userNote,
+        transferDate,
+        transferTime
       } = body;
 
       if (!userEmail) {

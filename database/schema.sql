@@ -126,6 +126,9 @@ CREATE TABLE IF NOT EXISTS orders (
 
     -- Payment Evidence
     slip_image TEXT,                            -- Base64 encoded image or Supabase Storage URL
+    transfer_date DATE,                         -- วันที่โอนเงินจริงตามสลิป
+    transfer_time VARCHAR(20),                  -- เวลาที่โอนเงินจริงตามสลิป (เช่น 14:30 น.)
+    user_note TEXT,                             -- หมายเหตุเพิ่มเติมจากผู้เรียน
 
     -- Status Lifecycle: pending → approved | rejected
     status VARCHAR(20) DEFAULT 'pending',       -- 'pending' | 'approved' | 'rejected'

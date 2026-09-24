@@ -1135,7 +1135,7 @@ const CloudService = window.CloudService = {
   /**
    * Submit a new payment order (pending slip verification)
    */
-  async submitOrder({ userEmail, userName, userId, courseIds, courseTitles, totalAmount, couponCode, discountAmount, slipBase64, userNote }) {
+  async submitOrder({ userEmail, userName, userId, courseIds, courseTitles, totalAmount, couponCode, discountAmount, slipBase64, userNote, transferDate, transferTime }) {
     const rawTitles = courseTitles || (Array.isArray(courseIds) ? courseIds.join(', ') : String(courseIds || ''));
     const displayTitles = userNote ? `${rawTitles} [หมายเหตุ: ${userNote}]` : rawTitles;
 
@@ -1179,7 +1179,7 @@ const CloudService = window.CloudService = {
           const orderId = result[0].id;
           console.log('☁️ [Supabase Cloud] Order saved:', orderId);
           // Mirror to localStorage
-          this._saveOrderLocally({ ...orderData, id: orderId, user_note: userNote || null, created_at: new Date().toISOString() });
+          this._saveOrderLocally({ ...orderData, id: orderId, user_note: userNote || null, transfer_date: transferDate || null, transfer_time: transferTime || null, created_at: new Date().toISOString() });
           return { success: true, orderId };
         }
       } catch(err) {
@@ -1202,14 +1202,16 @@ const CloudService = window.CloudService = {
           couponCode,
           discountAmount,
           slipBase64,
-          userNote
+          userNote,
+          transferDate,
+          transferTime
         })
       });
       if (bridgeRes.ok) {
         const data = await bridgeRes.json();
         if (data && data.success && data.orderId) {
           console.log('☁️ [/api/orders Bridge] Order saved:', data.orderId);
-          this._saveOrderLocally({ ...orderData, id: data.orderId, user_note: userNote || null, created_at: new Date().toISOString() });
+          this._saveOrderLocally({ ...orderData, id: data.orderId, user_note: userNote || null, transfer_date: transferDate || null, transfer_time: transferTime || null, created_at: new Date().toISOString() });
           return { success: true, orderId: data.orderId };
         }
       }
@@ -1221,7 +1223,7 @@ const CloudService = window.CloudService = {
     const localId = (typeof crypto !== 'undefined' && crypto.randomUUID) 
       ? crypto.randomUUID() 
       : '00000000-0000-4000-8000-' + Date.now().toString(16).padStart(12, '0');
-    this._saveOrderLocally({ ...orderData, id: localId, user_note: userNote || null, created_at: new Date().toISOString() });
+    this._saveOrderLocally({ ...orderData, id: localId, user_note: userNote || null, transfer_date: transferDate || null, transfer_time: transferTime || null, created_at: new Date().toISOString() });
     return { success: true, orderId: localId };
   },
 
