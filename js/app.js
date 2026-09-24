@@ -113,6 +113,10 @@ try {
               COURSES.splice(i, 1);
             }
           }
+          if (COURSES.length === 0 && typeof DEFAULT_COURSES !== 'undefined' && Array.isArray(DEFAULT_COURSES) && DEFAULT_COURSES.length > 0) {
+            COURSES.push(...JSON.parse(JSON.stringify(DEFAULT_COURSES)));
+            localStorage.removeItem('inbiology_deleted_courses');
+          }
         }
       } catch(e) {}
     }
@@ -810,6 +814,9 @@ const AppState = window.AppState = {
             COURSES.splice(i, 1);
           }
         }
+        if (COURSES.length === 0 && typeof DEFAULT_COURSES !== 'undefined' && Array.isArray(DEFAULT_COURSES) && DEFAULT_COURSES.length > 0) {
+          COURSES.push(...JSON.parse(JSON.stringify(DEFAULT_COURSES)));
+        }
       }
 
       // 1. Course Lessons
@@ -893,6 +900,7 @@ const AppState = window.AppState = {
       if (typeof window.renderDashboardCatalog === 'function') window.renderDashboardCatalog();
       if (typeof window.renderAdminTable === 'function') window.renderAdminTable();
       if (typeof window.renderCouponsTable === 'function') window.renderCouponsTable();
+      if (typeof initScrollReveal === 'function') initScrollReveal();
     } catch(err) {
       console.warn('Note: Cloud CMS background sync error:', err);
     }
@@ -2309,7 +2317,21 @@ function initScrollReveal() {
   } else {
     elements.forEach(el => el.classList.add('revealed'));
   }
+
+  // 3. Fallback safety timer: ensure any unrevealed element becomes visible within 800ms
+  setTimeout(() => {
+    document.querySelectorAll('[data-reveal]:not(.revealed)').forEach(el => {
+      el.classList.add('revealed');
+    });
+  }, 800);
 }
+
+// Automatically re-trigger scroll reveal whenever courses or site content update
+window.addEventListener('coursesUpdated', () => {
+  setTimeout(() => {
+    if (typeof initScrollReveal === 'function') initScrollReveal();
+  }, 50);
+});
 
 // FAQ Accordion & Category Filter Helper (Audit 1.2)
 function initFaqPage() {

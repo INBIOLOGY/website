@@ -657,10 +657,10 @@
   <!-- Universal Rich Multi-Column Footer -->
   <footer id="footer-container"></footer>
 
-  <script src="./js/mockData.js?v=20260924_v44"></script>
-  <script src="./js/supabaseConfig.js?v=20260924_v44"></script>
-  <script src="./js/cloudService.js?v=20260924_v44"></script>
-  <script src="./js/app.js?v=20260924_v44"></script>
+  <script src="./js/mockData.js?v=20260924_v45"></script>
+  <script src="./js/supabaseConfig.js?v=20260924_v45"></script>
+  <script src="./js/cloudService.js?v=20260924_v45"></script>
+  <script src="./js/app.js?v=20260924_v45"></script>
   <script>
     // Helper function for sleek category icons
     function getCategoryIconSvg(iconKey) {
@@ -722,7 +722,7 @@
       section.style.display = 'block';
 
       container.innerHTML = trials.map((ft, idx) => `
-        <div data-reveal data-delay="${(idx % 3) * 0.08}s" onclick="openTrialModal(window.findTrialItem ? window.findTrialItem('${ft.id}') : ${JSON.stringify(ft).replace(/"/g, '&quot;')})" style="background:white;border-radius:20px;overflow:hidden;cursor:pointer;border:1px solid #E5E7EB;box-shadow:0 4px 12px rgba(0,0,0,0.03);transition:all 0.25s cubic-bezier(0.16,1,0.3,1);position:relative" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(0,0,0,0.08)'" onmouseleave="this.style.transform='none';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.03)'">
+        <div class="revealed" data-reveal data-delay="${(idx % 3) * 0.08}s" onclick="openTrialModal(window.findTrialItem ? window.findTrialItem('${ft.id}') : ${JSON.stringify(ft).replace(/"/g, '&quot;')})" style="background:white;border-radius:20px;overflow:hidden;cursor:pointer;border:1px solid #E5E7EB;box-shadow:0 4px 12px rgba(0,0,0,0.03);transition:all 0.25s cubic-bezier(0.16,1,0.3,1);position:relative" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(0,0,0,0.08)'" onmouseleave="this.style.transform='none';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.03)'">
           <div style="position:relative;height:190px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;padding:14px">
             <img src="${ft.imageUrl || './course-cover-1.png'}" style="height:150px;max-width:85%;object-fit:contain;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.12)" alt="" />
             <div class="card-duration-badge">${ft.duration}</div>
@@ -743,6 +743,8 @@
           </div>
         </div>
       `).join('');
+
+      if (typeof initScrollReveal === 'function') initScrollReveal();
     };
 
     // Dynamic Articles renderer (Hides section if disabled or 0 items)
@@ -780,7 +782,7 @@
       section.style.display = 'block';
 
       container.innerHTML = articles.map((art, idx) => `
-        <div data-reveal data-delay="${(idx % 3) * 0.08}s" onclick="openArticleModal(window.findArticleItem ? window.findArticleItem('${art.id}') : ${JSON.stringify(art).replace(/"/g, '&quot;')})" style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:20px;padding:24px;cursor:pointer;position:relative;transition:all 0.25s cubic-bezier(0.16,1,0.3,1);display:flex;flex-direction:column;justify-content:space-between" onmouseenter="this.style.background='white';this.style.borderColor='#CBD5E1';this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 24px rgba(0,0,0,0.06)'" onmouseleave="this.style.background='#F9FAFB';this.style.borderColor='#E5E7EB';this.style.transform='none';this.style.boxShadow='none'">
+        <div class="revealed" data-reveal data-delay="${(idx % 3) * 0.08}s" onclick="openArticleModal(window.findArticleItem ? window.findArticleItem('${art.id}') : ${JSON.stringify(art).replace(/"/g, '&quot;')})" style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:20px;padding:24px;cursor:pointer;position:relative;transition:all 0.25s cubic-bezier(0.16,1,0.3,1);display:flex;flex-direction:column;justify-content:space-between" onmouseenter="this.style.background='white';this.style.borderColor='#CBD5E1';this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 24px rgba(0,0,0,0.06)'" onmouseleave="this.style.background='#F9FAFB';this.style.borderColor='#E5E7EB';this.style.transform='none';this.style.boxShadow='none'">
           ${(typeof AppState !== 'undefined' && AppState.userRole === 'admin') ? `
             <a href="admin.html?edit_article=${art.id}" onclick="event.stopPropagation()" style="position:absolute;top:16px;right:16px;background:rgba(30,58,138,0.92);color:white;font-size:10px;font-weight:800;padding:4px 10px;border-radius:8px;text-decoration:none;z-index:3;display:inline-flex;align-items:center;gap:4px;box-shadow:0 4px 10px rgba(0,0,0,0.15)">
               แก้ไข
@@ -817,6 +819,8 @@
           </div>
         </div>
       `).join('');
+
+      if (typeof initScrollReveal === 'function') initScrollReveal();
     };
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -841,79 +845,115 @@
       // Render recommended courses (Dynamic and reactive to additions, deletions & cloud sync)
       window.renderRecommendedCourses = function() {
         const courseContainer = document.getElementById('recommended-courses-grid');
-        if (!courseContainer || typeof COURSES === 'undefined') return;
-        courseContainer.innerHTML = COURSES.map((c, idx) => {
-          const isEnrolled = AppState.isEnrolled ? AppState.isEnrolled(c.id) : AppState.enrolled.includes(c.id);
-          const discountPercent = Math.round((1 - c.price / c.originalPrice) * 100);
-          return `
-            <div class="course-card" data-reveal data-delay="${(idx % 4) * 0.08}s" style="background:white;border:1px solid #E5E7EB;border-radius:24px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.04);display:flex;flex-direction:column">
-              <!-- Floating Portrait Book Cover Thumbnail Box (Matching User Screenshot) -->
-              <div style="position:relative;height:200px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;padding:14px;overflow:hidden">
-                <img src="${c.imageUrl}" alt="${c.title}" loading="lazy" decoding="async" onerror="this.src='./course-cover-1.png'" style="height:155px;max-width:85%;object-fit:contain;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.12)" />
+        if (!courseContainer) return;
+        
+        let list = (typeof COURSES !== 'undefined' && Array.isArray(COURSES) && COURSES.length > 0)
+          ? COURSES
+          : ((typeof DEFAULT_COURSES !== 'undefined' && Array.isArray(DEFAULT_COURSES) && DEFAULT_COURSES.length > 0)
+            ? DEFAULT_COURSES
+            : (window.COURSES || []));
 
-                <!-- Floating Top-Left Badge -->
-                <span style="position:absolute;top:12px;left:12px;background:${c.badgeBg || '#1E3A8A'};color:white;font-size:10px;font-weight:900;padding:4px 12px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,0.1);z-index:2">
-                  ${c.badge}
-                </span>
-
-                ${AppState.userRole === 'admin' ? `
-                  <a href="admin.html?edit=${c.id}" style="position:absolute;top:12px;right:12px;background:rgba(30,58,138,0.92);color:white;font-size:10px;font-weight:800;padding:4px 10px;border-radius:8px;text-decoration:none;z-index:3;display:inline-flex;align-items:center;gap:4px;box-shadow:0 4px 10px rgba(0,0,0,0.15)">
-                    แก้ไข
-                  </a>
-                ` : ''}
-
-                <!-- Floating Bottom-Right Duration Badge (Rule 2) -->
-                <span class="card-duration-badge">
-                  ${c.hours} ชั่วโมงเรียน
-                </span>
-              </div>
-
-              <!-- Body -->
-              <div style="padding:18px;display:flex;flex-direction:column;gap:10px;flex:1">
-                <div style="display:flex;align-items:center;justify-content:space-between">
-                  <span style="background:${c.tagBg || '#FEF2F2'};color:${c.tagColor || '#991B1B'};font-size:10px;font-weight:800;padding:3px 10px;border-radius:6px">
-                    ${c.tag || 'ติวสอบ'}
-                  </span>
-                  <span style="font-size:11px;color:#9CA3AF;font-weight:700">${c.Level || 'ม.4'}</span>
-                </div>
-
-                <h3 onclick="openCourseModal(COURSES.find(x=>x.id==='${c.id}'))" style="cursor:pointer;font-weight:900;color:#B91C1C;font-size:15px;margin:0;line-height:1.35">
-                  ${c.title}
-                </h3>
-
-                <p style="font-size:11px;color:#6B7280;margin:0">ผู้สอน: ${c.instructor}</p>
-
-                <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px">
-                  <span style="font-weight:700;color:#111827">★ ${c.rating || 4.9} <span style="color:#9CA3AF;font-weight:500">(${c.reviewCount || 400})</span></span>
-                  <span style="font-weight:800;color:#0F172A">${c.hours} ชั่วโมงเรียน</span>
-                </div>
-
-                <p style="font-size:11.5px;color:#6B7280;line-height:1.5;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">
-                  ${c.description}
-                </p>
-
-                <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:auto;padding-top:14px;border-top:1px solid #F3F4F6">
-                  <div>
-                    <span style="font-size:11px;color:#9CA3AF;text-decoration:line-through;display:block">฿${formatPrice(c.originalPrice)}</span>
-                    <div style="display:flex;align-items:center;gap:6px">
-                      <span style="font-size:18px;font-weight:950;color:#B91C1C">฿${formatPrice(c.price)}</span>
-                      <span style="background:#EF4444;color:white;font-size:9.5px;font-weight:900;padding:2px 6px;border-radius:4px">-${discountPercent}%</span>
-                    </div>
-                  </div>
-
-                  <div style="display:flex;align-items:center;gap:6px">
-                    <button onclick="openCourseModal(COURSES.find(x=>x.id==='${c.id}'))" style="background:none;border:none;color:#1E3A8A;font-weight:800;font-size:11.5px;cursor:pointer;padding:4px 6px">
-                      รายละเอียด
-                    </button>
-                    <button onclick="${isEnrolled ? `location.href='classroom.html?course=${c.id}'` : `AppState.addToCart(COURSES.find(x=>x.id==='${c.id}'))`}" style="padding:8px 14px;border-radius:10px;font-size:11px;font-weight:800;background:${isEnrolled ? '#10B981' : '#EF4444'};color:white;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
-                      ${isEnrolled ? 'เข้าเรียน' : 'สมัครเรียน'}
-                    </button>
-                  </div>
-                </div>
-              </div>
+        if (!list || list.length === 0) {
+          courseContainer.innerHTML = `
+            <div style="grid-column:1/-1;text-align:center;padding:48px 20px;background:#F8FAFC;border-radius:24px;border:1px dashed #CBD5E1">
+              <p style="font-size:15px;font-weight:800;color:#64748B;margin:0">กำลังเตรียมข้อมูลคอร์สเรียน...</p>
             </div>
           `;
-        }).join('');
+          return;
+        }
+
+        try {
+          courseContainer.innerHTML = list.map((c, idx) => {
+            const isEnrolled = (typeof AppState !== 'undefined' && typeof AppState.isEnrolled === 'function')
+              ? AppState.isEnrolled(c.id)
+              : (AppState && AppState.enrolled && Array.isArray(AppState.enrolled) && AppState.enrolled.includes(c.id));
+            const origPrice = Number(c.originalPrice) || Number(c.price) || 0;
+            const curPrice = Number(c.price) || 0;
+            const discountPercent = origPrice > curPrice ? Math.round((1 - curPrice / origPrice) * 100) : 0;
+            const isAdmin = typeof AppState !== 'undefined' && AppState.userRole === 'admin';
+            const courseImg = c.imageUrl || './course-cover-1.png';
+
+            return `
+              <div class="course-card revealed" data-reveal data-delay="${(idx % 4) * 0.08}s" style="background:white;border:1px solid #E5E7EB;border-radius:24px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.04);display:flex;flex-direction:column">
+                <!-- Floating Portrait Book Cover Thumbnail Box (Matching Approved UI pattern) -->
+                <div style="position:relative;height:200px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;padding:14px;overflow:hidden">
+                  <img src="${courseImg}" alt="${c.title || 'คอร์สเรียน'}" loading="lazy" decoding="async" onerror="this.src='./course-cover-1.png'" style="height:155px;max-width:85%;object-fit:contain;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.12)" />
+
+                  <!-- Floating Top-Left Badge -->
+                  <span style="position:absolute;top:12px;left:12px;background:${c.badgeBg || '#1E3A8A'};color:white;font-size:10px;font-weight:900;padding:4px 12px;border-radius:999px;box-shadow:0 4px 12px rgba(0,0,0,0.1);z-index:2">
+                    ${c.badge || 'ชีววิทยา'}
+                  </span>
+
+                  ${isAdmin ? `
+                    <a href="admin.html?edit=${c.id}" style="position:absolute;top:12px;right:12px;background:rgba(30,58,138,0.92);color:white;font-size:10px;font-weight:800;padding:4px 10px;border-radius:8px;text-decoration:none;z-index:3;display:inline-flex;align-items:center;gap:4px;box-shadow:0 4px 10px rgba(0,0,0,0.15)">
+                      แก้ไข
+                    </a>
+                  ` : ''}
+
+                  <!-- Bottom-Left Floating Trial Button (Rule 2) -->
+                  <button type="button" onclick="event.stopPropagation();${isEnrolled ? `location.href='classroom.html?course=${c.id}'` : `openCourseModal(COURSES.find(x=>x.id==='${c.id}'))`}" style="position:absolute;bottom:10px;left:12px;background:#1E3A8A;color:white;border:none;font-size:10px;font-weight:800;padding:4px 10px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:4px;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,0.15)">
+                    ▶ ทดลองเรียนฟรี
+                  </button>
+
+                  <!-- Floating Bottom-Right Duration Badge (Rule 2) -->
+                  <span class="card-duration-badge">
+                    ${c.hours || 15} ชั่วโมงเรียน
+                  </span>
+                </div>
+
+                <!-- Body -->
+                <div style="padding:18px;display:flex;flex-direction:column;gap:10px;flex:1">
+                  <div style="display:flex;align-items:center;justify-content:space-between">
+                    <span style="background:${c.tagBg || '#FEF2F2'};color:${c.tagColor || '#991B1B'};font-size:10px;font-weight:800;padding:3px 10px;border-radius:6px">
+                      ${c.tag || 'ติวสอบ'}
+                    </span>
+                    <span style="font-size:11px;color:#9CA3AF;font-weight:700">${c.termBadge || c.Level || 'ม.4'}</span>
+                  </div>
+
+                  <h3 onclick="openCourseModal(COURSES.find(x=>x.id==='${c.id}'))" style="cursor:pointer;font-weight:900;color:#B91C1C;font-size:15px;margin:0;line-height:1.35">
+                    ${c.title}
+                  </h3>
+
+                  <p style="font-size:11px;color:#6B7280;margin:0">ผู้สอน: ${c.instructor || 'พี่ต้น'}</p>
+
+                  <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px">
+                    <span style="font-weight:700;color:#111827">★ ${c.rating || 4.9} <span style="color:#9CA3AF;font-weight:500">(${c.reviewCount || 400})</span></span>
+                    <span style="font-weight:800;color:#0F172A">${c.hours || 15} ชั่วโมงเรียน</span>
+                  </div>
+
+                  <p style="font-size:11.5px;color:#6B7280;line-height:1.5;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">
+                    ${c.description || ''}
+                  </p>
+
+                  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:auto;padding-top:14px;border-top:1px solid #F3F4F6">
+                    <div>
+                      <span style="font-size:11px;color:#9CA3AF;text-decoration:line-through;display:block">฿${formatPrice(origPrice)}</span>
+                      <div style="display:flex;align-items:center;gap:6px">
+                        <span style="font-size:18px;font-weight:950;color:#B91C1C">฿${formatPrice(curPrice)}</span>
+                        ${discountPercent > 0 ? `<span style="background:#EF4444;color:white;font-size:9.5px;font-weight:900;padding:2px 6px;border-radius:4px">-${discountPercent}%</span>` : ''}
+                      </div>
+                    </div>
+
+                    <div style="display:flex;align-items:center;gap:6px">
+                      <button onclick="openCourseModal(COURSES.find(x=>x.id==='${c.id}'))" style="background:none;border:none;color:#1E3A8A;font-weight:800;font-size:11.5px;cursor:pointer;padding:4px 6px">
+                        รายละเอียด
+                      </button>
+                      <button onclick="${isEnrolled ? `location.href='classroom.html?course=${c.id}'` : `AppState.addToCart(COURSES.find(x=>x.id==='${c.id}'))`}" style="padding:8px 14px;border-radius:10px;font-size:11px;font-weight:800;background:${isEnrolled ? '#10B981' : '#EF4444'};color:white;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
+                        ${isEnrolled ? 'เข้าเรียน' : 'สมัครเรียน'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+
+          if (typeof initScrollReveal === 'function') {
+            initScrollReveal();
+          }
+        } catch(renderErr) {
+          console.error('Error rendering recommended courses:', renderErr);
+        }
       };
 
       // Initial render & live sync event listener

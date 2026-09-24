@@ -1706,6 +1706,7 @@ const DEFAULT_SLIDES = [
 // Attach to global window object
 window.BRAND_COLORS = BRAND_COLORS;
 window.COURSES = COURSES;
+window.DEFAULT_COURSES = JSON.parse(JSON.stringify(COURSES));
 window.FREE_TRIALS = FREE_TRIALS;
 window.COUPONS = COUPONS;
 window.ORDERS = ORDERS;
