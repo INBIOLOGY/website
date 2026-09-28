@@ -22,7 +22,7 @@ window.LINE_CONFIG = {
   lineChannelId: '',          // ใส่ Channel ID ที่นี่ เช่น '2006789012'
   lineCallbackUrl: window.location.hostname === 'localhost'
     ? 'http://localhost:62144/line-callback.html'
-    : 'https://inbiology-official.vercel.app/line-callback.html',
+    : window.location.origin + '/line-callback.html',
   lineScope: 'profile openid email'
 };
 

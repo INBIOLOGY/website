@@ -14,7 +14,7 @@
 
 export default async function handler(req, res) {
   // CORS headers
-  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || 'https://inbiology-official.vercel.app');
+  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || 'https://www.inbiologyacademy.com');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
