@@ -9,23 +9,34 @@
   --font-heading: 'Mitr', 'IBM Plex Sans Thai', sans-serif;
 
   /* Brand Palette */
-  --c-navy: #B91C1C;
-  /* Primary Red */
-  --c-navy-light: #EF4444;
-  /* Primary Red Light */
-  --c-sky: #1E3A8A;
-  /* Secondary Navy Blue */
+  --c-navy: #B91C1C;         /* Primary Red */
+  --c-navy-light: #EF4444;   /* Primary Red Light */
+  --c-sky: #1E3A8A;          /* Secondary Navy Blue */
   --c-sky-light: #E0F2FE;
-  --c-red: #EF4444;
-  /* Vibrant Red */
+  --c-red: #EF4444;          /* Vibrant Red */
   --c-red-dark: #DC2626;
   --c-page: #F8FAFC;
   --c-white: #FFFFFF;
   --c-text-dark: #0F172A;
-  --c-text-muted: #64748B;
+  --c-text-muted: #5B6470;   /* ≥4.5:1 contrast on white */
   --c-border: #E2E8F0;
 
-  --app-font-size: 15px;
+  /* Typography scale */
+  --app-font-size: 16px;     /* Thai ต้องไม่ต่ำกว่า 16px */
+
+  /* Section spacing tokens */
+  --section-py: 96px;        /* desktop section vertical padding */
+  --section-py-mobile: 56px; /* mobile section vertical padding */
+
+  /* Card design tokens */
+  --card-radius: 18px;
+  --card-shadow: 0 4px 24px rgba(16,24,40,.06);
+  --card-shadow-hover: 0 12px 36px rgba(16,24,40,.11);
+  --card-border: 1px solid #E2E8F0;
+
+  /* Button height */
+  --btn-h: 50px;
+  --btn-radius: 12px;
 }
 
 html {
@@ -46,7 +57,7 @@ body {
   font-size: var(--app-font-size);
   background-color: var(--c-page);
   color: var(--c-text-dark);
-  line-height: 1.6;
+  line-height: 1.75;             /* ภาษาไทยต้องมี breathing room มากกว่า EN */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -132,7 +143,8 @@ h4,
 h5,
 h6 {
   font-family: var(--font-heading);
-  letter-spacing: -0.01em;
+  letter-spacing: 0;         /* อย่าใส่ letter-spacing ติดลบกับตัวไทย สระจะชนกัน */
+  line-height: 1.35;         /* heading ไทยใช้ 1.3-1.4 */
   word-break: break-word;
   overflow-wrap: break-word;
 }
@@ -179,25 +191,65 @@ h6 {
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-  to {
+/* ── Scroll Reveal (ใช้กับ class .reveal-up) ────────────────── */
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.reveal-up {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.reveal-up.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
+    transition: none;
   }
+}
+
+/* ── Skeleton Shimmer (การ์ดโหลด) ──────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton {
+  border-radius: var(--card-radius);
+  background: linear-gradient(90deg, #F1F5F9 25%, #E8ECF0 50%, #F1F5F9 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+.skeleton-card {
+  height: 320px;
+  border-radius: var(--card-radius);
+  background: linear-gradient(90deg, #F1F5F9 25%, #E8ECF0 50%, #F1F5F9 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+/* ── Count-up stat numbers ───────────────────────────────────── */
+.stat-count-target {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
 }
 
 .animate-fade-in {
@@ -719,8 +771,21 @@ h6 {
 .hero-stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: 0;
   align-items: center;
+}
+
+.hero-stats-grid > div {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+}
+
+.hero-stats-grid .stat-divider {
+  border-left: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 /* ─── TABLET (641px–1024px) ─────────────────────────────────────────────── */
@@ -972,19 +1037,26 @@ h6 {
 
 .course-card {
   background: var(--c-white);
-  border-radius: 20px;
-  border: 1px solid var(--c-border);
+  border-radius: var(--card-radius);
+  border: var(--card-border);
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--card-shadow);
+  /* แยก property ที่ animate ออกมาตรงๆ เร็วและ smooth กว่า `all` */
+  transition: transform 0.22s ease-out, box-shadow 0.22s ease-out, border-color 0.22s ease-out;
   display: flex;
   flex-direction: column;
+  will-change: transform;
 }
 
 .course-card:hover {
-  border-color: var(--c-navy);
-  box-shadow: 0 20px 40px rgba(185, 28, 28, 0.12);
-  transform: translateY(-6px);
+  border-color: rgba(185,28,28,0.35);
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-4px);  /* 4px แทน 6px: ประหยัด subtle กว่า */
+}
+
+/* Image zoom on card hover */
+.course-card:hover .course-thumb img {
+  transform: scale(1.03);
 }
 
 /* MODALS */
@@ -1156,8 +1228,8 @@ h6 {
 .review-card-container {
   box-sizing: border-box;
   background: white;
-  border-radius: 24px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+  border-radius: 20px;
+  box-shadow: var(--card-shadow);
   width: 300px;
   max-width: 85vw;
   flex-shrink: 0;
@@ -1165,16 +1237,19 @@ h6 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 1px solid #E5E7EB;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border: var(--card-border);
+  transition: transform 0.22s ease-out, box-shadow 0.22s ease-out, border-color 0.22s ease-out;
   word-break: break-word;
   overflow-wrap: break-word;
+  will-change: transform;
 }
 
-.review-card-container:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 36px rgba(185, 28, 28, 0.08);
-  border-color: rgba(185, 28, 28, 0.3);
+@media (hover: hover) and (pointer: fine) {
+  .review-card-container:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px rgba(16,24,40,.10);
+    border-color: rgba(185,28,28,0.25);
+  }
 }
 
 .review-card-container-wide {
@@ -2520,5 +2595,632 @@ textarea {
   h3 {
     font-size: 15px !important;
     line-height: 1.4 !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ✨ WOW LAYER — Premium Animations & Modern Design Enhancements
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Animated Gradient Text ───────────────────────────────────────────────── */
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.text-gradient-animated {
+  background: linear-gradient(135deg, #B91C1C 0%, #EF4444 30%, #FACC15 60%, #EF4444 80%, #B91C1C 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 4s ease infinite;
+}
+
+.text-gradient-blue {
+  background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 40%, #06B6D4 70%, #1E3A8A 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradientShift 5s ease infinite;
+}
+
+/* ── Hero Kicker Pill — Live Pulse ───────────────────────────────────────── */
+@keyframes livePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+  50%       { box-shadow: 0 0 0 8px rgba(239,68,68,0); }
+}
+
+.hero-kicker-pill {
+  animation: livePulse 2.4s ease-in-out infinite;
+}
+
+/* ── Floating Particles (background dots on hero) ──────────────────────── */
+@keyframes floatParticle {
+  0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0.6; }
+  33%  { transform: translateY(-18px) translateX(8px) scale(1.1); opacity: 0.8; }
+  66%  { transform: translateY(-8px) translateX(-6px) scale(0.95); opacity: 0.5; }
+  100% { transform: translateY(0) translateX(0) scale(1); opacity: 0.6; }
+}
+
+.hero-particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 3;
+}
+.hero-particle:nth-child(1) {
+  width: 8px; height: 8px;
+  background: rgba(250,204,21,0.7);
+  top: 20%; left: 15%;
+  animation: floatParticle 5s ease-in-out infinite;
+}
+.hero-particle:nth-child(2) {
+  width: 5px; height: 5px;
+  background: rgba(255,255,255,0.5);
+  top: 35%; left: 30%;
+  animation: floatParticle 7s ease-in-out infinite 1s;
+}
+.hero-particle:nth-child(3) {
+  width: 10px; height: 10px;
+  background: rgba(239,68,68,0.5);
+  top: 60%; left: 8%;
+  animation: floatParticle 6s ease-in-out infinite 2s;
+}
+.hero-particle:nth-child(4) {
+  width: 6px; height: 6px;
+  background: rgba(250,204,21,0.5);
+  top: 15%; left: 55%;
+  animation: floatParticle 8s ease-in-out infinite 0.5s;
+}
+.hero-particle:nth-child(5) {
+  width: 4px; height: 4px;
+  background: rgba(255,255,255,0.6);
+  top: 75%; left: 45%;
+  animation: floatParticle 5.5s ease-in-out infinite 3s;
+}
+
+/* ── Section Headers — Underline Reveal ──────────────────────────────────── */
+.section-heading-wrap {
+  display: inline-block;
+  position: relative;
+}
+
+.section-heading-wrap::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  height: 3px;
+  width: 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #B91C1C, #EF4444, #FACC15);
+  transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.section-heading-wrap.is-visible::after {
+  width: 100%;
+}
+
+/* ── Section Tag Pill ─────────────────────────────────────────────────────── */
+.section-tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(185,28,28,0.08), rgba(239,68,68,0.06));
+  border: 1px solid rgba(185,28,28,0.2);
+  color: #B91C1C;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 5px 14px;
+  border-radius: 999px;
+  letter-spacing: 0.3px;
+  margin-bottom: 10px;
+}
+
+/* ── Category Cards — Enhanced with shimmer border ───────────────────────── */
+@keyframes borderSpin {
+  0%   { background-position: 0% 0%; }
+  100% { background-position: 400% 0%; }
+}
+
+.category-card-wow {
+  position: relative;
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 24px 18px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.25s ease-out, box-shadow 0.25s ease-out;
+  overflow: hidden;
+}
+
+.category-card-wow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 1.5px;
+  background: linear-gradient(90deg, #B91C1C, #FACC15, #1E3A8A, #EF4444, #B91C1C);
+  background-size: 300% 100%;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: borderSpin 4s linear infinite;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.category-card-wow:hover::before {
+  opacity: 1;
+}
+
+.category-card-wow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(185,28,28,0.06) 0%, transparent 70%);
+  border-radius: 20px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.category-card-wow:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 20px 48px rgba(16,24,40,0.12);
+}
+
+.category-card-wow:hover::after {
+  opacity: 1;
+}
+
+.category-icon-wrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  z-index: 1;
+}
+
+.category-card-wow:hover .category-icon-wrap {
+  transform: scale(1.18) rotate(-4deg);
+}
+
+/* ── Course Card Image Wrapper ─────────────────────────────────────────────── */
+.course-thumb {
+  height: 196px;
+  background: #F1F5F9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  position: relative;
+  border-radius: 18px 18px 0 0;
+  overflow: hidden;
+}
+
+.course-thumb img {
+  height: 150px;
+  max-width: 85%;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  z-index: 1;
+}
+
+/* Subtle glowing bg on thumb hover */
+.course-thumb::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 110%, rgba(185,28,28,0.08) 0%, transparent 65%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.course-card:hover .course-thumb::after {
+  opacity: 1;
+}
+
+/* ── Magnetic Hover Buttons ───────────────────────────────────────────────── */
+.hero-btn-primary,
+.hero-btn-secondary {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.hero-btn-primary:hover::after {
+  opacity: 1;
+}
+
+/* Ripple on click for hero primary */
+@keyframes btnRipple {
+  0%   { transform: scale(0); opacity: 0.4; }
+  100% { transform: scale(4); opacity: 0; }
+}
+
+.hero-btn-primary:active::before {
+  content: '';
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  animation: btnRipple 0.5s ease-out forwards;
+}
+
+/* ── Instructor Card — Floating glow effect ────────────────────────────────── */
+@keyframes instructorGlow {
+  0%, 100% { box-shadow: 0 24px 56px rgba(15,23,42,0.18), 0 0 0 0 rgba(30,58,138,0.15); }
+  50%       { box-shadow: 0 28px 64px rgba(15,23,42,0.22), 0 0 32px rgba(30,58,138,0.12); }
+}
+
+.instructor-glass-card {
+  animation: instructorGlow 4s ease-in-out infinite;
+}
+
+/* ── Hero Main Title — Word-by-word fade stagger ──────────────────────────── */
+@keyframes wordReveal {
+  from { opacity: 0; transform: translateY(12px) skewY(1deg); }
+  to   { opacity: 1; transform: translateY(0) skewY(0deg); }
+}
+
+.hero-word {
+  display: inline-block;
+  opacity: 0;
+  animation: wordReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.hero-word:nth-child(1) { animation-delay: 0.1s; }
+.hero-word:nth-child(2) { animation-delay: 0.22s; }
+.hero-word:nth-child(3) { animation-delay: 0.34s; }
+.hero-word:nth-child(4) { animation-delay: 0.46s; }
+
+/* ── Social Cards — Glow on hover ────────────────────────────────────────── */
+.social-card {
+  background: #FFFFFF;
+  border: 1.5px solid #F3F4F6;
+  border-radius: 24px;
+  padding: 32px 20px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.02);
+  transition: transform 0.25s ease-out, box-shadow 0.25s ease-out, border-color 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.social-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.4s, transform 0.4s;
+  transform: scale(0.3);
+}
+
+.social-card.instagram::before { background: radial-gradient(circle, rgba(220,39,67,0.07) 0%, transparent 70%); }
+.social-card.line::before      { background: radial-gradient(circle, rgba(6,199,85,0.07) 0%, transparent 70%); }
+.social-card.tiktok::before    { background: radial-gradient(circle, rgba(0,0,0,0.05) 0%, transparent 70%); }
+.social-card.facebook::before  { background: radial-gradient(circle, rgba(24,119,242,0.07) 0%, transparent 70%); }
+
+.social-card:hover {
+  transform: translateY(-6px);
+  border-color: transparent;
+}
+
+.social-card.instagram:hover { box-shadow: 0 20px 40px rgba(220,39,67,0.15); }
+.social-card.line:hover      { box-shadow: 0 20px 40px rgba(6,199,85,0.15); }
+.social-card.tiktok:hover    { box-shadow: 0 20px 40px rgba(0,0,0,0.12); }
+.social-card.facebook:hover  { box-shadow: 0 20px 40px rgba(24,119,242,0.15); }
+
+.social-card:hover::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Social icon container & real image logo styling */
+.social-icon-wrap {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.social-icon-wrap img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  transition: box-shadow 0.3s ease;
+}
+
+.social-card.instagram .social-icon-wrap img { box-shadow: 0 8px 22px rgba(225, 48, 108, 0.35); }
+.social-card.line .social-icon-wrap img      { box-shadow: 0 8px 22px rgba(6, 199, 85, 0.35); }
+.social-card.tiktok .social-icon-wrap img    { box-shadow: 0 8px 22px rgba(15, 23, 42, 0.35); }
+.social-card.facebook .social-icon-wrap img  { box-shadow: 0 8px 22px rgba(24, 119, 242, 0.35); }
+
+.social-card:hover .social-icon-wrap {
+  transform: scale(1.15) rotate(6deg);
+}
+
+.social-card.instagram:hover .social-icon-wrap img { box-shadow: 0 12px 28px rgba(225, 48, 108, 0.5); }
+.social-card.line:hover .social-icon-wrap img      { box-shadow: 0 12px 28px rgba(6, 199, 85, 0.5); }
+.social-card.tiktok:hover .social-icon-wrap img    { box-shadow: 0 12px 28px rgba(15, 23, 42, 0.5); }
+.social-card.facebook:hover .social-icon-wrap img  { box-shadow: 0 12px 28px rgba(24, 119, 242, 0.5); }
+
+/* ── Review Section Heading with Stars float ──────────────────────────────── */
+@keyframes starFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%       { transform: translateY(-8px) rotate(10deg); }
+}
+
+.floating-star {
+  display: inline-block;
+  animation: starFloat 3s ease-in-out infinite;
+  color: #FACC15;
+}
+
+.floating-star:nth-child(2) { animation-delay: 0.3s; }
+.floating-star:nth-child(3) { animation-delay: 0.6s; }
+.floating-star:nth-child(4) { animation-delay: 0.9s; }
+.floating-star:nth-child(5) { animation-delay: 1.2s; }
+
+/* ── Stats Bar — number glow ─────────────────────────────────────────────── */
+@keyframes numGlow {
+  0%, 100% { text-shadow: 0 0 0px rgba(255,255,255,0); }
+  50%       { text-shadow: 0 0 20px rgba(255,255,255,0.5); }
+}
+
+.stat-count-target {
+  animation: numGlow 3s ease-in-out infinite;
+}
+
+/* ── Course Card — Staggered entrance ───────────────────────────────────── */
+@keyframes cardEntrance {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.course-card[data-reveal].revealed {
+  animation: cardEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.course-card[data-delay="0.05s"][data-reveal].revealed { animation-delay: 0.05s; }
+.course-card[data-delay="0.1s"][data-reveal].revealed  { animation-delay: 0.1s; }
+.course-card[data-delay="0.15s"][data-reveal].revealed { animation-delay: 0.15s; }
+.course-card[data-delay="0.2s"][data-reveal].revealed  { animation-delay: 0.2s; }
+
+/* ── Sections: Alternating background rhythm ──────────────────────────────── */
+.section-alt {
+  background: linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 100%);
+}
+
+.section-dark-accent {
+  background: linear-gradient(135deg, #0F172A 0%, #1E3A8A 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.section-dark-accent::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  right: -80px;
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, rgba(239,68,68,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.section-dark-accent::after {
+  content: '';
+  position: absolute;
+  bottom: -80px;
+  left: -60px;
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(circle, rgba(250,204,21,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Divider Wave with gradient ──────────────────────────────────────────── */
+.wave-divider-colored {
+  position: relative;
+  margin-top: -2px;
+  line-height: 0;
+}
+
+/* ── Back to Top — enhanced ──────────────────────────────────────────────── */
+#back-to-top {
+  background: linear-gradient(135deg, #B91C1C, #EF4444) !important;
+  box-shadow: 0 8px 24px rgba(185,28,28,0.35) !important;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, opacity 0.25s !important;
+}
+
+#back-to-top:hover {
+  transform: translateY(-4px) scale(1.08) !important;
+  box-shadow: 0 12px 32px rgba(185,28,28,0.45) !important;
+}
+
+/* ── Categories Section — modern pill heading ────────────────────────────── */
+.categories-section {
+  padding: 72px 24px;
+  background: linear-gradient(180deg, #EFF6FF 0%, #F8FAFC 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.categories-section::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 300px;
+  background: radial-gradient(ellipse, rgba(30,58,138,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Course Section background ───────────────────────────────────────────── */
+.courses-section-wow {
+  padding: 72px 24px;
+  background: #FFFFFF;
+  position: relative;
+}
+
+/* ── Reviews Section — light theme with WOW animations ─────────────────── */
+.reviews-section-wow {
+  padding: 80px 0 96px;
+  background: var(--c-page);  /* ใช้สีเดิม #F8FAFC */
+  overflow: hidden;
+  position: relative;
+}
+
+.reviews-section-wow::before,
+.reviews-section-wow::after {
+  display: none !important;
+  content: none !important;
+}
+
+
+/* Light theme — use default card colors */
+.reviews-section-wow .section-main-heading {
+  color: var(--c-text-dark);
+}
+.reviews-section-wow .section-sub-heading {
+  color: var(--c-text-muted);
+}
+
+/* Card on light bg — keep original white style */
+.reviews-section-wow .review-card-container {
+  background: #FFFFFF;
+  border-color: #E2E8F0;
+  backdrop-filter: none;
+}
+
+.reviews-section-wow .review-student-name { color: #B91C1C; }
+.reviews-section-wow .review-school       { color: #4B5563; }
+.reviews-section-wow .review-score        { color: #1E3A8A; }
+.reviews-section-wow .review-text-quote   { color: #4B5563; }
+
+/* ── Social Section — modern dark ────────────────────────────────────────── */
+.social-section-wow {
+  padding: 80px 24px;
+  background: linear-gradient(180deg, #F8FAFC 0%, #EFF6FF 100%);
+  position: relative;
+}
+
+/* ── Section headings unified ─────────────────────────────────────────────── */
+.section-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #B91C1C;
+  margin-bottom: 10px;
+}
+
+.section-eyebrow::before,
+.section-eyebrow::after {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  opacity: 0.5;
+}
+
+.section-main-heading {
+  font-size: clamp(22px, 3vw, 36px);
+  font-weight: 950;
+  color: #0F172A;
+  margin: 0 0 6px;
+  line-height: 1.2;
+}
+
+.section-sub-heading {
+  font-size: 14px;
+  color: #64748B;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ── Stagger entrance delays for grid children ───────────────────────────── */
+[data-stagger] > *:nth-child(1) { transition-delay: 0.05s; }
+[data-stagger] > *:nth-child(2) { transition-delay: 0.1s; }
+[data-stagger] > *:nth-child(3) { transition-delay: 0.15s; }
+[data-stagger] > *:nth-child(4) { transition-delay: 0.2s; }
+[data-stagger] > *:nth-child(5) { transition-delay: 0.25s; }
+[data-stagger] > *:nth-child(6) { transition-delay: 0.3s; }
+[data-stagger] > *:nth-child(7) { transition-delay: 0.35s; }
+[data-stagger] > *:nth-child(8) { transition-delay: 0.4s; }
+
+/* ── Trusted Bar — logos stripe ──────────────────────────────────────────── */
+.trusted-bar {
+  padding: 20px 24px;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(226,232,240,0.8);
+  border-bottom: 1px solid rgba(226,232,240,0.8);
+  overflow: hidden;
+}
+
+/* ── Focus visible: accessible keyboard outlines ─────────────────────────── */
+:focus-visible {
+  outline: 2.5px solid #1E3A8A;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ── No-motion override ──────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .hero-particle,
+  .floating-star,
+  .instructor-glass-card,
+  .stat-count-target,
+  .text-gradient-animated,
+  .text-gradient-blue,
+  .hero-kicker-pill,
+  .hero-word,
+  .category-card-wow::before {
+    animation: none !important;
+    -webkit-text-fill-color: unset !important;
+    background-clip: unset !important;
   }
 }

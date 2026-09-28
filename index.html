@@ -38,7 +38,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Mitr:wght@500;700&display=swap">
-  <link rel="stylesheet" href="./css/style.css?v=20260924_v46">
+  <link rel="stylesheet" href="./css/style.css?v=20260928_v50">
 
   <!-- Schema.org Structured Data for Google Search -->
   <script type="application/ld+json">
@@ -143,9 +143,9 @@
         <!-- Top Title Block -->
         <div class="hero-top-block">
           <h1 class="hero-main-title">
-            เรียนชีวะให้เข้าใจ
-            <span class="hero-title-highlight">ไม่ใช่แค่จำ</span>
-            <span class="hero-title-sub">ติวเข้มออนไลน์แบบครบวงจรกับ พี่ต้น</span>
+            <span class="hero-word">เรียนชีวะให้</span><span class="hero-word" style="color:#FACC15">เข้าใจ</span>
+            <span class="hero-title-highlight"><span class="hero-word">ไม่ใช่แค่จำ</span></span>
+            <span class="hero-title-sub"><span class="hero-word">ติวเข้มออนไลน์แบบครบวงจรกับ พี่ต้น</span></span>
           </h1>
         </div>
 
@@ -162,32 +162,38 @@
           </div>
 
           <!-- Translucent Glass Stats Bar -->
-          <div class="hero-stats-grid" style="background:rgba(255,255,255,0.16);border:1.5px solid rgba(255,255,255,0.35);border-radius:20px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:14px 20px">
+          <div class="hero-stats-grid" style="background:rgba(255,255,255,0.16);border:1.5px solid rgba(255,255,255,0.35);border-radius:20px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:14px 16px">
             <div>
-              <div class="stat-num" style="font-size:20px;font-weight:950;color:white;margin-bottom:2px;line-height:1">50,000+</div>
+              <div class="stat-num" style="font-size:20px;font-weight:950;color:white;margin-bottom:2px;line-height:1">
+                <span class="stat-count-target" data-count="50000" data-suffix="+">50,000+</span>
+              </div>
               <div class="stat-lbl" style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.85);white-space:nowrap">นักเรียนไว้วางใจตั้งแต่ปี 2018</div>
             </div>
-            <div class="stat-divider" style="border-left:1px solid rgba(255,255,255,0.25);padding-left:12px">
-              <div class="stat-num" style="font-size:20px;font-weight:950;color:white;margin-bottom:2px;line-height:1">11+</div>
+            <div class="stat-divider">
+              <div class="stat-num" style="font-size:20px;font-weight:950;color:white;margin-bottom:2px;line-height:1">
+                <span class="stat-count-target" data-count="11" data-suffix="+">11+</span>
+              </div>
               <div class="stat-lbl" style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.85);white-space:nowrap">คอร์สคุณภาพ</div>
             </div>
-            <div class="stat-divider" style="border-left:1px solid rgba(255,255,255,0.25);padding-left:12px">
-              <div class="stat-num" style="font-size:20px;font-weight:950;color:white;margin-bottom:2px;line-height:1">100%</div>
+            <div class="stat-divider">
+              <div class="stat-num" style="font-size:20px;font-weight:950;color:white;margin-bottom:2px;line-height:1">
+                <span class="stat-count-target" data-count="100" data-suffix="%">100%</span>
+              </div>
               <div class="stat-lbl" style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.85);white-space:nowrap">ตรงตามเกณฑ์การสอบ</div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Instructor Glass Card (Centered on mobile, right-aligned on desktop) -->
+      <!-- Instructor Glass Card — Desktop only, slimmed to avatar + name + 1 credential + rating -->
       <div class="animate-fade-in hero-instructor-wrap">
         <div class="instructor-glass-card">
           <div style="display:flex;flex-direction:column;align-items:center;text-align:center">
-            
+
             <!-- Avatar with Active Green Dot -->
             <div style="position:relative;margin-bottom:12px">
               <div style="width:110px;height:110px;min-width:110px;min-height:110px;aspect-ratio:1/1;border-radius:50%;border:3px solid #1E3A8A;overflow:hidden;background:#1E3A8A;box-shadow:0 8px 24px rgba(30,58,138,0.2)">
-                <img src="./instructor.jpg" alt="พี่ต้น" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;object-position:center top" />
+                <img src="./instructor.jpg" alt="พี่ต้น" loading="eager" decoding="async" style="width:100%;height:100%;object-fit:cover;object-position:center top" />
               </div>
               <span style="position:absolute;bottom:4px;right:6px;width:16px;height:16px;min-width:16px;min-height:16px;aspect-ratio:1/1;background:#10B981;border:2.5px solid white;border-radius:50%;display:block"></span>
             </div>
@@ -197,33 +203,25 @@
             <p style="color:#6B7280;font-size:12px;font-weight:600;margin:0 0 10px">นายพิสิษฐ์ สายตา</p>
 
             <!-- Badges -->
-            <div style="display:flex;justify-content:center;gap:6px;margin-bottom:16px;flex-wrap:wrap">
-              <span style="background:#FEE2E2;color:#EF4444;font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px">ชีววิทยา</span>
-              <span style="background:#EFF6FF;color:#1E3A8A;font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px">เกียรตินิยมอันดับ 1</span>
+            <div style="display:flex;justify-content:center;gap:6px;margin-bottom:14px;flex-wrap:wrap">
+              <span style="background:#FEE2E2;color:#EF4444;font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px">🔬 ชีววิทยา</span>
+              <span style="background:#EFF6FF;color:#1E3A8A;font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px">🎓 เกียรตินิยมอันดับ 1</span>
             </div>
 
-            <!-- Qualification List White Card -->
-            <div style="background:#FFFFFF;border-radius:20px;padding:12px 16px;width:100%;box-shadow:0 4px 16px rgba(0,0,0,0.02);text-align:left;display:flex;flex-direction:column;gap:10px">
-              <div style="display:flex;align-items:center;gap:10px;font-size:11.5px;color:#374151;font-weight:700">
+            <!-- Slimmed credential – only 1 key line -->
+            <div style="background:#FFFFFF;border-radius:14px;padding:10px 14px;width:100%;text-align:left;box-shadow:0 2px 10px rgba(0,0,0,0.04)">
+              <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#374151;font-weight:700">
                 <span style="width:6px;height:6px;border-radius:50%;background:#1E3A8A;display:inline-block;flex-shrink:0"></span>
-                <span>ป.ตรี คณะศึกษาศาสตร์ มหาวิทยาลัยนเรศวร</span>
+                <span>ประสบการณ์สอน 9 ปี · วิทยากรพิเศษ</span>
               </div>
-              <div style="border-top:1px solid #F3F4F6;padding-top:8px;display:flex;align-items:center;gap:10px;font-size:11.5px;color:#374151;font-weight:700">
+              <div style="border-top:1px solid #F3F4F6;margin-top:8px;padding-top:8px;display:flex;align-items:center;gap:8px;font-size:12px;color:#374151;font-weight:700">
                 <span style="width:6px;height:6px;border-radius:50%;background:#1E3A8A;display:inline-block;flex-shrink:0"></span>
-                <span>กำลังศึกษาต่อ ป.โท มหาวิทยาลัยขอนแก่น</span>
-              </div>
-              <div style="border-top:1px solid #F3F4F6;padding-top:8px;display:flex;align-items:center;gap:10px;font-size:11.5px;color:#374151;font-weight:700">
-                <span style="width:6px;height:6px;border-radius:50%;background:#B91C1C;display:inline-block;flex-shrink:0"></span>
-                <span>ประสบการณ์สอน 9 ปี</span>
-              </div>
-              <div style="border-top:1px solid #F3F4F6;padding-top:8px;display:flex;align-items:center;gap:10px;font-size:11.5px;color:#374151;font-weight:700">
-                <span style="width:6px;height:6px;border-radius:50%;background:#B91C1C;display:inline-block;flex-shrink:0"></span>
-                <span>วิทยากรพิเศษตามโรงเรียนต่างๆ</span>
+                <span>ป.ตรี ม.นเรศวร · ป.โท ม.ขอนแก่น</span>
               </div>
             </div>
 
-            <!-- Rating & Reviews Bar -->
-            <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:16px;width:100%">
+            <!-- Rating Row -->
+            <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:14px;width:100%">
               <span style="color:#F59E0B;font-size:13px">★★★★★</span>
               <span style="font-size:14px;font-weight:900;color:#111827;margin-left:4px">4.98</span>
               <span style="font-size:11px;color:#9CA3AF;font-weight:600">(2,847 รีวิว)</span>
@@ -232,6 +230,14 @@
           </div>
         </div>
       </div>
+    </div>
+
+      <!-- Floating Particles in Hero -->
+      <div class="hero-particle"></div>
+      <div class="hero-particle"></div>
+      <div class="hero-particle"></div>
+      <div class="hero-particle"></div>
+      <div class="hero-particle"></div>
     </div>
 
     <!-- Seamless Wave Divider (No dark gap / seam line) -->
@@ -569,13 +575,14 @@
 
 
   <!-- Categories Section -->
-  <section style="padding:40px 24px;background:#F3F4F6">
+  <section class="categories-section reveal-up">
     <div style="max-width:1280px;margin:0 auto">
-      <div style="text-align:center;margin-bottom:32px">
-        <h2 style="font-size:26px;font-weight:950;color:var(--c-navy);margin:0">หมวดหมู่เนื้อหาชีวะ</h2>
-        <p style="font-size:13px;color:#6B7280;margin-top:6px">เจาะลึกทุกระบบชีววิทยา ตรงตามเกณฑ์สอบใหม่ล่าสุด</p>
+      <div style="text-align:center;margin-bottom:40px">
+        <div class="section-eyebrow">แยกหมวดหมู่ตามหลักสูตรใหม่</div>
+        <h2 class="section-main-heading">หมวดหมู่เนื้อหาชีวะ<span class="text-gradient-animated">ครบทุกระบบ</span></h2>
+        <p class="section-sub-heading">เจาะลึกทุกระบบชีววิทยา ตรงตามเกณฑ์สอบใหม่ล่าสุด</p>
       </div>
-      <div id="category-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px"></div>
+      <div id="category-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px" data-stagger></div>
     </div>
   </section>
 
@@ -594,11 +601,11 @@
   </section>
 
   <!-- Free Trial Video Preview Section -->
-  <section id="trial" style="padding:50px 24px">
+  <section id="trial" class="section-alt reveal-up" style="padding:72px 24px">
     <div style="max-width:1100px;margin:0 auto">
-      <div style="text-align:center;margin-bottom:32px">
-        <p style="color:var(--c-red);font-size:12px;font-weight:800;margin:0 0 6px;letter-spacing:1px">ทดลองเรียนฟรี</p>
-        <h2 style="font-size:26px;font-weight:950;color:var(--c-navy);margin:0">คลังวิดีโอและบทเรียนทดลองเรียนฟรี</h2>
+      <div style="text-align:center;margin-bottom:40px">
+        <div class="section-eyebrow">ทดลองเรียนฟรี</div>
+        <h2 class="section-main-heading">คลังวิดีโอและบทเรียน <span class="text-gradient-animated">ทดลองเรียนฟรี</span></h2>
       </div>
       <div id="trials-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;justify-content:center"></div>
     </div>
@@ -615,40 +622,62 @@
     </div>
   </section>
 
-  <!-- Reviews Marquee -->
-  <section style="padding:60px 24px 80px;background:var(--c-page);overflow:hidden;position:relative">
-    <div style="max-width:1280px;margin:0 auto 32px;text-align:center">
-      <h2 style="font-size:28px;font-weight:950;color:var(--c-navy);margin:0">รีวิวจากน้องๆ ที่ร่วมเรียนกับพี่ต้น</h2>
-      <p style="font-size:14px;color:#6B7280;margin-top:6px">ความรู้สึกจากน้องๆ ที่เรียนแล้วสอบติดเกือบ 3,000 คน</p>
+  <!-- Reviews Marquee — light theme + WOW animations -->
+  <section class="reviews-section-wow reveal-up">
+    <div style="max-width:1280px;margin:0 auto 40px;text-align:center;padding:0 24px">
+      <div class="section-eyebrow">ความรู้สึกจากน้องๆ</div>
+      <h2 class="section-main-heading">รีวิวจากน้องๆ ที่ร่วมเรียนกับพี่ต้น</h2>
+      <p class="section-sub-heading">ความรู้สึกจากน้องๆ ที่เรียนแล้วสอบติดเกือบ 3,000 คน</p>
+      <div style="margin-top:14px;display:flex;justify-content:center;gap:2px">
+        <span class="floating-star">★</span><span class="floating-star">★</span><span class="floating-star">★</span><span class="floating-star">★</span><span class="floating-star">★</span>
+        <span style="color:#64748B;font-size:13px;font-weight:700;margin-left:8px;line-height:1;align-self:center">4.98 · 2,847 รีวิว</span>
+      </div>
     </div>
     <div class="marquee-container">
       <div class="marquee-content" id="reviews-marquee"></div>
     </div>
   </section>
 
-  <!-- Social Connect Cards -->
-  <section style="padding:70px 24px;background:#FFFFFF">
+  <!-- Social Connect Cards — premium hover glow -->
+  <section class="social-section-wow reveal-up">
     <div style="max-width:1100px;margin:0 auto">
-      <div style="text-align:center;margin-bottom:40px">
-        <h2 style="font-size:32px;font-weight:950;color:#111827;margin:0">ติดตามพี่ต้น INBIOLOGY</h2>
-        <p style="font-size:14px;color:#6B7280;margin:8px 0 0">ติดตามสรุปความรู้ชีววิทยาและข่าวสารการสอบได้ครบทุกช่องทาง</p>
+      <div style="text-align:center;margin-bottom:48px">
+        <div class="section-eyebrow">ติดตามแบบปัง</div>
+        <h2 class="section-main-heading">ติดตามพี่ต้น <span class="text-gradient-blue">INBIOLOGY</span></h2>
+        <p class="section-sub-heading">ติดตามสรุปความรู้ชีววิทยาและข่าวสารการสอบได้ครบทุกช่องทาง</p>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));gap:20px">
-        <div style="background:#FFF;border:1.5px solid #F3F4F6;border-radius:24px;padding:32px 20px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.02)">
-          <p style="font-size:16px;font-weight:850;color:#374151;margin:0">Instagram</p>
-          <a href="https://www.instagram.com/inbiology_/" target="_blank" rel="noopener" style="margin-top:14px;display:block;background:linear-gradient(45deg, #f09433, #dc2743, #bc1888);color:white;padding:12px;border-radius:12px;font-weight:800;text-decoration:none;transition:transform 0.2s">@INBIOLOGY_</a>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));gap:20px" data-stagger>
+        <div class="social-card instagram reveal-up">
+          <div class="social-icon-wrap">
+            <img src="./social_instagram.png" alt="Instagram" width="68" height="68">
+          </div>
+          <p style="font-size:16px;font-weight:850;color:#1E293B;margin:0 0 4px">Instagram</p>
+          <p style="font-size:12px;color:#94A3B8;margin:0 0 18px">@INBIOLOGY_</p>
+          <a href="https://www.instagram.com/inbiology_/" target="_blank" rel="noopener" style="display:block;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:white;padding:11px;border-radius:12px;font-weight:800;text-decoration:none;font-size:13px;box-shadow:0 6px 18px rgba(220,39,67,0.3);transition:transform 0.2s,box-shadow 0.2s" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 10px 24px rgba(220,39,67,0.45)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 6px 18px rgba(220,39,67,0.3)'">@INBIOLOGY_ →</a>
         </div>
-        <div style="background:#FFF;border:1.5px solid #F3F4F6;border-radius:24px;padding:32px 20px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.02)">
-          <p style="font-size:16px;font-weight:850;color:#374151;margin:0">LINE Official</p>
-          <a href="https://lin.ee/sYQ6MIn" target="_blank" rel="noopener" style="margin-top:14px;display:block;background:#06C755;color:white;padding:12px;border-radius:12px;font-weight:800;text-decoration:none;transition:transform 0.2s">คลิกเลย</a>
+        <div class="social-card line reveal-up">
+          <div class="social-icon-wrap">
+            <img src="./social_line.png" alt="LINE Official" width="68" height="68">
+          </div>
+          <p style="font-size:16px;font-weight:850;color:#1E293B;margin:0 0 4px">LINE Official</p>
+          <p style="font-size:12px;color:#94A3B8;margin:0 0 18px">แชทสดกับพี่ต้น</p>
+          <a href="https://lin.ee/sYQ6MIn" target="_blank" rel="noopener" style="display:block;background:#06C755;color:white;padding:11px;border-radius:12px;font-weight:800;text-decoration:none;font-size:13px;box-shadow:0 6px 18px rgba(6,199,85,0.3);transition:transform 0.2s,box-shadow 0.2s" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 10px 24px rgba(6,199,85,0.45)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 6px 18px rgba(6,199,85,0.3)'">คลิกเลย →</a>
         </div>
-        <div style="background:#FFF;border:1.5px solid #F3F4F6;border-radius:24px;padding:32px 20px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.02)">
-          <p style="font-size:16px;font-weight:850;color:#374151;margin:0">TikTok</p>
-          <a href="https://www.tiktok.com/@tonnarabbit" target="_blank" rel="noopener" style="margin-top:14px;display:block;background:#010101;color:white;padding:12px;border-radius:12px;font-weight:800;text-decoration:none;transition:transform 0.2s">@ครูต้นInbiology</a>
+        <div class="social-card tiktok reveal-up">
+          <div class="social-icon-wrap">
+            <img src="./social_tiktok.png" alt="TikTok" width="68" height="68">
+          </div>
+          <p style="font-size:16px;font-weight:850;color:#1E293B;margin:0 0 4px">TikTok</p>
+          <p style="font-size:12px;color:#94A3B8;margin:0 0 18px">@ครูต้นInbiology</p>
+          <a href="https://www.tiktok.com/@tonnarabbit" target="_blank" rel="noopener" style="display:block;background:#0F172A;color:white;padding:11px;border-radius:12px;font-weight:800;text-decoration:none;font-size:13px;box-shadow:0 6px 18px rgba(15,23,42,0.3);transition:transform 0.2s,box-shadow 0.2s" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 10px 24px rgba(15,23,42,0.45)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 6px 18px rgba(15,23,42,0.3)'">ดูวิดีโอ →</a>
         </div>
-        <div style="background:#FFF;border:1.5px solid #F3F4F6;border-radius:24px;padding:32px 20px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.02)">
-          <p style="font-size:16px;font-weight:850;color:#374151;margin:0">Facebook</p>
-          <a href="https://www.facebook.com/share/1K2bmAys3f/?mibextid=wwXIfr" target="_blank" rel="noopener" style="margin-top:14px;display:block;background:#1877F2;color:white;padding:12px;border-radius:12px;font-weight:800;text-decoration:none;transition:transform 0.2s">INBIOLOGY</a>
+        <div class="social-card facebook reveal-up">
+          <div class="social-icon-wrap">
+            <img src="./social_facebook.png" alt="Facebook" width="68" height="68">
+          </div>
+          <p style="font-size:16px;font-weight:850;color:#1E293B;margin:0 0 4px">Facebook</p>
+          <p style="font-size:12px;color:#94A3B8;margin:0 0 18px">INBIOLOGY</p>
+          <a href="https://www.facebook.com/share/1K2bmAys3f/?mibextid=wwXIfr" target="_blank" rel="noopener" style="display:block;background:#1877F2;color:white;padding:11px;border-radius:12px;font-weight:800;text-decoration:none;font-size:13px;box-shadow:0 6px 18px rgba(24,119,242,0.3);transition:transform 0.2s,box-shadow 0.2s" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 10px 24px rgba(24,119,242,0.45)'" onmouseleave="this.style.transform='';this.style.boxShadow='0 6px 18px rgba(24,119,242,0.3)'">INBIOLOGY →</a>
         </div>
       </div>
     </div>
@@ -830,8 +859,8 @@
       const catContainer = document.getElementById('category-grid');
       if (catContainer && typeof CATEGORIES !== 'undefined') {
         catContainer.innerHTML = CATEGORIES.map(c => `
-          <div onclick="${c.actionType === 'modal' ? 'openBioIntensiveModal()' : `location.href='${c.targetUrl || 'courses.html'}'`}" style="background:white;border:1px solid #E5E7EB;border-radius:20px;padding:24px 20px;text-align:center;cursor:pointer;transition:all 0.22s cubic-bezier(0.16,1,0.3,1);box-shadow:0 2px 8px rgba(0,0,0,0.02);display:flex;flex-direction:column;align-items:center;justify-content:center" onmouseenter="this.style.transform='translateY(-3px)';this.style.boxShadow='0 10px 24px rgba(0,0,0,0.06)';this.style.borderColor='#BFDBFE'" onmouseleave="this.style.transform='none';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.02)';this.style.borderColor='#E5E7EB'">
-            <div style="width:54px;height:54px;border-radius:16px;background:#F1F5F9;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px">
+          <div class="category-card-wow" onclick="${c.actionType === 'modal' ? 'openBioIntensiveModal()' : `location.href='${c.targetUrl || 'courses.html'}'`}">
+            <div class="category-icon-wrap" style="background:#F1F5F9">
               ${getCategoryIconSvg(c.icon)}
             </div>
             <span style="font-size:15px;font-weight:950;color:var(--c-navy);display:block;margin-bottom:4px">${c.name}</span>
@@ -841,6 +870,7 @@
           </div>
         `).join('');
       }
+
 
       // Render recommended courses (Dynamic and reactive to additions, deletions & cloud sync)
       window.renderRecommendedCourses = function() {
@@ -1057,6 +1087,33 @@
       initScrollReveal();
     });
   </script>
+
+  <!-- WOW: Section heading underline reveal -->
+  <script>
+    (function() {
+      // ── Section heading underline reveal (add .reveal-up to .section-heading-wrap) ──
+      document.querySelectorAll('.section-heading-wrap').forEach(el => {
+        el.classList.add('reveal-up');
+      });
+
+      // ── Add .reveal-up to section-heading-wraps after they are visible ────
+      if ('IntersectionObserver' in window) {
+        const wrapObs = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              wrapObs.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.3 });
+
+        document.querySelectorAll('.section-heading-wrap').forEach(el => {
+          wrapObs.observe(el);
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
+
 

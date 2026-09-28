@@ -1834,10 +1834,9 @@
       const approvedOrders = customerOrders.filter(o => o.status === 'approved');
       const pendingOrders = customerOrders.filter(o => o.status === 'pending');
 
-      // Check if sales are reset to 0 (default to true for initial clean state)
-      const isSalesReset = localStorage.getItem('inbiology_reset_sales_to_zero') !== 'false';
-      const totalSales = isSalesReset ? 0 : approvedOrders.reduce((sum, o) => {
-        const amt = Number(o.total_amount) || Number(o.price) || 0;
+      // Calculate total revenue dynamically from all approved customer orders
+      const totalSales = approvedOrders.reduce((sum, o) => {
+        const amt = Number(o.total_amount) || Number(o.price) || Number(o.amount) || 0;
         return sum + amt;
       }, 0);
 
@@ -3246,7 +3245,7 @@
 
     async function clearTestOrdersAndResetSales() {
       if (!confirm('คุณต้องการรีเซ็ตยอดขายสะสมเป็น ฿0 และล้างออเดอร์ทดสอบใช่หรือไม่?')) return;
-      localStorage.setItem('inbiology_reset_sales_to_zero', 'true');
+      localStorage.removeItem('inbiology_reset_sales_to_zero');
       localStorage.setItem('inbiology_orders', '[]');
       _ordersCache = [];
       if (window.CloudService && typeof window.CloudService.clearAllTestOrders === 'function') {
@@ -3254,7 +3253,7 @@
       }
       renderOrdersTable();
       updateAdminOverviewStats();
-      showToast('✅ รีเซ็ตยอดขายสะสมเป็น ฿0 เรียบร้อยแล้ว', 'success');
+      showToast('✅ ล้างออเดอร์ทดสอบและรีเซ็ตยอดขายเรียบร้อยแล้ว', 'success');
     }
 
     async function revertOrderApproval(orderId) {

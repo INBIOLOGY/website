@@ -2180,16 +2180,16 @@ function renderFooter() {
           </p>
           <div class="footer-social-row" style="margin-top:0">
             <a href="https://www.facebook.com/share/1K2bmAys3f/?mibextid=wwXIfr" target="_blank" rel="noopener" class="footer-social-btn" title="Facebook INBIOLOGY" aria-label="Facebook">
-              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" style="color:#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              <img src="./social_facebook.png" alt="Facebook" style="width:20px;height:20px;object-fit:cover;border-radius:50%" />
             </a>
             <a href="https://lin.ee/sYQ6MIn" target="_blank" rel="noopener" class="footer-social-btn" title="LINE Official @inbiology" aria-label="LINE Official">
-              <img src="./social_line.png" alt="LINE" style="width:18px;height:18px;object-fit:contain" />
+              <img src="./social_line.png" alt="LINE" style="width:20px;height:20px;object-fit:cover;border-radius:50%" />
             </a>
             <a href="https://www.tiktok.com/@tonnarabbit" target="_blank" rel="noopener" class="footer-social-btn" title="TikTok @ครูต้นInbiology" aria-label="TikTok">
-              <img src="./social_tiktok.png" alt="TikTok" style="width:18px;height:18px;object-fit:contain" />
+              <img src="./social_tiktok.png" alt="TikTok" style="width:20px;height:20px;object-fit:cover;border-radius:50%" />
             </a>
             <a href="https://www.instagram.com/inbiology_/" target="_blank" rel="noopener" class="footer-social-btn" title="Instagram @INBIOLOGY_" aria-label="Instagram">
-              <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24" style="color:#E1306C"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+              <img src="./social_instagram.png" alt="Instagram" style="width:20px;height:20px;object-fit:cover;border-radius:50%" />
             </a>
           </div>
         </div>
@@ -2201,7 +2201,6 @@ function renderFooter() {
             <ul class="footer-links">
               <li><a href="index.html">หน้าแรก</a></li>
               <li><a href="courses.html">คอร์สเรียนทั้งหมด</a></li>
-              <li><a href="exam.html">คลังข้อสอบ A-Level</a></li>
             </ul>
           </div>
 
@@ -2210,7 +2209,6 @@ function renderFooter() {
             <ul class="footer-links">
               <li><a href="about.html">เกี่ยวกับพี่ต้น</a></li>
               <li><a href="faq.html">คำถามพบบ่อย</a></li>
-              <li><a href="https://lin.ee/sYQ6MIn" target="_blank" rel="noopener" style="color:#38BDF8;font-weight:800">LINE: @inbiology</a></li>
             </ul>
           </div>
         </div>
@@ -2310,11 +2308,10 @@ document.addEventListener('click', (e) => {
 
 // Scroll Reveal Observer Engine (Instant viewport reveal for Safari & Mobile)
 function initScrollReveal() {
+  // ── 1. Handle legacy [data-reveal] elements ─────────────────────────────
   const elements = document.querySelectorAll('[data-reveal]');
-  if (!elements.length) return;
-
-  // 1. Immediately reveal elements already within the initial screen view (0ms delay for Safari)
   const vh = window.innerHeight || document.documentElement.clientHeight || 800;
+
   elements.forEach(el => {
     const rect = el.getBoundingClientRect();
     if (rect.top < vh + 100 && rect.bottom > -50) {
@@ -2322,7 +2319,6 @@ function initScrollReveal() {
     }
   });
 
-  // 2. Observe remaining off-screen elements
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver((entries, obs) => {
       entries.forEach(entry => {
@@ -2331,17 +2327,12 @@ function initScrollReveal() {
           obs.unobserve(entry.target);
         }
       });
-    }, {
-      threshold: 0.05,
-      rootMargin: '0px 0px 60px 0px'
-    });
+    }, { threshold: 0.05, rootMargin: '0px 0px 60px 0px' });
 
     elements.forEach(el => {
       if (!el.classList.contains('revealed')) {
         const delay = el.getAttribute('data-delay');
-        if (delay) {
-          el.style.transitionDelay = delay;
-        }
+        if (delay) el.style.transitionDelay = delay;
         observer.observe(el);
       }
     });
@@ -2349,12 +2340,68 @@ function initScrollReveal() {
     elements.forEach(el => el.classList.add('revealed'));
   }
 
-  // 3. Fallback safety timer: ensure any unrevealed element becomes visible within 800ms
+  // Safety timer fallback
   setTimeout(() => {
     document.querySelectorAll('[data-reveal]:not(.revealed)').forEach(el => {
       el.classList.add('revealed');
     });
   }, 800);
+
+  // ── 2. Handle .reveal-up elements (CSS-based scroll reveal) ─────────────
+  if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const revealObs = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -24px 0px' });
+
+    document.querySelectorAll('.reveal-up:not(.is-visible)').forEach(el => {
+      revealObs.observe(el);
+    });
+  } else {
+    // ลด motion หรือ browser เก่า: แสดงทุกอย่างทันที
+    document.querySelectorAll('.reveal-up').forEach(el => el.classList.add('is-visible'));
+  }
+
+  // ── 3. Count-up animation สำหรับ [data-count] ──────────────────────────
+  function animateCountUp(el) {
+    const target = parseInt(el.getAttribute('data-count'), 10);
+    const suffix = el.getAttribute('data-suffix') || '';
+    if (isNaN(target)) return;
+
+    const duration = 1200; // ms
+    const start = performance.now();
+    const isLarge = target >= 1000;
+
+    function tick(now) {
+      const elapsed = Math.min(now - start, duration);
+      const progress = elapsed / duration;
+      // easeOutQuart
+      const ease = 1 - Math.pow(1 - progress, 4);
+      const value = Math.round(ease * target);
+      el.textContent = isLarge ? value.toLocaleString('th-TH') + suffix : value + suffix;
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  if ('IntersectionObserver' in window) {
+    const countObs = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCountUp(entry.target);
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.stat-count-target[data-count]').forEach(el => {
+      countObs.observe(el);
+    });
+  }
 }
 
 // Automatically re-trigger scroll reveal whenever courses or site content update
