@@ -138,7 +138,7 @@
           </div>
 
           <!-- Card 4: Pending Verification -->
-          <div style="background:#FFFBEB;border-radius:16px;padding:18px;border:1.5px solid #FDE68A;box-shadow:0 2px 8px rgba(245,158,11,0.05)">
+          <div onclick="switchAdminTab('orders'); setOrderFilterStatus('pending');" style="background:#FFFBEB;border-radius:16px;padding:18px;border:1.5px solid #FDE68A;box-shadow:0 2px 8px rgba(245,158,11,0.05);cursor:pointer;transition:transform 0.15s" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform=''" title="คลิกเพื่อเปิดดูเฉพาะสลิปที่รอตรวจสอบ">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
               <span style="font-size:11.5px;font-weight:850;color:#92400E">รอตรวจสอบสลิป</span>
               <span id="admin-pending-badge" style="font-size:10px;font-weight:800;background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:6px">0 รอตรวจ</span>
@@ -158,7 +158,7 @@
               <span style="font-size:12.5px;font-weight:850;color:var(--c-navy)">จัดการคอร์สเรียน</span>
               <span style="font-size:11px;color:#64748B">เพิ่ม/แก้ไขคอร์ส, วิดีโอ, ชีท</span>
             </button>
-            <button type="button" onclick="switchAdminTab('orders')" style="background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:14px;padding:14px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px;transition:all 0.2s">
+            <button type="button" onclick="switchAdminTab('orders'); setOrderFilterStatus('pending');" style="background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:14px;padding:14px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px;transition:all 0.2s">
               <span style="font-size:12.5px;font-weight:850;color:var(--c-navy)">ตรวจสลิปออเดอร์</span>
               <span style="font-size:11px;color:#64748B">ดูสลิปโอนเงิน & อนุมัติคอร์ส</span>
             </button>
@@ -3145,8 +3145,22 @@
     function renderOrdersTable() {
       const tbody = document.getElementById('admin-orders-table');
 
-      // Update pending count badge
-      const pendingCount = _ordersCache.filter(o => o.status === 'pending').length;
+      // Update pending count badge and filter pill counts
+      const customerOrders = _ordersCache.filter(o => o.status !== 'system_cms');
+      const allCount = customerOrders.length;
+      const pendingCount = customerOrders.filter(o => o.status === 'pending').length;
+      const approvedCount = customerOrders.filter(o => o.status === 'approved').length;
+      const rejectedCount = customerOrders.filter(o => o.status === 'rejected').length;
+
+      const fAll = document.getElementById('ofilter-all');
+      if (fAll) fAll.textContent = `ทั้งหมด (${allCount})`;
+      const fPending = document.getElementById('ofilter-pending');
+      if (fPending) fPending.textContent = `⏳ รอตรวจสอบ (${pendingCount})`;
+      const fApproved = document.getElementById('ofilter-approved');
+      if (fApproved) fApproved.textContent = `✅ อนุมัติแล้ว (${approvedCount})`;
+      const fRejected = document.getElementById('ofilter-rejected');
+      if (fRejected) fRejected.textContent = `❌ ปฏิเสธแล้ว (${rejectedCount})`;
+
       const tabBtn = document.getElementById('atab-orders');
       if (tabBtn) tabBtn.textContent = `💳 ตรวจสลิปออเดอร์${pendingCount > 0 ? ` (🔴 ${pendingCount})` : ''}`;
 

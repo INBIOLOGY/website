@@ -1218,8 +1218,15 @@ function renderCartDrawer() {
 
       <div style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px">
         ${AppState.cart.length === 0 
-          ? `<div style="text-align:center;padding:48px 0;color:#9CA3AF">
-              <p style="font-size:13px;font-weight:500">ไม่มีสินค้าในตะกร้า</p>
+          ? `<div style="text-align:center;padding:44px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+              <div style="width:64px;height:64px;border-radius:20px;background:#EFF6FF;border:2px solid #DBEAFE;display:flex;align-items:center;justify-content:center;margin-bottom:14px;font-size:28px">
+                🛒
+              </div>
+              <h4 style="font-size:15px;font-weight:900;color:var(--c-navy);margin:0 0 6px">ยังไม่มีคอร์สในตะกร้า</h4>
+              <p style="font-size:12.5px;color:#64748B;line-height:1.6;margin:0 0 20px;max-width:240px">เลือกคอร์สชีวะที่ใช่ แล้วเริ่มติวเข้มแบบเข้าใจ ไม่ใช่แค่จำได้เลย</p>
+              <a href="courses.html" onclick="closeCartDrawer()" style="background:var(--c-navy);color:white;text-decoration:none;font-size:13px;font-weight:850;padding:11px 22px;border-radius:12px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(30,58,138,0.25);transition:all 0.2s">
+                เลือกดูคอร์สเรียน ➔
+              </a>
              </div>`
           : AppState.cart.map(c => `
               <div style="display:flex;align-items:center;gap:10px;padding:10px;background:#F9FAFB;border-radius:12px;border:1px solid #E5E7EB">
@@ -2077,7 +2084,7 @@ function renderHeader(activePage = 'home') {
       <nav class="desktop-nav" aria-label="เมนูหลัก">
         <a href="index.html" class="nav-link ${activePage === 'home' ? 'active' : ''}">หน้าแรก</a>
         <a href="courses.html" class="nav-link ${activePage === 'courses' ? 'active' : ''}">คอร์สเรียน</a>
-        <a href="javascript:void(0)" onclick="showNotReadyModal('exam')" class="nav-link ${activePage === 'exam' ? 'active' : ''}">คลังข้อสอบ</a>
+        <a href="javascript:void(0)" onclick="showNotReadyModal('exam')" class="nav-link ${activePage === 'exam' ? 'active' : ''}">คลังข้อสอบ <span style="font-size:9.5px;font-weight:900;background:#FEE2E2;color:#B91C1C;padding:2px 6px;border-radius:6px;vertical-align:middle;margin-left:4px">เร็วๆ นี้</span></a>
         <a href="about.html" class="nav-link ${activePage === 'about' ? 'active' : ''}">เกี่ยวกับเรา</a>
         <a href="faq.html" class="nav-link ${activePage === 'faq' ? 'active' : ''}">คำถามพบบ่อย</a>
         ${isLoggedIn ? `
@@ -2114,7 +2121,7 @@ function renderHeader(activePage = 'home') {
         <div id="nav-dropdown" class="dropdown-panel">
           <a href="index.html" class="dropdown-item">หน้าแรก</a>
           <a href="courses.html" class="dropdown-item">คอร์สเรียนทั้งหมด</a>
-          <a href="javascript:void(0)" onclick="showNotReadyModal('exam')" class="dropdown-item">คลังข้อสอบ A-Level</a>
+          <a href="javascript:void(0)" onclick="showNotReadyModal('exam')" class="dropdown-item">คลังข้อสอบ A-Level <span style="font-size:9.5px;font-weight:900;background:#FEE2E2;color:#B91C1C;padding:2px 6px;border-radius:6px;margin-left:6px">เร็วๆ นี้</span></a>
           <a href="about.html" class="dropdown-item">เกี่ยวกับเรา</a>
           <a href="faq.html" class="dropdown-item">คำถามพบบ่อย</a>
           <a href="guide.html" class="dropdown-item">คู่มือการใช้งาน</a>
@@ -2249,6 +2256,29 @@ function initBackToTop() {
       btn.classList.remove('visible');
     }
   });
+
+  initFloatingLineContact();
+}
+
+// Floating LINE Contact Button
+function initFloatingLineContact() {
+  if (document.getElementById('floating-line-btn')) return;
+  // Don't show on checkout page to avoid blocking purchase form
+  if (window.location.pathname.includes('checkout')) return;
+
+  const btn = document.createElement('a');
+  btn.id = 'floating-line-btn';
+  btn.className = 'floating-line-btn';
+  btn.href = 'https://lin.ee/sYQ6MIn';
+  btn.target = '_blank';
+  btn.rel = 'noopener noreferrer';
+  btn.setAttribute('aria-label', 'ปรึกษาพี่ต้นทาง LINE');
+  btn.title = 'สอบถามและปรึกษาพี่ต้นฟรีทาง LINE';
+  btn.innerHTML = `
+    <img src="./social_line.png" alt="LINE" class="floating-line-icon" />
+    <span class="floating-line-text">ปรึกษาพี่ต้นฟรี</span>
+  `;
+  document.body.appendChild(btn);
 }
 
 function toggleMyCoursesMenu(e) {
