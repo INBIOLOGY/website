@@ -2104,8 +2104,8 @@ textarea {
    ───────────────────────────────────────────────────────────────────────────── */
 .back-to-top {
   position: fixed;
-  bottom: 28px;
-  right: 28px;
+  bottom: 24px;
+  right: 24px;
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -2137,21 +2137,21 @@ textarea {
   box-shadow: 0 12px 28px rgba(185, 28, 28, 0.45);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .back-to-top {
-    bottom: 20px;
-    right: 20px;
-    width: 44px;
-    height: 44px;
-    font-size: 18px;
+    bottom: 20px !important;
+    right: 16px !important;
+    width: 42px !important;
+    height: 42px !important;
+    font-size: 17px !important;
   }
 }
 
 /* Floating LINE Contact Button */
 .floating-line-btn {
   position: fixed;
-  bottom: 86px;
-  right: 28px;
+  bottom: 84px;
+  right: 24px;
   height: 48px;
   border-radius: 999px;
   background: #06C755;
@@ -2188,18 +2188,18 @@ textarea {
   white-space: nowrap;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .floating-line-btn {
-    bottom: 74px;
-    right: 20px;
-    height: 42px;
-    padding: 0 14px 0 6px;
-    font-size: 12px;
-    gap: 7px;
+    bottom: 72px !important;
+    right: 16px !important;
+    height: 42px !important;
+    padding: 0 14px 0 6px !important;
+    font-size: 12px !important;
+    gap: 7px !important;
   }
   .floating-line-icon {
-    width: 30px;
-    height: 30px;
+    width: 30px !important;
+    height: 30px !important;
   }
 }
 
@@ -2522,8 +2522,8 @@ textarea {
 
   /* Floating Back-To-Top Safe Floating Position on Mobile */
   .back-to-top {
-    bottom: 80px !important;
-    right: 14px !important;
+    bottom: 20px !important;
+    right: 16px !important;
     width: 42px !important;
     height: 42px !important;
     font-size: 17px !important;
