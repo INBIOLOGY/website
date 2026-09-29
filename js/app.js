@@ -2187,16 +2187,16 @@ function renderFooter() {
           </p>
           <div class="footer-social-row" style="margin-top:0">
             <a href="https://www.facebook.com/share/1K2bmAys3f/?mibextid=wwXIfr" target="_blank" rel="noopener" class="footer-social-btn" title="Facebook INBIOLOGY" aria-label="Facebook">
-              <img src="./social_facebook.png" alt="Facebook" style="width:20px;height:20px;object-fit:cover;border-radius:50%" />
+              <img src="./social_facebook.png?v=20260929_v2" alt="Facebook" style="width:20px;height:20px;object-fit:cover;border-radius:50%" />
             </a>
             <a href="https://lin.ee/sYQ6MIn" target="_blank" rel="noopener" class="footer-social-btn" title="LINE Official @inbiology" aria-label="LINE Official">
-              <img src="./social_line.png" alt="LINE" style="width:20px;height:20px;object-fit:cover;border-radius:50%" />
+              <img src="./social_line.png?v=20260929_v2" alt="LINE" style="width:20px;height:20px;object-fit:cover;border-radius:50%" />
             </a>
             <a href="https://www.tiktok.com/@tonnarabbit" target="_blank" rel="noopener" class="footer-social-btn" title="TikTok @ครูต้นInbiology" aria-label="TikTok">
-              <img src="./social_tiktok.png" alt="TikTok" style="width:20px;height:20px;object-fit:cover;border-radius:50%" />
+              <img src="./social_tiktok.png?v=20260929_v2" alt="TikTok" style="width:20px;height:20px;object-fit:cover;border-radius:50%" />
             </a>
             <a href="https://www.instagram.com/inbiology_/" target="_blank" rel="noopener" class="footer-social-btn" title="Instagram @INBIOLOGY_" aria-label="Instagram">
-              <img src="./social_instagram.png" alt="Instagram" style="width:20px;height:20px;object-fit:cover;border-radius:50%" />
+              <img src="./social_instagram.png?v=20260929_v2" alt="Instagram" style="width:20px;height:20px;object-fit:cover;border-radius:50%" />
             </a>
           </div>
         </div>
@@ -2275,7 +2275,7 @@ function initFloatingLineContact() {
   btn.setAttribute('aria-label', 'ปรึกษาพี่ต้นทาง LINE');
   btn.title = 'สอบถามและปรึกษาพี่ต้นฟรีทาง LINE';
   btn.innerHTML = `
-    <img src="./social_line.png" alt="LINE" class="floating-line-icon" />
+    <img src="./social_line.png?v=20260929_v2" alt="LINE" class="floating-line-icon" />
     <span class="floating-line-text">ปรึกษาพี่ต้นฟรี</span>
   `;
   document.body.appendChild(btn);
