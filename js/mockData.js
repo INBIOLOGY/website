@@ -1663,7 +1663,7 @@ const ARTICLES = [
     content: 'การสังเคราะห์ด้วยแสงแบ่งออกเป็น 2 ขั้นตอนหลัก ได้แก่ ปฏิกิริยาแสง (Light Reaction) ที่เกิดขึ้นบริเวณ Thylakoid Membrane เพื่อผลิต ATP และ NADPH สำหรับนำไปใช้ในปฏิกิริยาตรึงคาร์บอน (Calvin Cycle) ที่เกิดใน Stroma ของคลอโรพลาสต์\n\nจุดที่มักสับสนในข้อสอบ A-Level คือตำแหน่งการสะสมโปรตอน (H+) ภายใน Thylakoid Lumen และกลไก Photophosphorylation ทั้งแบบเป็นวัฏจักรและไม่เป็นวัฏจักร',
     documentUrl: 'https://drive.google.com/file/d/1_Sample_Biology_Photosynthesis_Summary/view?usp=sharing',
     documentName: 'ชีทสรุปจุดออกสอบ_Photosynthesis_INBIOLOGY.pdf',
-    articleUrl: 'https://inbiology-official.vercel.app/courses.html',
+    articleUrl: 'https://www.inbiologyacademy.com/courses.html',
     imageUrl: './course-cover-3.jpg'
   },
   {
@@ -1678,7 +1678,7 @@ const ARTICLES = [
     content: 'การสกัด DNA เบื้องต้นใช้หลักการทำลายเยื่อหุ้มเซลล์และเยื่อหุ้มนิวเคลียสด้วยสารซักฟอก (Detergent) เกลือแกงทำหน้าที่ปรับประจุของ DNA ให้เสถียร และแอลกอฮอล์เย็นจัด (Cold Ethanol) ช่วยตกตะกอนสาย DNA สีขาวขุ่นออกมาให้เห็นด้วยตาเปล่าเพื่อการศึกษาโครงสร้างพันธุกรรม',
     documentUrl: 'https://drive.google.com/file/d/1_Sample_DNA_Extraction_Lab_Protocol/view?usp=sharing',
     documentName: 'คู่มือการทดลอง_DNA_Extraction_Lab.pdf',
-    articleUrl: 'https://inbiology-official.vercel.app/courses.html',
+    articleUrl: 'https://www.inbiologyacademy.com/courses.html',
     imageUrl: './course-cover-c-1790176559102.jpg'
   },
   {
@@ -1693,7 +1693,7 @@ const ARTICLES = [
     content: 'เทคนิคจำระบบไหลเวียนเลือด: เลือดดำจากส่วนบนและล่างของร่างกายเข้าสู่หัวใจห้องบนขวา (Right Atrium) ผ่านลิ้น Tricuspid สู่ล่างขวา (Right Ventricle) ส่งไปฟอกที่ปอดผ่าน Pulmonary Artery จากนั้นเลือดแดงจากปอดกลับเข้าบนซ้าย (Left Atrium) ผ่านลิ้น Bicuspid (Mitral) สู่ล่างซ้าย (Left Ventricle) ซึ่งมีผนังกล้ามเนื้อหนาที่สุดเพื่อบีบเลือดออกทาง Aorta ไปเลี้ยงทั่วร่างกาย',
     documentUrl: 'https://drive.google.com/file/d/1_Sample_Heart_Circulation_Mindmap/view?usp=sharing',
     documentName: 'MindMap_ระบบหมุนเวียนโลหิตและหัวใจ_INBIOLOGY.pdf',
-    articleUrl: 'https://inbiology-official.vercel.app/courses.html',
+    articleUrl: 'https://www.inbiologyacademy.com/courses.html',
     imageUrl: './course-cover-4.png'
   }
 ];
