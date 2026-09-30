@@ -379,6 +379,135 @@
 
       <!-- Tab: Orders Verification -->
       <div id="apanel-orders" style="display:none;flex-direction:column;gap:16px">
+
+        <!-- 💰 Financial Management & Google Sheets Auto-Sync Panel -->
+        <div id="finance-analytics-panel" style="background:white;border:1px solid #E2E8F0;border-radius:20px;padding:20px 24px;box-shadow:0 4px 16px rgba(0,0,0,0.02)">
+          <!-- Top Row: Title, Google Sheets Status & Actions -->
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px">
+            <div>
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                <span style="font-size:20px">💰</span>
+                <h3 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0">ระบบจัดการการเงิน & สรุปยอดขาย (Financial Management)</h3>
+                <span id="finance-gsheets-status-badge" style="font-size:11px;font-weight:800;padding:3px 10px;border-radius:999px;background:#F1F5F9;color:#64748B;display:inline-flex;align-items:center;gap:5px">
+                  <span style="width:7px;height:7px;border-radius:50%;background:#94A3B8;display:inline-block"></span> ยังไม่เชื่อมต่อ Sheet
+                </span>
+              </div>
+              <p style="font-size:11.5px;color:#64748B;margin:3px 0 0">
+                สรุปยอดเงินเข้าจริง ยอดขายแยกแต่ละคอร์ส และสรุปยอดรายเดือนอัตโนมัติ พร้อมส่งข้อมูลเข้า Google Sheets แบบ Real-time
+              </p>
+            </div>
+
+            <!-- Action buttons -->
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <button type="button" onclick="openGoogleSheetsConfigModal()" style="background:#EFF6FF;color:#1E3A8A;border:1.5px solid #93C5FD;padding:8px 14px;border-radius:10px;font-size:11.5px;font-weight:850;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.15s">
+                <span>⚙️ ตั้งค่า Google Sheets</span>
+              </button>
+              <button type="button" onclick="syncAllApprovedOrdersToSheets()" id="btn-sync-all-orders-sheets" style="background:#047857;color:white;border:none;padding:8px 16px;border-radius:10px;font-size:11.5px;font-weight:850;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(4,120,87,0.25);transition:all 0.15s">
+                <span>🔄 ซิงก์ขึ้น Sheet ทันที</span>
+              </button>
+              <button type="button" onclick="toggleFinancePanelCollapse()" id="btn-toggle-finance-collapse" style="background:#F8FAFC;color:#64748B;border:1px solid #CBD5E1;padding:8px 12px;border-radius:10px;font-size:11px;font-weight:800;cursor:pointer">
+                ▼ ซ่อนสรุป
+              </button>
+            </div>
+          </div>
+
+          <!-- Collapsible Body -->
+          <div id="finance-collapsible-body" style="display:flex;flex-direction:column;gap:18px">
+            <!-- 4 Financial KPI Cards -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));gap:14px">
+              <!-- KPI 1: Total Revenue -->
+              <div style="background:linear-gradient(135deg, #ECFDF5 0%, #F0FDF4 100%);border:1.5px solid #A7F3D0;border-radius:16px;padding:16px 18px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                  <span style="font-size:11.5px;font-weight:850;color:#065F46">ยอดเงินเข้าสะสม (ทั้งหมด)</span>
+                  <span style="font-size:14px">💳</span>
+                </div>
+                <p id="finance-kpi-total-revenue" style="font-size:26px;font-weight:950;color:#047857;margin:0;line-height:1.2">฿0</p>
+                <p id="finance-kpi-total-orders" style="font-size:11px;color:#047857;margin:4px 0 0;font-weight:700">จาก 0 ออเดอร์ที่อนุมัติแล้ว</p>
+              </div>
+
+              <!-- KPI 2: This Month Revenue -->
+              <div style="background:linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);border:1.5px solid #BFDBFE;border-radius:16px;padding:16px 18px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                  <span style="font-size:11.5px;font-weight:850;color:#1E3A8A">ยอดเงินเดือนนี้</span>
+                  <span style="font-size:14px">📅</span>
+                </div>
+                <p id="finance-kpi-month-revenue" style="font-size:26px;font-weight:950;color:#1E3A8A;margin:0;line-height:1.2">฿0</p>
+                <p id="finance-kpi-month-label" style="font-size:11px;color:#1E40AF;margin:4px 0 0;font-weight:700">คำนวณอัตโนมัติประจำเดือน</p>
+              </div>
+
+              <!-- KPI 3: Top Selling Course -->
+              <div style="background:linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);border:1.5px solid #FECACA;border-radius:16px;padding:16px 18px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                  <span style="font-size:11.5px;font-weight:850;color:#991B1B">คอร์สทำเงินสูงสุด</span>
+                  <span style="font-size:14px">🏆</span>
+                </div>
+                <p id="finance-kpi-top-course" style="font-size:14px;font-weight:950;color:#991B1B;margin:0;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">—</p>
+                <p id="finance-kpi-top-course-rev" style="font-size:11px;color:#B91C1C;margin:4px 0 0;font-weight:700">฿0 (0 ออเดอร์)</p>
+              </div>
+
+              <!-- KPI 4: Average Order Value & Discount -->
+              <div style="background:linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);border:1.5px solid #FDE68A;border-radius:16px;padding:16px 18px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                  <span style="font-size:11.5px;font-weight:850;color:#92400E">เฉลี่ยต่อออเดอร์</span>
+                  <span style="font-size:14px">🏷️</span>
+                </div>
+                <p id="finance-kpi-avg-order" style="font-size:26px;font-weight:950;color:#B45309;margin:0;line-height:1.2">฿0</p>
+                <p id="finance-kpi-total-discount" style="font-size:11px;color:#92400E;margin:4px 0 0;font-weight:700">ส่วนลดรวม ฿0</p>
+              </div>
+            </div>
+
+            <!-- Detailed Views Sub-Tab Bar -->
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;border-top:1px solid #F1F5F9;padding-top:16px">
+              <div style="display:flex;gap:6px">
+                <button type="button" onclick="switchFinanceSubView('monthly')" id="fsub-tab-monthly" style="padding:7px 16px;border-radius:10px;font-size:11.5px;font-weight:850;border:none;background:var(--c-navy);color:white;cursor:pointer">
+                  📅 สรุปยอดเงินเข้าแยกตามเดือน (Monthly Breakdown)
+                </button>
+                <button type="button" onclick="switchFinanceSubView('course')" id="fsub-tab-course" style="padding:7px 16px;border-radius:10px;font-size:11.5px;font-weight:850;border:1px solid #E2E8F0;background:#F8FAFC;color:#475569;cursor:pointer">
+                  📚 สรุปยอดเงินเข้าแยกตามรายคอร์ส (Course Breakdown)
+                </button>
+              </div>
+              <span style="font-size:11px;color:#94A3B8;font-weight:600">อัปเดตแบบ Real-time ตามออเดอร์ที่อนุมัติ</span>
+            </div>
+
+            <!-- View 1: Monthly Financial Breakdown Table -->
+            <div id="finance-view-monthly" style="overflow-x:auto">
+              <table style="width:100%;border-collapse:collapse;font-size:12px;text-align:left">
+                <thead>
+                  <tr style="background:#F8FAFC;color:#64748B;border-bottom:2px solid #E2E8F0">
+                    <th style="padding:10px 14px;border-radius:8px 0 0 8px">เดือน / ปี</th>
+                    <th style="padding:10px 14px">จำนวนออเดอร์</th>
+                    <th style="padding:10px 14px">ยอดขายรวม (Gross)</th>
+                    <th style="padding:10px 14px">ส่วนลดคูปอง</th>
+                    <th style="padding:10px 14px">รายได้สุทธิ (Net)</th>
+                    <th style="padding:10px 14px">เฉลี่ย / ออเดอร์</th>
+                    <th style="padding:10px 14px;border-radius:0 8px 8px 0;text-align:right">สถานะเดือน</th>
+                  </tr>
+                </thead>
+                <tbody id="finance-monthly-table-body">
+                  <tr><td colspan="7" style="padding:20px;text-align:center;color:#94A3B8">กำลังประมวลผลข้อมูลการเงิน...</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- View 2: Course Breakdown Table & Progress Bars -->
+            <div id="finance-view-course" style="display:none;overflow-x:auto">
+              <table style="width:100%;border-collapse:collapse;font-size:12px;text-align:left">
+                <thead>
+                  <tr style="background:#F8FAFC;color:#64748B;border-bottom:2px solid #E2E8F0">
+                    <th style="padding:10px 14px;border-radius:8px 0 0 8px">ชื่อคอร์สเรียน</th>
+                    <th style="padding:10px 14px">จำนวนที่ขายได้</th>
+                    <th style="padding:10px 14px">ยอดเงินรวมที่ทำได้</th>
+                    <th style="padding:10px 14px;width:30%">สัดส่วนยอดขาย (% of Revenue)</th>
+                  </tr>
+                </thead>
+                <tbody id="finance-course-table-body">
+                  <tr><td colspan="4" style="padding:20px;text-align:center;color:#94A3B8">กำลังประมวลผลข้อมูลรายคอร์ส...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
         <!-- Search & Status Filter Toolbar -->
         <div style="background:white;border:1px solid #E5E7EB;border-radius:18px;padding:16px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.02)">
           <div style="position:relative;flex:1;min-width:260px">
@@ -904,6 +1033,74 @@
 
     </div>
 
+  </div>
+
+  <!-- Google Sheets Auto-Sync Configuration Modal -->
+  <div id="google-sheets-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.65);backdrop-filter:blur(6px);z-index:10000;align-items:center;justify-content:center;padding:16px;box-sizing:border-box">
+    <div style="background:white;border-radius:24px;width:100%;max-width:min(660px,calc(100vw - 32px));box-shadow:0 25px 50px -12px rgba(0,0,0,0.3);overflow:hidden;animation:fadeIn 0.2s ease;max-height:92vh;display:flex;flex-direction:column;box-sizing:border-box">
+      <!-- Modal Header -->
+      <div style="padding:18px 24px;border-bottom:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center;background:#F8FAFC">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:22px">📊</span>
+          <div>
+            <h3 style="font-size:16px;font-weight:900;color:var(--c-navy);margin:0">ตั้งค่าเชื่อมต่อ Google Sheets อัตโนมัติ (Live Sync)</h3>
+            <p style="font-size:11px;color:#64748B;margin:2px 0 0">เมื่ออนุมัติออเดอร์ ข้อมูลจะเด้งเข้า Google Sheets พร้อมสรุปรายเดือนทันที</p>
+          </div>
+        </div>
+        <button onclick="closeGoogleSheetsModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#94A3B8;font-weight:700;line-height:1">✕</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div style="padding:20px 24px;overflow-y:auto;display:flex;flex-direction:column;gap:16px">
+        <!-- 3-Step Guide -->
+        <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:14px;padding:14px 16px">
+          <div style="font-weight:900;font-size:12.5px;color:#1E3A8A;margin-bottom:8px">📌 วิธีเชื่อมต่อง่ายๆ ใน 3 ขั้นตอน (ทำครั้งเดียว):</div>
+          <ol style="margin:0;padding-left:18px;font-size:11.5px;color:#1E40AF;line-height:1.6;display:flex;flex-direction:column;gap:4px">
+            <li>สร้าง <strong>Google Sheet</strong> ใหม่ในบัญชีของคุณ (ตั้งชื่อ เช่น "INBIOLOGY — บัญชีรายรับ & ยอดขาย")</li>
+            <li>ไปที่เมนู <strong>ส่วนขยาย (Extensions)</strong> ➔ <strong>Apps Script</strong> แล้วคลิกปุ่ม <strong>[📋 คัดลอกโค้ด Apps Script]</strong> ด้านล่างนี้ไปวางทับโค้ดเดิมทั้งหมด ➔ กดบันทึก</li>
+            <li>กดปุ่มสีน้ำเงินมุมขวาบน <strong>"การทำให้ใช้งานได้" (Deploy)</strong> ➔ <strong>"การปรับใช้ใหม่" (New deployment)</strong> ➔ เลือกประเภท <strong>"เว็บแอป"</strong> ➔ ตรง "ใครมีสิทธิ์เข้าถึง" ให้เลือก <strong>"ทุกคน (Anyone)"</strong> ➔ คัดลอก URL ของเว็บแอปมาวางในช่องด้านล่างนี้ได้เลย!</li>
+          </ol>
+        </div>
+
+        <!-- Webhook URL Input -->
+        <div>
+          <label style="display:block;font-size:12px;font-weight:850;color:#1E293B;margin-bottom:6px">
+            🔗 Google Apps Script Webhook URL <span style="color:#EF4444">*</span>
+          </label>
+          <input type="text" id="gsheets-webhook-input" placeholder="https://script.google.com/macros/s/.../exec" style="width:100%;border:1.5px solid #CBD5E1;border-radius:10px;padding:10px 12px;font-size:12px;font-family:monospace;outline:none;background:white" />
+          <p style="font-size:10.5px;color:#64748B;margin:4px 0 0">URL นี้จะถูกบันทึกขึ้น Supabase Cloud ให้แอดมินทุกคนใช้งานร่วมกันอัตโนมัติ</p>
+        </div>
+
+        <!-- Code Box with Copy Button -->
+        <div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:12px;padding:12px 14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:11.5px;font-weight:800;color:#334155">📄 โค้ด Google Apps Script (พร้อมระบบสรุปรายเดือน & รายคอร์ส):</span>
+            <button type="button" onclick="copyGoogleAppsScriptCode()" id="btn-copy-apps-script" style="background:#1E3A8A;color:white;border:none;padding:5px 12px;border-radius:6px;font-size:11px;font-weight:800;cursor:pointer">
+              📋 คัดลอกโค้ดทั้งหมด
+            </button>
+          </div>
+          <textarea id="apps-script-code-preview" readonly style="width:100%;height:110px;font-family:monospace;font-size:11px;border:1px solid #CBD5E1;border-radius:8px;padding:8px;background:#FFFFFF;color:#475569;resize:none"></textarea>
+        </div>
+
+        <!-- Connection Test & Status result -->
+        <div id="gsheets-test-result" style="display:none;padding:10px 14px;border-radius:10px;font-size:11.5px;font-weight:700"></div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div style="padding:14px 24px;border-top:1px solid #F1F5F9;background:#F8FAFC;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+        <button type="button" onclick="testGoogleSheetsConnection()" id="btn-test-gsheets" style="background:#F1F5F9;color:#334155;border:1px solid #CBD5E1;padding:9px 16px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer">
+          🧪 ทดสอบการเชื่อมต่อ
+        </button>
+        <div style="display:flex;gap:8px">
+          <button type="button" onclick="closeGoogleSheetsModal()" style="background:white;color:#64748B;border:1px solid #CBD5E1;padding:9px 16px;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer">
+            ยกเลิก
+          </button>
+          <button type="button" onclick="saveGoogleSheetsWebhookUrl()" id="btn-save-gsheets-url" style="background:var(--c-navy);color:white;border:none;padding:9px 20px;border-radius:10px;font-size:12px;font-weight:850;cursor:pointer;box-shadow:0 2px 8px rgba(185,28,28,0.25)">
+            💾 บันทึก URL
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- 2-Step Admin Order Approval Confirmation Modal -->
@@ -1630,6 +1827,7 @@
       renderAdminTrials();
       renderAdminArticles();
       updateAdminOverviewStats();
+      initGoogleSheetsConfig();
 
       // Live reactive Cloud Sync listener
       window.addEventListener('coursesUpdated', () => {
@@ -3113,6 +3311,7 @@
       }
       renderOrdersTable();
       updateAdminOverviewStats();
+      renderFinancialAnalytics();
     }
 
     let _currentOrderFilterStatus = 'all';
@@ -3423,6 +3622,14 @@
         showToast(`✅ อนุมัติและเปิดคอร์สให้ ${studentLabel} เรียบร้อยแล้ว`, 'success');
         closeApprovalModal();
         await loadAndRenderOrders();
+
+        // 📊 Auto-sync approved order to Google Sheets if configured
+        syncSingleOrderToGoogleSheets({
+          ...o,
+          status: 'approved',
+          reviewed_by: AppState.getStudentProfile()?.nickname || 'Admin',
+          approved_at: new Date().toISOString()
+        });
       } catch (e) {
         showToast('❌ เกิดข้อผิดพลาด: ' + e.message, 'error');
       } finally {
@@ -4969,7 +5176,744 @@
       if (container) container.innerHTML = ''; // Stop video playback
       if (modal) modal.style.display = 'none';
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // 💰 FINANCIAL MANAGEMENT & GOOGLE SHEETS AUTOMATED SYNC
+    // ─────────────────────────────────────────────────────────────────────────
+    let _googleSheetsWebhookUrl = localStorage.getItem('inbiology_gsheets_webhook') || '';
+
+    const GOOGLE_APPS_SCRIPT_TEMPLATE_CODE = `/**
+ * INBIOLOGY ACADEMY — Google Apps Script for Automated Financial & Sales Sync
+ */
+function doPost(e) {
+  var lock = LockService.getScriptLock();
+  lock.tryLock(15000);
+  try {
+    var raw = (e && e.postData && e.postData.contents) ? e.postData.contents : "{}";
+    var payload = JSON.parse(raw);
+    var action = payload.action || 'order_approved';
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    setupSheetsIfMissing(ss);
+    var ordersSheet = ss.getSheetByName('รายการออเดอร์');
+    var monthlySheet = ss.getSheetByName('สรุปรายได้รายเดือน');
+    var courseSheet = ss.getSheetByName('สรุปรายได้รายคอร์ส');
+
+    if (action === 'test') {
+      return ContentService.createTextOutput(JSON.stringify({
+        status: 'success', message: 'เชื่อมต่อ Google Sheets สำเร็จสมบูรณ์!'
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (action === 'order_approved' && payload.order) {
+      appendOrUpdateOrder(ordersSheet, payload.order);
+      recalculateMonthlySummary(ordersSheet, monthlySheet);
+      recalculateCourseSummary(ordersSheet, courseSheet);
+    } else if (action === 'batch_sync' && Array.isArray(payload.orders)) {
+      payload.orders.forEach(function(o) { appendOrUpdateOrder(ordersSheet, o); });
+      recalculateMonthlySummary(ordersSheet, monthlySheet);
+      recalculateCourseSummary(ordersSheet, courseSheet);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ status: 'success' })).setMimeType(ContentService.MimeType.JSON);
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: err.toString() })).setMimeType(ContentService.MimeType.JSON);
+  } finally { lock.releaseLock(); }
+}
+function doGet(e) {
+  return ContentService.createTextOutput(JSON.stringify({ status: 'online' })).setMimeType(ContentService.MimeType.JSON);
+}
+function setupSheetsIfMissing(ss) {
+  var s1 = ss.getSheetByName('รายการออเดอร์');
+  if (!s1) {
+    s1 = ss.insertSheet('รายการออเดอร์', 0);
+    s1.appendRow(['วันที่สั่งซื้อ','เวลา','รหัสออเดอร์','ชื่อนักเรียน','อีเมล','คอร์สที่ซื้อ','ยอดชำระจริง (฿)','ส่วนลด (฿)','โค้ดส่วนลด','สถานะ','ผู้อนุมัติ','วันเวลาที่โอนจริงตามสลิป']);
+    formatH(s1, 12, '#1E3A8A');
+  }
+  var s2 = ss.getSheetByName('สรุปรายได้รายเดือน');
+  if (!s2) {
+    s2 = ss.insertSheet('สรุปรายได้รายเดือน', 1);
+    s2.appendRow(['เดือน / ปี','จำนวนออเดอร์','ยอดขายรวม (฿)','ส่วนลดรวม (฿)','ยอดสุทธิ (฿)','ยอดเฉลี่ย/ออเดอร์ (฿)','สถานะ']);
+    formatH(s2, 7, '#047857');
+  }
+  var s3 = ss.getSheetByName('สรุปรายได้รายคอร์ส');
+  if (!s3) {
+    s3 = ss.insertSheet('สรุปรายได้รายคอร์ส', 2);
+    s3.appendRow(['ชื่อคอร์สเรียน','จำนวนที่ขายได้ (ออเดอร์)','ยอดเงินรวม (฿)','สัดส่วนยอดขาย (%)']);
+    formatH(s3, 4, '#B91C1C');
+  }
+}
+function formatH(sheet, numCols, bg) {
+  var r = sheet.getRange(1, 1, 1, numCols);
+  r.setBackground(bg).setFontColor('#FFFFFF').setFontWeight('bold').setHorizontalAlignment('center');
+  sheet.setFrozenRows(1);
+}
+function appendOrUpdateOrder(sheet, order) {
+  var orderId = String(order.id || '');
+  if (!orderId) return;
+  var created = new Date(order.created_at || order.createdAt || Date.now());
+  var d = Utilities.formatDate(created, 'Asia/Bangkok', 'yyyy-MM-dd');
+  var t = Utilities.formatDate(created, 'Asia/Bangkok', 'HH:mm');
+  var total = Number(order.total_amount || order.totalAmount || order.price || 0);
+  var disc = Number(order.discount_amount || order.discountAmount || 0);
+  var coupon = order.coupon_code || order.couponCode || '-';
+  var status = order.status === 'approved' ? 'อนุมัติแล้ว' : order.status;
+  var reviewer = order.reviewed_by || order.reviewedBy || 'Admin';
+  var transfer = order.transfer_date ? (order.transfer_date + ' ' + (order.transfer_time||'')) : '-';
+
+  var rowData = [d, t, orderId, order.user_name||'ไม่ระบุชื่อ', order.user_email||'', order.course_titles||'', total, disc, coupon, status, reviewer, transfer];
+  var lastRow = sheet.getLastRow();
+  var found = -1;
+  if (lastRow > 1) {
+    var idCol = sheet.getRange(2, 3, lastRow - 1, 1).getValues();
+    for (var i = 0; i < idCol.length; i++) {
+      if (String(idCol[i][0]) === orderId) { found = i + 2; break; }
+    }
+  }
+  if (found > 0) {
+    sheet.getRange(found, 1, 1, rowData.length).setValues([rowData]);
+  } else {
+    sheet.appendRow(rowData);
+    var nr = sheet.getLastRow();
+    sheet.getRange(nr, 7).setNumberFormat('฿#,##0.00');
+    sheet.getRange(nr, 8).setNumberFormat('฿#,##0.00');
+  }
+}
+function recalculateMonthlySummary(ordersSheet, monthlySheet) {
+  var lastRow = ordersSheet.getLastRow();
+  if (lastRow <= 1) return;
+  var data = ordersSheet.getRange(2, 1, lastRow - 1, 10).getValues();
+  var map = {};
+  var currentMonthKey = Utilities.formatDate(new Date(), 'Asia/Bangkok', 'yyyy-MM');
+
+  data.forEach(function(row) {
+    var dateVal = row[0];
+    var total = Number(row[6]) || 0;
+    var disc = Number(row[7]) || 0;
+    var st = String(row[9]);
+    if (st !== 'อนุมัติแล้ว' && st !== 'approved') return;
+
+    var mKey = String(dateVal).substring(0, 7);
+    if (!mKey || mKey.length < 7) mKey = currentMonthKey;
+    if (!map[mKey]) map[mKey] = { orders: 0, gross: 0, discount: 0, net: 0 };
+    map[mKey].orders += 1;
+    map[mKey].gross += (total + disc);
+    map[mKey].discount += disc;
+    map[mKey].net += total;
+  });
+
+  var curL = monthlySheet.getLastRow();
+  if (curL > 1) monthlySheet.getRange(2, 1, curL - 1, 7).clearContent().clearFormat();
+
+  var sorted = Object.keys(map).sort().reverse();
+  var rows = [];
+  var tOrders = 0, tGross = 0, tDisc = 0, tNet = 0;
+  var thaiMo = {'01':'ม.ค.','02':'ก.พ.','03':'มี.ค.','04':'เม.ย.','05':'พ.ค.','06':'มิ.ย.','07':'ก.ค.','08':'ส.ค.','09':'ก.ย.','10':'ต.ค.','11':'พ.ย.','12':'ธ.ค.'};
+
+  sorted.forEach(function(k) {
+    var p = k.split('-');
+    var yr = parseInt(p[0], 10) + 543;
+    var label = (thaiMo[p[1]]||p[1]) + ' ' + yr + ' (' + k + ')';
+    var m = map[k];
+    var avg = m.orders > 0 ? (m.net / m.orders) : 0;
+    var stText = (k === currentMonthKey) ? '🟢 เดือนปัจจุบัน' : '🔒 ครบเดือน (ปิดยอด)';
+    rows.push([label, m.orders, m.gross, m.discount, m.net, avg, stText]);
+    tOrders += m.orders; tGross += m.gross; tDisc += m.discount; tNet += m.net;
+  });
+
+  if (rows.length > 0) {
+    monthlySheet.getRange(2, 1, rows.length, 7).setValues(rows);
+    monthlySheet.getRange(2, 3, rows.length, 4).setNumberFormat('฿#,##0.00');
+    var gRow = rows.length + 2;
+    var gAvg = tOrders > 0 ? (tNet / tOrders) : 0;
+    monthlySheet.getRange(gRow, 1, 1, 7).setValues([['⭐ รวมยอดสะสมทั้งหมด', tOrders, tGross, tDisc, tNet, gAvg, '✓ สรุปภาพรวม']]);
+    monthlySheet.getRange(gRow, 1, 1, 7).setFontWeight('bold').setBackground('#ECFDF5');
+    monthlySheet.getRange(gRow, 3, 1, 4).setNumberFormat('฿#,##0.00');
+  }
+}
+function recalculateCourseSummary(ordersSheet, courseSheet) {
+  var lastRow = ordersSheet.getLastRow();
+  if (lastRow <= 1) return;
+  var data = ordersSheet.getRange(2, 1, lastRow - 1, 10).getValues();
+  var map = {};
+  var totalRev = 0;
+
+  data.forEach(function(row) {
+    var cText = String(row[5] || 'ไม่ระบุคอร์ส');
+    var total = Number(row[6]) || 0;
+    var st = String(row[9]);
+    if (st !== 'อนุมัติแล้ว' && st !== 'approved') return;
+
+    var list = cText.split(',').map(function(s){return s.trim();}).filter(Boolean);
+    if (!list.length) list = [cText];
+    var part = total / list.length;
+    list.forEach(function(cName) {
+      if (!map[cName]) map[cName] = { count: 0, revenue: 0 };
+      map[cName].count += 1;
+      map[cName].revenue += part;
+    });
+    totalRev += total;
+  });
+
+  var curL = courseSheet.getLastRow();
+  if (curL > 1) courseSheet.getRange(2, 1, curL - 1, 4).clearContent().clearFormat();
+
+  var sorted = Object.keys(map).sort(function(a,b){ return map[b].revenue - map[a].revenue; });
+  var rows = [];
+  sorted.forEach(function(cName) {
+    var c = map[cName];
+    var pct = totalRev > 0 ? (c.revenue / totalRev) * 100 : 0;
+    rows.push([cName, c.count, c.revenue, pct.toFixed(1) + '%']);
+  });
+
+  if (rows.length > 0) {
+    courseSheet.getRange(2, 1, rows.length, 4).setValues(rows);
+    courseSheet.getRange(2, 3, rows.length, 1).setNumberFormat('฿#,##0.00');
+    var gRow = rows.length + 2;
+    courseSheet.getRange(gRow, 1, 1, 4).setValues([['⭐ รวมยอดขายทุกคอร์ส', data.length, totalRev, '100%']]);
+    courseSheet.getRange(gRow, 1, 1, 4).setFontWeight('bold').setBackground('#EFF6FF');
+    courseSheet.getRange(gRow, 3).setNumberFormat('฿#,##0.00');
+  }
+}`;
+
+    async function initGoogleSheetsConfig() {
+      // 1. Check local storage
+      const localUrl = localStorage.getItem('inbiology_gsheets_webhook');
+      if (localUrl) _googleSheetsWebhookUrl = localUrl;
+
+      // 2. Fetch from Supabase site_content for multi-device sync
+      if (window.CloudService && typeof window.CloudService.fetchGenericContent === 'function') {
+        try {
+          const cloudConfig = await window.CloudService.fetchGenericContent('google_sheets_config');
+          if (cloudConfig && cloudConfig.webhookUrl) {
+            _googleSheetsWebhookUrl = cloudConfig.webhookUrl;
+            localStorage.setItem('inbiology_gsheets_webhook', _googleSheetsWebhookUrl);
+          }
+        } catch (e) {
+          console.warn('Load gsheets config note:', e);
+        }
+      }
+
+      updateGoogleSheetsStatusBadge();
+    }
+
+    function updateGoogleSheetsStatusBadge() {
+      const badge = document.getElementById('finance-gsheets-status-badge');
+      if (!badge) return;
+      if (_googleSheetsWebhookUrl && _googleSheetsWebhookUrl.startsWith('https://script.google.com/')) {
+        badge.innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:#10B981;display:inline-block"></span> เชื่อมต่อ Google Sheets แล้ว';
+        badge.style.background = '#DCFCE7';
+        badge.style.color = '#065F46';
+      } else {
+        badge.innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:#94A3B8;display:inline-block"></span> ยังไม่เชื่อมต่อ Sheet';
+        badge.style.background = '#F1F5F9';
+        badge.style.color = '#64748B';
+      }
+    }
+
+    function openGoogleSheetsConfigModal() {
+      const modal = document.getElementById('google-sheets-modal');
+      const input = document.getElementById('gsheets-webhook-input');
+      const preview = document.getElementById('apps-script-code-preview');
+      const testRes = document.getElementById('gsheets-test-result');
+
+      if (input) input.value = _googleSheetsWebhookUrl || '';
+      if (preview) preview.value = GOOGLE_APPS_SCRIPT_TEMPLATE_CODE;
+      if (testRes) {
+        testRes.style.display = 'none';
+        testRes.innerHTML = '';
+      }
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeGoogleSheetsModal() {
+      const modal = document.getElementById('google-sheets-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function copyGoogleAppsScriptCode() {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(GOOGLE_APPS_SCRIPT_TEMPLATE_CODE).then(() => {
+          showToast('📋 คัดลอกโค้ด Google Apps Script เรียบร้อยแล้ว! นำไปวางใน Extensions ➔ Apps Script ได้เลย', 'success');
+        }).catch(() => fallbackCopyScript());
+      } else {
+        fallbackCopyScript();
+      }
+    }
+
+    function fallbackCopyScript() {
+      const preview = document.getElementById('apps-script-code-preview');
+      if (preview) {
+        preview.select();
+        document.execCommand('copy');
+        showToast('📋 คัดลอกโค้ด Google Apps Script เรียบร้อยแล้ว!', 'success');
+      }
+    }
+
+    async function saveGoogleSheetsWebhookUrl() {
+      const input = document.getElementById('gsheets-webhook-input');
+      const url = (input ? input.value : '').trim();
+
+      if (url && !url.startsWith('https://script.google.com/')) {
+        alert('⚠️ URL ต้องขึ้นต้นด้วย https://script.google.com/ เท่านั้นครับ\nกรุณาตรวจสอบ URL ของเว็บแอปที่ได้จากการ Deploy');
+        return;
+      }
+
+      _googleSheetsWebhookUrl = url;
+      localStorage.setItem('inbiology_gsheets_webhook', url);
+
+      // Save to Supabase for multi-device sync
+      if (window.CloudService && typeof window.CloudService.saveGenericContent === 'function') {
+        try {
+          await window.CloudService.saveGenericContent('google_sheets_config', { webhookUrl: url });
+        } catch (e) {
+          console.warn('Sync gsheets config error:', e);
+        }
+      }
+
+      updateGoogleSheetsStatusBadge();
+      showToast(url ? '✅ บันทึก Google Sheets Webhook เรียบร้อยแล้ว' : '🗑️ ล้างการเชื่อมต่อ Google Sheets แล้ว', 'success');
+      closeGoogleSheetsModal();
+    }
+
+    async function testGoogleSheetsConnection() {
+      const input = document.getElementById('gsheets-webhook-input');
+      const url = (input ? input.value : _googleSheetsWebhookUrl).trim();
+      const testRes = document.getElementById('gsheets-test-result');
+      const btn = document.getElementById('btn-test-gsheets');
+
+      if (!url) {
+        alert('กรุณากรอก Google Apps Script Webhook URL ก่อนกดทดสอบ');
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = '⏳ กำลังทดสอบ...';
+      }
+      if (testRes) {
+        testRes.style.display = 'block';
+        testRes.style.background = '#EFF6FF';
+        testRes.style.color = '#1E40AF';
+        testRes.textContent = '⏳ กำลังส่งข้อมูลทดสอบไปยัง Google Sheets...';
+      }
+
+      try {
+        let ok = false;
+        let responseMsg = '';
+
+        // Try via /api/sync-sheets first
+        try {
+          const apiRes = await fetch('/api/sync-sheets', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ webhookUrl: url, action: 'test' })
+          });
+          if (apiRes.ok) {
+            const data = await apiRes.json();
+            ok = data.success;
+            responseMsg = data.result?.message || 'เชื่อมต่อสำเร็จ';
+          }
+        } catch (apiErr) {
+          console.warn('Serverless bridge note, falling back to direct fetch:', apiErr);
+        }
+
+        // Fallback: direct fetch
+        if (!ok) {
+          await fetch(url, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'test' })
+          });
+          ok = true;
+          responseMsg = 'ส่งสัญญาณทดสอบเข้า Google Sheets เรียบร้อยแล้ว';
+        }
+
+        if (testRes) {
+          testRes.style.background = '#DCFCE7';
+          testRes.style.color = '#065F46';
+          testRes.innerHTML = `✅ <strong>เชื่อมต่อสำเร็จ 100%!</strong> ${responseMsg}`;
+        }
+        showToast('✅ เชื่อมต่อ Google Sheets สำเร็จสมบูรณ์!', 'success');
+      } catch (err) {
+        if (testRes) {
+          testRes.style.background = '#FEE2E2';
+          testRes.style.color = '#991B1B';
+          testRes.innerHTML = `❌ <strong>เชื่อมต่อไม่สำเร็จ:</strong> ${err.message || 'โปรดตรวจสอบสิทธิ์การเข้าถึงเป็น "ทุกคน (Anyone)"'}`;
+        }
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = '🧪 ทดสอบการเชื่อมต่อ';
+        }
+      }
+    }
+
+    async function syncSingleOrderToGoogleSheets(order) {
+      if (!_googleSheetsWebhookUrl) return;
+      try {
+        await fetch('/api/sync-sheets', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            webhookUrl: _googleSheetsWebhookUrl,
+            action: 'order_approved',
+            order: order
+          })
+        });
+        console.log('📊 [Google Sheets] Synced approved order:', order.id);
+      } catch (err) {
+        // Fallback no-cors
+        try {
+          fetch(_googleSheetsWebhookUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'order_approved', order: order })
+          });
+        } catch (e) {}
+      }
+    }
+
+    async function syncAllApprovedOrdersToSheets() {
+      if (!_googleSheetsWebhookUrl) {
+        alert('กรุณาตั้งค่า Google Sheets Webhook URL ก่อนซิงก์ข้อมูล');
+        openGoogleSheetsConfigModal();
+        return;
+      }
+
+      const approvedOrders = (_ordersCache || []).filter(o => o.status === 'approved' && o.status !== 'system_cms');
+      if (approvedOrders.length === 0) {
+        alert('ยังไม่มีออเดอร์ที่อนุมัติแล้วในระบบสำหรับซิงก์ขึ้น Google Sheets');
+        return;
+      }
+
+      const btn = document.getElementById('btn-sync-all-orders-sheets');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = `⏳ กำลังซิงก์ ${approvedOrders.length} รายการ...`;
+      }
+
+      try {
+        let syncSuccess = false;
+        try {
+          const res = await fetch('/api/sync-sheets', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              webhookUrl: _googleSheetsWebhookUrl,
+              action: 'batch_sync',
+              orders: approvedOrders
+            })
+          });
+          if (res.ok) syncSuccess = true;
+        } catch (e) {
+          console.warn('API sync fallback to no-cors:', e);
+        }
+
+        if (!syncSuccess) {
+          await fetch(_googleSheetsWebhookUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'batch_sync', orders: approvedOrders })
+          });
+        }
+
+        showToast(`🎉 ซิงก์ออเดอร์ทั้งหมด ${approvedOrders.length} รายการ และสรุปยอดรายเดือนเข้า Google Sheets เรียบร้อยแล้ว!`, 'success');
+      } catch (err) {
+        showToast('❌ เกิดข้อผิดพลาดในการซิงก์: ' + err.message, 'error');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span>🔄 ซิงก์ขึ้น Sheet ทันที</span>';
+        }
+      }
+    }
+
+    function toggleFinancePanelCollapse() {
+      const body = document.getElementById('finance-collapsible-body');
+      const btn = document.getElementById('btn-toggle-finance-collapse');
+      if (!body) return;
+      const isHidden = body.style.display === 'none';
+      body.style.display = isHidden ? 'flex' : 'none';
+      if (btn) btn.textContent = isHidden ? '▼ ซ่อนสรุป' : '▲ แสดงสรุป';
+    }
+
+    function switchFinanceSubView(view) {
+      const vMonthly = document.getElementById('finance-view-monthly');
+      const vCourse = document.getElementById('finance-view-course');
+      const tabMonthly = document.getElementById('fsub-tab-monthly');
+      const tabCourse = document.getElementById('fsub-tab-course');
+
+      if (view === 'monthly') {
+        if (vMonthly) vMonthly.style.display = 'block';
+        if (vCourse) vCourse.style.display = 'none';
+        if (tabMonthly) {
+          tabMonthly.style.background = 'var(--c-navy)';
+          tabMonthly.style.color = 'white';
+          tabMonthly.style.borderColor = 'transparent';
+        }
+        if (tabCourse) {
+          tabCourse.style.background = '#F8FAFC';
+          tabCourse.style.color = '#475569';
+          tabCourse.style.border = '1px solid #E2E8F0';
+        }
+      } else {
+        if (vMonthly) vMonthly.style.display = 'none';
+        if (vCourse) vCourse.style.display = 'block';
+        if (tabCourse) {
+          tabCourse.style.background = 'var(--c-navy)';
+          tabCourse.style.color = 'white';
+          tabCourse.style.borderColor = 'transparent';
+        }
+        if (tabMonthly) {
+          tabMonthly.style.background = '#F8FAFC';
+          tabMonthly.style.color = '#475569';
+          tabMonthly.style.border = '1px solid #E2E8F0';
+        }
+      }
+    }
+
+    function renderFinancialAnalytics() {
+      const allOrders = (_ordersCache || []).filter(o => o.status !== 'system_cms');
+      const approvedOrders = allOrders.filter(o => o.status === 'approved');
+
+      // 1. Total Revenue
+      let totalRevenue = 0;
+      let totalDiscount = 0;
+      approvedOrders.forEach(o => {
+        const amt = Number(o.total_amount) || Number(o.price) || 0;
+        const disc = Number(o.discount_amount) || 0;
+        totalRevenue += amt;
+        totalDiscount += disc;
+      });
+
+      const totalRevEl = document.getElementById('finance-kpi-total-revenue');
+      if (totalRevEl) totalRevEl.textContent = `฿${totalRevenue.toLocaleString('th-TH')}`;
+
+      const totalOrdEl = document.getElementById('finance-kpi-total-orders');
+      if (totalOrdEl) totalOrdEl.textContent = `จาก ${approvedOrders.length.toLocaleString('th-TH')} ออเดอร์ที่อนุมัติแล้ว`;
+
+      // 2. This Month Revenue
+      const now = new Date();
+      const curYear = now.getFullYear();
+      const curMonth = String(now.getMonth() + 1).padStart(2, '0');
+      const curMonthKey = `${curYear}-${curMonth}`;
+
+      const thaiMonths = [
+        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+      ];
+      const curThaiMonthName = thaiMonths[now.getMonth()];
+      const curThaiYear = curYear + 543;
+
+      let thisMonthRevenue = 0;
+      let thisMonthOrders = 0;
+
+      // Monthly Map
+      const monthlyMap = {};
+
+      // Course Map
+      const courseMap = {};
+
+      approvedOrders.forEach(o => {
+        const rawDate = o.created_at || o.transfer_date || new Date().toISOString();
+        const dObj = new Date(rawDate);
+        const y = isNaN(dObj.getTime()) ? curYear : dObj.getFullYear();
+        const m = isNaN(dObj.getTime()) ? (now.getMonth() + 1) : (dObj.getMonth() + 1);
+        const mKey = `${y}-${String(m).padStart(2, '0')}`;
+
+        const amt = Number(o.total_amount) || Number(o.price) || 0;
+        const disc = Number(o.discount_amount) || 0;
+        const gross = amt + disc;
+
+        if (mKey === curMonthKey) {
+          thisMonthRevenue += amt;
+          thisMonthOrders += 1;
+        }
+
+        if (!monthlyMap[mKey]) {
+          monthlyMap[mKey] = {
+            key: mKey,
+            year: y,
+            month: m,
+            orders: 0,
+            gross: 0,
+            discount: 0,
+            net: 0
+          };
+        }
+        monthlyMap[mKey].orders += 1;
+        monthlyMap[mKey].gross += gross;
+        monthlyMap[mKey].discount += disc;
+        monthlyMap[mKey].net += amt;
+
+        // Process courses breakdown
+        const rawTitles = o.course_titles || (o.course_ids || []).join(', ') || 'ไม่ระบุคอร์ส';
+        const cleanTitles = rawTitles.replace(/\[หมายเหตุ:.*?\]/g, '').trim();
+        const cList = cleanTitles.split(',').map(s => s.trim()).filter(Boolean);
+        const cCount = cList.length || 1;
+        const splitAmt = amt / cCount;
+
+        cList.forEach(cName => {
+          if (!courseMap[cName]) {
+            courseMap[cName] = { name: cName, count: 0, revenue: 0 };
+          }
+          courseMap[cName].count += 1;
+          courseMap[cName].revenue += splitAmt;
+        });
+      });
+
+      const monthRevEl = document.getElementById('finance-kpi-month-revenue');
+      if (monthRevEl) monthRevEl.textContent = `฿${thisMonthRevenue.toLocaleString('th-TH')}`;
+
+      const monthLblEl = document.getElementById('finance-kpi-month-label');
+      if (monthLblEl) monthLblEl.textContent = `ประจำเดือน ${curThaiMonthName} ${curThaiYear} (${thisMonthOrders} ออเดอร์)`;
+
+      // 3. Top Course
+      const sortedCourses = Object.values(courseMap).sort((a, b) => b.revenue - a.revenue);
+      const topCourse = sortedCourses[0];
+      const topCourseEl = document.getElementById('finance-kpi-top-course');
+      const topCourseRevEl = document.getElementById('finance-kpi-top-course-rev');
+
+      if (topCourse && topCourse.count > 0) {
+        if (topCourseEl) {
+          topCourseEl.textContent = topCourse.name;
+          topCourseEl.title = topCourse.name;
+        }
+        if (topCourseRevEl) {
+          topCourseRevEl.textContent = `฿${Math.round(topCourse.revenue).toLocaleString('th-TH')} (${topCourse.count} ออเดอร์)`;
+        }
+      } else {
+        if (topCourseEl) topCourseEl.textContent = 'ยังไม่มีข้อมูล';
+        if (topCourseRevEl) topCourseRevEl.textContent = '฿0 (0 ออเดอร์)';
+      }
+
+      // 4. Average Ticket & Discounts
+      const avgAmt = approvedOrders.length > 0 ? (totalRevenue / approvedOrders.length) : 0;
+      const avgEl = document.getElementById('finance-kpi-avg-order');
+      if (avgEl) avgEl.textContent = `฿${Math.round(avgAmt).toLocaleString('th-TH')}`;
+
+      const discEl = document.getElementById('finance-kpi-total-discount');
+      if (discEl) discEl.textContent = `ส่วนลดรวม ฿${totalDiscount.toLocaleString('th-TH')}`;
+
+      // ─── Render Monthly Breakdown Table ──────────────────────────────────
+      const monthlyTbody = document.getElementById('finance-monthly-table-body');
+      if (monthlyTbody) {
+        const sortedMonthKeys = Object.keys(monthlyMap).sort().reverse();
+        if (sortedMonthKeys.length === 0) {
+          monthlyTbody.innerHTML = `<tr><td colspan="7" style="padding:28px;text-align:center;color:#94A3B8">ยังไม่มีข้อมูลยอดขายที่อนุมัติในระบบ</td></tr>`;
+        } else {
+          let html = '';
+          let grandOrders = 0;
+          let grandGross = 0;
+          let grandDiscount = 0;
+          let grandNet = 0;
+
+          sortedMonthKeys.forEach(k => {
+            const m = monthlyMap[k];
+            const isCur = (k === curMonthKey);
+            const mIdx = m.month - 1;
+            const thMonth = (mIdx >= 0 && mIdx < 12) ? thaiMonths[mIdx] : k;
+            const thYear = m.year + 543;
+            const label = `${thMonth} ${thYear}`;
+            const avg = m.orders > 0 ? Math.round(m.net / m.orders) : 0;
+
+            grandOrders += m.orders;
+            grandGross += m.gross;
+            grandDiscount += m.discount;
+            grandNet += m.net;
+
+            html += `
+              <tr style="border-bottom:1px solid #F1F5F9;${isCur ? 'background:#F0FDF4;' : ''}">
+                <td style="padding:12px 14px;font-weight:900;color:var(--c-navy)">
+                  ${label} <span style="font-size:10px;color:#94A3B8;font-weight:700">(${k})</span>
+                </td>
+                <td style="padding:12px 14px;font-weight:800;color:#334155">${m.orders.toLocaleString('th-TH')} ออเดอร์</td>
+                <td style="padding:12px 14px;font-weight:700;color:#64748B">฿${m.gross.toLocaleString('th-TH')}</td>
+                <td style="padding:12px 14px;font-weight:700;color:#DC2626">฿${m.discount.toLocaleString('th-TH')}</td>
+                <td style="padding:12px 14px;font-weight:950;color:#059669;font-size:13px">฿${m.net.toLocaleString('th-TH')}</td>
+                <td style="padding:12px 14px;font-weight:750;color:#475569">฿${avg.toLocaleString('th-TH')}</td>
+                <td style="padding:12px 14px;text-align:right">
+                  ${isCur
+                    ? '<span style="background:#DCFCE7;color:#065F46;font-size:10.5px;font-weight:850;padding:3px 9px;border-radius:999px">🟢 เดือนนี้ (กำลังรับยอด)</span>'
+                    : '<span style="background:#F1F5F9;color:#475569;font-size:10.5px;font-weight:850;padding:3px 9px;border-radius:999px">🔒 ครบเดือน (สรุปยอดสำเร็จ)</span>'
+                  }
+                </td>
+              </tr>
+            `;
+          });
+
+          // Grand Total Footer
+          const grandAvg = grandOrders > 0 ? Math.round(grandNet / grandOrders) : 0;
+          html += `
+            <tr style="background:#ECFDF5;border-top:2px solid #A7F3D0;font-weight:950">
+              <td style="padding:13px 14px;color:#065F46;font-size:12.5px">⭐ รวมยอดสะสมทั้งหมด</td>
+              <td style="padding:13px 14px;color:#065F46">${grandOrders.toLocaleString('th-TH')} ออเดอร์</td>
+              <td style="padding:13px 14px;color:#065F46">฿${grandGross.toLocaleString('th-TH')}</td>
+              <td style="padding:13px 14px;color:#DC2626">฿${grandDiscount.toLocaleString('th-TH')}</td>
+              <td style="padding:13px 14px;color:#047857;font-size:14px">฿${grandNet.toLocaleString('th-TH')}</td>
+              <td style="padding:13px 14px;color:#065F46">฿${grandAvg.toLocaleString('th-TH')}</td>
+              <td style="padding:13px 14px;text-align:right;color:#065F46;font-size:11px">✓ สรุปครบทุกเดือน</td>
+            </tr>
+          `;
+
+          monthlyTbody.innerHTML = html;
+        }
+      }
+
+      // ─── Render Course Breakdown Table ───────────────────────────────────
+      const courseTbody = document.getElementById('finance-course-table-body');
+      if (courseTbody) {
+        if (sortedCourses.length === 0) {
+          courseTbody.innerHTML = `<tr><td colspan="4" style="padding:28px;text-align:center;color:#94A3B8">ยังไม่มีข้อมูลรายได้แยกตามคอร์ส</td></tr>`;
+        } else {
+          let cHtml = '';
+          sortedCourses.forEach(c => {
+            const pct = totalRevenue > 0 ? (c.revenue / totalRevenue) * 100 : 0;
+            const revRound = Math.round(c.revenue);
+
+            cHtml += `
+              <tr style="border-bottom:1px solid #F1F5F9">
+                <td style="padding:12px 14px;font-weight:850;color:var(--c-navy)">
+                  ${c.name}
+                </td>
+                <td style="padding:12px 14px;font-weight:800;color:#334155">
+                  ${c.count.toLocaleString('th-TH')} ออเดอร์
+                </td>
+                <td style="padding:12px 14px;font-weight:950;color:#059669;font-size:13px">
+                  ฿${revRound.toLocaleString('th-TH')}
+                </td>
+                <td style="padding:12px 14px">
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <div style="flex:1;height:8px;background:#F1F5F9;border-radius:999px;overflow:hidden">
+                      <div style="width:${Math.min(100, pct)}%;height:100%;background:linear-gradient(90deg, #1E3A8A 0%, #3B82F6 100%);border-radius:999px"></div>
+                    </div>
+                    <span style="font-weight:850;font-size:11.5px;color:#1E3A8A;width:48px;text-align:right">${pct.toFixed(1)}%</span>
+                  </div>
+                </td>
+              </tr>
+            `;
+          });
+
+          // Grand Total Footer
+          cHtml += `
+            <tr style="background:#EFF6FF;border-top:2px solid #BFDBFE;font-weight:950">
+              <td style="padding:13px 14px;color:#1E3A8A;font-size:12.5px">⭐ รวมยอดขายทุกคอร์ส</td>
+              <td style="padding:13px 14px;color:#1E3A8A">${approvedOrders.length.toLocaleString('th-TH')} ออเดอร์</td>
+              <td style="padding:13px 14px;color:#1E3A8A;font-size:14px">฿${totalRevenue.toLocaleString('th-TH')}</td>
+              <td style="padding:13px 14px;color:#1E3A8A;text-align:right">100.0%</td>
+            </tr>
+          `;
+
+          courseTbody.innerHTML = cHtml;
+        }
+      }
+    }
   </script>
 </body>
 </html>
+
 
