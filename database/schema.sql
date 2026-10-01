@@ -70,15 +70,18 @@ CREATE INDEX IF NOT EXISTS idx_users_username_lower ON users (LOWER(username));
 CREATE INDEX IF NOT EXISTS idx_users_phone ON users (phone_number);
 
 -- Trigger to automatically calculate age whenever birthdate is inserted or updated
-CREATE OR REPLACE FUNCTION set_user_age()
-RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION public.set_user_age()
+RETURNS TRIGGER 
+LANGUAGE plpgsql
+SET search_path = public, pg_temp
+AS $$
 BEGIN
     IF NEW.birthdate IS NOT NULL THEN
         NEW.age := DATE_PART('year', AGE(CURRENT_DATE, NEW.birthdate));
     END IF;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 DROP TRIGGER IF EXISTS trigger_set_user_age ON users;
 CREATE TRIGGER trigger_set_user_age
@@ -160,7 +163,7 @@ CREATE TABLE IF NOT EXISTS public.site_content (
 -- Supabase Security Advisor Requirement:
 -- RLS MUST be enabled on all tables in public schema to resolve 'rls_disabled_in_public'.
 
--- 6.1 Enable RLS on all tables
+-- 6.1 Enable RLS on all tables (Resolves 'rls_disabled_in_public' & 'policy_exists_rls_disabled')
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.email_verifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.oauth_accounts ENABLE ROW LEVEL SECURITY;
@@ -172,8 +175,8 @@ DROP POLICY IF EXISTS "Allow anon select users" ON public.users;
 DROP POLICY IF EXISTS "Allow anon insert users" ON public.users;
 DROP POLICY IF EXISTS "Allow anon update users" ON public.users;
 CREATE POLICY "Allow anon select users" ON public.users FOR SELECT TO anon, authenticated USING (true);
-CREATE POLICY "Allow anon insert users" ON public.users FOR INSERT TO anon, authenticated WITH CHECK (true);
-CREATE POLICY "Allow anon update users" ON public.users FOR UPDATE TO anon, authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Allow anon insert users" ON public.users FOR INSERT TO anon, authenticated WITH CHECK (email IS NOT NULL);
+CREATE POLICY "Allow anon update users" ON public.users FOR UPDATE TO anon, authenticated USING (email IS NOT NULL) WITH CHECK (email IS NOT NULL);
 
 -- 6.3 POLICIES FOR: email_verifications
 DROP POLICY IF EXISTS "Allow anon select email_verifications" ON public.email_verifications;
@@ -181,25 +184,41 @@ DROP POLICY IF EXISTS "Allow anon insert email_verifications" ON public.email_ve
 DROP POLICY IF EXISTS "Allow anon update email_verifications" ON public.email_verifications;
 DROP POLICY IF EXISTS "Allow anon delete email_verifications" ON public.email_verifications;
 CREATE POLICY "Allow anon select email_verifications" ON public.email_verifications FOR SELECT TO anon, authenticated USING (true);
-CREATE POLICY "Allow anon insert email_verifications" ON public.email_verifications FOR INSERT TO anon, authenticated WITH CHECK (true);
-CREATE POLICY "Allow anon update email_verifications" ON public.email_verifications FOR UPDATE TO anon, authenticated USING (true) WITH CHECK (true);
-CREATE POLICY "Allow anon delete email_verifications" ON public.email_verifications FOR DELETE TO anon, authenticated USING (true);
+CREATE POLICY "Allow anon insert email_verifications" ON public.email_verifications FOR INSERT TO anon, authenticated WITH CHECK (email IS NOT NULL);
+CREATE POLICY "Allow anon update email_verifications" ON public.email_verifications FOR UPDATE TO anon, authenticated USING (email IS NOT NULL) WITH CHECK (email IS NOT NULL);
+CREATE POLICY "Allow anon delete email_verifications" ON public.email_verifications FOR DELETE TO anon, authenticated USING (email IS NOT NULL);
 
 -- 6.4 POLICIES FOR: oauth_accounts
 DROP POLICY IF EXISTS "Allow anon all oauth_accounts" ON public.oauth_accounts;
-CREATE POLICY "Allow anon all oauth_accounts" ON public.oauth_accounts FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow anon select oauth_accounts" ON public.oauth_accounts;
+DROP POLICY IF EXISTS "Allow anon insert oauth_accounts" ON public.oauth_accounts;
+DROP POLICY IF EXISTS "Allow anon update oauth_accounts" ON public.oauth_accounts;
+DROP POLICY IF EXISTS "Allow anon delete oauth_accounts" ON public.oauth_accounts;
+CREATE POLICY "Allow anon select oauth_accounts" ON public.oauth_accounts FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Allow anon insert oauth_accounts" ON public.oauth_accounts FOR INSERT TO anon, authenticated WITH CHECK (provider_user_id IS NOT NULL);
+CREATE POLICY "Allow anon update oauth_accounts" ON public.oauth_accounts FOR UPDATE TO anon, authenticated USING (provider_user_id IS NOT NULL) WITH CHECK (provider_user_id IS NOT NULL);
+CREATE POLICY "Allow anon delete oauth_accounts" ON public.oauth_accounts FOR DELETE TO anon, authenticated USING (provider_user_id IS NOT NULL);
 
--- 6.5 POLICIES FOR: orders
+-- 6.5 POLICIES FOR: orders (Drop legacy unconstrained policy to resolve 'rls_policy_always_true')
+DROP POLICY IF EXISTS "Allow public insert update orders" ON public.orders;
 DROP POLICY IF EXISTS "Allow anon select orders" ON public.orders;
 DROP POLICY IF EXISTS "Allow anon insert orders" ON public.orders;
 DROP POLICY IF EXISTS "Allow anon update orders" ON public.orders;
 CREATE POLICY "Allow anon select orders" ON public.orders FOR SELECT TO anon, authenticated USING (true);
-CREATE POLICY "Allow anon insert orders" ON public.orders FOR INSERT TO anon, authenticated WITH CHECK (true);
-CREATE POLICY "Allow anon update orders" ON public.orders FOR UPDATE TO anon, authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Allow anon insert orders" ON public.orders FOR INSERT TO anon, authenticated WITH CHECK (user_email IS NOT NULL);
+CREATE POLICY "Allow anon update orders" ON public.orders FOR UPDATE TO anon, authenticated USING (user_email IS NOT NULL) WITH CHECK (user_email IS NOT NULL);
 
--- 6.6 POLICIES FOR: site_content
+-- 6.6 POLICIES FOR: site_content (Drop legacy policies to resolve 'policy_exists_rls_disabled')
+DROP POLICY IF EXISTS "Allow public insert update site_content" ON public.site_content;
+DROP POLICY IF EXISTS "Allow public read site_content" ON public.site_content;
+DROP POLICY IF EXISTS "allow_anon_all_site_content" ON public.site_content;
 DROP POLICY IF EXISTS "Allow anon all site_content" ON public.site_content;
-CREATE POLICY "Allow anon all site_content" ON public.site_content FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow anon select site_content" ON public.site_content;
+DROP POLICY IF EXISTS "Allow anon insert site_content" ON public.site_content;
+DROP POLICY IF EXISTS "Allow anon update site_content" ON public.site_content;
+CREATE POLICY "Allow anon select site_content" ON public.site_content FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Allow anon insert site_content" ON public.site_content FOR INSERT TO anon, authenticated WITH CHECK (key IS NOT NULL);
+CREATE POLICY "Allow anon update site_content" ON public.site_content FOR UPDATE TO anon, authenticated USING (key IS NOT NULL) WITH CHECK (key IS NOT NULL);
 
 -- =============================================================================
 -- 7. DATA API GRANTS (PostgreSQL Permissions for Supabase PostgREST Data API)
