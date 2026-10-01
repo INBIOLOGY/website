@@ -2272,11 +2272,11 @@ function initFloatingLineContact() {
   btn.href = 'https://lin.ee/sYQ6MIn';
   btn.target = '_blank';
   btn.rel = 'noopener noreferrer';
-  btn.setAttribute('aria-label', 'ปรึกษาพี่ต้นทาง LINE');
-  btn.title = 'สอบถามและปรึกษาพี่ต้นฟรีทาง LINE';
+  btn.setAttribute('aria-label', 'ปรึกษาพี่ต้น/พบปัญหาทาง LINE');
+  btn.title = 'สอบถาม ปรึกษาพี่ต้น หรือแจ้งปัญหาทาง LINE';
   btn.innerHTML = `
     <img src="./social_line.png?v=20260929_v2" alt="LINE" class="floating-line-icon" />
-    <span class="floating-line-text">ปรึกษาพี่ต้นฟรี</span>
+    <span class="floating-line-text">ปรึกษาพี่ต้น/พบปัญหา</span>
   `;
   document.body.appendChild(btn);
 }
