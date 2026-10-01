@@ -146,42 +146,60 @@ CREATE INDEX IF NOT EXISTS idx_orders_status ON orders (status, created_at DESC)
 CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders (user_id);
 
 -- =============================================================================
--- 5. ROW-LEVEL SECURITY (RLS) POLICIES FOR INBIOLOGY CLIENT
--- =============================================================================
--- To allow the web frontend (using the anon/publishable key) to register students,
--- verify email OTPs, and link OAuth accounts, run this section:
-
--- OPTION A: Disable RLS completely (Simplest for direct frontend access)
-ALTER TABLE public.users DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.email_verifications DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.oauth_accounts DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.orders DISABLE ROW LEVEL SECURITY;
-
--- OPTION B: Or enable RLS with permissive policies for anon & authenticated roles:
--- ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE public.email_verifications ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE public.oauth_accounts ENABLE ROW LEVEL SECURITY;
--- ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
--- CREATE POLICY "Allow anon insert users" ON public.users FOR INSERT TO anon, authenticated WITH CHECK (true);
--- CREATE POLICY "Allow anon select users" ON public.users FOR SELECT TO anon, authenticated USING (true);
--- CREATE POLICY "Allow anon update users" ON public.users FOR UPDATE TO anon, authenticated USING (true);
--- CREATE POLICY "Allow anon insert email_verifications" ON public.email_verifications FOR INSERT TO anon, authenticated WITH CHECK (true);
--- CREATE POLICY "Allow anon select email_verifications" ON public.email_verifications FOR SELECT TO anon, authenticated USING (true);
--- CREATE POLICY "Allow anon update email_verifications" ON public.email_verifications FOR UPDATE TO anon, authenticated USING (true);
--- CREATE POLICY "Allow anon all oauth_accounts" ON public.oauth_accounts FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
--- CREATE POLICY "Allow anon insert orders" ON public.orders FOR INSERT TO anon, authenticated WITH CHECK (true);
--- CREATE POLICY "Allow anon select orders" ON public.orders FOR SELECT TO anon, authenticated USING (true);
--- CREATE POLICY "Allow anon update orders" ON public.orders FOR UPDATE TO anon, authenticated USING (true);
-
--- =============================================================================
--- 6. TABLE: site_content (Cross-Device Course & Lesson CMS Synchronization)
+-- 5. TABLE: site_content (Cross-Device Course & Lesson CMS Synchronization)
 -- =============================================================================
 CREATE TABLE IF NOT EXISTS public.site_content (
     key VARCHAR(100) PRIMARY KEY,
     content JSONB NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
-ALTER TABLE public.site_content DISABLE ROW LEVEL SECURITY;
+
+-- =============================================================================
+-- 6. ROW-LEVEL SECURITY (RLS) — ENABLED & SECURED (Resolves rls_disabled_in_public)
+-- =============================================================================
+-- Supabase Security Advisor Requirement:
+-- RLS MUST be enabled on all tables in public schema to resolve 'rls_disabled_in_public'.
+
+-- 6.1 Enable RLS on all tables
+ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.email_verifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.oauth_accounts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.site_content ENABLE ROW LEVEL SECURITY;
+
+-- 6.2 POLICIES FOR: users
+DROP POLICY IF EXISTS "Allow anon select users" ON public.users;
+DROP POLICY IF EXISTS "Allow anon insert users" ON public.users;
+DROP POLICY IF EXISTS "Allow anon update users" ON public.users;
+CREATE POLICY "Allow anon select users" ON public.users FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Allow anon insert users" ON public.users FOR INSERT TO anon, authenticated WITH CHECK (true);
+CREATE POLICY "Allow anon update users" ON public.users FOR UPDATE TO anon, authenticated USING (true) WITH CHECK (true);
+
+-- 6.3 POLICIES FOR: email_verifications
+DROP POLICY IF EXISTS "Allow anon select email_verifications" ON public.email_verifications;
+DROP POLICY IF EXISTS "Allow anon insert email_verifications" ON public.email_verifications;
+DROP POLICY IF EXISTS "Allow anon update email_verifications" ON public.email_verifications;
+DROP POLICY IF EXISTS "Allow anon delete email_verifications" ON public.email_verifications;
+CREATE POLICY "Allow anon select email_verifications" ON public.email_verifications FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Allow anon insert email_verifications" ON public.email_verifications FOR INSERT TO anon, authenticated WITH CHECK (true);
+CREATE POLICY "Allow anon update email_verifications" ON public.email_verifications FOR UPDATE TO anon, authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Allow anon delete email_verifications" ON public.email_verifications FOR DELETE TO anon, authenticated USING (true);
+
+-- 6.4 POLICIES FOR: oauth_accounts
+DROP POLICY IF EXISTS "Allow anon all oauth_accounts" ON public.oauth_accounts;
+CREATE POLICY "Allow anon all oauth_accounts" ON public.oauth_accounts FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+
+-- 6.5 POLICIES FOR: orders
+DROP POLICY IF EXISTS "Allow anon select orders" ON public.orders;
+DROP POLICY IF EXISTS "Allow anon insert orders" ON public.orders;
+DROP POLICY IF EXISTS "Allow anon update orders" ON public.orders;
+CREATE POLICY "Allow anon select orders" ON public.orders FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY "Allow anon insert orders" ON public.orders FOR INSERT TO anon, authenticated WITH CHECK (true);
+CREATE POLICY "Allow anon update orders" ON public.orders FOR UPDATE TO anon, authenticated USING (true) WITH CHECK (true);
+
+-- 6.6 POLICIES FOR: site_content
+DROP POLICY IF EXISTS "Allow anon all site_content" ON public.site_content;
+CREATE POLICY "Allow anon all site_content" ON public.site_content FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
 
 -- =============================================================================
 -- 7. DATA API GRANTS (PostgreSQL Permissions for Supabase PostgREST Data API)
