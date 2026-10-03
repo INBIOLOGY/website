@@ -368,8 +368,8 @@
       // 🔄 BACKGROUND ASYNC SYNC: Sync latest cloud enrollments & lessons without blocking UI
       const profile = AppState.getStudentProfile();
       if (profile && profile.email && window.CloudService && typeof window.CloudService.syncEnrolledFromCloud === 'function') {
-        window.CloudService.syncEnrolledFromCloud(profile.email).then(updated => {
-          if (updated && !courseParam) {
+        window.CloudService.syncEnrolledFromCloud(profile.email).then(() => {
+          if (!courseParam) {
             renderMyCoursesCatalog();
           }
         }).catch(() => {});
@@ -407,7 +407,11 @@
         return;
       }
 
-      const enrolled = COURSES.filter(c => (AppState.enrolled && AppState.enrolled.includes(c.id)) || (AppState.isEnrolled && AppState.isEnrolled(c.id)) || (c.id === 'c-1790176559102' && AppState.enrolled && AppState.enrolled.includes('bio-intensive-2')) || (c.id === 'bio-intensive-2' && AppState.enrolled && AppState.enrolled.includes('c-1790176559102')));
+      const enrolledIds = Array.isArray(AppState.enrolled) ? AppState.enrolled : [];
+      const enrolled = COURSES.filter(c => {
+        const isBio2Target = (c.id === 'bio-intensive-2' || c.id === 'c-1790176559102' || c.id === 'c-1790179918330');
+        return enrolledIds.includes(c.id) || (isBio2Target && (enrolledIds.includes('bio-intensive-2') || enrolledIds.includes('c-1790176559102') || enrolledIds.includes('c-1790179918330')));
+      });
 
       if (enrolled.length === 0) {
         container.innerHTML = `

@@ -1060,7 +1060,6 @@ const AppState = window.AppState = {
   },
   
   isEnrolled(courseId) {
-    if (this.userRole === 'admin') return true; // Admins always have access
     if (!this.enrolled || !Array.isArray(this.enrolled)) return false;
     const isBio2Target = (courseId === 'bio-intensive-2' || courseId === 'c-1790176559102' || courseId === 'c-1790179918330');
     const isEnrolledBasic = this.enrolled.includes(courseId) ||
@@ -2523,7 +2522,11 @@ function toggleMyCoursesMenu(e) {
     return;
   }
 
-  const enrolledCourses = COURSES.filter(c => AppState.isEnrolled ? AppState.isEnrolled(c.id) : AppState.enrolled.includes(c.id));
+  const enrolledIds = Array.isArray(AppState.enrolled) ? AppState.enrolled : [];
+  const enrolledCourses = COURSES.filter(c => {
+    const isBio2Target = (c.id === 'bio-intensive-2' || c.id === 'c-1790176559102' || c.id === 'c-1790179918330');
+    return enrolledIds.includes(c.id) || (isBio2Target && (enrolledIds.includes('bio-intensive-2') || enrolledIds.includes('c-1790176559102') || enrolledIds.includes('c-1790179918330')));
+  });
 
   if (enrolledCourses.length === 0) {
     menu.innerHTML = `

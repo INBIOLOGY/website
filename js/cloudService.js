@@ -1707,12 +1707,11 @@ const CloudService = window.CloudService = {
    * Call on classroom/dashboard page load so the student sees all purchased courses
    */
   async syncEnrolledFromCloud(userEmail) {
-    if (!userEmail) return;
+    if (!userEmail) return false;
     const cleanEmail = userEmail.toLowerCase().trim();
 
-    const collectedIds = new Set(
-      Array.isArray(AppState.enrolled) ? AppState.enrolled : []
-    );
+    const collectedIds = new Set();
+    let hasOrderOrUserSource = false;
 
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
@@ -1722,6 +1721,7 @@ const CloudService = window.CloudService = {
         );
         if (userRows && userRows[0] && Array.isArray(userRows[0].enrolled)) {
           userRows[0].enrolled.forEach(id => id && collectedIds.add(id));
+          hasOrderOrUserSource = true;
         }
       } catch(err) {
         console.warn('[syncEnrolledFromCloud users query]:', err);
@@ -1732,7 +1732,8 @@ const CloudService = window.CloudService = {
         const orderRows = await this._supabaseFetch(
           `/orders?user_email=eq.${encodeURIComponent(cleanEmail)}&status=eq.approved&select=id,course_ids,approved_at,expires_at,created_at`
         );
-        if (orderRows && Array.isArray(orderRows)) {
+        if (orderRows && Array.isArray(orderRows) && orderRows.length > 0) {
+          hasOrderOrUserSource = true;
           orderRows.forEach(row => {
             if (row.course_ids && Array.isArray(row.course_ids)) {
               const startAt = row.approved_at || row.created_at || new Date().toISOString();
@@ -1760,9 +1761,10 @@ const CloudService = window.CloudService = {
     // 3. Fallback: derive from local approved orders saved in localStorage
     try {
       const orders = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
-      orders
-        .filter(o => (o.user_email || '').toLowerCase().trim() === cleanEmail && o.status === 'approved')
-        .forEach(o => {
+      const userApprovedOrders = orders.filter(o => (o.user_email || '').toLowerCase().trim() === cleanEmail && o.status === 'approved');
+      if (userApprovedOrders.length > 0) {
+        hasOrderOrUserSource = true;
+        userApprovedOrders.forEach(o => {
           const startAt = o.approved_at || o.created_at || new Date().toISOString();
           const expAt = o.expires_at || new Date(new Date(startAt).getTime() + 365 * 24 * 60 * 60 * 1000).toISOString();
           (o.course_ids || []).forEach(id => {
@@ -1778,11 +1780,17 @@ const CloudService = window.CloudService = {
             }
           });
         });
+      }
     } catch(e) {}
 
-    // Apply merged result if we collected anything new
+    // 4. If no authoritative orders/user row was found, preserve existing AppState.enrolled
+    if (!hasOrderOrUserSource && Array.isArray(AppState.enrolled)) {
+      AppState.enrolled.forEach(id => id && collectedIds.add(id));
+    }
+
+    // Apply synchronized result
     const merged = [...collectedIds];
-    if (merged.length > 0) {
+    if (hasOrderOrUserSource || merged.length > 0) {
       if (typeof AppState.setEnrolledCourses === 'function') {
         AppState.setEnrolledCourses(merged);
       } else {
@@ -1790,7 +1798,9 @@ const CloudService = window.CloudService = {
         localStorage.setItem('inbiology_enrolled', JSON.stringify(merged));
       }
       console.log('☁️ [Supabase Cloud] Enrolled synced (with 365-day validity):', merged);
+      return true;
     }
+    return false;
   },
 
 

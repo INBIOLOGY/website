@@ -824,7 +824,11 @@
     let _currentDashboardTopic = 'all';
 
     function renderEnrolled() {
-      const enrolled = COURSES.filter(c => (AppState.enrolled && AppState.enrolled.includes(c.id)) || (AppState.isEnrolled && AppState.isEnrolled(c.id)));
+      const enrolledIds = Array.isArray(AppState.enrolled) ? AppState.enrolled : [];
+      const enrolled = COURSES.filter(c => {
+        const isBio2Target = (c.id === 'bio-intensive-2' || c.id === 'c-1790176559102' || c.id === 'c-1790179918330');
+        return enrolledIds.includes(c.id) || (isBio2Target && (enrolledIds.includes('bio-intensive-2') || enrolledIds.includes('c-1790176559102') || enrolledIds.includes('c-1790179918330')));
+      });
       const container = document.getElementById('enrolled-list');
       if (enrolled.length === 0) {
         container.innerHTML = `
