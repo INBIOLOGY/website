@@ -947,8 +947,8 @@
 
                   <p style="font-size:11px;color:#6B7280;margin:0">ผู้สอน: ${c.instructor || 'พี่ต้น'}</p>
 
-                  <!-- 365-Day Course Expiration Display Badge -->
-                  ${enrollInfo ? `
+                  <!-- 365-Day Course Expiration Display Badge - Only for Enrolled Courses -->
+                  ${(enrollInfo && enrollInfo.isEnrolled) ? `
                     <div style="background:${isExpired ? '#FEF2F2' : (enrollInfo.daysLeft <= 15 ? '#FFFBEB' : '#EFF6FF')};border:1px solid ${isExpired ? '#FECACA' : (enrollInfo.daysLeft <= 15 ? '#FDE68A' : '#BFDBFE')};border-radius:8px;padding:5px 8px;font-size:10.5px;font-weight:800;color:${isExpired ? '#DC2626' : (enrollInfo.daysLeft <= 15 ? '#D97706' : '#1E3A8A')};display:flex;align-items:center;justify-content:space-between">
                       <span>${isExpired ? '❌ หมดอายุแล้ว' : `⏳ เหลืออีก ${enrollInfo.daysLeft} วัน`}</span>
                       <span style="font-size:10px;color:#64748B;font-weight:600">${isExpired ? `หมดเมื่อ ${enrollInfo.formattedExpiresAt}` : `หมดอายุ ${enrollInfo.formattedExpiresAt}`}</span>
