@@ -533,6 +533,7 @@ const CloudService = window.CloudService = {
     sessionStorage.setItem('inbiology_session_active', 'true');
     localStorage.setItem('inbiology_role', 'student');
     AppState.saveStudentProfile(newUser);
+    try { await this.recordDeviceSession(cleanEmail); } catch(e){}
 
     // Clear used OTP
     try {
@@ -620,6 +621,7 @@ const CloudService = window.CloudService = {
             AppState.enrolled = userProfile.enrolled || [];
             localStorage.setItem('inbiology_enrolled', JSON.stringify(AppState.enrolled));
           }
+          try { await this.recordDeviceSession(userProfile.email); } catch(e){}
           return userProfile;
         }
       } catch(err) {
@@ -662,6 +664,7 @@ const CloudService = window.CloudService = {
       AppState.enrolled = user.enrolled || [];
       localStorage.setItem('inbiology_enrolled', JSON.stringify(AppState.enrolled));
     }
+    try { await this.recordDeviceSession(user.email); } catch(e){}
 
     return user;
   },
@@ -787,6 +790,7 @@ const CloudService = window.CloudService = {
         }).catch(() => {});
       }
 
+      try { await this.recordDeviceSession(googleEmail); } catch(e){}
       return { user: mergedUser, isNew: false, isAutoLinked: true };
     }
 
@@ -873,6 +877,7 @@ const CloudService = window.CloudService = {
     sessionStorage.setItem('inbiology_session_active', 'true');
     localStorage.setItem('inbiology_role', initialRole);
     AppState.saveStudentProfile(newUser);
+    try { await this.recordDeviceSession(googleEmail); } catch(e){}
     return { user: newUser, isNew: true, isAutoLinked: false };
   },
 
@@ -925,6 +930,112 @@ const CloudService = window.CloudService = {
     // 3. Fallback for Firebase if configured
     if (this.isLive && this.db && uid) {
       try { await this.db.collection('users').doc(uid).update(data); } catch(e){}
+    }
+  },
+
+  // ─── 4.1 SINGLE-DEVICE AUTHENTICATION ENFORCEMENT ENGINE ───────────────────
+  /**
+   * Generates and writes unique session token for 1-device-per-account security
+   * @param {string} email
+   */
+  async recordDeviceSession(email) {
+    if (!email) return null;
+    const cleanEmail = email.toLowerCase().trim();
+    const token = 'sess_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+    localStorage.setItem('inbiology_session_token', token);
+
+    const now = new Date().toISOString();
+    const deviceInfo = (navigator.userAgent || '').substring(0, 150);
+
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      // 1. Update Supabase users table
+      try {
+        await this._supabaseFetch(`/users?email=ilike.${encodeURIComponent(cleanEmail)}`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            current_session_token: token,
+            last_device_info: deviceInfo,
+            last_active_at: now
+          })
+        });
+      } catch(e) {
+        console.warn('[Single-Device] users table update note:', e);
+      }
+
+      // 2. Also sync to site_content device_sessions as a resilient fallback
+      try {
+        let sessions = (await this.fetchSiteContent('device_sessions')) || {};
+        sessions[cleanEmail] = {
+          sessionToken: token,
+          device: deviceInfo,
+          updatedAt: now
+        };
+        await this.saveSiteContent('device_sessions', sessions);
+      } catch(e) {}
+    }
+
+    return token;
+  },
+
+  /**
+   * Checks if current device holds the active session token
+   */
+  async verifySingleDeviceSession() {
+    const profile = AppState.getStudentProfile();
+    if (!profile || !profile.email || !AppState.isLoggedIn()) return { valid: true };
+    if (AppState.userRole === 'admin') return { valid: true }; // Admin bypass
+
+    const localToken = localStorage.getItem('inbiology_session_token');
+    const cleanEmail = profile.email.toLowerCase().trim();
+
+    // If local token not set yet, record device session now
+    if (!localToken) {
+      await this.recordDeviceSession(cleanEmail);
+      return { valid: true };
+    }
+
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        // Query users table
+        const rows = await this._supabaseFetch(
+          `/users?email=ilike.${encodeURIComponent(cleanEmail)}&select=current_session_token,last_active_at&limit=1`
+        );
+        if (rows && rows[0] && rows[0].current_session_token) {
+          const cloudToken = rows[0].current_session_token;
+          if (cloudToken !== localToken) {
+            console.warn('⚠️ [Single-Device] Device mismatch detected via users table. Logging out.');
+            this.handleDeviceKick();
+            return { valid: false, reason: 'kicked' };
+          }
+        } else {
+          // Check site_content backup
+          const sessions = await this.fetchSiteContent('device_sessions');
+          if (sessions && sessions[cleanEmail] && sessions[cleanEmail].sessionToken) {
+            if (sessions[cleanEmail].sessionToken !== localToken) {
+              console.warn('⚠️ [Single-Device] Device mismatch detected via site_content. Logging out.');
+              this.handleDeviceKick();
+              return { valid: false, reason: 'kicked' };
+            }
+          }
+        }
+      } catch(err) {
+        // Network offline note - do not disconnect
+      }
+    }
+
+    return { valid: true };
+  },
+
+  handleDeviceKick() {
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        const bc = new BroadcastChannel('inbiology_device_auth');
+        bc.postMessage({ type: 'KICK_DEVICE' });
+      }
+    } catch(e){}
+
+    if (typeof AppState.showDeviceKickModal === 'function') {
+      AppState.showDeviceKickModal();
     }
   },
 
@@ -1369,12 +1480,14 @@ const CloudService = window.CloudService = {
   },
 
   /**
-   * Admin: Approve an order → unlock courses for the student
+   * Admin: Approve an order → unlock courses for the student with 365-day validity
    */
   async approveOrder(orderId, userEmail, courseIds) {
     const adminProfile = AppState.getStudentProfile();
     const adminName = adminProfile ? (adminProfile.nickname || adminProfile.fullName || 'Admin') : 'Admin';
-    const now = new Date().toISOString();
+    const now = new Date();
+    const approvedAt = now.toISOString();
+    const expiresAt = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000).toISOString();
 
     // 1. Update order status in Supabase
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
@@ -1384,8 +1497,9 @@ const CloudService = window.CloudService = {
           body: JSON.stringify({
             status: 'approved',
             reviewed_by: adminName,
-            approved_at: now,
-            updated_at: now
+            approved_at: approvedAt,
+            expires_at: expiresAt,
+            updated_at: approvedAt
           })
         });
 
@@ -1399,10 +1513,10 @@ const CloudService = window.CloudService = {
           const merged = [...new Set([...currentEnrolled, ...courseIds])];
           await this._supabaseFetch(`/users?email=eq.${encodeURIComponent(userEmail.toLowerCase().trim())}`, {
             method: 'PATCH',
-            body: JSON.stringify({ enrolled: merged, updated_at: now })
+            body: JSON.stringify({ enrolled: merged, updated_at: approvedAt })
           });
         }
-        console.log('☁️ [Supabase Cloud] Order approved & enrollment updated:', orderId);
+        console.log('☁️ [Supabase Cloud] Order approved & enrollment updated (365 days):', orderId);
       } catch(err) {
         console.warn('[approveOrder Supabase Error]:', err);
       }
@@ -1412,15 +1526,37 @@ const CloudService = window.CloudService = {
     try {
       const orders = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
       const o = orders.find(x => x.id === orderId);
-      if (o) { o.status = 'approved'; o.reviewed_by = adminName; o.approved_at = now; }
+      if (o) {
+        o.status = 'approved';
+        o.reviewed_by = adminName;
+        o.approved_at = approvedAt;
+        o.expires_at = expiresAt;
+      }
       localStorage.setItem('inbiology_orders', JSON.stringify(orders));
+
+      // 4. Save 365-day enrollment metadata
+      if (Array.isArray(courseIds)) {
+        courseIds.forEach(cid => {
+          if (typeof AppState.saveEnrollmentMeta === 'function') {
+            AppState.saveEnrollmentMeta(cid, {
+              enrolledAt: approvedAt,
+              expiresAt: expiresAt,
+              orderId: orderId
+            });
+          }
+        });
+      }
 
       // Also mirror to active session if user is currently logged in
       const currentProfile = AppState.getStudentProfile();
       if (currentProfile && currentProfile.email && currentProfile.email.toLowerCase().trim() === userEmail.toLowerCase().trim()) {
         const merged = [...new Set([...(AppState.enrolled || []), ...(courseIds || [])])];
-        AppState.enrolled = merged;
-        localStorage.setItem('inbiology_enrolled', JSON.stringify(merged));
+        if (typeof AppState.setEnrolledCourses === 'function') {
+          AppState.setEnrolledCourses(merged);
+        } else {
+          AppState.enrolled = merged;
+          localStorage.setItem('inbiology_enrolled', JSON.stringify(merged));
+        }
       }
     } catch(e) {}
 
@@ -1476,6 +1612,7 @@ const CloudService = window.CloudService = {
             status: 'pending',
             reviewed_by: null,
             approved_at: null,
+            expires_at: null,
             admin_note: null,
             updated_at: now
           })
@@ -1507,6 +1644,7 @@ const CloudService = window.CloudService = {
         o.status = 'pending';
         o.reviewed_by = null;
         o.approved_at = null;
+        o.expires_at = null;
         o.admin_note = null;
       }
       localStorage.setItem('inbiology_orders', JSON.stringify(orders));
@@ -1590,14 +1728,27 @@ const CloudService = window.CloudService = {
       }
 
       try {
-        // 2. Fetch course_ids from all approved orders for this student
+        // 2. Fetch course_ids, approved_at, expires_at, created_at from all approved orders for this student
         const orderRows = await this._supabaseFetch(
-          `/orders?user_email=eq.${encodeURIComponent(cleanEmail)}&status=eq.approved&select=course_ids`
+          `/orders?user_email=eq.${encodeURIComponent(cleanEmail)}&status=eq.approved&select=id,course_ids,approved_at,expires_at,created_at`
         );
         if (orderRows && Array.isArray(orderRows)) {
           orderRows.forEach(row => {
             if (row.course_ids && Array.isArray(row.course_ids)) {
-              row.course_ids.forEach(id => id && collectedIds.add(id));
+              const startAt = row.approved_at || row.created_at || new Date().toISOString();
+              const expAt = row.expires_at || new Date(new Date(startAt).getTime() + 365 * 24 * 60 * 60 * 1000).toISOString();
+              row.course_ids.forEach(id => {
+                if (id) {
+                  collectedIds.add(id);
+                  if (typeof AppState.saveEnrollmentMeta === 'function') {
+                    AppState.saveEnrollmentMeta(id, {
+                      enrolledAt: startAt,
+                      expiresAt: expAt,
+                      orderId: row.id
+                    });
+                  }
+                }
+              });
             }
           });
         }
@@ -1610,8 +1761,23 @@ const CloudService = window.CloudService = {
     try {
       const orders = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
       orders
-        .filter(o => o.user_email === cleanEmail && o.status === 'approved')
-        .forEach(o => (o.course_ids || []).forEach(id => id && collectedIds.add(id)));
+        .filter(o => (o.user_email || '').toLowerCase().trim() === cleanEmail && o.status === 'approved')
+        .forEach(o => {
+          const startAt = o.approved_at || o.created_at || new Date().toISOString();
+          const expAt = o.expires_at || new Date(new Date(startAt).getTime() + 365 * 24 * 60 * 60 * 1000).toISOString();
+          (o.course_ids || []).forEach(id => {
+            if (id) {
+              collectedIds.add(id);
+              if (typeof AppState.saveEnrollmentMeta === 'function') {
+                AppState.saveEnrollmentMeta(id, {
+                  enrolledAt: startAt,
+                  expiresAt: expAt,
+                  orderId: o.id
+                });
+              }
+            }
+          });
+        });
     } catch(e) {}
 
     // Apply merged result if we collected anything new
@@ -1623,7 +1789,7 @@ const CloudService = window.CloudService = {
         AppState.enrolled = merged;
         localStorage.setItem('inbiology_enrolled', JSON.stringify(merged));
       }
-      console.log('☁️ [Supabase Cloud] Enrolled synced:', merged);
+      console.log('☁️ [Supabase Cloud] Enrolled synced (with 365-day validity):', merged);
     }
   },
 

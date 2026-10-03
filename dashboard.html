@@ -824,7 +824,7 @@
     let _currentDashboardTopic = 'all';
 
     function renderEnrolled() {
-      const enrolled = COURSES.filter(c => AppState.isEnrolled ? AppState.isEnrolled(c.id) : AppState.enrolled.includes(c.id));
+      const enrolled = COURSES.filter(c => (AppState.enrolled && AppState.enrolled.includes(c.id)) || (AppState.isEnrolled && AppState.isEnrolled(c.id)));
       const container = document.getElementById('enrolled-list');
       if (enrolled.length === 0) {
         container.innerHTML = `
@@ -844,26 +844,55 @@
       } else {
         container.innerHTML = enrolled.map((c, idx) => {
           const prog = AppState.getCourseProgress(c.id);
+          const enrollInfo = typeof AppState.getCourseEnrollment === 'function' ? AppState.getCourseEnrollment(c.id) : null;
+          const isExpired = enrollInfo ? enrollInfo.isExpired : false;
+          const daysLeft = enrollInfo ? enrollInfo.daysLeft : 365;
+          const expDateStr = enrollInfo ? enrollInfo.formattedExpiresAt : '—';
+
           return `
-            <div data-reveal data-delay="${idx * 0.08}s" style="background:white;border:1px solid #E5E7EB;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 8px rgba(0,0,0,0.02)">
+            <div data-reveal data-delay="${idx * 0.08}s" style="background:white;border:1px solid ${isExpired ? '#FECACA' : '#E5E7EB'};border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 8px rgba(0,0,0,0.02)">
               <div style="height:130px;background:#F8FAFC;display:flex;align-items:center;justify-content:center;padding:10px;position:relative">
                 <img src="${c.imageUrl}" style="max-height:110px;max-width:85%;object-fit:contain;border-radius:6px;box-shadow:0 4px 10px rgba(0,0,0,0.08)" alt="${c.title}" />
                 <span style="position:absolute;top:8px;left:8px;background:${c.badgeBg};color:white;font-size:9.5px;font-weight:800;padding:2px 8px;border-radius:6px">
                   ${c.badge}
                 </span>
+                <span style="position:absolute;bottom:8px;right:8px;background:rgba(15,23,42,0.85);color:white;font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:4px">
+                  อายุคอร์ส 365 วัน
+                </span>
               </div>
               <div style="padding:16px;display:flex;flex-direction:column;gap:8px;flex:1">
                 <h4 style="font-weight:800;color:var(--c-navy);font-size:13px;margin:0;line-height:1.4">${c.title}</h4>
+                
+                <!-- 365-Day Course Expiration Display Badge -->
+                <div style="display:flex;align-items:center;justify-content:space-between;background:${enrollInfo ? enrollInfo.badgeBg : '#EFF6FF'};border:1px solid ${isExpired ? '#FECACA' : (daysLeft <= 15 ? '#FDE68A' : '#BFDBFE')};border-radius:8px;padding:6px 10px;margin:2px 0 4px">
+                  <div style="display:flex;align-items:center;gap:5px">
+                    <span style="font-size:12px">${isExpired ? '❌' : (daysLeft <= 15 ? '⚠️' : '⏳')}</span>
+                    <span style="font-size:11px;font-weight:850;color:${enrollInfo ? enrollInfo.badgeColor : '#1E3A8A'}">
+                      ${isExpired ? 'หมดอายุแล้ว' : `เหลืออีก ${daysLeft} วัน`}
+                    </span>
+                  </div>
+                  <span style="font-size:10.5px;color:#64748B;font-weight:700">
+                    ${isExpired ? `หมดเมื่อ ${expDateStr}` : `หมดอายุ: ${expDateStr}`}
+                  </span>
+                </div>
+
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-top:auto">
                   <span style="font-size:11px;color:var(--c-sky);font-weight:800">ความก้าวหน้า</span>
                   <span style="font-size:11px;color:var(--c-navy);font-weight:900">${prog.percentage}% (${prog.completedCount}/${prog.totalCount} ตอน)</span>
                 </div>
                 <div style="background:#E5E7EB;height:6px;border-radius:3px;overflow:hidden;margin:2px 0 8px">
-                  <div style="width:${prog.percentage}%;height:100%;background:var(--c-sky);transition:width 0.3s ease"></div>
+                  <div style="width:${prog.percentage}%;height:100%;background:${isExpired ? '#94A3B8' : 'var(--c-sky)'};transition:width 0.3s ease"></div>
                 </div>
-                <a href="classroom.html?course=${c.id}" style="background:var(--c-sky);color:white;font-weight:850;font-size:12px;padding:9px;border-radius:10px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px">
-                  เข้าสู่ห้องเรียน
-                </a>
+
+                ${isExpired ? `
+                  <a href="courses.html" style="background:#DC2626;color:white;font-weight:850;font-size:12px;padding:9px;border-radius:10px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 2px 8px rgba(220,38,38,0.25)">
+                    🔄 ต่ออายุคอร์สเรียน (365 วัน)
+                  </a>
+                ` : `
+                  <a href="classroom.html?course=${c.id}" style="background:var(--c-sky);color:white;font-weight:850;font-size:12px;padding:9px;border-radius:10px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px">
+                    เข้าสู่ห้องเรียน
+                  </a>
+                `}
               </div>
             </div>
           `;

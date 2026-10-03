@@ -151,7 +151,14 @@ export default async function handler(req, res) {
       if (status) patchPayload.status = status;
       if (reviewedBy) patchPayload.reviewed_by = reviewedBy;
       if (note) patchPayload.admin_note = note;
-      if (status === 'approved') patchPayload.approved_at = new Date().toISOString();
+      if (status === 'approved') {
+        const now = new Date();
+        patchPayload.approved_at = now.toISOString();
+        patchPayload.expires_at = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000).toISOString();
+      } else if (status === 'pending' || status === 'rejected') {
+        patchPayload.approved_at = null;
+        patchPayload.expires_at = null;
+      }
 
       const response = await fetch(`${supabaseUrl}/rest/v1/orders?id=eq.${encodeURIComponent(id)}`, {
         method: 'PATCH',

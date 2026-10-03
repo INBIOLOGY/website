@@ -416,6 +416,159 @@ const AppState = window.AppState = {
     localStorage.setItem('inbiology_enrolled', JSON.stringify(this.enrolled));
   },
 
+  // ─── 365-Day Course Expiration Engine ───
+  getEnrollmentMeta(courseId) {
+    const userKey = this.getUserStorageKey();
+    if (userKey === 'guest' || !courseId) return null;
+    try {
+      const stored = localStorage.getItem('inbiology_enrollment_meta_' + userKey);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && parsed[courseId]) return parsed[courseId];
+      }
+    } catch(e){}
+    return null;
+  },
+
+  saveEnrollmentMeta(courseId, meta) {
+    const userKey = this.getUserStorageKey();
+    if (userKey === 'guest' || !courseId || !meta) return;
+    try {
+      let stored = {};
+      const raw = localStorage.getItem('inbiology_enrollment_meta_' + userKey);
+      if (raw) {
+        try { stored = JSON.parse(raw); } catch(e){}
+      }
+      stored[courseId] = {
+        ...(stored[courseId] || {}),
+        ...meta,
+        updatedAt: new Date().toISOString()
+      };
+      localStorage.setItem('inbiology_enrollment_meta_' + userKey, JSON.stringify(stored));
+    } catch(e){}
+  },
+
+  getCourseEnrollment(courseId) {
+    const isBio2Target = (courseId === 'bio-intensive-2' || courseId === 'c-1790176559102' || courseId === 'c-1790179918330');
+    const isEnrolledBasic = Array.isArray(this.enrolled) && (
+      this.enrolled.includes(courseId) ||
+      (isBio2Target && (this.enrolled.includes('bio-intensive-2') || this.enrolled.includes('c-1790176559102') || this.enrolled.includes('c-1790179918330')))
+    );
+
+    if (!isEnrolledBasic) {
+      return {
+        isEnrolled: false,
+        isExpired: false,
+        daysLeft: 0,
+        enrolledAt: null,
+        expiresAt: null,
+        formattedExpiresAt: '—',
+        formattedEnrolledAt: '—',
+        statusText: 'ยังไม่ได้สมัครเรียน',
+        badgeBg: '#F1F5F9',
+        badgeColor: '#64748B'
+      };
+    }
+
+    const now = new Date();
+    let meta = this.getEnrollmentMeta(courseId);
+
+    // Look for matching approved order in orders cache if meta is missing
+    if (!meta || !meta.expiresAt) {
+      try {
+        const localOrders = JSON.parse(localStorage.getItem('inbiology_orders') || '[]');
+        const profile = this.getStudentProfile();
+        const userEmail = (profile?.email || '').toLowerCase().trim();
+        const matchedOrder = localOrders.find(o => 
+          (o.user_email || '').toLowerCase().trim() === userEmail &&
+          o.status === 'approved' &&
+          Array.isArray(o.course_ids) && (o.course_ids.includes(courseId) || (isBio2Target && o.course_ids.some(x => x === 'bio-intensive-2' || x === 'c-1790176559102')))
+        );
+        if (matchedOrder) {
+          const start = new Date(matchedOrder.approved_at || matchedOrder.created_at || Date.now());
+          const exp = matchedOrder.expires_at 
+            ? new Date(matchedOrder.expires_at) 
+            : new Date(start.getTime() + 365 * 24 * 60 * 60 * 1000);
+          meta = {
+            enrolledAt: start.toISOString(),
+            expiresAt: exp.toISOString(),
+            orderId: matchedOrder.id
+          };
+        }
+      } catch(e){}
+
+      // Default fallback: 365 days validity from registration or today
+      if (!meta || !meta.expiresAt) {
+        const profile = this.getStudentProfile();
+        const baseDate = (profile && profile.emailVerifiedAt) ? new Date(profile.emailVerifiedAt) : new Date();
+        const expDate = new Date(baseDate.getTime() + 365 * 24 * 60 * 60 * 1000);
+        meta = {
+          enrolledAt: baseDate.toISOString(),
+          expiresAt: expDate.toISOString(),
+          isDefault: true
+        };
+      }
+      this.saveEnrollmentMeta(courseId, meta);
+    }
+
+    const exp = new Date(meta.expiresAt);
+    const start = meta.enrolledAt ? new Date(meta.enrolledAt) : null;
+    const diffMs = exp.getTime() - now.getTime();
+    const daysLeft = Math.max(0, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
+    const isExpired = diffMs <= 0;
+
+    // Format Thai date e.g. "03/10/2570"
+    const day = String(exp.getDate()).padStart(2, '0');
+    const month = String(exp.getMonth() + 1).padStart(2, '0');
+    const yearTh = exp.getFullYear() + 543;
+    const formattedExpiresAt = `${day}/${month}/${yearTh}`;
+
+    let formattedEnrolledAt = '—';
+    if (start) {
+      const sDay = String(start.getDate()).padStart(2, '0');
+      const sMonth = String(start.getMonth() + 1).padStart(2, '0');
+      const sYearTh = start.getFullYear() + 543;
+      formattedEnrolledAt = `${sDay}/${sMonth}/${sYearTh}`;
+    }
+
+    let statusText = '';
+    let badgeBg = '#EFF6FF';
+    let badgeColor = '#1E3A8A';
+
+    if (isExpired) {
+      statusText = `หมดอายุแล้วเมื่อ ${formattedExpiresAt}`;
+      badgeBg = '#FEF2F2';
+      badgeColor = '#B91C1C';
+    } else if (daysLeft <= 15) {
+      statusText = `ใกล้หมดอายุ (เหลือ ${daysLeft} วัน)`;
+      badgeBg = '#FFFBEB';
+      badgeColor = '#B45309';
+    } else {
+      statusText = `เหลืออีก ${daysLeft} วัน (หมดอายุ ${formattedExpiresAt})`;
+      badgeBg = '#EFF6FF';
+      badgeColor = '#1E3A8A';
+    }
+
+    return {
+      isEnrolled: true,
+      isExpired: isExpired,
+      daysLeft: daysLeft,
+      enrolledAt: meta.enrolledAt,
+      expiresAt: meta.expiresAt,
+      formattedExpiresAt: formattedExpiresAt,
+      formattedEnrolledAt: formattedEnrolledAt,
+      statusText: statusText,
+      badgeBg: badgeBg,
+      badgeColor: badgeColor
+    };
+  },
+
+  isCourseExpired(courseId) {
+    if (this.userRole === 'admin') return false; // Admins bypass expiration
+    const info = this.getCourseEnrollment(courseId);
+    return Boolean(info && info.isEnrolled && info.isExpired);
+  },
+
   getCourseProgress(courseId) {
     const userKey = this.getUserStorageKey();
     const saved = localStorage.getItem(`inbiology_progress_${userKey}_${courseId}`) || 
@@ -907,13 +1060,18 @@ const AppState = window.AppState = {
   },
   
   isEnrolled(courseId) {
+    if (this.userRole === 'admin') return true; // Admins always have access
     if (!this.enrolled || !Array.isArray(this.enrolled)) return false;
-    if (this.enrolled.includes(courseId)) return true;
     const isBio2Target = (courseId === 'bio-intensive-2' || courseId === 'c-1790176559102' || courseId === 'c-1790179918330');
-    if (isBio2Target && (this.enrolled.includes('bio-intensive-2') || this.enrolled.includes('c-1790176559102') || this.enrolled.includes('c-1790179918330'))) {
-      return true;
+    const isEnrolledBasic = this.enrolled.includes(courseId) ||
+      (isBio2Target && (this.enrolled.includes('bio-intensive-2') || this.enrolled.includes('c-1790176559102') || this.enrolled.includes('c-1790179918330')));
+    if (!isEnrolledBasic) return false;
+
+    // Check 365-day validity
+    if (this.isCourseExpired(courseId)) {
+      return false; // Expired course no longer has active classroom access
     }
-    return false;
+    return true;
   },
 
   saveCart() {
@@ -976,8 +1134,81 @@ const AppState = window.AppState = {
     localStorage.removeItem('inbiology_role');
     localStorage.removeItem('inbiology_student_profile');
     localStorage.removeItem('inbiology_enrolled');
+    localStorage.removeItem('inbiology_session_token');
     showToast('ออกจากระบบเรียบร้อยแล้ว', 'info');
     setTimeout(() => { location.href = 'index.html'; }, 500);
+  },
+
+  // ─── Single-Device Account Security Engine (1 บัญชี ล็อกอินได้ 1 เครื่อง) ───
+  _singleDeviceWatcherInitialized: false,
+  initSingleDeviceWatcher() {
+    if (this._singleDeviceWatcherInitialized) return;
+    this._singleDeviceWatcherInitialized = true;
+
+    // 1. BroadcastChannel: instantly alerts other tabs on this device
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        const bc = new BroadcastChannel('inbiology_device_auth');
+        bc.onmessage = (event) => {
+          if (event && event.data && event.data.type === 'KICK_DEVICE') {
+            AppState.showDeviceKickModal();
+          }
+        };
+      }
+    } catch(e){}
+
+    // 2. Periodic background verification heartbeat (runs every 30 seconds for logged-in students)
+    setInterval(() => {
+      if (AppState.isLoggedIn() && AppState.userRole !== 'admin') {
+        if (window.CloudService && typeof window.CloudService.verifySingleDeviceSession === 'function') {
+          window.CloudService.verifySingleDeviceSession();
+        }
+      }
+    }, 30000);
+
+    // 3. Instant verification on window tab focus
+    window.addEventListener('focus', () => {
+      if (AppState.isLoggedIn() && AppState.userRole !== 'admin') {
+        if (window.CloudService && typeof window.CloudService.verifySingleDeviceSession === 'function') {
+          window.CloudService.verifySingleDeviceSession();
+        }
+      }
+    });
+  },
+
+  showDeviceKickModal() {
+    if (document.getElementById('device-kick-modal')) return;
+
+    // Immediately revoke current device's local credentials
+    AppState.userRole = null;
+    AppState.enrolled = [];
+    sessionStorage.removeItem('inbiology_session_active');
+    localStorage.removeItem('inbiology_role');
+    localStorage.removeItem('inbiology_student_profile');
+    localStorage.removeItem('inbiology_session_token');
+
+    const modal = document.createElement('div');
+    modal.id = 'device-kick-modal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.88);backdrop-filter:blur(10px);z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box';
+    modal.innerHTML = `
+      <div style="background:white;border-radius:24px;padding:36px 30px;max-width:440px;width:100%;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,0.35);animation:fadeIn 0.25s ease-out">
+        <div style="width:68px;height:68px;border-radius:22px;background:#FEE2E2;color:#DC2626;display:inline-flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:18px;box-shadow:0 8px 16px rgba(220,38,38,0.15)">
+          📱⚠️
+        </div>
+        <h3 style="font-size:19px;font-weight:950;color:#0F172A;margin:0 0 10px;line-height:1.3">
+          มีการเข้าสู่ระบบจากอุปกรณ์อื่น
+        </h3>
+        <p style="font-size:13px;color:#64748B;line-height:1.65;margin:0 0 24px">
+          ระบบตรวจพบว่าบัญชีของคุณได้เข้าสู่ระบบบนอุปกรณ์ใหม่<br>
+          (ระบบ INBIOLOGY กำหนดให้ <strong>1 บัญชีใช้งานได้ทีละ 1 เครื่อง</strong> เพื่อความปลอดภัยของข้อมูลและสิทธิ์บทเรียน)
+          ระบบจึงออกจากระบบบนอุปกรณ์นี้โดยอัตโนมัติ
+        </p>
+        <button onclick="location.href='login.html'" style="width:100%;background:#B91C1C;color:white;font-weight:900;font-size:13.5px;padding:13px;border-radius:12px;border:none;cursor:pointer;box-shadow:0 4px 14px rgba(185,28,28,0.3)">
+          เข้าสู่ระบบใหม่อีกครั้ง ➔
+        </button>
+      </div>
+    `;
+    document.body.appendChild(modal);
   },
 
   updateCartBadges() {
@@ -2507,5 +2738,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof AppState !== 'undefined' && typeof AppState.syncUserProfileWithCloud === 'function') {
     AppState.syncUserProfileWithCloud();
   }
+
+  // 🛡️ Single-Device Login Guard & Heartbeat Watcher (1 บัญชี ล็อกอินได้ 1 เครื่อง)
+  if (typeof AppState !== 'undefined' && typeof AppState.initSingleDeviceWatcher === 'function') {
+    AppState.initSingleDeviceWatcher();
+  }
 });
+
 

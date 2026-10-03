@@ -897,6 +897,12 @@
             const isEnrolled = (typeof AppState !== 'undefined' && typeof AppState.isEnrolled === 'function')
               ? AppState.isEnrolled(c.id)
               : (AppState && AppState.enrolled && Array.isArray(AppState.enrolled) && AppState.enrolled.includes(c.id));
+            const isExpired = (typeof AppState !== 'undefined' && typeof AppState.isCourseExpired === 'function')
+              ? AppState.isCourseExpired(c.id)
+              : false;
+            const enrollInfo = (typeof AppState !== 'undefined' && typeof AppState.getCourseEnrollment === 'function')
+              ? AppState.getCourseEnrollment(c.id)
+              : null;
             const origPrice = Number(c.originalPrice) || Number(c.price) || 0;
             const curPrice = Number(c.price) || 0;
             const discountPercent = origPrice > curPrice ? Math.round((1 - curPrice / origPrice) * 100) : 0;
@@ -941,6 +947,14 @@
 
                   <p style="font-size:11px;color:#6B7280;margin:0">ผู้สอน: ${c.instructor || 'พี่ต้น'}</p>
 
+                  <!-- 365-Day Course Expiration Display Badge -->
+                  ${enrollInfo ? `
+                    <div style="background:${isExpired ? '#FEF2F2' : (enrollInfo.daysLeft <= 15 ? '#FFFBEB' : '#EFF6FF')};border:1px solid ${isExpired ? '#FECACA' : (enrollInfo.daysLeft <= 15 ? '#FDE68A' : '#BFDBFE')};border-radius:8px;padding:5px 8px;font-size:10.5px;font-weight:800;color:${isExpired ? '#DC2626' : (enrollInfo.daysLeft <= 15 ? '#D97706' : '#1E3A8A')};display:flex;align-items:center;justify-content:space-between">
+                      <span>${isExpired ? '❌ หมดอายุแล้ว' : `⏳ เหลืออีก ${enrollInfo.daysLeft} วัน`}</span>
+                      <span style="font-size:10px;color:#64748B;font-weight:600">${isExpired ? `หมดเมื่อ ${enrollInfo.formattedExpiresAt}` : `หมดอายุ ${enrollInfo.formattedExpiresAt}`}</span>
+                    </div>
+                  ` : ''}
+
                   <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px">
                     <span style="font-weight:700;color:#111827">★ ${c.rating || 4.9} <span style="color:#9CA3AF;font-weight:500">(${c.reviewCount || 400})</span></span>
                     <span style="font-weight:800;color:#0F172A">${c.hours || 15} ชั่วโมงเรียน</span>
@@ -963,9 +977,19 @@
                       <button onclick="openCourseModal(COURSES.find(x=>x.id==='${c.id}'))" style="background:none;border:none;color:#1E3A8A;font-weight:800;font-size:11.5px;cursor:pointer;padding:4px 6px">
                         รายละเอียด
                       </button>
-                      <button onclick="${isEnrolled ? `location.href='classroom.html?course=${c.id}'` : `AppState.addToCart(COURSES.find(x=>x.id==='${c.id}'))`}" style="padding:8px 14px;border-radius:10px;font-size:11px;font-weight:800;background:${isEnrolled ? '#10B981' : '#EF4444'};color:white;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
-                        ${isEnrolled ? 'เข้าเรียน' : 'สมัครเรียน'}
-                      </button>
+                      ${isExpired ? `
+                        <button onclick="AppState.addToCart(COURSES.find(x=>x.id==='${c.id}'));showToast('เพิ่มคอร์สลงในตะกร้าเพื่อต่ออายุ 365 วันแล้ว','success')" style="padding:8px 14px;border-radius:10px;font-size:11px;font-weight:800;background:#DC2626;color:white;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(220,38,38,0.25)">
+                          🔄 ต่ออายุคอร์ส
+                        </button>
+                      ` : (isEnrolled ? `
+                        <button onclick="location.href='classroom.html?course=${c.id}'" style="padding:8px 14px;border-radius:10px;font-size:11px;font-weight:800;background:#10B981;color:white;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
+                          ✓ เข้าเรียน
+                        </button>
+                      ` : `
+                        <button onclick="AppState.addToCart(COURSES.find(x=>x.id==='${c.id}'))" style="padding:8px 14px;border-radius:10px;font-size:11px;font-weight:800;background:#EF4444;color:white;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
+                          สมัครเรียน
+                        </button>
+                      `)}
                     </div>
                   </div>
                 </div>

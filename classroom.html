@@ -126,7 +126,8 @@
                 </div>
                 <span id="course-progress-badge" style="background:rgba(255,255,255,0.2);font-size:11px;font-weight:900;padding:2px 8px;border-radius:6px">0%</span>
               </div>
-              <p id="course-title" style="font-size:11.5px;color:rgba(255,255,255,0.85);margin:0 0 10px;font-weight:700">Bio Intensive I</p>
+              <p id="course-title" style="font-size:11.5px;color:rgba(255,255,255,0.85);margin:0 0 6px;font-weight:700">Bio Intensive I</p>
+              <div id="course-expiry-sidebar-badge" style="font-size:10px;color:rgba(255,255,255,0.85);font-weight:700;margin:0 0 10px;display:none;align-items:center;gap:4px"></div>
               <div style="background:rgba(255,255,255,0.2);height:6px;border-radius:3px;overflow:hidden">
                 <div id="course-progress-bar-fill" style="width:0%;height:100%;background:#38BDF8;transition:width 0.35s ease"></div>
               </div>
@@ -231,8 +232,8 @@
                   <!-- User Questions and Kru Ton Answers -->
                 </div>
                 <div style="display:flex;gap:10px">
-                  <input type="text" id="ask-question-input" placeholder="พิมพ์คำถามข้อสงสัยในตอนนี้ เช่น ทำไมตรงนี้ถึงเป็น Active Transport?..." style="flex:1;border:1px solid #E5E7EB;border-radius:10px;padding:10px 14px;font-size:12.5px;outline:none" />
-                  <button onclick="sendQuestionToInstructor()" style="background:var(--c-navy);color:white;border:none;padding:10px 20px;border-radius:10px;font-weight:850;font-size:12px;cursor:pointer;white-space:nowrap">
+                  <input type="text" id="ask-question-input" onkeydown="if(event.key==='Enter') sendQuestionToInstructor()" placeholder="พิมพ์คำถามข้อสงสัยในตอนนี้ เช่น ทำไมตรงนี้ถึงเป็น Active Transport?..." style="flex:1;border:1px solid #E5E7EB;border-radius:10px;padding:10px 14px;font-size:12.5px;outline:none" />
+                  <button type="button" id="btn-send-question" onclick="sendQuestionToInstructor()" style="background:#B91C1C;color:white;border:none;padding:10px 20px;border-radius:10px;font-weight:850;font-size:12px;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(185,28,28,0.25)">
                     ส่งคำถาม ➔
                   </button>
                 </div>
@@ -298,6 +299,28 @@
           <button onclick="window.print()" style="padding:8px 14px;border:1px solid #E5E7EB;background:white;border-radius:10px;font-size:12px;font-weight:800;color:#374151;cursor:pointer">พิมพ์เอกสาร</button>
           <button onclick="downloadEbookPdf()" style="padding:8px 18px;background:#15803D;color:white;border:none;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer">บันทึกไฟล์ PDF</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Course Expired Modal (365 Days Limit Enforcement) -->
+  <div id="course-expired-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.78);backdrop-filter:blur(8px);z-index:9999;align-items:center;justify-content:center;padding:16px;box-sizing:border-box">
+    <div style="background:white;width:100%;max-width:440px;border-radius:24px;overflow:hidden;box-shadow:0 25px 50px -12px rgba(0,0,0,0.3);text-align:center;padding:32px 26px;position:relative">
+      <div style="width:68px;height:68px;background:#FEE2E2;color:#DC2626;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px">
+        ⏳
+      </div>
+      <h3 style="font-size:20px;font-weight:950;color:var(--c-navy);margin:0 0 6px">คอร์สเรียนหมดอายุแล้ว</h3>
+      <p id="expired-modal-course-title" style="font-size:14px;font-weight:800;color:var(--c-sky);margin:0 0 10px">Bio Intensive</p>
+      <div id="expired-modal-desc" style="background:#FFF1F2;border:1px solid #FECDD3;border-radius:12px;padding:12px 14px;font-size:12.5px;color:#9F1239;line-height:1.6;margin:0 0 20px">
+        คอร์สนี้มีอายุการใช้งาน 365 วัน และครบกำหนดระยะเวลาเรียนแล้ว
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a id="expired-modal-renew-btn" href="courses.html" style="background:#DC2626;color:white;font-weight:900;font-size:13.5px;padding:13px;border-radius:12px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(220,38,38,0.3)">
+          🔄 ต่ออายุคอร์สเรียน (365 วัน)
+        </a>
+        <button onclick="document.getElementById('course-expired-modal').style.display='none'" style="background:#F1F5F9;color:#475569;font-weight:800;font-size:12.5px;padding:11px;border-radius:12px;border:none;cursor:pointer">
+          ปิดหน้าต่างนี้
+        </button>
       </div>
     </div>
   </div>
@@ -384,7 +407,7 @@
         return;
       }
 
-      const enrolled = COURSES.filter(c => AppState.enrolled.includes(c.id) || (c.id === 'c-1790176559102' && AppState.enrolled.includes('bio-intensive-2')) || (c.id === 'bio-intensive-2' && AppState.enrolled.includes('c-1790176559102')));
+      const enrolled = COURSES.filter(c => (AppState.enrolled && AppState.enrolled.includes(c.id)) || (AppState.isEnrolled && AppState.isEnrolled(c.id)) || (c.id === 'c-1790176559102' && AppState.enrolled && AppState.enrolled.includes('bio-intensive-2')) || (c.id === 'bio-intensive-2' && AppState.enrolled && AppState.enrolled.includes('c-1790176559102')));
 
       if (enrolled.length === 0) {
         container.innerHTML = `
@@ -399,6 +422,10 @@
 
       container.innerHTML = enrolled.map((c, idx) => {
         const prog = AppState.getCourseProgress(c.id);
+        const enrollInfo = typeof AppState.getCourseEnrollment === 'function' ? AppState.getCourseEnrollment(c.id) : null;
+        const isExpired = enrollInfo ? enrollInfo.isExpired : false;
+        const daysLeft = enrollInfo ? enrollInfo.daysLeft : 365;
+        const expDateStr = enrollInfo ? enrollInfo.formattedExpiresAt : '—';
         return `
           <div class="course-card" data-reveal data-delay="${(idx % 4) * 0.08}s" style="background:white;border-radius:20px;border:1px solid #E5E7EB;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,0.02);display:flex;flex-direction:column">
             <!-- Thumbnail Container matching standard approved UI pattern -->
@@ -424,16 +451,29 @@
               <h3 style="font-weight:850;color:var(--c-navy);font-size:15px;line-height:1.3;margin:0">${c.title}</h3>
               <p style="font-size:11px;color:#9CA3AF;font-weight:600;margin:0">ผู้สอน: ${c.instructor}</p>
 
+              <!-- 365-Day Course Expiration Display Badge -->
+              <div style="display:flex;align-items:center;justify-content:space-between;background:${enrollInfo ? enrollInfo.badgeBg : '#EFF6FF'};border:1px solid ${isExpired ? '#FECACA' : (daysLeft <= 15 ? '#FDE68A' : '#BFDBFE')};border-radius:8px;padding:6px 10px;margin:2px 0">
+                <div style="display:flex;align-items:center;gap:5px">
+                  <span style="font-size:12px">${isExpired ? '❌' : (daysLeft <= 15 ? '⚠️' : '⏳')}</span>
+                  <span style="font-size:11px;font-weight:850;color:${enrollInfo ? enrollInfo.badgeColor : '#1E3A8A'}">
+                    ${isExpired ? 'หมดอายุแล้ว' : `เหลืออีก ${daysLeft} วัน`}
+                  </span>
+                </div>
+                <span style="font-size:10.5px;color:#64748B;font-weight:700">
+                  ${isExpired ? `หมดเมื่อ ${expDateStr}` : `หมดอายุ: ${expDateStr}`}
+                </span>
+              </div>
+
               <div style="margin-top:auto;padding-top:12px;border-top:1px solid #F3F4F6">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
                   <span style="font-size:11px;font-weight:800;color:var(--c-sky)">ความก้าวหน้าการเรียน</span>
                   <span style="font-size:11px;font-weight:900;color:var(--c-navy)">${prog.percentage}% (${prog.completedCount}/${prog.totalCount} ตอน)</span>
                 </div>
                 <div style="background:#E5E7EB;height:6px;border-radius:3px;overflow:hidden;margin-bottom:12px">
-                  <div style="width:${prog.percentage}%;height:100%;background:var(--c-sky);transition:width 0.3s ease"></div>
+                  <div style="width:${prog.percentage}%;height:100%;background:${isExpired ? '#94A3B8' : 'var(--c-sky)'};transition:width 0.3s ease"></div>
                 </div>
-                <button onclick="openClassroomRoom('${c.id}')" style="width:100%;background:var(--c-sky);color:white;font-weight:850;font-size:13px;padding:12px;border-radius:12px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">
-                  เข้าสู่ห้องเรียน
+                <button onclick="${isExpired ? `location.href='courses.html'` : `openClassroomRoom('${c.id}')`}" style="width:100%;background:${isExpired ? '#DC2626' : 'var(--c-sky)'};color:white;font-weight:850;font-size:13px;padding:12px;border-radius:12px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px${isExpired ? ';box-shadow:0 4px 14px rgba(220,38,38,0.25)' : ''}">
+                  ${isExpired ? '🔄 ต่ออายุคอร์สเรียน (365 วัน)' : 'เข้าสู่ห้องเรียน'}
                 </button>
               </div>
             </div>
@@ -452,7 +492,14 @@
     }
 
     function openClassroomRoom(courseId, lessonId = null) {
-      const isEnrolledInCourse = AppState.isEnrolled ? AppState.isEnrolled(courseId) : AppState.enrolled.includes(courseId);
+      const isExpired = typeof AppState.isCourseExpired === 'function' ? AppState.isCourseExpired(courseId) : false;
+      if (isExpired && AppState.userRole !== 'admin') {
+        showCourseExpiredModal(courseId);
+        showMyCoursesCatalog();
+        return;
+      }
+
+      const isEnrolledInCourse = AppState.isEnrolled ? AppState.isEnrolled(courseId) : (AppState.enrolled && AppState.enrolled.includes(courseId));
       if (!isEnrolledInCourse && AppState.userRole !== 'admin') {
         showToast('คุณยังไม่ได้ลงทะเบียนในคอร์สนี้ กรุณาสมัครคอร์สก่อนเข้าเรียน', 'warning');
         setTimeout(() => { location.href = 'courses.html'; }, 1000);
@@ -481,11 +528,31 @@
       updateEbookBanner();
       updateActiveLessonBar();
       renderLessonList();
+      loadLessonNote();
+      loadQuestionsHistory();
 
       if (currentLesson) {
         playLessonVideo(currentLesson);
       }
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showCourseExpiredModal(courseId) {
+      const modal = document.getElementById('course-expired-modal');
+      if (!modal) return;
+      const c = COURSES.find(item => item.id === courseId);
+      const enroll = typeof AppState.getCourseEnrollment === 'function' ? AppState.getCourseEnrollment(courseId) : null;
+      const titleEl = document.getElementById('expired-modal-course-title');
+      const descEl = document.getElementById('expired-modal-desc');
+      const renewBtn = document.getElementById('expired-modal-renew-btn');
+      if (titleEl) titleEl.textContent = c ? c.title : courseId;
+      if (descEl && enroll) {
+        descEl.innerHTML = `คอร์สนี้มีอายุการใช้งาน 365 วัน และหมดอายุแล้วเมื่อ <strong>${enroll.formattedExpiresAt}</strong><br>หากต้องการทบทวนเนื้อหาและทำโจทย์ต่อ สามารถกดต่ออายุเพื่อรับสิทธิ์เรียนต่ออีก 365 วัน`;
+      }
+      if (renewBtn && c) {
+        renewBtn.href = `courses.html?renew=${encodeURIComponent(c.id)}`;
+      }
+      modal.style.display = 'flex';
     }
 
     function playLessonVideo(lesson) {
@@ -497,18 +564,29 @@
 
       if (ytId) {
         wrapper.innerHTML = `
-          <iframe id="main-youtube-iframe"
-                  src="https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
-                  title="${lesson.title ? lesson.title.replace(/"/g, '&quot;') : 'INBIOLOGY Lesson'}"
-                  frameborder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowfullscreen
-                  style="width:100%;height:100%;border:none;border-radius:24px">
-          </iframe>
+          <div id="yt-secure-container" style="position:relative;width:100%;height:100%;overflow:hidden;border-radius:24px;user-select:none;-webkit-user-select:none;background:#000">
+            <!-- 1. Top Shield: Blocks clicks to YouTube Header, Video Title & Share Button (Completely Invisible) -->
+            <div id="yt-top-shield" title="INBIOLOGY Secure Classroom" style="position:absolute;top:0;left:0;right:0;height:58px;z-index:30;background:transparent;cursor:default" oncontextmenu="return false;"></div>
+
+            <!-- 2. Bottom Right Shield: Blocks clicks to YouTube Logo (Completely Invisible) -->
+            <div id="yt-corner-shield" title="INBIOLOGY Protected" style="position:absolute;bottom:0;right:0;width:95px;height:48px;z-index:30;background:transparent;cursor:default" oncontextmenu="return false;"></div>
+
+            <!-- 3. Secured YouTube iFrame (Removed clipboard-write & web-share permissions) -->
+            <iframe id="main-youtube-iframe"
+                    src="https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&iv_load_policy=3"
+                    title="${lesson.title ? lesson.title.replace(/"/g, '&quot;') : 'INBIOLOGY Lesson'}"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    style="width:100%;height:100%;border:none;border-radius:24px;display:block">
+            </iframe>
+          </div>
         `;
       } else if (videoUrl) {
         wrapper.innerHTML = `
-          <video id="main-video-player" src="${videoUrl}" controls preload="metadata" playsinline autoplay style="width:100%;height:100%;object-fit:contain;border-radius:24px"></video>
+          <div style="position:relative;width:100%;height:100%;overflow:hidden;border-radius:24px;background:#000">
+            <video id="main-video-player" src="${videoUrl}" controls controlsList="nodownload" preload="metadata" playsinline autoplay oncontextmenu="return false;" style="width:100%;height:100%;object-fit:contain;border-radius:24px"></video>
+          </div>
         `;
       } else {
         wrapper.innerHTML = `
@@ -555,6 +633,18 @@
       const epLabel = currentLesson.ep || extractEpFromTitle(currentLesson.title) || `EP.${idx + 1}`;
       if (badge) badge.textContent = epLabel;
       if (title) title.textContent = currentLesson.title;
+
+      // Update sidebar course expiry badge
+      const enrollInfo = typeof AppState.getCourseEnrollment === 'function' ? AppState.getCourseEnrollment(currentCourse.id) : null;
+      const expBadge = document.getElementById('course-expiry-sidebar-badge');
+      if (expBadge) {
+        if (enrollInfo) {
+          expBadge.style.display = 'inline-flex';
+          expBadge.innerHTML = `<span>⏳ ${enrollInfo.isExpired ? 'หมดอายุแล้ว' : `เหลือ ${enrollInfo.daysLeft} วัน`}</span><span style="opacity:0.75">(${enrollInfo.formattedExpiresAt})</span>`;
+        } else {
+          expBadge.style.display = 'none';
+        }
+      }
 
       if (btn) {
         if (isCompleted) {
@@ -638,6 +728,8 @@
       history.replaceState(null, '', `?course=${currentCourse.id}&lesson=${currentLesson.id}`);
       updateActiveLessonBar();
       renderLessonList();
+      loadLessonNote();
+      loadQuestionsHistory();
 
       setTimeout(() => {
         const activeRow = document.querySelector('#lesson-list .active-lesson-row');
@@ -786,67 +878,369 @@
       downloadMaterialItem(0);
     }
 
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
     function switchTab(tabName) {
       ['notes', 'ask'].forEach(t => {
         const btn = document.getElementById(`tab-${t}`);
         const panel = document.getElementById(`panel-${t}`);
         if (t === tabName) {
-          btn.style.background = 'var(--c-navy)';
+          btn.style.background = '#B91C1C';
           btn.style.color = 'white';
-          panel.style.display = 'flex';
+          if (panel) panel.style.display = 'block';
         } else {
           btn.style.background = 'white';
           btn.style.color = '#374151';
-          panel.style.display = 'none';
+          if (panel) panel.style.display = 'none';
         }
       });
+      if (tabName === 'ask') {
+        loadQuestionsHistory();
+        const askInput = document.getElementById('ask-question-input');
+        if (askInput) setTimeout(() => askInput.focus(), 60);
+      } else if (tabName === 'notes') {
+        loadLessonNote();
+      }
     }
 
-    function handleAskQuestion() {
-      const q = document.getElementById('ask-query').value.trim();
-      if (!q) return;
-      document.getElementById('ask-query').value = '';
-      showToast('ส่งคำถามถึงพี่ต้นเรียบร้อยแล้ว', 'success');
-      const box = document.getElementById('ask-response-box');
-      box.style.display = 'block';
-      box.innerHTML = `**ตอบกลับจากพี่ต้น**: ได้รับคำถามเรื่อง "${q}" เรียบร้อยแล้วครับ เดี๋ยวพี่ต้นจะมาตอบคลายข้อสงสัยให้น้องทางกล่องข้อความอย่างละเอียดแน่นอนครับ`;
+    function getCourseQuestions(cId) {
+      const sharedKey = 'inbiology_course_qa_' + cId;
+      let list = [];
+      try {
+        list = JSON.parse(localStorage.getItem(sharedKey) || '[]');
+      } catch(e) {
+        list = [];
+      }
+
+      // Also migrate from old user-specific key if exists
+      const userKey = (typeof AppState !== 'undefined' && typeof AppState.getUserStorageKey === 'function') 
+        ? AppState.getUserStorageKey() 
+        : 'guest';
+      const oldKey = 'inbiology_questions_' + userKey + '_' + cId;
+      try {
+        const oldList = JSON.parse(localStorage.getItem(oldKey) || '[]');
+        if (Array.isArray(oldList) && oldList.length > 0) {
+          oldList.forEach(oldQ => {
+            if (!list.some(x => x.id === oldQ.id || (x.question === oldQ.question && x.time === oldQ.time))) {
+              list.push({
+                id: oldQ.id || ('q_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4)),
+                studentName: oldQ.studentName || 'น้องแดน',
+                lessonTitle: oldQ.lessonTitle || 'ลักษณะของสิ่งมีชีวิต 1',
+                question: oldQ.question,
+                time: oldQ.time,
+                status: oldQ.reply ? 'answered' : 'pending',
+                reply: oldQ.reply || null,
+                repliedBy: oldQ.repliedBy || null,
+                repliedAt: oldQ.repliedAt || null
+              });
+            }
+          });
+          localStorage.setItem(sharedKey, JSON.stringify(list));
+        }
+      } catch(e) {}
+
+      return list;
+    }
+
+    function saveCourseQuestions(cId, list) {
+      const sharedKey = 'inbiology_course_qa_' + cId;
+      localStorage.setItem(sharedKey, JSON.stringify(list));
+
+      // 🔄 Cloud sync via Supabase
+      if (window.CloudService && typeof window.CloudService.saveSiteContent === 'function') {
+        window.CloudService.saveSiteContent('classroom_qa_' + cId, list).catch(() => {});
+      }
+    }
+
+    function loadQuestionsHistory() {
+      const container = document.getElementById('ask-messages-history');
+      if (!container) return;
+      const cId = currentCourse ? currentCourse.id : 'general';
+      const list = getCourseQuestions(cId);
+
+      // Background Cloud Sync from Supabase
+      if (window.CloudService && typeof window.CloudService.fetchSiteContent === 'function') {
+        window.CloudService.fetchSiteContent('classroom_qa_' + cId).then(cloudList => {
+          if (cloudList && Array.isArray(cloudList) && cloudList.length > 0) {
+            const local = getCourseQuestions(cId);
+            let updated = false;
+            cloudList.forEach(cq => {
+              const existing = local.find(lq => String(lq.id) === String(cq.id));
+              if (!existing) {
+                local.push(cq);
+                updated = true;
+              } else if (cq.reply && !existing.reply) {
+                existing.reply = cq.reply;
+                existing.repliedBy = cq.repliedBy;
+                existing.repliedAt = cq.repliedAt;
+                existing.status = 'answered';
+                updated = true;
+              }
+            });
+            if (updated) {
+              const sharedKey = 'inbiology_course_qa_' + cId;
+              localStorage.setItem(sharedKey, JSON.stringify(local));
+              renderQuestionsList(local);
+            }
+          }
+        }).catch(() => {});
+      }
+
+      renderQuestionsList(list);
+    }
+
+    function renderQuestionsList(list) {
+      const container = document.getElementById('ask-messages-history');
+      if (!container) return;
+
+      if (!list || list.length === 0) {
+        container.innerHTML = `
+          <div style="background:#F8FAFC;border:1px dashed #CBD5E1;border-radius:12px;padding:16px;text-align:center;color:#64748B;font-size:12px">
+            ยังไม่มีข้อความคำถามในคอร์สนี้<br>
+            <span style="font-size:11px;color:#94A3B8">พิมพ์ข้อสงสัยแล้วกด "ส่งคำถาม" เพื่อสอบถามพี่ต้นได้ทันที</span>
+          </div>
+        `;
+        return;
+      }
+
+      const isAdmin = (typeof AppState !== 'undefined' && AppState.userRole === 'admin');
+
+      container.innerHTML = list.map(item => {
+        const isAnswered = Boolean(item.reply && item.reply.trim());
+        return `
+          <div id="q-card-${item.id}" style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;background:#FAFAFA;border:1px solid #E5E7EB;border-radius:16px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,0.02)">
+            <!-- Student Question Bubble -->
+            <div style="align-self:flex-end;max-width:92%;background:#B91C1C;color:white;padding:10px 14px;border-radius:14px 14px 2px 14px;font-size:12.5px;box-shadow:0 2px 6px rgba(185,28,28,0.15)">
+              <div style="font-size:10px;color:rgba(255,255,255,0.85);margin-bottom:3px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+                <span>🙋 คำถามของ ${escapeHtml(item.studentName || 'คุณ')} • ${escapeHtml(item.lessonTitle || 'บทเรียนนี้')}</span>
+                <span>${item.time}</span>
+              </div>
+              <div style="word-break:break-word;font-weight:600">${escapeHtml(item.question)}</div>
+            </div>
+
+            <!-- Kru Ton / Admin Answer Box -->
+            ${isAnswered ? `
+              <div style="align-self:flex-start;width:100%;max-width:95%;background:#EFF6FF;border:1.5px solid #93C5FD;color:#1E3A8A;padding:12px 16px;border-radius:14px 14px 14px 2px;font-size:12.5px;line-height:1.6;box-shadow:0 2px 8px rgba(37,99,235,0.06)">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:6px">
+                  <div style="font-weight:900;font-size:11.5px;color:var(--c-navy);display:flex;align-items:center;gap:6px">
+                    <span style="background:#1E3A8A;color:white;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px">ต้น</span>
+                    <span>👨‍🏫 ${escapeHtml(item.repliedBy || 'พี่ต้น INBIOLOGY (ผู้สอน)')}</span>
+                    <span style="background:#DCFCE7;color:#15803D;font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:4px">✓ ตอบแล้ว</span>
+                  </div>
+                  <span style="font-size:10.5px;color:#64748B">${item.repliedAt || ''}</span>
+                </div>
+                <div style="word-break:break-word;color:#1E293B;font-weight:600;white-space:pre-wrap">${escapeHtml(item.reply)}</div>
+              </div>
+            ` : `
+              <!-- Pending status banner -->
+              <div style="align-self:flex-start;max-width:95%;background:#F8FAFC;border:1px dashed #CBD5E1;color:#64748B;padding:10px 14px;border-radius:14px 14px 14px 2px;font-size:12px;line-height:1.5">
+                <div style="display:flex;align-items:center;gap:6px;font-weight:700;color:#475569;margin-bottom:2px">
+                  <span>⏳ พี่ต้นได้รับคำถามแล้ว</span>
+                  <span style="font-size:10px;color:#94A3B8">• กำลังรอคำตอบจากผู้สอน</span>
+                </div>
+                <div style="font-size:11.5px;color:#64748B">
+                  พี่ต้นจะเข้ามาตอบคลายข้อสงสัยให้น้องในกล่องข้อความนี้โดยตรงครับ
+                </div>
+              </div>
+            `}
+
+            <!-- Admin / Kru Ton Direct In-line Reply Section -->
+            <div class="admin-reply-section" style="margin-top:6px;border-top:1px dashed #E2E8F0;padding-top:8px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+                <span style="font-size:10.5px;font-weight:800;color:#991B1B;display:flex;align-items:center;gap:4px">
+                  <span>👑 แอดมิน / พี่ต้น</span>
+                </span>
+                <button type="button" onclick="toggleAdminReplyInput('${item.id}')" style="background:#FEE2E2;color:#991B1B;border:1px solid #FECACA;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
+                  ${isAnswered ? '✏️ แก้ไขคำตอบ' : '✍️ ตอบกลับคำถามนี้ (ในฐานะพี่ต้น)'}
+                </button>
+              </div>
+
+              <div id="admin-reply-box-${item.id}" style="display:${(isAdmin && !isAnswered) ? 'flex' : 'none'};flex-direction:column;gap:8px;background:white;border:1.5px solid #FCA5A5;border-radius:12px;padding:12px">
+                <textarea id="admin-reply-text-${item.id}" placeholder="พิมพ์คำตอบจากพี่ต้นเพื่ออธิบายให้น้อง ${escapeHtml(item.studentName || '')} ตรงนี้ได้เลย..." style="width:100%;height:80px;border:1px solid #CBD5E1;border-radius:8px;padding:10px 12px;font-family:inherit;font-size:12.5px;outline:none;resize:vertical;line-height:1.5">${isAnswered ? escapeHtml(item.reply) : ''}</textarea>
+                <div style="display:flex;justify-content:flex-end;gap:8px">
+                  <button type="button" onclick="toggleAdminReplyInput('${item.id}')" style="background:#F1F5F9;color:#64748B;border:none;padding:7px 14px;border-radius:8px;font-size:11.5px;font-weight:800;cursor:pointer">
+                    ยกเลิก
+                  </button>
+                  <button type="button" onclick="submitAdminReply('${item.id}')" style="background:#B91C1C;color:white;border:none;padding:7px 18px;border-radius:8px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(185,28,28,0.25)">
+                    ✓ ส่งคำตอบให้น้อง
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function toggleAdminReplyInput(itemId) {
+      const box = document.getElementById(`admin-reply-box-${itemId}`);
+      if (!box) return;
+      const isHidden = box.style.display === 'none' || !box.style.display;
+      box.style.display = isHidden ? 'flex' : 'none';
+      if (isHidden) {
+        const ta = document.getElementById(`admin-reply-text-${itemId}`);
+        if (ta) setTimeout(() => ta.focus(), 60);
+      }
+    }
+
+    async function submitAdminReply(itemId) {
+      const ta = document.getElementById(`admin-reply-text-${itemId}`);
+      if (!ta) return;
+      const replyText = ta.value.trim();
+      if (!replyText) {
+        showToast('กรุณาพิมพ์คำตอบก่อนกดส่งครับ', 'warning');
+        ta.focus();
+        return;
+      }
+
+      const cId = currentCourse ? currentCourse.id : 'general';
+      const list = getCourseQuestions(cId);
+      const target = list.find(x => String(x.id) === String(itemId));
+      if (!target) {
+        showToast('ไม่พบคำถามนี้ในระบบ', 'error');
+        return;
+      }
+
+      const now = new Date();
+      const timeStr = now.toLocaleDateString('th-TH', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' });
+
+      target.status = 'answered';
+      target.reply = replyText;
+      target.repliedBy = 'พี่ต้น INBIOLOGY (ผู้สอน)';
+      target.repliedAt = timeStr;
+
+      saveCourseQuestions(cId, list);
+      showToast(`ส่งคำตอบถึงน้อง${target.studentName || ''} เรียบร้อยแล้ว`, 'success');
+      renderQuestionsList(list);
+    }
+
+    function sendQuestionToInstructor() {
+      const input = document.getElementById('ask-question-input');
+      if (!input) return;
+      const q = input.value.trim();
+      if (!q) {
+        showToast('กรุณาพิมพ์ข้อความคำถามก่อนกดส่งครับ', 'warning');
+        input.focus();
+        return;
+      }
+
+      const profile = (typeof AppState !== 'undefined' && typeof AppState.getStudentProfile === 'function') 
+        ? AppState.getStudentProfile() 
+        : null;
+      const studentName = profile ? (profile.nickname || profile.name || 'น้องนักเรียน') : 'น้องนักเรียน';
+      const studentEmail = profile ? (profile.email || '') : '';
+      const now = new Date();
+      const timeStr = now.toLocaleDateString('th-TH', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' });
+      const currentLessonTitle = currentLesson ? currentLesson.title : (currentCourse ? currentCourse.title : 'บทเรียนนี้');
+      const cId = currentCourse ? currentCourse.id : 'general';
+
+      const list = getCourseQuestions(cId);
+
+      const newItem = {
+        id: 'q_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+        studentName: studentName,
+        studentEmail: studentEmail,
+        courseId: cId,
+        courseTitle: currentCourse ? currentCourse.title : 'คอร์สเรียน',
+        lessonId: currentLesson ? currentLesson.id : '',
+        lessonTitle: currentLessonTitle,
+        question: q,
+        time: timeStr,
+        createdAt: new Date().toISOString(),
+        status: 'pending',
+        reply: null,
+        repliedBy: null,
+        repliedAt: null
+      };
+
+      list.push(newItem);
+      saveCourseQuestions(cId, list);
+
+      input.value = '';
+      showToast('ส่งคำถามถึงพี่ต้นเรียบร้อยแล้วครับ', 'success');
+      renderQuestionsList(list);
     }
 
     function getNotesStorageKey() {
       const userKey = (typeof AppState !== 'undefined' && typeof AppState.getUserStorageKey === 'function') 
         ? AppState.getUserStorageKey() 
         : 'guest';
-      return 'inbiology_notes_' + userKey;
+      const cId = currentCourse ? currentCourse.id : 'general';
+      return 'inbiology_notes_' + userKey + '_' + cId;
     }
 
-    function saveNote() {
-      const text = document.getElementById('note-input').value.trim();
-      if (!text) return;
+    function loadLessonNote() {
+      const input = document.getElementById('lesson-notes-input');
+      const statusEl = document.getElementById('notes-saved-status');
+      if (!input) return;
       const key = getNotesStorageKey();
-      const notes = JSON.parse(localStorage.getItem(key) || '[]');
-      notes.push({ id: Date.now(), courseTitle: currentCourse.title, lessonTitle: currentLesson ? currentLesson.title : currentCourse.title, text });
-      localStorage.setItem(key, JSON.stringify(notes));
-      document.getElementById('note-input').value = '';
-      showToast('บันทึกโน้ตย่อสำเร็จ', 'success');
-      renderNotes();
-    }
-
-    function renderNotes() {
-      const key = getNotesStorageKey();
-      const notes = JSON.parse(localStorage.getItem(key) || '[]');
-      const container = document.getElementById('saved-notes-list');
-      if (!container) return;
-      if (notes.length === 0) {
-        container.innerHTML = `<p style="color:#9CA3AF;font-size:11.5px;margin:0">ยังไม่มีโน้ตย่อที่บันทึกไว้ในบทนี้</p>`;
-        return;
+      let notes = {};
+      try {
+        notes = JSON.parse(localStorage.getItem(key) || '{}');
+      } catch(e) {
+        notes = {};
       }
-      container.innerHTML = notes.map(n => `
-        <div style="background:#F9FAFB;padding:10px 14px;border-radius:10px;border:1px solid #E5E7EB;font-size:12px">
-          <span style="font-weight:800;color:var(--c-sky);display:block">${n.lessonTitle}</span>
-          <p style="margin:4px 0 0;color:#374151">${n.text}</p>
-        </div>
-      `).join('');
+      const lessonKey = currentLesson ? currentLesson.id : 'course_general';
+      
+      input.value = (notes[lessonKey] && notes[lessonKey].text) ? notes[lessonKey].text : '';
+      if (statusEl) {
+        if (notes[lessonKey] && notes[lessonKey].updatedAt) {
+          statusEl.textContent = `บันทึกล่าสุด: ${notes[lessonKey].updatedAt} น.`;
+          statusEl.style.color = '#059669';
+        } else {
+          statusEl.textContent = 'บันทึกอัตโนมัติ';
+          statusEl.style.color = '#9CA3AF';
+        }
+      }
     }
+
+    function saveCurrentLessonNotes() {
+      const input = document.getElementById('lesson-notes-input');
+      if (!input) return;
+      const text = input.value.trim();
+      const key = getNotesStorageKey();
+      let notes = {};
+      try {
+        notes = JSON.parse(localStorage.getItem(key) || '{}');
+      } catch(e) {
+        notes = {};
+      }
+      const lessonKey = currentLesson ? currentLesson.id : 'course_general';
+      
+      const nowStr = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
+      notes[lessonKey] = {
+        text: text,
+        lessonTitle: currentLesson ? currentLesson.title : (currentCourse ? currentCourse.title : 'บทเรียน'),
+        updatedAt: nowStr
+      };
+      localStorage.setItem(key, JSON.stringify(notes));
+
+      const statusEl = document.getElementById('notes-saved-status');
+      if (statusEl) {
+        statusEl.textContent = `✓ บันทึกสำเร็จ (${nowStr} น.)`;
+        statusEl.style.color = '#059669';
+      }
+      showToast('บันทึกโน้ตย่อประจำตอนนี้สำเร็จ', 'success');
+    }
+
+    // Export aliases for backwards compatibility
+    window.sendQuestionToInstructor = sendQuestionToInstructor;
+    window.handleAskQuestion = sendQuestionToInstructor;
+    window.saveCurrentLessonNotes = saveCurrentLessonNotes;
+    window.saveNote = saveCurrentLessonNotes;
+    window.renderNotes = loadLessonNote;
+    window.toggleAdminReplyInput = toggleAdminReplyInput;
+    window.submitAdminReply = submitAdminReply;
 
     async function refreshClassroomLessonsFromCloud() {
       showToast('กำลังตรวจสอบคลิปวิดีโอล่าสุดจาก Cloud...', 'info');
@@ -875,6 +1269,21 @@
         showToast('ไม่สามารถเชื่อมต่อคลาวด์ได้ในขณะนี้', 'warning');
       }
     }
+
+    // 🛡️ Anti-Inspect & Devtools Shortcut Blockers in Classroom View
+    document.addEventListener('keydown', (e) => {
+      if (
+        e.key === 'F12' || 
+        ((e.ctrlKey || e.metaKey) && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S')) ||
+        ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'i' || e.key === 'I' || e.key === 'j' || e.key === 'J' || e.key === 'c' || e.key === 'C'))
+      ) {
+        const videoView = document.getElementById('video-classroom-view');
+        if (videoView && videoView.style.display !== 'none') {
+          e.preventDefault();
+          return false;
+        }
+      }
+    });
   </script>
 </body>
 </html>

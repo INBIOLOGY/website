@@ -232,6 +232,18 @@
         }
       }
 
+      const renewParam = urlParams.get('renew');
+      if (renewParam) {
+        const found = COURSES.find(x => x.id === renewParam);
+        if (found) {
+          AppState.addToCart(found);
+          if (typeof showToast === 'function') {
+            showToast(`เพิ่ม "${found.title}" ลงในตะกร้าเพื่อต่ออายุ 365 วันแล้ว`, 'success');
+          }
+          setTimeout(() => { if (typeof openCartDrawer === 'function') openCartDrawer(); }, 400);
+        }
+      }
+
       const categoryLabelsMap = {
         all: 'แสดงทุกหมวดหมู่',
         'bio-intensive': '🧬 Bio Intensive (ม.4 - ม.6)',
@@ -274,7 +286,9 @@
         }
 
         grid.innerHTML = filtered.map((c, idx) => {
-          const isEnrolled = AppState.isEnrolled ? AppState.isEnrolled(c.id) : AppState.enrolled.includes(c.id);
+          const isEnrolled = AppState.isEnrolled ? AppState.isEnrolled(c.id) : (AppState.enrolled && AppState.enrolled.includes(c.id));
+          const isExpired = typeof AppState.isCourseExpired === 'function' ? AppState.isCourseExpired(c.id) : false;
+          const enrollInfo = typeof AppState.getCourseEnrollment === 'function' ? AppState.getCourseEnrollment(c.id) : null;
           const discountPercent = Math.round((1 - c.price / c.originalPrice) * 100);
           return `
             <div class="course-card" data-reveal data-delay="${(idx % 4) * 0.08}s" style="background:white;border:1px solid #E5E7EB;border-radius:24px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.04);display:flex;flex-direction:column">
@@ -313,6 +327,14 @@
                 </h3>
 
                 <p style="font-size:11px;color:#6B7280;margin:0">ผู้สอน: ${c.instructor}</p>
+
+                <!-- Course Expiry Display Badge (365 Days) -->
+                ${enrollInfo ? `
+                  <div style="background:${isExpired ? '#FEF2F2' : (enrollInfo.daysLeft <= 15 ? '#FFFBEB' : '#EFF6FF')};border:1px solid ${isExpired ? '#FECACA' : (enrollInfo.daysLeft <= 15 ? '#FDE68A' : '#BFDBFE')};border-radius:8px;padding:5px 8px;font-size:10.5px;font-weight:800;color:${isExpired ? '#DC2626' : (enrollInfo.daysLeft <= 15 ? '#D97706' : '#1E3A8A')};display:flex;align-items:center;justify-content:space-between">
+                    <span>${isExpired ? '❌ หมดอายุแล้ว' : `⏳ เหลืออีก ${enrollInfo.daysLeft} วัน`}</span>
+                    <span style="font-size:10px;color:#64748B;font-weight:600">${isExpired ? `หมดเมื่อ ${enrollInfo.formattedExpiresAt}` : `หมดอายุ ${enrollInfo.formattedExpiresAt}`}</span>
+                  </div>
+                ` : ''}
 
                 <!-- Bullet points of topics covered in this specific course -->
                 ${c.topicHighlights ? `
@@ -353,9 +375,19 @@
                     <button onclick="openCourseModal(COURSES.find(x=>x.id==='${c.id}'))" style="background:none;border:none;color:#1E3A8A;font-weight:800;font-size:11.5px;cursor:pointer;padding:4px 6px">
                       รายละเอียด
                     </button>
-                    <button onclick="${isEnrolled ? `location.href='classroom.html?course=${c.id}'` : `AppState.addToCart(COURSES.find(x=>x.id==='${c.id}'))`}" style="padding:8px 14px;border-radius:10px;font-size:11px;font-weight:800;background:${isEnrolled ? '#10B981' : '#EF4444'};color:white;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
-                      ${isEnrolled ? 'เข้าเรียน' : 'สมัครเรียน'}
-                    </button>
+                    ${isExpired ? `
+                      <button onclick="AppState.addToCart(COURSES.find(x=>x.id==='${c.id}'));showToast('เพิ่มคอร์สลงในตะกร้าเพื่อต่ออายุ 365 วันแล้ว','success')" style="padding:8px 14px;border-radius:10px;font-size:11px;font-weight:800;background:#DC2626;color:white;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(220,38,38,0.25)">
+                        🔄 ต่ออายุคอร์ส
+                      </button>
+                    ` : (isEnrolled ? `
+                      <button onclick="location.href='classroom.html?course=${c.id}'" style="padding:8px 14px;border-radius:10px;font-size:11px;font-weight:800;background:#10B981;color:white;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
+                        ✓ เข้าเรียน
+                      </button>
+                    ` : `
+                      <button onclick="AppState.addToCart(COURSES.find(x=>x.id==='${c.id}'))" style="padding:8px 14px;border-radius:10px;font-size:11px;font-weight:800;background:#EF4444;color:white;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
+                        สมัครเรียน
+                      </button>
+                    `)}
                   </div>
                 </div>
               </div>

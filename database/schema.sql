@@ -60,6 +60,12 @@ CREATE TABLE IF NOT EXISTS users (
     role VARCHAR(20) DEFAULT 'student',              -- 'student' | 'admin' | 'instructor'
     avatar_url TEXT,                                 -- Profile image URL
     is_active BOOLEAN DEFAULT TRUE,
+
+    -- Single Device Session Enforcement
+    current_session_token VARCHAR(255),              -- Session token for 1-device-per-account security
+    last_device_info TEXT,                           -- Client User-Agent / Device
+    last_active_at TIMESTAMP WITH TIME ZONE,         -- Heartbeat timestamp
+
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -107,7 +113,7 @@ CREATE TABLE IF NOT EXISTS oauth_accounts (
 );
 
 CREATE INDEX IF NOT EXISTS idx_oauth_accounts_lookup 
-    ON oauth_accounts (provider, provider_user_id);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ON oauth_accounts (provider, provider_user_id);
 
 -- =============================================================================
 -- 4. TABLE: orders (Payment Orders with Slip Verification)
@@ -138,6 +144,7 @@ CREATE TABLE IF NOT EXISTS orders (
     admin_note TEXT,                            -- Admin's reason for rejection (optional)
     reviewed_by VARCHAR(100),                   -- Admin name who approved/rejected
     approved_at TIMESTAMP WITH TIME ZONE,
+    expires_at TIMESTAMP WITH TIME ZONE,        -- วันหมดอายุคอร์ส (365 วันนับจากวันอนุมัติ)
 
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -233,5 +240,13 @@ GRANT ALL ON ALL ROUTINES IN SCHEMA public TO anon, authenticated, service_role;
 -- Ensure future tables also inherit these permissions automatically
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO anon, authenticated, service_role;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO anon, authenticated, service_role;
+
+-- =============================================================================
+-- 8. COMPATIBILITY MIGRATIONS FOR EXISTING DATABASES
+-- =============================================================================
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS current_session_token VARCHAR(255);
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS last_device_info TEXT;
+ALTER TABLE public.users ADD COLUMN IF NOT EXISTS last_active_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS expires_at TIMESTAMP WITH TIME ZONE;
 
 
