@@ -911,6 +911,7 @@ h6 {
     gap: 10px !important;
     margin-top: 0 !important;
     width: 100% !important;
+    max-width: 420px !important;
     justify-content: center !important;
   }
 
@@ -919,14 +920,24 @@ h6 {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 14px !important;
+    font-size: 13.5px !important;
     font-weight: 850 !important;
-    padding: 0 28px !important;
+    padding: 0 16px !important;
     border-radius: 12px !important;
     white-space: nowrap !important;
     box-sizing: border-box !important;
-    flex: 0 1 auto !important;
+    flex: 1 1 50% !important;
+  }
+
+  .hero-actions-row .hero-btn-primary {
     box-shadow: 0 6px 18px rgba(239, 68, 68, 0.4) !important;
+  }
+
+  .hero-actions-row .hero-btn-secondary {
+    background: rgba(59, 130, 246, 0.35) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.7) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15) !important;
+    color: white !important;
   }
 
   /* Stats grid on mobile - Sleek glass pill below the buttons */
