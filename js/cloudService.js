@@ -1492,16 +1492,20 @@ const CloudService = window.CloudService = {
     // 1. Update order status in Supabase
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
-        await this._supabaseFetch(`/orders?id=eq.${orderId}`, {
+        const patchPayload = {
+          status: 'approved',
+          reviewed_by: adminName,
+          approved_at: approvedAt,
+          updated_at: approvedAt
+        };
+        const sbRes = await this._supabaseFetch(`/orders?id=eq.${orderId}`, {
           method: 'PATCH',
-          body: JSON.stringify({
-            status: 'approved',
-            reviewed_by: adminName,
-            approved_at: approvedAt,
-            expires_at: expiresAt,
-            updated_at: approvedAt
-          })
+          body: JSON.stringify(patchPayload)
         });
+        if (sbRes && sbRes.error) {
+          console.error('[approveOrder Supabase Error]:', sbRes.error);
+          throw new Error(sbRes.error.message || 'ไม่สามารถอัปเดตสถานะออเดอร์ใน Supabase ได้');
+        }
 
         // 2. Add courses to the student's Supabase user record
         // First fetch current enrolled array
@@ -1519,6 +1523,7 @@ const CloudService = window.CloudService = {
         console.log('☁️ [Supabase Cloud] Order approved & enrollment updated (365 days):', orderId);
       } catch(err) {
         console.warn('[approveOrder Supabase Error]:', err);
+        throw err;
       }
     }
 
@@ -1606,17 +1611,21 @@ const CloudService = window.CloudService = {
 
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
-        await this._supabaseFetch(`/orders?id=eq.${orderId}`, {
+        const patchPayload = {
+          status: 'pending',
+          reviewed_by: null,
+          approved_at: null,
+          admin_note: null,
+          updated_at: now
+        };
+        const sbRes = await this._supabaseFetch(`/orders?id=eq.${orderId}`, {
           method: 'PATCH',
-          body: JSON.stringify({
-            status: 'pending',
-            reviewed_by: null,
-            approved_at: null,
-            expires_at: null,
-            admin_note: null,
-            updated_at: now
-          })
+          body: JSON.stringify(patchPayload)
         });
+        if (sbRes && sbRes.error) {
+          console.error('[revertOrderToPending Supabase Error]:', sbRes.error);
+          throw new Error(sbRes.error.message || 'ไม่สามารถเปลี่ยนสถานะออเดอร์ใน Supabase ได้');
+        }
 
         // Revoke courses from user record if no other approved order includes them
         if (userEmail && courseIds && courseIds.length > 0) {
@@ -1728,9 +1737,9 @@ const CloudService = window.CloudService = {
       }
 
       try {
-        // 2. Fetch course_ids, approved_at, expires_at, created_at from all approved orders for this student
+        // 2. Fetch course_ids, approved_at, created_at from all approved orders for this student
         const orderRows = await this._supabaseFetch(
-          `/orders?user_email=eq.${encodeURIComponent(cleanEmail)}&status=eq.approved&select=id,course_ids,approved_at,expires_at,created_at`
+          `/orders?user_email=eq.${encodeURIComponent(cleanEmail)}&status=eq.approved&select=id,course_ids,approved_at,created_at`
         );
         if (orderRows && Array.isArray(orderRows) && orderRows.length > 0) {
           hasOrderOrUserSource = true;
