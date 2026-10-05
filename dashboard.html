@@ -110,6 +110,22 @@
       <div data-reveal data-delay="0.1s" style="display:flex;flex-direction:column;gap:20px">
 
         <!-- Profile Incomplete Alert Banner -->
+                <!-- Admin Access Shortcut Banner -->
+        <div id="dashboard-admin-banner" style="display:none;background:linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);border:1.5px solid #93C5FD;border-radius:16px;padding:14px 20px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:0 4px 14px rgba(30,58,138,0.06)">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:40px;height:40px;border-radius:12px;background:#1E3A8A;color:white;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">
+              🛡️
+            </div>
+            <div>
+              <div style="font-size:13.5px;font-weight:900;color:var(--c-navy)">คุณได้รับสิทธิ์ผู้ดูแลระบบ (Admin)</div>
+              <div style="font-size:11.5px;color:#475569;margin-top:2px">จัดการคอร์สเรียน ตรวจสลิปโอนเงิน รายชื่อนักเรียน และแบนเนอร์โปรโมชั่น</div>
+            </div>
+          </div>
+          <a href="admin.html" style="background:#1E3A8A;color:white;text-decoration:none;border-radius:10px;padding:9px 18px;font-size:12px;font-weight:900;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(30,58,138,0.25);transition:all 0.2s">
+            เข้าสู่แดชบอร์ดแอดมิน (Admin CMS) ➔
+          </a>
+        </div>
+
         <div id="incomplete-profile-banner" style="display:none;background:#FEF2F2;border:1.5px solid #FCA5A5;border-radius:16px;padding:16px 20px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
           <div style="display:flex;align-items:center;gap:12px">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -472,6 +488,12 @@
       renderNotes();
       renderFAQs();
       updateProfileIncompleteBanner();
+      function updateDashboardAdminBanner() {
+        const b = document.getElementById('dashboard-admin-banner');
+        if (b) b.style.display = (AppState.userRole === 'admin') ? 'flex' : 'none';
+      }
+      updateDashboardAdminBanner();
+      window.addEventListener('inbiology_role_updated', updateDashboardAdminBanner);
 
       // 🔄 BACKGROUND ASYNC SYNC: Sync latest cloud enrollments & profile without blocking UI
       const profile = AppState.getStudentProfile();

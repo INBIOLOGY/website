@@ -1220,24 +1220,58 @@
 
       // 2. If already logged in, redirect away safely
       if (AppState.isLoggedIn()) {
-        if (redirectUrl) {
-          // CRITICAL INFINITE LOOP PREVENTION:
-          // If destination is admin.html, but current user is NOT an admin,
-          // NEVER redirect to admin.html! That triggers the ping-pong reload loop!
-          if (redirectUrl.includes('admin') && AppState.userRole !== 'admin') {
-            console.warn('[Auth Guard] Blocked ping-pong loop: user is not admin.');
-            showToast('บัญชีปัจจุบันของคุณไม่ได้รับสิทธิ์แอดมิน กรุณาเข้าสู่ระบบด้วยบัญชีแอดมิน หรือเข้าสู่หน้าแดชบอร์ดนักเรียน', 'warning');
-            setTimeout(() => {
-              location.replace('dashboard.html');
-            }, 1200);
-            return;
+        (async () => {
+          if (redirectUrl) {
+            if (redirectUrl.includes('admin') && AppState.userRole !== 'admin') {
+              const profile = AppState.getStudentProfile();
+              const curEmail = profile ? profile.email : (localStorage.getItem('inbiology_user_email') || '');
+              if (curEmail && window.CloudService && typeof window.CloudService.fetchUserRole === 'function') {
+                try {
+                  const verified = await window.CloudService.fetchUserRole(curEmail);
+                  if (verified === 'admin') {
+                    AppState.userRole = 'admin';
+                    localStorage.setItem('inbiology_role', 'admin');
+                    if (profile) {
+                      profile.role = 'admin';
+                      AppState.saveStudentProfile(profile);
+                    }
+                    location.replace('admin.html');
+                    return;
+                  }
+                } catch(e){}
+              }
+              console.warn('[Auth Guard] Blocked ping-pong loop: user is not admin.');
+              showToast('บัญชีปัจจุบันของคุณไม่ได้รับสิทธิ์แอดมิน กรุณาเข้าสู่ระบบด้วยบัญชีแอดมิน หรือเข้าสู่หน้าแดชบอร์ดนักเรียน', 'warning');
+              setTimeout(() => {
+                location.replace('dashboard.html');
+              }, 1200);
+              return;
+            }
+            location.replace(redirectUrl);
+          } else if (AppState.userRole === 'admin') {
+            location.replace('admin.html');
+          } else {
+            // Check cloud role before defaulting to dashboard
+            const profile = AppState.getStudentProfile();
+            const curEmail = profile ? profile.email : (localStorage.getItem('inbiology_user_email') || '');
+            if (curEmail && window.CloudService && typeof window.CloudService.fetchUserRole === 'function') {
+              try {
+                const verified = await window.CloudService.fetchUserRole(curEmail);
+                if (verified === 'admin') {
+                  AppState.userRole = 'admin';
+                  localStorage.setItem('inbiology_role', 'admin');
+                  if (profile) {
+                    profile.role = 'admin';
+                    AppState.saveStudentProfile(profile);
+                  }
+                  location.replace('admin.html');
+                  return;
+                }
+              } catch(e){}
+            }
+            location.replace('dashboard.html');
           }
-          location.replace(redirectUrl);
-        } else if (AppState.userRole === 'admin') {
-          location.replace('admin.html');
-        } else {
-          location.replace('dashboard.html');
-        }
+        })();
         return;
       }
       initGoogleSignIn();

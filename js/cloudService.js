@@ -607,10 +607,13 @@ const CloudService = window.CloudService = {
             instagram: sbUser.instagram || '',
             lineId: sbUser.line_id || '',
             facebook: sbUser.facebook || '',
-            role: this.isSuperAdminEmail(sbUser.email) ? 'admin' : (sbUser.role || 'student'),
+            role: (this.isSuperAdminEmail(sbUser.email) || sbUser.role === 'admin') ? 'admin' : (sbUser.role || 'student'),
             linkedProviders: [],
             enrolled: (sbUser.enrolled && Array.isArray(sbUser.enrolled)) ? sbUser.enrolled : []
           };
+          if (userProfile.role === 'admin') {
+            this._syncRoleToMapSilently(userProfile.email, 'admin');
+          }
           AppState.userRole = userProfile.role;
           sessionStorage.setItem('inbiology_session_active', 'true');
           localStorage.setItem('inbiology_role', AppState.userRole);
@@ -717,7 +720,23 @@ const CloudService = window.CloudService = {
 
     if (sbUser || localUser) {
       // User exists! Hydrate latest data from Supabase & Cloud Roles Map
-      const finalRole = isSuper ? 'admin' : (cloudRoleOverride || (sbUser && sbUser.role) || (localUser && localUser.role) || 'student');
+      let finalRole = 'student';
+      if (isSuper) {
+        finalRole = 'admin';
+      } else if (sbUser && sbUser.role === 'admin') {
+        finalRole = 'admin';
+      } else if (cloudRoleOverride === 'admin') {
+        finalRole = 'admin';
+      } else if (sbUser && sbUser.role) {
+        finalRole = sbUser.role;
+      } else if (localUser && localUser.role) {
+        finalRole = localUser.role;
+      } else if (cloudRoleOverride) {
+        finalRole = cloudRoleOverride;
+      }
+      if (finalRole === 'admin') {
+        this._syncRoleToMapSilently(googleEmail, 'admin');
+      }
       const finalId = (sbUser && sbUser.id) || (localUser && localUser.id) || ('user-google-' + Date.now().toString(36));
       const finalFullName = (localUser && localUser.fullName && localUser.fullName !== 'ผู้ใช้งาน Google') 
         ? localUser.fullName 
@@ -1072,7 +1091,27 @@ const CloudService = window.CloudService = {
   },
 
   /**
-   * Fetch current user role with multi-tier cloud validation (with 60s memory caching)
+   * Helper to silently keep user_roles_map in sync for cross-device bridge
+   * @param {string} email
+   * @param {string} role
+   */
+  async _syncRoleToMapSilently(email, role) {
+    if (!email || !window.isSupabaseConfigured || !window.isSupabaseConfigured()) return;
+    try {
+      const clean = email.toLowerCase().trim();
+      let rolesMap = (await this.fetchSiteContent('user_roles_map')) || {};
+      if (typeof rolesMap !== 'object' || Array.isArray(rolesMap)) rolesMap = {};
+      if (rolesMap[clean] !== role) {
+        rolesMap[clean] = role;
+        await this.saveSiteContent('user_roles_map', rolesMap);
+        console.log('☁️ [Supabase Cloud] Silently synced role to user_roles_map:', clean, '->', role);
+      }
+    } catch(e) {}
+  },
+
+  /**
+   * Fetch current user role with multi-tier cloud validation
+   * Prioritizes authoritative /users table, backed by user_roles_map bridge
    * @param {string} email
    */
   async fetchUserRole(email) {
@@ -1080,12 +1119,42 @@ const CloudService = window.CloudService = {
     const clean = email.toLowerCase().trim();
     if (this.isSuperAdminEmail(clean)) return 'admin';
 
-    // Check memory cache first (60s TTL)
-    if (this._userRoleCache[clean] && (Date.now() - this._userRoleCache[clean].time < 60000)) {
-      return this._userRoleCache[clean].role;
+    // Check memory cache first (60s TTL for admin, 10s TTL for student)
+    if (this._userRoleCache[clean]) {
+      const entry = this._userRoleCache[clean];
+      const ttl = entry.role === 'admin' ? 60000 : 10000;
+      if (Date.now() - entry.time < ttl) {
+        return entry.role;
+      }
     }
 
-    // 1. Check user_roles_map in site_content (Fastest & multi-device bridge)
+    // 1. Check user_roles_map bridge first (Fastest cross-device sync)
+    try {
+      const map = await this.fetchSiteContent('user_roles_map');
+      if (map && typeof map === 'object' && map[clean] === 'admin') {
+        this._userRoleCache[clean] = { role: 'admin', time: Date.now() };
+        return 'admin';
+      }
+    } catch(e){}
+
+    // 2. Query /users table in Supabase Cloud (Authoritative database)
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        const rows = await this._supabaseFetch(`/users?email=ilike.${encodeURIComponent(clean)}&select=role&limit=1`, { timeout: 8000 });
+        if (rows && Array.isArray(rows) && rows.length > 0 && rows[0].role) {
+          const dbRole = rows[0].role;
+          this._userRoleCache[clean] = { role: dbRole, time: Date.now() };
+          if (dbRole === 'admin') {
+            this._syncRoleToMapSilently(clean, 'admin');
+          }
+          return dbRole;
+        }
+      } catch(e) {
+        console.warn('Supabase fetchUserRole note:', e);
+      }
+    }
+
+    // 3. Fallback bridge: Check user_roles_map again if DB query timed out
     try {
       const map = await this.fetchSiteContent('user_roles_map');
       if (map && typeof map === 'object' && map[clean]) {
@@ -1094,22 +1163,14 @@ const CloudService = window.CloudService = {
       }
     } catch(e){}
 
-    // 2. Query /users table
-    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
-      try {
-        const rows = await this._supabaseFetch(`/users?email=ilike.${encodeURIComponent(clean)}&select=role&limit=1`, { timeout: 3000 });
-        if (rows && Array.isArray(rows) && rows.length > 0 && rows[0].role) {
-          this._userRoleCache[clean] = { role: rows[0].role, time: Date.now() };
-          return rows[0].role;
-        }
-      } catch(e){}
-    }
-
-    // 3. Fallback to local DB
+    // 4. Fallback to local DB (do not cache for long if offline)
     const users = this._getUsersDb();
     const u = users.find(x => x.email && x.email.toLowerCase() === clean);
     const resolvedRole = (u && u.role) ? u.role : 'student';
-    this._userRoleCache[clean] = { role: resolvedRole, time: Date.now() };
+    // Only cache if admin, so if network restores, student status is re-evaluated quickly
+    if (resolvedRole === 'admin') {
+      this._userRoleCache[clean] = { role: resolvedRole, time: Date.now() };
+    }
     return resolvedRole;
   },
 
@@ -2349,7 +2410,7 @@ const CloudService = window.CloudService = {
               phone: r.phone_number || '-',
               school: r.school || '-',
               level: r.grade_level || 'ม.5',
-              role: (r.email && this.isSuperAdminEmail(r.email)) ? 'admin' : (mappedRole || r.role || 'student'),
+              role: (r.email && this.isSuperAdminEmail(r.email)) ? 'admin' : ((r.role === 'admin' || mappedRole === 'admin') ? 'admin' : (mappedRole || r.role || 'student')),
               createdAt: r.created_at
             };
           });
@@ -2372,7 +2433,7 @@ const CloudService = window.CloudService = {
           phone: s.phone || '08X-XXX-XXXX',
           school: s.school || '-',
           level: s.level || 'ม.5',
-          role: (s.email && this.isSuperAdminEmail(s.email)) ? 'admin' : (mappedRole || s.role || 'student'),
+          role: (s.email && this.isSuperAdminEmail(s.email)) ? 'admin' : ((s.role === 'admin' || mappedRole === 'admin') ? 'admin' : (mappedRole || s.role || 'student')),
           password: s.password
         };
       });
@@ -2430,6 +2491,12 @@ const CloudService = window.CloudService = {
 
     const finalTargetEmail = emailToMatch || (targetUser && targetUser.email ? targetUser.email.toLowerCase().trim() : '');
 
+    // Invalidate local in-memory role & profile caches immediately
+    if (finalTargetEmail) {
+      delete this._userRoleCache[finalTargetEmail];
+      delete this._userProfileCache[finalTargetEmail];
+    }
+
     // 2. Update in Supabase Cloud (/users table)
     if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
       try {
@@ -2458,9 +2525,13 @@ const CloudService = window.CloudService = {
       // 3. ALSO update user_roles_map in site_content (Bridge for multi-device sync!)
       if (finalTargetEmail) {
         try {
-          let rolesMap = (await this.fetchSiteContent('user_roles_map')) || {};
+          let rolesMap = (await this.fetchSiteContent('user_roles_map', true)) || {};
           if (typeof rolesMap !== 'object' || Array.isArray(rolesMap)) rolesMap = {};
-          rolesMap[finalTargetEmail] = newRole;
+          if (newRole === 'admin') {
+            rolesMap[finalTargetEmail] = 'admin';
+          } else {
+            delete rolesMap[finalTargetEmail];
+          }
           await this.saveSiteContent('user_roles_map', rolesMap);
           console.log('☁️ [Supabase Cloud] user_roles_map synced:', finalTargetEmail, '->', newRole);
         } catch(e) {

@@ -1056,6 +1056,12 @@
       // Initial render & live sync event listener
       window.renderRecommendedCourses();
       window.addEventListener('coursesUpdated', () => window.renderRecommendedCourses());
+      window.addEventListener('inbiology_role_updated', () => {
+        if (typeof renderHeader === 'function') renderHeader('home');
+        if (typeof window.renderRecommendedCourses === 'function') window.renderRecommendedCourses();
+        if (typeof window.renderFreeTrials === 'function') window.renderFreeTrials();
+        if (typeof window.renderArticles === 'function') window.renderArticles();
+      });
 
       // Initial render for Free Trials & Articles
       window.renderFreeTrials();

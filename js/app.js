@@ -290,6 +290,9 @@ const AppState = window.AppState = {
         localStorage.setItem('inbiology_role', 'admin');
         return 'admin';
       }
+      if (p.role === 'admin' || localStorage.getItem('inbiology_role') === 'admin') {
+        return 'admin';
+      }
     } catch(e) {}
     return localStorage.getItem('inbiology_role') || null;
   })(),
@@ -318,6 +321,9 @@ const AppState = window.AppState = {
             p.role = 'admin';
             this.userRole = 'admin';
             localStorage.setItem('inbiology_role', 'admin');
+          } else if (p.role === 'admin' || localStorage.getItem('inbiology_role') === 'admin') {
+            p.role = 'admin';
+            this.userRole = 'admin';
           }
         }
         return p;
@@ -349,7 +355,8 @@ const AppState = window.AppState = {
     const profile = this.getStudentProfile();
     if (!profile || !profile.email) return;
     const now = Date.now();
-    if (!force && this._lastProfileSyncTime && (now - this._lastProfileSyncTime < 120000)) {
+    // Only throttle if user is already recognized as admin; if not admin, check eager cloud role without throttle
+    if (!force && this.userRole === 'admin' && this._lastProfileSyncTime && (now - this._lastProfileSyncTime < 120000)) {
       return;
     }
     this._lastProfileSyncTime = now;
@@ -381,7 +388,34 @@ const AppState = window.AppState = {
           localStorage.setItem('inbiology_role', cloudRole);
           profile.role = cloudRole;
           this.saveStudentProfile(profile);
-          if (typeof renderHeader === 'function') renderHeader();
+          if (typeof renderHeader === 'function') {
+            const curPage = window.CURRENT_PAGE || (window.location.pathname.includes('courses') ? 'courses' : (window.location.pathname.includes('dashboard') ? 'dashboard' : (window.location.pathname.includes('classroom') ? 'classroom' : 'home')));
+            renderHeader(curPage);
+          }
+
+          // Broadcast event to notify all components
+          window.dispatchEvent(new CustomEvent('inbiology_role_updated', { detail: { role: cloudRole } }));
+
+          // Re-render components with admin capability if they exist on current page
+          if (cloudRole === 'admin') {
+            if (typeof window.renderCourses === 'function') {
+              try { window.renderCourses(); } catch(e){}
+            }
+            if (typeof window.filterAndRender === 'function') {
+              try { window.filterAndRender(); } catch(e){}
+            }
+            if (typeof window.renderRecommendedCourses === 'function') {
+              try { window.renderRecommendedCourses(); } catch(e){}
+            }
+            if (typeof window.renderFreeTrials === 'function') {
+              try { window.renderFreeTrials(); } catch(e){}
+            }
+            if (typeof window.renderArticles === 'function') {
+              try { window.renderArticles(); } catch(e){}
+            }
+            const dashBanner = document.getElementById('dashboard-admin-banner');
+            if (dashBanner) dashBanner.style.display = 'flex';
+          }
         }
       } catch(e) {}
     }

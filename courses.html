@@ -408,6 +408,10 @@
       window.addEventListener('coursesUpdated', () => {
         if (typeof window.filterAndRender === 'function') window.filterAndRender();
       });
+      window.addEventListener('inbiology_role_updated', () => {
+        if (typeof renderHeader === 'function') renderHeader('courses');
+        if (typeof window.filterAndRender === 'function') window.filterAndRender();
+      });
     });
   </script>
 </body>
