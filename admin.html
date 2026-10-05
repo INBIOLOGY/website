@@ -512,7 +512,7 @@
         <div style="background:white;border:1px solid #E5E7EB;border-radius:18px;padding:16px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.02)">
           <div style="position:relative;flex:1;min-width:260px">
             <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:14px;color:#94A3B8;pointer-events:none">🔍</span>
-            <input type="text" id="admin-order-search" oninput="handleOrderFilter()" placeholder="ค้นหาออเดอร์ (#รหัส, ชื่อนักเรียน, อีเมล, วิชา)..." style="width:100%;border:1.5px solid #E2E8F0;border-radius:12px;padding:10px 14px 10px 38px;font-size:12.5px;outline:none;background:#F8FAFC;transition:all 0.2s" onfocus="this.style.background='white';this.style.borderColor='var(--c-sky)'" onblur="this.style.background='#F8FAFC';this.style.borderColor='#E2E8F0'" />
+            <input type="text" id="admin-order-search" oninput="handleOrderFilter()" placeholder="ค้นหาออเดอร์ (#รหัส, ชื่อไทย/อังกฤษ, อีเมล, วิชา)..." style="width:100%;border:1.5px solid #E2E8F0;border-radius:12px;padding:10px 14px 10px 38px;font-size:12.5px;outline:none;background:#F8FAFC;transition:all 0.2s" onfocus="this.style.background='white';this.style.borderColor='var(--c-sky)'" onblur="this.style.background='#F8FAFC';this.style.borderColor='#E2E8F0'" />
           </div>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
             <button type="button" onclick="setOrderFilterStatus('all')" id="ofilter-all" style="padding:7px 14px;border-radius:999px;font-size:11.5px;font-weight:800;border:1px solid var(--c-navy);background:var(--c-navy);color:white;cursor:pointer">ทั้งหมด</button>
@@ -739,7 +739,7 @@
           </div>
           <div style="position:relative;min-width:260px;flex:1;max-width:380px">
             <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:13px;color:#94A3B8;pointer-events:none">🔍</span>
-            <input type="text" id="admin-student-search" oninput="handleStudentSearch()" placeholder="ค้นหานักเรียน (ชื่อ, อีเมล, โรงเรียน)..." style="width:100%;border:1.5px solid #E2E8F0;border-radius:12px;padding:9px 14px 9px 38px;font-size:12px;outline:none;background:#F8FAFC;transition:all 0.2s" onfocus="this.style.background='white';this.style.borderColor='var(--c-sky)'" onblur="this.style.background='#F8FAFC';this.style.borderColor='#E2E8F0'" />
+            <input type="text" id="admin-student-search" oninput="handleStudentSearch()" placeholder="ค้นหาชื่อไทย, ชื่ออังกฤษ, ชื่อเล่น, อีเมล, โรงเรียน, หรือชื่อในสลิป..." style="width:100%;border:1.5px solid #E2E8F0;border-radius:12px;padding:9px 14px 9px 38px;font-size:12px;outline:none;background:#F8FAFC;transition:all 0.2s" onfocus="this.style.background='white';this.style.borderColor='var(--c-sky)'" onblur="this.style.background='#F8FAFC';this.style.borderColor='#E2E8F0'" />
           </div>
         </div>
 
@@ -1140,6 +1140,7 @@
               <div style="font-size:10px;font-weight:800;color:#64748B;text-transform:uppercase">👤 นักเรียน</div>
               <div id="modal-student-name" style="font-weight:900;color:var(--c-navy);font-size:13px"></div>
               <div id="modal-student-email" style="color:#64748B;font-size:11px"></div>
+              <div id="modal-student-reg-info" style="display:none;margin-top:5px;font-size:11px;color:#1E3A8A;background:#DBEAFE;border:1px solid #BFDBFE;padding:4px 8px;border-radius:6px"></div>
             </div>
             <div style="border-top:1px solid #E2E8F0;padding-top:6px">
               <div style="font-size:10px;font-weight:800;color:#64748B;text-transform:uppercase">📚 คอร์สที่ซื้อ</div>
@@ -1200,6 +1201,7 @@
           <div>
             <label style="display:block;font-size:11px;font-weight:800;color:#374151;margin-bottom:4px">ชื่อจริง - นามสกุล</label>
             <input type="text" id="admin-edit-fullname" required style="width:100%;border:1px solid #D1D5DB;border-radius:8px;padding:8px 12px;font-size:12px;outline:none" />
+            <div id="admin-edit-fullname-hint" style="display:none;margin-top:6px"></div>
           </div>
         </div>
 
@@ -3505,6 +3507,68 @@
     // ─── REAL ORDERS from Supabase ───────────────────────────────────────────
     let _ordersCache = [];
 
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function getKnownStudentsList() {
+      if (Array.isArray(studentListCache) && studentListCache.length > 0) return studentListCache;
+      if (window.CloudService && typeof window.CloudService._getUsersDb === 'function') {
+        const local = window.CloudService._getUsersDb();
+        if (Array.isArray(local) && local.length > 0) return local;
+      }
+      try {
+        const stored = JSON.parse(localStorage.getItem('inbiology_users_db') || '[]');
+        if (Array.isArray(stored) && stored.length > 0) return stored;
+      } catch(e) {}
+      return [];
+    }
+
+    function jumpToStudent(email) {
+      if (!email) return;
+      switchAdminTab('students');
+      const searchInput = document.getElementById('admin-student-search');
+      if (searchInput) {
+        searchInput.value = email;
+        handleStudentSearch();
+        searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        searchInput.focus();
+      }
+    }
+
+    function jumpToOrders(email) {
+      if (!email) return;
+      switchAdminTab('orders');
+      setOrderFilterStatus('all');
+      const searchInput = document.getElementById('admin-order-search');
+      if (searchInput) {
+        searchInput.value = email;
+        handleOrderFilter();
+        searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        searchInput.focus();
+      }
+    }
+
+    function applySuggestedName(name) {
+      if (!name) return;
+      const input = document.getElementById('admin-edit-fullname');
+      if (input) {
+        input.value = name;
+        input.style.borderColor = '#10B981';
+        input.style.background = '#ECFDF5';
+        setTimeout(() => {
+          input.style.borderColor = '#D1D5DB';
+          input.style.background = 'white';
+        }, 1500);
+      }
+    }
+
     async function loadAndRenderOrders() {
       const tbody = document.getElementById('admin-orders-table');
       tbody.innerHTML = `<tr><td colspan="6" style="padding:20px;text-align:center;color:#9CA3AF;font-size:13px">⏳ กำลังโหลด...</td></tr>`;
@@ -3517,6 +3581,11 @@
       renderOrdersTable();
       updateAdminOverviewStats();
       renderFinancialAnalytics();
+
+      // If students are already loaded, refresh students table to update order badges
+      if (Array.isArray(studentListCache) && studentListCache.length > 0) {
+        renderStudentsTable();
+      }
     }
 
     let _currentOrderFilterStatus = 'all';
@@ -3568,19 +3637,28 @@
       const tabBtn = document.getElementById('atab-orders');
       if (tabBtn) tabBtn.textContent = `💳 ตรวจสลิปออเดอร์${pendingCount > 0 ? ` (🔴 ${pendingCount})` : ''}`;
 
-      // Filter orders by status and search query
+      // Filter orders by status and search query (with student cross-search)
       let filtered = _ordersCache;
       if (_currentOrderFilterStatus !== 'all') {
         filtered = filtered.filter(o => o.status === _currentOrderFilterStatus);
       }
       if (_currentOrderSearchQuery) {
         const q = _currentOrderSearchQuery;
+        const students = getKnownStudentsList();
         filtered = filtered.filter(o => {
           const id = (o.id || '').toLowerCase();
           const name = (o.user_name || '').toLowerCase();
-          const email = (o.user_email || '').toLowerCase();
+          const email = (o.user_email || '').toLowerCase().trim();
           const courses = (o.course_titles || (o.course_ids || []).join(' ')).toLowerCase();
-          return id.includes(q) || name.includes(q) || email.includes(q) || courses.includes(q);
+
+          // Cross-search with registered student account
+          const reg = students.find(s => (s.email || '').toLowerCase().trim() === email);
+          const regName = reg ? (reg.fullName || reg.name || '').toLowerCase() : '';
+          const regNick = reg ? (reg.nickname || '').toLowerCase() : '';
+          const regSchool = reg ? (reg.school || '').toLowerCase() : '';
+
+          return id.includes(q) || name.includes(q) || email.includes(q) || courses.includes(q) ||
+                 regName.includes(q) || regNick.includes(q) || regSchool.includes(q);
         });
       }
 
@@ -3595,21 +3673,67 @@
         rejected: '<span style="background:#FEE2E2;color:#991B1B;font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px">❌ ปฏิเสธ</span>'
       };
 
+      const students = getKnownStudentsList();
+
       tbody.innerHTML = filtered.map(o => {
         const shortId = (o.id || '').substring(0, 8).toUpperCase();
         const date = new Date(o.created_at).toLocaleDateString('th-TH', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
         const hasSlip = o.slip_image && o.slip_image.length > 0;
+        const cleanEmail = (o.user_email || '').toLowerCase().trim();
+        const regStudent = students.find(s => (s.email || '').toLowerCase().trim() === cleanEmail);
+        const orderName = (o.user_name || '').trim();
+
+        // Dual-name display logic
+        let nameHtml = '';
+        if (regStudent) {
+          const regFullName = (regStudent.fullName || regStudent.name || '').trim();
+          const isDifferentName = regFullName && orderName && regFullName.toLowerCase() !== orderName.toLowerCase();
+          if (isDifferentName) {
+            nameHtml = `
+              <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+                <span style="font-weight:800;font-size:12.5px;color:var(--c-navy)">${escapeHtml(orderName || 'ไม่ระบุชื่อ')}</span>
+                <span style="font-size:9.5px;font-weight:800;background:#FEF3C7;color:#92400E;padding:1px 6px;border-radius:4px;border:1px solid #FDE68A" title="ชื่อที่กรอกตอนแจ้งชำระเงิน">💳 ชื่อตอนสั่งซื้อ</span>
+              </div>
+              <div style="font-size:11px;color:#475569;margin-top:3px;display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+                <span>👤 บัญชี: <strong>${escapeHtml(regFullName)}</strong>${regStudent.nickname ? ` (น้อง${escapeHtml(regStudent.nickname)})` : ''}</span>
+                <button type="button" onclick="jumpToStudent('${escapeHtml(o.user_email)}')" style="background:#EFF6FF;color:#1E3A8A;border:1px solid #BFDBFE;padding:1px 6px;border-radius:4px;font-size:9.5px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:3px;transition:all 0.15s" title="ดูข้อมูลและแก้ไขชื่อในรายชื่อนักเรียน">
+                  🔍 ดูในรายชื่อ ➔
+                </button>
+              </div>
+              <div style="font-size:10.5px;color:#94A3B8;margin-top:2px">${escapeHtml(o.user_email)}</div>
+            `;
+          } else {
+            nameHtml = `
+              <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">
+                <span style="font-weight:800;font-size:12.5px;color:var(--c-navy)">${escapeHtml(orderName || regFullName || 'ไม่ระบุชื่อ')}</span>
+                ${regStudent.nickname ? `<span style="font-size:10.5px;color:#0284C7;font-weight:700">(น้อง${escapeHtml(regStudent.nickname)})</span>` : ''}
+              </div>
+              <div style="font-size:11px;color:#6B7280;display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:2px">
+                <span>${escapeHtml(o.user_email)}</span>
+                <button type="button" onclick="jumpToStudent('${escapeHtml(o.user_email)}')" style="background:#F1F5F9;color:#475569;border:1px solid #E2E8F0;padding:1px 5px;border-radius:4px;font-size:9.5px;font-weight:700;cursor:pointer" title="ดูในรายชื่อนักเรียน">
+                  👤 นักเรียน ➔
+                </button>
+              </div>
+            `;
+          }
+        } else {
+          nameHtml = `
+            <div style="font-weight:800;font-size:12.5px;color:var(--c-navy)">${escapeHtml(orderName || 'ไม่ระบุชื่อ')}</div>
+            <div style="font-size:11px;color:#6B7280;margin-top:2px">${escapeHtml(o.user_email)}</div>
+            <div style="font-size:10px;color:#D97706;margin-top:2px">⚠️ ยังไม่พบในตารางสมาชิก</div>
+          `;
+        }
+
         return `
           <tr style="border-bottom:1px solid #F3F4F6">
             <td style="padding:10px 16px;font-family:monospace;font-weight:800;font-size:11px;color:#475569">
               #${shortId}<br><span style="font-size:10px;color:#9CA3AF;font-weight:400">${date}</span>
             </td>
             <td style="padding:10px 16px">
-              <div style="font-weight:800;font-size:12px;color:var(--c-navy)">${o.user_name || 'ไม่ระบุชื่อ'}</div>
-              <div style="font-size:11px;color:#6B7280">${o.user_email}</div>
+              ${nameHtml}
             </td>
-            <td style="padding:10px 16px;font-size:11.5px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${o.course_titles || ''}">
-              <strong>${o.course_titles || (o.course_ids||[]).join(', ')}</strong>
+            <td style="padding:10px 16px;font-size:11.5px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${escapeHtml(o.course_titles || '')}">
+              <strong>${escapeHtml(o.course_titles || (o.course_ids||[]).join(', '))}</strong>
             </td>
             <td style="padding:10px 16px;font-weight:900;color:#B91C1C">฿${Number(o.total_amount).toLocaleString('th-TH')}</td>
             <td style="padding:10px 16px">
@@ -3705,6 +3829,12 @@
         alert('คำสั่งซื้อนี้ไม่มีรูปสลิปแนบมา');
         return;
       }
+      const students = getKnownStudentsList();
+      const cleanEmail = (o.user_email || '').toLowerCase().trim();
+      const reg = students.find(s => (s.email || '').toLowerCase().trim() === cleanEmail);
+      const regFullName = reg ? (reg.fullName || reg.name || '').trim() : '';
+      const isDiff = regFullName && o.user_name && regFullName.toLowerCase() !== o.user_name.trim().toLowerCase();
+
       const overlay = document.createElement('div');
       overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;cursor:pointer;backdrop-filter:blur(4px)';
       overlay.onclick = () => overlay.remove();
@@ -3718,10 +3848,11 @@
             <img src="${o.slip_image}" style="max-width:100%;height:auto;object-fit:contain;border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,0.1)" alt="สลิป" />
           </div>
           <div style="margin-top:12px;font-size:12px;color:#475569;line-height:1.6;text-align:left;background:#F1F5F9;padding:10px 14px;border-radius:10px">
-            <div><strong>นักเรียน:</strong> ${o.user_name || 'ไม่ระบุ'} (${o.user_email})</div>
-            <div><strong>คอร์สที่ซื้อ:</strong> ${o.course_titles || (o.course_ids||[]).join(', ')}</div>
+            <div><strong>ชื่อตอนโอน/สั่งซื้อ:</strong> ${escapeHtml(o.user_name || 'ไม่ระบุ')} (${escapeHtml(o.user_email)})</div>
+            ${isDiff ? `<div style="margin-top:3px;color:#1E3A8A;background:#DBEAFE;padding:3px 8px;border-radius:6px;font-size:11.5px">👤 <strong>ชื่อบัญชีในระบบ:</strong> ${escapeHtml(regFullName)}${reg.nickname ? ` (น้อง${escapeHtml(reg.nickname)})` : ''}</div>` : ''}
+            <div><strong>คอร์สที่ซื้อ:</strong> ${escapeHtml(o.course_titles || (o.course_ids||[]).join(', '))}</div>
             <div><strong>ยอดโอนสุทธิ:</strong> <span style="color:#B91C1C;font-weight:900">฿${Number(o.total_amount).toLocaleString('th-TH')}</span></div>
-            ${o.user_note ? `<div style="margin-top:4px;color:#334155"><strong>บันทึก:</strong> ${o.user_note}</div>` : ''}
+            ${o.user_note ? `<div style="margin-top:4px;color:#334155"><strong>บันทึก:</strong> ${escapeHtml(o.user_note)}</div>` : ''}
           </div>
           ${o.status === 'pending' ? `
             <div style="display:flex;gap:10px;margin-top:14px;justify-content:flex-end">
@@ -3743,6 +3874,21 @@
 
       document.getElementById('modal-student-name').textContent = o.user_name || 'ไม่ระบุชื่อ';
       document.getElementById('modal-student-email').textContent = o.user_email || '—';
+
+      const students = getKnownStudentsList();
+      const cleanEmail = (o.user_email || '').toLowerCase().trim();
+      const reg = students.find(s => (s.email || '').toLowerCase().trim() === cleanEmail);
+      const regFullName = reg ? (reg.fullName || reg.name || '').trim() : '';
+      const regInfoEl = document.getElementById('modal-student-reg-info');
+      if (regInfoEl) {
+        if (regFullName && o.user_name && regFullName.toLowerCase() !== o.user_name.trim().toLowerCase()) {
+          regInfoEl.style.display = 'block';
+          regInfoEl.innerHTML = `👤 <strong>ชื่อบัญชีในระบบ:</strong> ${escapeHtml(regFullName)}${reg.nickname ? ` (น้อง${escapeHtml(reg.nickname)})` : ''}`;
+        } else {
+          regInfoEl.style.display = 'none';
+        }
+      }
+
       document.getElementById('modal-course-titles').textContent = o.course_titles || (o.course_ids || []).join(', ');
       document.getElementById('modal-total-amount').textContent = `฿${Number(o.total_amount).toLocaleString('th-TH')}`;
 
@@ -4110,6 +4256,15 @@
 
       updateAdminOverviewStats();
 
+      // If orders table is already populated, refresh orders table so student names link
+      if (_ordersCache && _ordersCache.length > 0) {
+        const tbody = document.getElementById('admin-orders-table');
+        if (tbody && !tbody.dataset.syncedWithStudents) {
+          tbody.dataset.syncedWithStudents = 'true';
+          renderOrdersTable();
+        }
+      }
+
       const currentProfile = (typeof AppState !== 'undefined' && typeof AppState.getStudentProfile === 'function') ? AppState.getStudentProfile() : null;
       const currentEmail = (currentProfile && currentProfile.email) ? currentProfile.email.trim().toLowerCase() : (localStorage.getItem('inbiology_user_email') || '').toLowerCase();
 
@@ -4139,17 +4294,25 @@
         `;
       }
 
-      // Filter by search query if any
+      // Filter by search query if any (with cross-search on orders)
       let filteredStudents = studentListCache;
       if (_studentSearchQuery) {
         const q = _studentSearchQuery;
         filteredStudents = filteredStudents.filter(s => {
           const fn = (s.fullName || '').toLowerCase();
           const nn = (s.nickname || '').toLowerCase();
-          const em = (s.email || '').toLowerCase();
+          const em = (s.email || '').toLowerCase().trim();
           const sc = (s.school || '').toLowerCase();
           const lv = (s.level || '').toLowerCase();
-          return fn.includes(q) || nn.includes(q) || em.includes(q) || sc.includes(q) || lv.includes(q);
+
+          // Cross-search with orders placed under this email
+          const studentOrders = (_ordersCache || []).filter(o => (o.user_email || '').toLowerCase().trim() === em);
+          const orderNames = studentOrders.map(o => (o.user_name || '').toLowerCase()).join(' ');
+          const orderCourses = studentOrders.map(o => (o.course_titles || (o.course_ids || []).join(' ')).toLowerCase()).join(' ');
+          const orderIds = studentOrders.map(o => (o.id || '').toLowerCase()).join(' ');
+
+          return fn.includes(q) || nn.includes(q) || em.includes(q) || sc.includes(q) || lv.includes(q) ||
+                 orderNames.includes(q) || orderCourses.includes(q) || orderIds.includes(q);
         });
       }
 
@@ -4191,12 +4354,36 @@
           }
         }
 
+        // Orders cross-referencing
+        const studentOrders = (_ordersCache || []).filter(o => (o.user_email || '').toLowerCase().trim() === sEmail);
+        const altOrderNames = [...new Set(studentOrders.map(o => (o.user_name || '').trim()).filter(n => n && n.toLowerCase() !== (s.fullName || '').trim().toLowerCase()))];
+
         return `
           <tr style="border-bottom:1px solid #F3F4F6">
-            <td style="padding:12px 16px;font-weight:700;color:var(--c-navy)">${s.fullName}</td>
-            <td style="padding:12px 16px;font-weight:800;color:var(--c-sky)">น้อง${s.nickname}</td>
-            <td style="padding:12px 16px;color:#6B7280">${s.email}</td>
-            <td style="padding:12px 16px">${s.school} • ${s.level}</td>
+            <td style="padding:12px 16px">
+              <div style="font-weight:700;color:var(--c-navy);font-size:12.5px">${escapeHtml(s.fullName)}</div>
+              ${altOrderNames.length > 0 ? `
+                <div style="margin-top:4px">
+                  <span style="display:inline-flex;align-items:center;gap:4px;background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:6px;font-size:10px;font-weight:800;border:1px solid #FDE68A" title="ชื่อที่น้องใช้กรอกตอนสั่งซื้อหรือโอนเงิน">
+                    💳 ชื่อจ่ายตัง: ${escapeHtml(altOrderNames.join(' / '))}
+                  </span>
+                </div>
+              ` : ''}
+              ${studentOrders.length > 0 ? `
+                <div style="margin-top:4px">
+                  <button type="button" onclick="jumpToOrders('${escapeHtml(s.email)}')" style="background:#F0FDF4;color:#166534;border:1px solid #BBF7D0;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:all 0.15s" title="คลิกเพื่อดูออเดอร์ทั้งหมดของนักเรียนคนนี้">
+                    🛒 ${studentOrders.length} ออเดอร์ ➔
+                  </button>
+                </div>
+              ` : `
+                <div style="margin-top:4px">
+                  <span style="font-size:10px;color:#94A3B8">ยังไม่มีออเดอร์</span>
+                </div>
+              `}
+            </td>
+            <td style="padding:12px 16px;font-weight:800;color:var(--c-sky)">น้อง${escapeHtml(s.nickname)}</td>
+            <td style="padding:12px 16px;color:#6B7280">${escapeHtml(s.email)}</td>
+            <td style="padding:12px 16px">${escapeHtml(s.school)} • ${escapeHtml(s.level)}</td>
             <td style="padding:12px 16px;text-align:center">${roleBadge}</td>
             <td style="padding:12px 16px;text-align:center">${actionCol}</td>
             <td style="padding:12px 16px;text-align:center">
@@ -4240,17 +4427,43 @@
       const s = studentListCache.find(x => String(x.id) === String(id));
       if (!s) return;
       document.getElementById('admin-edit-student-id').value = s.id;
-      document.getElementById('admin-edit-nickname').value = s.nickname;
-      document.getElementById('admin-edit-fullname').value = s.fullName;
-      document.getElementById('admin-edit-email').value = s.email;
+      document.getElementById('admin-edit-nickname').value = s.nickname || '';
+      document.getElementById('admin-edit-fullname').value = s.fullName || '';
+      document.getElementById('admin-edit-email').value = s.email || '';
       document.getElementById('admin-edit-password').value = s.password || '••••••••';
-      document.getElementById('admin-edit-school').value = s.school;
+      document.getElementById('admin-edit-school').value = s.school || '';
       document.getElementById('admin-edit-level').value = s.level || 'ม.5';
+
+      // Check for alternative name in orders to suggest 1-click update
+      const sEmail = (s.email || '').toLowerCase().trim();
+      const studentOrders = (_ordersCache || []).filter(o => (o.user_email || '').toLowerCase().trim() === sEmail);
+      const altNames = [...new Set(studentOrders.map(o => (o.user_name || '').trim()).filter(n => n && n.toLowerCase() !== (s.fullName || '').trim().toLowerCase()))];
+
+      const hintEl = document.getElementById('admin-edit-fullname-hint');
+      if (hintEl) {
+        if (altNames.length > 0) {
+          const suggestedName = altNames[0];
+          hintEl.style.display = 'block';
+          hintEl.innerHTML = `
+            <div style="background:#FEF3C7;border:1.5px solid #FCD34D;border-radius:8px;padding:8px 10px;font-size:11.5px;color:#92400E;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+              <div>
+                <span style="font-weight:800">💡 พบชื่อตอนชำระเงิน/สลิป:</span>
+                <strong style="color:var(--c-navy);margin-left:4px">"${escapeHtml(suggestedName)}"</strong>
+              </div>
+              <button type="button" onclick="applySuggestedName('${escapeHtml(suggestedName)}')" style="background:#D97706;color:white;border:none;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:3px;box-shadow:0 1px 3px rgba(217,119,6,0.3)">
+                ✓ เปลี่ยนเป็นชื่อนี้
+              </button>
+            </div>
+          `;
+        } else {
+          hintEl.style.display = 'none';
+          hintEl.innerHTML = '';
+        }
+      }
 
       // Configure delete button visibility in modal
       const currentProfile = (typeof AppState !== 'undefined' && typeof AppState.getStudentProfile === 'function') ? AppState.getStudentProfile() : null;
       const currentEmail = (currentProfile && currentProfile.email) ? currentProfile.email.trim().toLowerCase() : (localStorage.getItem('inbiology_user_email') || '').toLowerCase();
-      const sEmail = (s.email || '').toLowerCase().trim();
       const isSuper = (window.CloudService && typeof window.CloudService.isSuperAdminEmail === 'function')
         ? window.CloudService.isSuperAdminEmail(sEmail)
         : (sEmail === 'witsarut.cha@pccpl.ac.th' || sEmail === 'witsarutcha@pccpl.ac.th');
@@ -4323,12 +4536,13 @@
       }
     }
 
-    function saveAdminStudentEdit(e) {
+    async function saveAdminStudentEdit(e) {
       e.preventDefault();
       const id = document.getElementById('admin-edit-student-id').value;
       const s = studentListCache.find(x => String(x.id) === String(id));
       if (!s) return;
 
+      const oldEmail = s.email;
       s.nickname = document.getElementById('admin-edit-nickname').value.trim();
       s.fullName = document.getElementById('admin-edit-fullname').value.trim();
       s.email = document.getElementById('admin-edit-email').value.trim();
@@ -4336,22 +4550,53 @@
       s.school = document.getElementById('admin-edit-school').value.trim();
       s.level = document.getElementById('admin-edit-level').value.trim();
 
+      // 1. Update in local Users DB
       if (window.CloudService && typeof window.CloudService._getUsersDb === 'function') {
         const users = window.CloudService._getUsersDb();
-        const uIdx = users.findIndex(u => String(u.id) === String(id) || (u.email && u.email.toLowerCase() === s.email.toLowerCase()));
+        const uIdx = users.findIndex(u => String(u.id) === String(id) || (u.email && u.email.toLowerCase() === (oldEmail || s.email).toLowerCase()));
         if (uIdx >= 0) {
           users[uIdx] = { ...users[uIdx], nickname: s.nickname, fullName: s.fullName, email: s.email, password: s.password, school: s.school, level: s.level };
           window.CloudService._saveUsersDb(users);
         }
       }
 
+      // 2. Sync to Supabase Cloud (/users table)
+      if (window.CloudService && window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+        try {
+          const patchPayload = {
+            full_name: s.fullName,
+            nickname: s.nickname,
+            email: s.email,
+            school: s.school,
+            grade_level: s.level,
+            updated_at: new Date().toISOString()
+          };
+          const filter = id ? `id=eq.${encodeURIComponent(id)}` : `email=ilike.${encodeURIComponent(oldEmail || s.email)}`;
+          await window.CloudService._supabaseFetch(`/users?${filter}`, {
+            method: 'PATCH',
+            body: JSON.stringify(patchPayload)
+          });
+        } catch(err) {
+          console.warn('Supabase users patch note:', err);
+        }
+      }
+
+      // 3. Fallback via CloudService.saveUserProfile
+      if (window.CloudService && typeof window.CloudService.saveUserProfile === 'function') {
+        try {
+          await window.CloudService.saveUserProfile(id || s.email, s);
+        } catch(e) {}
+      }
+
+      // 4. Update current profile if logged in as this user
       if (typeof AppState !== 'undefined' && AppState.getStudentProfile && String(AppState.getStudentProfile().id) === String(id)) {
         AppState.saveStudentProfile(s);
       }
 
       closeAdminStudentModal();
-      renderStudentsTable();
-      showToast('✅ แอดมินแก้ไขข้อมูลนักเรียนเรียบร้อยแล้ว (อัปเดตอีเมล/รหัสผ่านสำเร็จ)', 'success');
+      await renderStudentsTable();
+      renderOrdersTable();
+      showToast('✅ แอดมินแก้ไขข้อมูลนักเรียนเรียบร้อยแล้ว (อัปเดตและเชื่อมโยงข้อมูลสำเร็จ)', 'success');
     }
 
     // ─────────────────────────────────────────────────────────────────────────────
