@@ -22,6 +22,52 @@ function extractYouTubeId(urlOrId) {
   const match = trimmed.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/);
   return match ? match[1] : null;
 }
+window.extractYouTubeId = extractYouTubeId;
+
+// Auto-convert Google Drive sharing/view link into direct image link (Google CDN)
+function convertGoogleDriveDirectUrl(url) {
+  if (!url || typeof url !== 'string') return url;
+  const trimmed = url.trim();
+  const m1 = trimmed.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (m1) return `https://lh3.googleusercontent.com/d/${m1[1]}`;
+  const m2 = trimmed.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
+  if (m2) return `https://lh3.googleusercontent.com/d/${m2[1]}`;
+  const m3 = trimmed.match(/drive\.google\.com\/uc\?(?:.*&)?id=([a-zA-Z0-9_-]+)/);
+  if (m3) return `https://lh3.googleusercontent.com/d/${m3[1]}`;
+  return trimmed;
+}
+window.convertGoogleDriveDirectUrl = convertGoogleDriveDirectUrl;
+
+// Resilient Image URL Resolver for Course Cards & Free Trials
+function resolveTrialImageUrl(imgUrl, videoUrl = '') {
+  let url = (imgUrl || '').trim();
+  if (url) {
+    // If it's a YouTube URL mistakenly put in image field
+    const ytImgId = extractYouTubeId(url);
+    if (ytImgId) {
+      return `https://img.youtube.com/vi/${ytImgId}/hqdefault.jpg`;
+    }
+    // If it's a Google Drive link
+    if (url.includes('drive.google.com')) {
+      return convertGoogleDriveDirectUrl(url);
+    }
+    // If it's a Dropbox link
+    if (url.includes('dropbox.com')) {
+      return url.replace('dl=0', 'raw=1');
+    }
+    return url;
+  }
+  // If no custom image is provided, auto-extract YouTube thumbnail from videoUrl
+  if (videoUrl) {
+    const ytVidId = extractYouTubeId(videoUrl);
+    if (ytVidId) {
+      return `https://img.youtube.com/vi/${ytVidId}/hqdefault.jpg`;
+    }
+  }
+  return './course-cover-1.png';
+}
+window.resolveTrialImageUrl = resolveTrialImageUrl;
+
 
 // Extract EP prefix or number from lesson title e.g. "EP 2: ...", "EP.3 - ...", "EP: 2", "ตอนที่ 1"
 function extractEpFromTitle(title) {

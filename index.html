@@ -607,7 +607,7 @@
         <div class="section-eyebrow">ทดลองเรียนฟรี</div>
         <h2 class="section-main-heading">คลังวิดีโอและบทเรียน <span class="text-gradient-animated">ทดลองเรียนฟรี</span></h2>
       </div>
-      <div id="trials-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;justify-content:center"></div>
+      <div id="trials-grid" class="trials-grid"></div>
     </div>
   </section>
 
@@ -618,7 +618,7 @@
         <h2 style="font-size:26px;font-weight:950;color:var(--c-navy);margin:0">คลังความรู้และบทความชีวะ</h2>
         <p style="font-size:13px;color:#6B7280;margin-top:6px">ทริคจำชีววิทยา บทวิเคราะห์แล็บ และข่าวสารวิชาการชีววิทยา</p>
       </div>
-      <div id="articles-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;justify-content:center"></div>
+      <div id="articles-grid" class="articles-grid"></div>
     </div>
   </section>
 
@@ -750,28 +750,76 @@
       }
       section.style.display = 'block';
 
-      container.innerHTML = trials.map((ft, idx) => `
-        <div class="revealed" data-reveal data-delay="${(idx % 3) * 0.08}s" onclick="openTrialModal(window.findTrialItem ? window.findTrialItem('${ft.id}') : ${JSON.stringify(ft).replace(/"/g, '&quot;')})" style="background:white;border-radius:20px;overflow:hidden;cursor:pointer;border:1px solid #E5E7EB;box-shadow:0 4px 12px rgba(0,0,0,0.03);transition:all 0.25s cubic-bezier(0.16,1,0.3,1);position:relative" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(0,0,0,0.08)'" onmouseleave="this.style.transform='none';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.03)'">
-          <div style="position:relative;height:190px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;padding:14px">
-            <img src="${ft.imageUrl || './course-cover-1.png'}" style="height:150px;max-width:85%;object-fit:contain;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.12)" alt="" />
-            <div class="card-duration-badge">${ft.duration}</div>
+      container.innerHTML = trials.map((ft, idx) => {
+        const safeTitle = (ft.title || '').replace(/"/g, '&quot;');
+        const safeCourse = (ft.course || '').replace(/"/g, '&quot;');
+        const durationRaw = String(ft.duration || '40 นาที');
+        const durationText = (durationRaw.includes('นาที') || durationRaw.includes('ชม') || durationRaw.includes('min')) 
+          ? durationRaw 
+          : durationRaw + ' นาที';
+        const resolvedImg = (typeof resolveTrialImageUrl === 'function') 
+          ? resolveTrialImageUrl(ft.imageUrl, ft.videoUrl) 
+          : (ft.imageUrl || './course-cover-1.png');
+        const ytId = (typeof extractYouTubeId === 'function') ? extractYouTubeId(ft.videoUrl) : null;
+        const ytThumb = ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : './course-cover-1.png';
+
+        return `
+        <div class="revealed trial-card-item" data-reveal data-delay="${(idx % 3) * 0.08}s" onclick="openTrialModal(window.findTrialItem ? window.findTrialItem('${ft.id}') : ${JSON.stringify(ft).replace(/"/g, '&quot;')})" style="background:white;border-radius:20px;overflow:hidden;cursor:pointer;border:1px solid #E5E7EB;box-shadow:0 4px 12px rgba(0,0,0,0.03);transition:all 0.25s cubic-bezier(0.16,1,0.3,1);position:relative;display:flex;flex-direction:column;justify-content:space-between" onmouseenter="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 28px rgba(0,0,0,0.08)'" onmouseleave="this.style.transform='none';this.style.boxShadow='0 4px 12px rgba(0,0,0,0.03)'">
+          <div style="position:relative;height:195px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;padding:14px;border-radius:20px 20px 0 0;overflow:hidden">
+            <img src="${resolvedImg}" 
+                 alt="${safeTitle}" 
+                 data-fallback="${ytThumb}"
+                 onerror="if(this.src !== this.dataset.fallback && this.dataset.fallback){ this.src = this.dataset.fallback; } else if(this.src !== './course-cover-1.png'){ this.src = './course-cover-1.png'; }"
+                 style="height:150px;max-width:85%;object-fit:contain;border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,0.12);transition:transform 0.3s ease" 
+            />
+            
+            <!-- Top Left Floating Badge -->
+            <div style="position:absolute;top:12px;left:12px;background:#1E3A8A;color:white;font-size:10px;font-weight:800;padding:4px 10px;border-radius:8px;z-index:2;box-shadow:0 2px 6px rgba(0,0,0,0.15);max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+              ${safeCourse || 'ชีววิทยา'}
+            </div>
+
+            <!-- Top Right Admin Edit Button (if Admin) -->
             ${(typeof AppState !== 'undefined' && AppState.userRole === 'admin') ? `
-              <a href="admin.html?edit_trial=${ft.id}" onclick="event.stopPropagation()" style="position:absolute;top:12px;left:12px;background:rgba(30,58,138,0.92);color:white;font-size:10px;font-weight:800;padding:4px 10px;border-radius:8px;text-decoration:none;z-index:3;display:inline-flex;align-items:center;gap:4px;box-shadow:0 4px 10px rgba(0,0,0,0.15)">
-                แก้ไข
+              <a href="admin.html?edit_trial=${ft.id}" onclick="event.stopPropagation()" style="position:absolute;top:12px;right:12px;background:rgba(239,68,68,0.95);color:white;font-size:10px;font-weight:800;padding:4px 10px;border-radius:8px;text-decoration:none;z-index:3;display:inline-flex;align-items:center;gap:4px;box-shadow:0 4px 10px rgba(0,0,0,0.15)">
+                ✏️ แก้ไข
               </a>
             ` : ''}
-          </div>
-          <div style="padding:16px">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-              <span style="font-size:10px;font-weight:800;color:var(--c-sky)">${ft.course}</span>
-              ${ft.sheetUrl ? `
-                <span style="font-size:9.5px;font-weight:800;color:#166534;background:#DCFCE7;padding:2px 6px;border-radius:4px">ชีทฟรี</span>
-              ` : ''}
+
+            <!-- Bottom Left Floating Trial Button (Rule 2) -->
+            <div style="position:absolute;bottom:10px;left:12px;background:#1E3A8A;color:white;font-size:10px;font-weight:800;border-radius:8px;padding:4px 10px;display:inline-flex;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(30,58,138,0.25);z-index:2">
+              ▶ ทดลองเรียนฟรี
             </div>
-            <h4 style="font-weight:850;color:var(--c-navy);font-size:13px;margin:0;line-height:1.4">${ft.title}</h4>
+
+            <!-- Bottom Right Duration Badge (Rule 2) -->
+            <div class="card-duration-badge">${durationText}</div>
+          </div>
+          
+          <div style="padding:16px;flex:1;display:flex;flex-direction:column;justify-content:space-between">
+            <div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:8px">
+                <span style="font-size:11px;font-weight:800;color:var(--c-sky);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${safeCourse}</span>
+                ${ft.sheetUrl ? `
+                  <span style="font-size:9.5px;font-weight:800;color:#166534;background:#DCFCE7;border:1px solid #BBF7D0;padding:2px 8px;border-radius:6px;white-space:nowrap;display:inline-flex;align-items:center;gap:3px">
+                    📄 ชีทฟรี
+                  </span>
+                ` : ''}
+              </div>
+              <h4 style="font-weight:850;color:var(--c-navy);font-size:13.5px;margin:0 0 10px;line-height:1.45">${safeTitle}</h4>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid #F1F5F9;margin-top:auto">
+              <span style="font-size:11px;color:#64748B;font-weight:700;display:inline-flex;align-items:center;gap:4px">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style="color:#EF4444"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                คลิกเข้าเรียนคลิปนี้
+              </span>
+              <span style="font-size:11.5px;font-weight:800;color:#1E3A8A">
+                เริ่มเรียน ➔
+              </span>
+            </div>
           </div>
         </div>
-      `).join('');
+        `;
+      }).join('');
 
       if (typeof initScrollReveal === 'function') initScrollReveal();
     };
