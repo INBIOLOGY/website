@@ -1,10 +1,16 @@
 User-agent: *
 Allow: /
+Disallow: /admin
 Disallow: /admin.html
+Disallow: /classroom
 Disallow: /classroom.html
+Disallow: /dashboard
 Disallow: /dashboard.html
+Disallow: /login
 Disallow: /login.html
+Disallow: /checkout
 Disallow: /checkout.html
+Disallow: /line-callback
 Disallow: /line-callback.html
 
 Sitemap: https://www.inbiologyacademy.com/sitemap.xml
