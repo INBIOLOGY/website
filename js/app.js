@@ -79,6 +79,142 @@ function extractEpFromTitle(title) {
   return null;
 }
 
+// ─── Document File Size & Metadata Analyzer Utility (DocUtils) ───
+const DocUtils = {
+  // Format bytes into human-readable string (B, KB, MB, GB)
+  formatFileSize(bytes) {
+    if (typeof bytes !== 'number' || isNaN(bytes) || bytes < 0) return '0 B';
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+  },
+
+  // Parse PDF binary data to detect page count
+  detectPdfPageCount(arrayBuffer) {
+    try {
+      const bytes = new Uint8Array(arrayBuffer);
+      const decoder = new TextDecoder('latin1');
+      // Read first 2.5MB
+      const maxRead = Math.min(bytes.length, 2500000);
+      const sample = decoder.decode(bytes.subarray(0, maxRead));
+
+      // Method 1: Look for /Type /Pages /Count N
+      const countMatch = sample.match(/\/Type\s*\/Pages[^>]*?\/Count\s+(\d+)/s) || sample.match(/\/Count\s+(\d+)\s*\/Type\s*\/Pages/s);
+      if (countMatch && parseInt(countMatch[1], 10) > 0) {
+        return parseInt(countMatch[1], 10);
+      }
+
+      // Method 2: Match /Type /Page (excluding /Pages)
+      const pageMatches = sample.match(/\/Type\s*\/Page(?![sA-Za-z0-9_])/g);
+      if (pageMatches && pageMatches.length > 0) {
+        return pageMatches.length;
+      }
+
+      // Method 3: If large file, check trailer / end of file
+      if (bytes.length > maxRead) {
+        const endChunk = decoder.decode(bytes.subarray(Math.max(0, bytes.length - 250000)));
+        const endCountMatch = endChunk.match(/\/Type\s*\/Pages[^>]*?\/Count\s+(\d+)/s) || endChunk.match(/\/Count\s+(\d+)\s*\/Type\s*\/Pages/s);
+        if (endCountMatch && parseInt(endCountMatch[1], 10) > 0) {
+          return parseInt(endCountMatch[1], 10);
+        }
+        const endPageMatches = endChunk.match(/\/Type\s*\/Page(?![sA-Za-z0-9_])/g);
+        if (endPageMatches && endPageMatches.length > 0) {
+          return endPageMatches.length;
+        }
+      }
+      return null;
+    } catch (e) {
+      console.warn('DocUtils: Could not parse PDF page count:', e);
+      return null;
+    }
+  },
+
+  // Inspect any File object (from <input type="file"> or drop)
+  async inspectFile(file) {
+    if (!file) throw new Error('ไม่พบไฟล์');
+    const sizeBytes = file.size;
+    const formattedSize = this.formatFileSize(sizeBytes);
+    const ext = file.name.includes('.') ? file.name.split('.').pop().toLowerCase() : '';
+    let pageCount = null;
+
+    if (ext === 'pdf') {
+      try {
+        const buffer = await file.arrayBuffer();
+        pageCount = this.detectPdfPageCount(buffer);
+      } catch (err) {
+        console.warn('DocUtils: Error reading PDF buffer:', err);
+      }
+    }
+
+    const cleanTitle = file.name
+      .replace(/\.[^/.]+$/, '')
+      .replace(/[_\-]+/g, ' ')
+      .trim();
+
+    const sizeWithPages = pageCount ? `${formattedSize} • ${pageCount} หน้า` : formattedSize;
+
+    return {
+      filename: file.name,
+      cleanTitle,
+      ext,
+      sizeBytes,
+      formattedSize,
+      pageCount,
+      sizeWithPages
+    };
+  },
+
+  // Detect file size from URL using HEAD or Range request
+  async detectUrlFileSize(url) {
+    if (!url || typeof url !== 'string') {
+      return { success: false, message: 'กรุณาระบุ URL ของไฟล์' };
+    }
+    const cleanUrl = url.trim();
+
+    if (cleanUrl.includes('drive.google.com')) {
+      return {
+        success: false,
+        isDrive: true,
+        message: 'Google Drive มีระบบรักษาความปลอดภัยป้องกันการอ่าน Header โดยตรงผ่านเบราว์เซอร์ (แนะนำให้กดปุ่ม "📂 เลือกไฟล์จากเครื่อง" เพื่ออ่านขนาดและหน้าอัตโนมัติได้ทันที)'
+      };
+    }
+
+    try {
+      // Attempt 1: HEAD
+      let res = await fetch(cleanUrl, { method: 'HEAD' });
+      let len = res.headers.get('content-length');
+
+      // Attempt 2: GET Range 0-0
+      if (!len) {
+        res = await fetch(cleanUrl, {
+          method: 'GET',
+          headers: { 'Range': 'bytes=0-0' }
+        });
+        const cr = res.headers.get('content-range');
+        if (cr) {
+          const parts = cr.split('/');
+          if (parts[1] && !isNaN(parts[1])) len = parts[1];
+        }
+        if (!len) len = res.headers.get('content-length');
+      }
+
+      if (len && !isNaN(len) && parseInt(len, 10) > 0) {
+        const bytes = parseInt(len, 10);
+        return {
+          success: true,
+          sizeBytes: bytes,
+          formattedSize: this.formatFileSize(bytes)
+        };
+      }
+      return { success: false, message: 'เซิร์ฟเวอร์ไม่ได้ส่ง Header ขนาดไฟล์ (Content-Length) กลับมา' };
+    } catch (err) {
+      return { success: false, message: 'ไม่สามารถเชื่อมต่อเพื่ออ่านขนาดได้ (อาจติด CORS หรือ URL ผิดพลาด): ' + err.message };
+    }
+  }
+};
+window.DocUtils = DocUtils;
+
 // Default Study Materials Generator
 function getDefaultMaterialsForCourse(course) {
   if (!course) return [];

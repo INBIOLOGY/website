@@ -1315,13 +1315,25 @@
 
         <!-- Attached Free Study Sheet -->
         <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px">
-          <div style="display:flex;align-items:center;gap:6px">
-            <span style="font-size:14px">📄</span>
-            <strong style="font-size:12px;color:#166534">เอกสาร / ชีทสรุปประกอบคลิปฟรี (Study Sheet)</strong>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="font-size:14px">📄</span>
+              <strong style="font-size:12px;color:#166534">เอกสาร / ชีทสรุปประกอบคลิปฟรี (Study Sheet)</strong>
+            </div>
+            <div>
+              <input type="file" id="admin-trial-sheet-file" accept=".pdf,.doc,.docx,.ppt,.pptx,.zip" style="display:none" onchange="handleTrialSheetFileUpload(event)">
+              <button type="button" onclick="document.getElementById('admin-trial-sheet-file').click()"
+                      style="background:#166534;color:white;border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
+                📂 อ่านชื่อและขนาดไฟล์
+              </button>
+            </div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
             <div>
-              <label style="display:block;font-size:10.5px;font-weight:800;color:#166534;margin-bottom:3px">ลิงก์ดาวน์โหลดชีท (PDF / Google Drive)</label>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+                <label style="font-size:10.5px;font-weight:800;color:#166534">ลิงก์ดาวน์โหลดชีท (PDF / Google Drive)</label>
+                <button type="button" onclick="handleDetectTrialUrlSize()" style="background:none;border:none;color:#047857;font-size:10.5px;font-weight:800;cursor:pointer;padding:0">⚡ ตรวจขนาดจาก URL</button>
+              </div>
               <input type="text" id="admin-trial-sheet-url" placeholder="https://drive.google.com/..." style="width:100%;border:1px solid #86EFAC;border-radius:8px;padding:8px 10px;font-size:11.5px;outline:none;background:white" />
             </div>
             <div>
@@ -1329,6 +1341,7 @@
               <input type="text" id="admin-trial-sheet-title" placeholder="เช่น ชีทสรุปโครงสร้างเซลล์.pdf" style="width:100%;border:1px solid #86EFAC;border-radius:8px;padding:8px 10px;font-size:11.5px;outline:none;background:white" />
             </div>
           </div>
+          <div id="admin-trial-sheet-status" style="display:none;font-size:11.5px;font-weight:800;color:#14532D;background:#DCFCE7;border:1px solid #86EFAC;padding:6px 10px;border-radius:6px"></div>
         </div>
 
         <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:10px">
@@ -1399,20 +1412,33 @@
 
         <!-- Document Attachment Section -->
         <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px">
-          <div style="display:flex;align-items:center;gap:6px">
-            <span style="font-size:14px">📥</span>
-            <strong style="font-size:12px;color:#166534">เอกสารแนบ / ชีทสรุป PDF (เปิดให้นักเรียนดาวน์โหลดฟรี)</strong>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap">
+            <div style="display:flex;align-items:center;gap:6px">
+              <span style="font-size:14px">📥</span>
+              <strong style="font-size:12px;color:#166534">เอกสารแนบ / ชีทสรุป PDF (เปิดให้นักเรียนดาวน์โหลดฟรี)</strong>
+            </div>
+            <div>
+              <input type="file" id="admin-article-doc-file" accept=".pdf,.doc,.docx,.ppt,.pptx,.zip" style="display:none" onchange="handleArticleDocFileUpload(event)">
+              <button type="button" onclick="document.getElementById('admin-article-doc-file').click()"
+                      style="background:#166534;color:white;border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:4px">
+                📂 อ่านชื่อและขนาดไฟล์
+              </button>
+            </div>
           </div>
           <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:10px">
             <div>
-              <label style="display:block;font-size:10.5px;font-weight:800;color:#166534;margin-bottom:3px">ลิงก์ดาวน์โหลดเอกสาร (Google Drive / OneDrive / Cloud)</label>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+                <label style="font-size:10.5px;font-weight:800;color:#166534">ลิงก์ดาวน์โหลดเอกสาร (Google Drive / OneDrive / Cloud)</label>
+                <button type="button" onclick="handleDetectArticleUrlSize()" style="background:none;border:none;color:#047857;font-size:10.5px;font-weight:800;cursor:pointer;padding:0">⚡ ตรวจขนาดจาก URL</button>
+              </div>
               <input type="text" id="admin-article-doc-url" placeholder="https://drive.google.com/file/d/.../view" style="width:100%;border:1px solid #86EFAC;border-radius:8px;padding:8px 10px;font-size:11.5px;outline:none;background:white" />
             </div>
             <div>
-              <label style="display:block;font-size:10.5px;font-weight:800;color:#166534;margin-bottom:3px">ชื่อไฟล์เอกสาร</label>
+              <label style="display:block;font-size:10.5px;font-weight:800;color:#166534;margin-bottom:3px">ชื่อไฟล์เอกสาร (พร้อมขนาด)</label>
               <input type="text" id="admin-article-doc-name" placeholder="เช่น ชีทสรุป_Photosynthesis.pdf" style="width:100%;border:1px solid #86EFAC;border-radius:8px;padding:8px 10px;font-size:11.5px;outline:none;background:white" />
             </div>
           </div>
+          <div id="admin-article-doc-status" style="display:none;font-size:11.5px;font-weight:800;color:#14532D;background:#DCFCE7;border:1px solid #86EFAC;padding:6px 10px;border-radius:6px"></div>
         </div>
 
         <!-- External Link & Image Section -->
@@ -1576,10 +1602,29 @@
 
           <!-- Add New Study Material Form Box -->
           <div style="background:white;border:1.5px dashed #86EFAC;border-radius:18px;padding:16px 20px;display:flex;flex-direction:column;gap:12px;flex-shrink:0">
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="background:#DCFCE7;color:#15803D;font-size:11px;font-weight:900;padding:3px 10px;border-radius:6px">+ NEW DOCUMENT</span>
-              <span style="font-weight:900;color:var(--c-navy);font-size:13.5px">เพิ่มไฟล์เอกสาร / ชีทเรียนใหม่ในคอร์สนี้</span>
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="background:#DCFCE7;color:#15803D;font-size:11px;font-weight:900;padding:3px 10px;border-radius:6px">+ NEW DOCUMENT</span>
+                <span style="font-weight:900;color:var(--c-navy);font-size:13.5px">เพิ่มไฟล์เอกสาร / ชีทเรียนใหม่ในคอร์สนี้</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <input type="file" id="cms-new-mat-file-input" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip" style="display:none" onchange="handleNewMaterialFileUpload(event)">
+                <button type="button" onclick="document.getElementById('cms-new-mat-file-input').click()"
+                        style="background:#047857;color:white;border:none;font-weight:850;font-size:11.5px;padding:7px 14px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(4,120,87,0.25)">
+                  📂 เลือกไฟล์เพื่ออ่านชื่อและขนาดอัตโนมัติ
+                </button>
+              </div>
             </div>
+
+            <!-- Detected File Status Banner -->
+            <div id="cms-new-mat-file-status" style="display:none;background:#F0FDF4;border:1px solid #86EFAC;padding:8px 12px;border-radius:10px;align-items:center;justify-content:space-between;font-size:11.5px">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:15px">⚡</span>
+                <span id="cms-new-mat-file-status-text" style="color:#14532D;font-weight:800"></span>
+              </div>
+              <button type="button" onclick="clearNewMaterialFileStatus()" style="background:none;border:none;color:#047857;font-weight:800;font-size:12px;cursor:pointer">✕ ปิด</button>
+            </div>
+
             <div class="cms-material-form-grid">
               <div>
                 <label style="display:block;font-size:11px;font-weight:800;color:#475569;margin-bottom:4px">ชื่อเอกสาร / ชีทเรียน</label>
@@ -1600,7 +1645,12 @@
                 <input type="text" id="cms-new-mat-size" placeholder="เช่น 12 MB • 45 หน้า" style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 10px;font-size:12px;outline:none;text-align:center" />
               </div>
               <div>
-                <label style="display:block;font-size:11px;font-weight:800;color:#475569;margin-bottom:4px">ลิงก์ดาวน์โหลด (Google Drive / URL)</label>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                  <label style="font-size:11px;font-weight:800;color:#475569">ลิงก์ดาวน์โหลด (Google Drive / URL)</label>
+                  <button type="button" onclick="detectNewMaterialUrlSize()" style="background:none;border:none;color:#0369A1;font-size:10.5px;font-weight:800;cursor:pointer;padding:0;display:inline-flex;align-items:center;gap:3px">
+                    ⚡ ตรวจขนาดจาก URL
+                  </button>
+                </div>
                 <input type="text" id="cms-new-mat-url" placeholder="https://drive.google.com/..." style="width:100%;border:1px solid #CBD5E1;border-radius:10px;padding:9px 12px;font-size:12px;outline:none" />
               </div>
               <button type="button" onclick="addNewMaterialToCourse()" style="background:#047857;color:white;border:none;font-weight:850;font-size:12px;padding:10px 18px;border-radius:10px;cursor:pointer;white-space:nowrap;box-shadow:0 2px 6px rgba(4,120,87,0.25)">
@@ -2457,6 +2507,8 @@
       document.getElementById('admin-trial-sheet-title').value = '';
       const fileInput = document.getElementById('admin-trial-file');
       if (fileInput) fileInput.value = '';
+      const statusEl = document.getElementById('admin-trial-sheet-status');
+      if (statusEl) statusEl.style.display = 'none';
       updateTrialPreviewDisplay('./course-cover-1.png', 'รูปภาพปกเริ่มต้น');
       document.getElementById('admin-trial-modal').style.display = 'flex';
     }
@@ -2476,6 +2528,8 @@
       document.getElementById('admin-trial-sheet-title').value = item.sheetTitle || '';
       const fileInput = document.getElementById('admin-trial-file');
       if (fileInput) fileInput.value = '';
+      const statusEl = document.getElementById('admin-trial-sheet-status');
+      if (statusEl) statusEl.style.display = 'none';
       updateTrialPreviewDisplay(initialImg, 'รูปภาพปัจจุบัน');
       document.getElementById('admin-trial-modal').style.display = 'flex';
     }
@@ -2620,6 +2674,106 @@
       }
       renderAdminTrials();
       showToast('🗑 ลบรายการทดลองเรียนเรียบร้อยแล้ว', 'success');
+    }
+
+    // ─── Trial Sheet Auto-Detector Handlers ───
+    async function handleTrialSheetFileUpload(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      try {
+        showToast('⏳ กำลังอ่านขนาดชีทเรียน...', 'info');
+        const meta = await DocUtils.inspectFile(file);
+        const titleInput = document.getElementById('admin-trial-sheet-title');
+        const statusEl = document.getElementById('admin-trial-sheet-status');
+        if (titleInput) {
+          titleInput.value = `${meta.cleanTitle}.${meta.ext || 'pdf'} (${meta.formattedSize})`;
+        }
+        if (statusEl) {
+          statusEl.textContent = `✅ ตรวจพบชีท: ${meta.filename} (ขนาด ${meta.formattedSize}${meta.pageCount ? ' • ' + meta.pageCount + ' หน้า' : ''})`;
+          statusEl.style.display = 'block';
+        }
+        showToast(`✅ อ่านขนาดชีทสำเร็จ: ${meta.formattedSize}`, 'success');
+      } catch (err) {
+        showToast('⚠️ ไม่สามารถอ่านขนาดชีทได้: ' + err.message, 'error');
+      } finally {
+        e.target.value = '';
+      }
+    }
+
+    async function handleDetectTrialUrlSize() {
+      const url = document.getElementById('admin-trial-sheet-url').value.trim();
+      if (!url) {
+        showToast('กรุณากรอกลิงก์ดาวน์โหลดชีทก่อน', 'warning');
+        return;
+      }
+      showToast('⏳ กำลังตรวจสอบขนาดชีท...', 'info');
+      const res = await DocUtils.detectUrlFileSize(url);
+      if (res.success) {
+        const titleInput = document.getElementById('admin-trial-sheet-title');
+        if (titleInput) {
+          const current = titleInput.value.replace(/\s*\([\d\.\s\w]+\)$/, '').trim();
+          titleInput.value = (current || 'ชีทสรุปประกอบคลิป.pdf') + ` (${res.formattedSize})`;
+        }
+        const statusEl = document.getElementById('admin-trial-sheet-status');
+        if (statusEl) {
+          statusEl.textContent = `🌐 ตรวจพบขนาดจาก URL: ${res.formattedSize}`;
+          statusEl.style.display = 'block';
+        }
+        showToast(`✅ ตรวจพบขนาดชีท: ${res.formattedSize}`, 'success');
+      } else {
+        if (res.isDrive) alert('ℹ️ ข้อมูลลิงก์ Google Drive:\n\n' + res.message);
+        else showToast(`⚠️ ${res.message}`, 'warning');
+      }
+    }
+
+    // ─── Article Document Auto-Detector Handlers ───
+    async function handleArticleDocFileUpload(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      try {
+        showToast('⏳ กำลังอ่านขนาดไฟล์เอกสาร...', 'info');
+        const meta = await DocUtils.inspectFile(file);
+        const nameInput = document.getElementById('admin-article-doc-name');
+        const statusEl = document.getElementById('admin-article-doc-status');
+        if (nameInput) {
+          nameInput.value = `${meta.cleanTitle}.${meta.ext || 'pdf'} (${meta.formattedSize})`;
+        }
+        if (statusEl) {
+          statusEl.textContent = `✅ ตรวจพบไฟล์: ${meta.filename} (ขนาด ${meta.formattedSize}${meta.pageCount ? ' • ' + meta.pageCount + ' หน้า' : ''})`;
+          statusEl.style.display = 'block';
+        }
+        showToast(`✅ อ่านขนาดไฟล์สำเร็จ: ${meta.formattedSize}`, 'success');
+      } catch (err) {
+        showToast('⚠️ ไม่สามารถอ่านขนาดไฟล์ได้: ' + err.message, 'error');
+      } finally {
+        e.target.value = '';
+      }
+    }
+
+    async function handleDetectArticleUrlSize() {
+      const url = document.getElementById('admin-article-doc-url').value.trim();
+      if (!url) {
+        showToast('กรุณากรอกลิงก์ดาวน์โหลดเอกสารก่อน', 'warning');
+        return;
+      }
+      showToast('⏳ กำลังตรวจสอบขนาดไฟล์...', 'info');
+      const res = await DocUtils.detectUrlFileSize(url);
+      if (res.success) {
+        const nameInput = document.getElementById('admin-article-doc-name');
+        if (nameInput) {
+          const current = nameInput.value.replace(/\s*\([\d\.\s\w]+\)$/, '').trim();
+          nameInput.value = (current || 'ชีทสรุปบทความ_INBIOLOGY.pdf') + ` (${res.formattedSize})`;
+        }
+        const statusEl = document.getElementById('admin-article-doc-status');
+        if (statusEl) {
+          statusEl.textContent = `🌐 ตรวจพบขนาดจาก URL: ${res.formattedSize}`;
+          statusEl.style.display = 'block';
+        }
+        showToast(`✅ ตรวจพบขนาดไฟล์: ${res.formattedSize}`, 'success');
+      } else {
+        if (res.isDrive) alert('ℹ️ ข้อมูลลิงก์ Google Drive:\n\n' + res.message);
+        else showToast(`⚠️ ${res.message}`, 'warning');
+      }
     }
 
     // ─── ARTICLES CMS ─────────────────────────────────────────────────
@@ -2780,6 +2934,8 @@
       document.getElementById('admin-article-doc-name').value = '';
       document.getElementById('admin-article-url').value = '';
       document.getElementById('admin-article-image').value = '';
+      const docStatusEl = document.getElementById('admin-article-doc-status');
+      if (docStatusEl) docStatusEl.style.display = 'none';
       document.getElementById('admin-article-modal').style.display = 'flex';
     }
 
@@ -2800,6 +2956,8 @@
       document.getElementById('admin-article-doc-name').value = item.documentName || '';
       document.getElementById('admin-article-url').value = item.articleUrl || '';
       document.getElementById('admin-article-image').value = item.imageUrl || '';
+      const docStatusEl = document.getElementById('admin-article-doc-status');
+      if (docStatusEl) docStatusEl.style.display = 'none';
       document.getElementById('admin-article-modal').style.display = 'flex';
     }
 
@@ -5157,6 +5315,7 @@
       }
 
       switchCmsTab(initialTab || 'lessons');
+      if (typeof clearNewMaterialFileStatus === 'function') clearNewMaterialFileStatus();
       document.getElementById('admin-lesson-modal').style.display = 'flex';
     }
 
@@ -5423,8 +5582,17 @@
               </div>
 
               <div>
-                <label style="display:block;font-size:10.5px;font-weight:800;color:#64748B;margin-bottom:3px">ขนาด / จำนวนหน้า</label>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+                  <label style="font-size:10.5px;font-weight:800;color:#64748B">ขนาด / จำนวนหน้า</label>
+                  <button type="button" onclick="document.getElementById('cms-mat-row-file-${idx}').click()"
+                          style="background:none;border:none;color:#047857;font-size:10.5px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:3px;padding:0"
+                          title="อ่านขนาดและจำนวนหน้าจากไฟล์ในเครื่อง">
+                    📂 อ่านจากไฟล์
+                  </button>
+                  <input type="file" id="cms-mat-row-file-${idx}" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip" style="display:none" onchange="handleRowMaterialFileUpload(event, ${idx})">
+                </div>
                 <input type="text"
+                       id="cms-mat-row-size-${idx}"
                        value="${(m.fileSize || m.pages || '').replace(/"/g, '&quot;')}"
                        oninput="updateMaterialField(${idx}, 'fileSize', this.value)"
                        placeholder="เช่น 24 MB • 140 หน้า"
@@ -5449,8 +5617,16 @@
 
             <!-- Download Link Field -->
             <div>
-              <label style="display:block;font-size:10.5px;font-weight:800;color:#64748B;margin-bottom:3px">ลิงก์ดาวน์โหลดเอกสาร (Google Drive, OneDrive หรือ Cloud PDF URL)</label>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+                <label style="font-size:10.5px;font-weight:800;color:#64748B">ลิงก์ดาวน์โหลดเอกสาร (Google Drive, OneDrive หรือ Cloud PDF URL)</label>
+                <button type="button" onclick="handleDetectRowUrlSize(${idx})"
+                        style="background:none;border:none;color:#0284C7;font-size:10.5px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:3px;padding:0"
+                        title="ตรวจวัดขนาดไฟล์จากลิงก์ URL ที่ใส่">
+                  ⚡ ตรวจสอบขนาดจาก URL
+                </button>
+              </div>
               <input type="text"
+                     id="cms-mat-row-url-${idx}"
                      value="${(m.url || '').replace(/"/g, '&quot;')}"
                      oninput="updateMaterialField(${idx}, 'url', this.value)"
                      placeholder="วางลิงก์แชร์ เช่น https://drive.google.com/file/d/.../view?usp=sharing"
@@ -5521,9 +5697,128 @@
       titleInput.value = '';
       urlInput.value = '';
       if (sizeInput) sizeInput.value = '';
+      clearNewMaterialFileStatus();
 
       renderMaterialEditorList();
       showToast('✅ เพิ่มไฟล์เอกสารใหม่แล้ว อย่าลืมกด "บันทึกการเปลี่ยนแปลงทั้งหมด"', 'success');
+    }
+
+    // ─── Course Materials File & URL Auto-Detect Handlers ───
+    async function handleNewMaterialFileUpload(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+
+      try {
+        showToast('⏳ กำลังอ่านขนาดไฟล์และตรวจนับหน้า...', 'info');
+        const meta = await DocUtils.inspectFile(file);
+
+        const sizeInput = document.getElementById('cms-new-mat-size');
+        const titleInput = document.getElementById('cms-new-mat-title');
+        const statusBox = document.getElementById('cms-new-mat-file-status');
+        const statusText = document.getElementById('cms-new-mat-file-status-text');
+
+        if (sizeInput) sizeInput.value = meta.sizeWithPages;
+        if (titleInput && !titleInput.value.trim()) {
+          titleInput.value = meta.cleanTitle;
+        }
+
+        if (statusBox && statusText) {
+          statusText.textContent = `✅ ตรวจพบไฟล์: ${meta.filename} (ขนาด ${meta.sizeWithPages})`;
+          statusBox.style.display = 'flex';
+        }
+
+        showToast(`✅ อ่านขนาดไฟล์สำเร็จ: ${meta.sizeWithPages}`, 'success');
+      } catch (err) {
+        console.error('Error reading document file:', err);
+        showToast('⚠️ ไม่สามารถอ่านข้อมูลไฟล์ได้: ' + err.message, 'error');
+      } finally {
+        e.target.value = '';
+      }
+    }
+
+    function clearNewMaterialFileStatus() {
+      const statusBox = document.getElementById('cms-new-mat-file-status');
+      if (statusBox) statusBox.style.display = 'none';
+    }
+
+    async function detectNewMaterialUrlSize() {
+      const urlInput = document.getElementById('cms-new-mat-url');
+      const sizeInput = document.getElementById('cms-new-mat-size');
+      const statusBox = document.getElementById('cms-new-mat-file-status');
+      const statusText = document.getElementById('cms-new-mat-file-status-text');
+
+      const url = urlInput ? urlInput.value.trim() : '';
+      if (!url) {
+        showToast('กรุณากรอกลิงก์ดาวน์โหลดก่อนตรวจสอบขนาด', 'warning');
+        if (urlInput) urlInput.focus();
+        return;
+      }
+
+      showToast('⏳ กำลังตรวจสอบขนาดไฟล์จาก URL...', 'info');
+      const res = await DocUtils.detectUrlFileSize(url);
+      if (res.success) {
+        if (sizeInput) sizeInput.value = res.formattedSize;
+        if (statusBox && statusText) {
+          statusText.textContent = `🌐 ตรวจพบขนาดจาก URL: ${res.formattedSize}`;
+          statusBox.style.display = 'flex';
+        }
+        showToast(`✅ ตรวจพบขนาดไฟล์: ${res.formattedSize}`, 'success');
+      } else {
+        if (res.isDrive) {
+          alert('ℹ️ ข้อมูลลิงก์ Google Drive:\n\n' + res.message);
+        } else {
+          showToast(`⚠️ ${res.message}`, 'warning');
+        }
+      }
+    }
+
+    async function handleRowMaterialFileUpload(e, idx) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+
+      try {
+        showToast('⏳ กำลังอ่านขนาดไฟล์...', 'info');
+        const meta = await DocUtils.inspectFile(file);
+
+        if (_editingMaterials[idx]) {
+          _editingMaterials[idx].fileSize = meta.sizeWithPages;
+          _editingMaterials[idx].filename = meta.filename;
+        }
+
+        const sizeInput = document.getElementById(`cms-mat-row-size-${idx}`);
+        if (sizeInput) sizeInput.value = meta.sizeWithPages;
+
+        showToast(`✅ ปรับขนาดเอกสารเป็น "${meta.sizeWithPages}" แล้ว`, 'success');
+      } catch (err) {
+        console.error('Error reading row material file:', err);
+        showToast('⚠️ ไม่สามารถอ่านขนาดไฟล์ได้: ' + err.message, 'error');
+      } finally {
+        e.target.value = '';
+      }
+    }
+
+    async function handleDetectRowUrlSize(idx) {
+      if (!_editingMaterials[idx]) return;
+      const url = _editingMaterials[idx].url || (document.getElementById(`cms-mat-row-url-${idx}`) ? document.getElementById(`cms-mat-row-url-${idx}`).value.trim() : '');
+      if (!url) {
+        showToast('ยังไม่มีลิงก์ URL ในเอกสารนี้ กรุณากรอกลิงก์ก่อน', 'warning');
+        return;
+      }
+
+      showToast('⏳ กำลังตรวจสอบขนาดไฟล์จาก URL...', 'info');
+      const res = await DocUtils.detectUrlFileSize(url);
+      if (res.success) {
+        _editingMaterials[idx].fileSize = res.formattedSize;
+        const sizeInput = document.getElementById(`cms-mat-row-size-${idx}`);
+        if (sizeInput) sizeInput.value = res.formattedSize;
+        showToast(`✅ ตรวจพบขนาดไฟล์: ${res.formattedSize}`, 'success');
+      } else {
+        if (res.isDrive) {
+          alert('ℹ️ ข้อมูลลิงก์ Google Drive:\n\n' + res.message);
+        } else {
+          showToast(`⚠️ ${res.message}`, 'warning');
+        }
+      }
     }
 
     async function saveAllLessonsForCourse() {
