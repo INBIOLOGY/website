@@ -691,6 +691,9 @@
   <!-- ───────────────────────────────────────────────────────────────── -->
   <!-- FORGOT PASSWORD MODAL (OTP-BASED SECURE RESET)                     -->
   <!-- ───────────────────────────────────────────────────────────────── -->
+    <!-- ───────────────────────────────────────────────────────────────── -->
+  <!-- FORGOT PASSWORD MODAL (3-STEP SECURE OTP RESET)                    -->
+  <!-- ───────────────────────────────────────────────────────────────── -->
   <div id="modal-forgot-password" class="modal-overlay" style="display:none">
     <div class="modal-backdrop" onclick="closeForgotPasswordModal()"></div>
     <div class="modal-box" style="max-width:440px;border-radius:24px;overflow:hidden;box-shadow:0 25px 60px rgba(0,0,0,0.2);border:1px solid #E2E8F0;animation:fadeIn 0.2s ease-out">
@@ -711,6 +714,24 @@
             ✕
           </button>
         </div>
+
+        <!-- 3-Step Progress Indicators -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.15);font-size:11.5px;font-weight:700">
+          <div id="fp-pill-step-1" style="display:flex;align-items:center;gap:5px;color:#FACC15">
+            <span style="display:inline-flex;width:18px;height:18px;border-radius:50%;background:#FACC15;color:#1E3A8A;align-items:center;justify-content:center;font-size:11px;font-weight:800">1</span>
+            <span>ขอรหัส OTP</span>
+          </div>
+          <span style="color:rgba(255,255,255,0.4)">➔</span>
+          <div id="fp-pill-step-2" style="display:flex;align-items:center;gap:5px;color:rgba(255,255,255,0.5)">
+            <span style="display:inline-flex;width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,0.2);color:#FFFFFF;align-items:center;justify-content:center;font-size:11px;font-weight:800">2</span>
+            <span>ยืนยันรหัส</span>
+          </div>
+          <span style="color:rgba(255,255,255,0.4)">➔</span>
+          <div id="fp-pill-step-3" style="display:flex;align-items:center;gap:5px;color:rgba(255,255,255,0.5)">
+            <span style="display:inline-flex;width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,0.2);color:#FFFFFF;align-items:center;justify-content:center;font-size:11px;font-weight:800">3</span>
+            <span>ตั้งรหัสใหม่</span>
+          </div>
+        </div>
       </div>
 
       <div style="padding:24px">
@@ -718,7 +739,7 @@
         <!-- STEP 1: Enter email/identifier -->
         <div id="fp-step-1">
           <p style="font-size:13.5px;color:#475569;margin:0 0 16px;line-height:1.5">
-            กรอกอีเมลที่ใช้ลงทะเบียน ระบบจะส่งรหัส <strong>OTP 6 หลัก</strong> ไปยังอีเมลของคุณเพื่อยืนยันตัวตนและตั้งรหัสผ่านใหม่
+            กรอกอีเมลที่ใช้ลงทะเบียน ระบบจะส่งรหัส <strong>OTP 6 หลัก</strong> เพื่อยืนยันตัวตนของคุณก่อนตั้งรหัสผ่านใหม่
           </p>
 
           <div class="form-group" style="margin-bottom:16px">
@@ -729,11 +750,11 @@
           </div>
 
           <button type="button" id="fp-btn-send" onclick="handleSendPasswordResetOtp()" class="btn-submit" style="width:100%;margin-top:8px">
-            ส่งรหัส OTP ➔
+            ขอรับรหัส OTP ➔
           </button>
         </div>
 
-        <!-- STEP 2: Enter OTP and New Password -->
+        <!-- STEP 2: Verify OTP 6 digits -->
         <div id="fp-step-2" style="display:none">
           <div style="background:#EFF6FF;border:1px solid #BFDBFE;padding:12px 14px;border-radius:12px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
             <span style="font-size:22px">✉️</span>
@@ -743,7 +764,7 @@
             </div>
           </div>
 
-          <div class="form-group" style="margin-bottom:14px">
+          <div class="form-group" style="margin-bottom:16px">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
               <label class="form-label" for="fp-input-otp" style="font-size:13px;font-weight:600;margin-bottom:0">
                 รหัส OTP 6 หลัก <span class="required-dot">*</span>
@@ -752,7 +773,27 @@
                 ส่งรหัสอีกครั้ง
               </button>
             </div>
-            <input type="text" id="fp-input-otp" class="form-input" placeholder="••••••" maxlength="6" inputmode="numeric" style="font-size:20px;font-weight:800;letter-spacing:6px;text-align:center;width:100%;box-sizing:border-box" />
+            <input type="text" id="fp-input-otp" class="form-input" placeholder="••••••" maxlength="6" inputmode="numeric" style="font-size:22px;font-weight:800;letter-spacing:6px;text-align:center;width:100%;box-sizing:border-box" onkeydown="if(event.key==='Enter'){event.preventDefault();handleVerifyPasswordResetOtp();}" />
+          </div>
+
+          <button type="button" id="fp-btn-verify-otp" onclick="handleVerifyPasswordResetOtp()" class="btn-submit" style="width:100%">
+            ตรวจสอบและยืนยันรหัส OTP ➔
+          </button>
+
+          <div style="text-align:center;margin-top:14px">
+            <button type="button" onclick="fpGoToStep(1)" style="background:none;border:none;color:#64748B;font-size:12px;font-weight:600;cursor:pointer">
+              ← เปลี่ยนอีเมล / ย้อนกลับ
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 3: Enter New Password -->
+        <div id="fp-step-3" style="display:none">
+          <div style="background:#ECFDF5;border:1px solid #A7F3D0;padding:10px 14px;border-radius:12px;margin-bottom:16px;display:flex;align-items:center;gap:8px">
+            <span style="font-size:18px;color:#059669">✓</span>
+            <div style="font-size:12.5px;color:#065F46;font-weight:600">
+              ยืนยันรหัส OTP สำเร็จ! กรุณาตั้งรหัสผ่านใหม่
+            </div>
           </div>
 
           <div class="form-group" style="margin-bottom:14px">
@@ -783,14 +824,16 @@
             บันทึกรหัสผ่านใหม่ ➔
           </button>
 
-          <div style="text-align:center;margin-top:12px">
-            <button type="button" onclick="fpBackToStep1()" style="background:none;border:none;color:#64748B;font-size:12px;font-weight:600;cursor:pointer">
-              ← เปลี่ยนอีเมล / ย้อนกลับ
+          <div style="text-align:center;margin-top:14px">
+            <button type="button" onclick="fpGoToStep(2)" style="background:none;border:none;color:#64748B;font-size:12px;font-weight:600;cursor:pointer">
+              ← ย้อนกลับไปขั้นตอนก่อนหน้า
             </button>
           </div>
         </div>
 
       </div>
+    </div>
+  </div>
     </div>
   </div>
 
@@ -1167,6 +1210,7 @@
     }
 
     let fpTargetEmail = '';
+    let fpVerifiedOtp = '';
     let fpCooldownTimer = null;
     let fpCooldownRemaining = 0;
 
@@ -1176,8 +1220,8 @@
       const fpEmailInput = document.getElementById('fp-input-email');
       if (fpEmailInput) {
         if (loginEmail) fpEmailInput.value = loginEmail;
-        fpBackToStep1();
       }
+      fpGoToStep(1);
       const modal = document.getElementById('modal-forgot-password');
       if (modal) {
         modal.style.display = 'flex';
@@ -1194,11 +1238,37 @@
       }
     }
 
-    function fpBackToStep1() {
+    function fpGoToStep(stepNumber) {
       const s1 = document.getElementById('fp-step-1');
       const s2 = document.getElementById('fp-step-2');
-      if (s1) s1.style.display = 'block';
-      if (s2) s2.style.display = 'none';
+      const s3 = document.getElementById('fp-step-3');
+      const p1 = document.getElementById('fp-pill-step-1');
+      const p2 = document.getElementById('fp-pill-step-2');
+      const p3 = document.getElementById('fp-pill-step-3');
+
+      if (s1) s1.style.display = (stepNumber === 1) ? 'block' : 'none';
+      if (s2) s2.style.display = (stepNumber === 2) ? 'block' : 'none';
+      if (s3) s3.style.display = (stepNumber === 3) ? 'block' : 'none';
+
+      // Update pills styling
+      const setPill = (el, active, done) => {
+        if (!el) return;
+        const circle = el.querySelector('span:first-child');
+        if (active) {
+          el.style.color = '#FACC15';
+          if (circle) { circle.style.background = '#FACC15'; circle.style.color = '#1E3A8A'; }
+        } else if (done) {
+          el.style.color = '#34D399';
+          if (circle) { circle.style.background = '#34D399'; circle.style.color = '#065F46'; }
+        } else {
+          el.style.color = 'rgba(255,255,255,0.5)';
+          if (circle) { circle.style.background = 'rgba(255,255,255,0.2)'; circle.style.color = '#FFFFFF'; }
+        }
+      };
+
+      setPill(p1, stepNumber === 1, stepNumber > 1);
+      setPill(p2, stepNumber === 2, stepNumber > 2);
+      setPill(p3, stepNumber === 3, false);
     }
 
     async function handleSendPasswordResetOtp(isResend = false) {
@@ -1223,14 +1293,14 @@
         fpTargetEmail = res.email;
         showToast(res.message, 'success');
 
-        // Reveal Step 2
-        document.getElementById('fp-step-1').style.display = 'none';
-        document.getElementById('fp-step-2').style.display = 'block';
+        // Reveal Step 2 (Enter OTP only)
+        fpGoToStep(2);
         document.getElementById('fp-masked-email').textContent = res.maskedEmail || res.email;
-        document.getElementById('fp-input-otp').value = '';
-        document.getElementById('fp-input-new-pass').value = '';
-        document.getElementById('fp-input-confirm-pass').value = '';
-        document.getElementById('fp-input-otp').focus();
+        const otpInput = document.getElementById('fp-input-otp');
+        if (otpInput) {
+          otpInput.value = '';
+          setTimeout(() => otpInput.focus(), 150);
+        }
 
         // Start 60s cooldown timer
         startFpCooldown(res.cooldownSeconds || 60);
@@ -1267,26 +1337,71 @@
       }, 1000);
     }
 
-    async function handleCompletePasswordReset() {
-      const otp = document.getElementById('fp-input-otp').value.trim();
-      const newPass = document.getElementById('fp-input-new-pass').value;
-      const confirmPass = document.getElementById('fp-input-confirm-pass').value;
+    // STEP 2 -> STEP 3: Verify OTP first!
+    async function handleVerifyPasswordResetOtp() {
+      const otpInput = document.getElementById('fp-input-otp');
+      const otp = (otpInput?.value || '').trim();
 
       if (!otp || otp.length !== 6) {
         showToast('กรุณากรอกรหัส OTP ให้ครบ 6 หลัก', 'error');
-        document.getElementById('fp-input-otp').focus();
+        if (otpInput) otpInput.focus();
+        return;
+      }
+
+      const btnVerify = document.getElementById('fp-btn-verify-otp');
+      const origText = btnVerify ? btnVerify.textContent : '';
+      if (btnVerify) {
+        btnVerify.disabled = true;
+        btnVerify.textContent = 'กำลังตรวจสอบรหัส OTP...';
+      }
+
+      try {
+        await window.CloudService.verifyPasswordResetOtp(fpTargetEmail, otp);
+        fpVerifiedOtp = otp;
+        showToast('✓ ยืนยันรหัส OTP ถูกต้องแล้ว กรุณาตั้งรหัสผ่านใหม่', 'success');
+
+        // Proceed to Step 3: Set New Password
+        fpGoToStep(3);
+        const passInput = document.getElementById('fp-input-new-pass');
+        const confirmInput = document.getElementById('fp-input-confirm-pass');
+        if (passInput) passInput.value = '';
+        if (confirmInput) confirmInput.value = '';
+        setTimeout(() => passInput && passInput.focus(), 150);
+
+      } catch (err) {
+        showToast(err.message || 'รหัส OTP ไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง', 'error');
+        if (otpInput) {
+          otpInput.focus();
+          otpInput.select();
+        }
+      } finally {
+        if (btnVerify) {
+          btnVerify.disabled = false;
+          btnVerify.textContent = origText;
+        }
+      }
+    }
+
+    // STEP 3: Complete Password Reset
+    async function handleCompletePasswordReset() {
+      const newPass = (document.getElementById('fp-input-new-pass')?.value || '');
+      const confirmPass = (document.getElementById('fp-input-confirm-pass')?.value || '');
+
+      if (!fpVerifiedOtp) {
+        showToast('กรุณายืนยันรหัส OTP ก่อนตั้งรหัสผ่านใหม่', 'error');
+        fpGoToStep(2);
         return;
       }
 
       if (!newPass || newPass.length < 6) {
         showToast('รหัสผ่านใหม่ต้องมีความยาวอย่างน้อย 6 ตัวอักษร', 'error');
-        document.getElementById('fp-input-new-pass').focus();
+        document.getElementById('fp-input-new-pass')?.focus();
         return;
       }
 
       if (newPass !== confirmPass) {
         showToast('รหัสผ่านใหม่และยืนยันรหัสผ่านไม่ตรงกัน', 'error');
-        document.getElementById('fp-input-confirm-pass').focus();
+        document.getElementById('fp-input-confirm-pass')?.focus();
         return;
       }
 
@@ -1297,7 +1412,7 @@
       }
 
       try {
-        const res = await window.CloudService.completePasswordReset(fpTargetEmail, otp, newPass);
+        const res = await window.CloudService.completePasswordReset(fpTargetEmail, fpVerifiedOtp, newPass);
         showToast(res.message, 'success');
 
         closeForgotPasswordModal();
