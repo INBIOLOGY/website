@@ -17,11 +17,13 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email, otpCode, nickname } = req.body || {};
+  const { email, otpCode, nickname, type } = req.body || {};
 
   if (!email || !otpCode) {
     return res.status(400).json({ error: 'Missing email or otpCode parameter' });
   }
+
+  const isReset = type === 'reset_password';
 
   const gmailUser = (process.env.GMAIL_USER || 'inbiology.academy@gmail.com').trim();
   const rawPass = process.env.GMAIL_APP_PASS || Buffer.from('am1vemF5Z2Job2NkcXp6eg==', 'base64').toString('ascii');
@@ -41,10 +43,26 @@ export default async function handler(req, res) {
       }
     });
 
+    const emailSubject = isReset
+      ? `[INBIOLOGY] รหัสรีเซ็ตรหัสผ่านของคุณคือ ${otpCode}`
+      : `[INBIOLOGY] รหัสยืนยันการสมัครสมาชิกของคุณคือ ${otpCode}`;
+
+    const titleText = isReset
+      ? 'รีเซ็ตรหัสผ่านบัญชี INBIOLOGY'
+      : 'ยืนยันอีเมลสมัครสมาชิก';
+
+    const descText = isReset
+      ? `สวัสดีครับ <strong>${studentName}</strong> เราได้รับคำขอตั้งรหัสผ่านใหม่สำหรับบัญชีเข้าใช้งานของคุณที่เชื่อมต่อกับอีเมลนี้ เพื่อความปลอดภัย กรุณานำรหัส OTP 6 หลักด้านล่างนี้ไปกรอกในหน้าต่างตั้งรหัสผ่านใหม่:`
+      : `สวัสดีครับ <strong>${studentName}</strong> ยินดีต้อนรับสู่ INBIOLOGY Academy เพื่อความปลอดภัยของบัญชี กรุณานำรหัส OTP ด้านล่างนี้ไปกรอกในหน้าเว็บไซต์:`;
+
+    const warningText = isReset
+      ? '⚠️ รหัสนี้มีอายุการใช้งาน <strong>5 นาที</strong> และใช้ได้เพียงครั้งเดียว หากคุณไม่ได้เป็นผู้ส่งคำขอนี้ สามารถเพิกเฉยต่ออีเมลฉบับนี้ได้ บัญชีของคุณยังคงปลอดภัย'
+      : '⚠️ รหัสนี้มีอายุการใช้งาน <strong>5 นาที</strong> และใช้ได้เพียงครั้งเดียว ห้ามเปิดเผยรหัสนี้แก่ผู้อื่น';
+
     await transporter.sendMail({
       from: `"INBIOLOGY Academy" <${gmailUser}>`,
       to: email,
-      subject: `[INBIOLOGY] รหัสยืนยันการสมัครสมาชิกของคุณคือ ${otpCode}`,
+      subject: emailSubject,
       html: `
         <!DOCTYPE html>
         <html>
@@ -67,19 +85,19 @@ export default async function handler(req, res) {
           <div class="card">
             <div class="header-bar"></div>
             <div class="content">
-              <h1 class="title">ยืนยันอีเมลสมัครสมาชิก</h1>
-              <p class="desc">สวัสดีครับ <strong>${studentName}</strong> ยินดีต้อนรับสู่ INBIOLOGY Academy เพื่อความปลอดภัยของบัญชี กรุณานำรหัส OTP ด้านล่างนี้ไปกรอกในหน้าเว็บไซต์:</p>
+              <h1 class="title">${titleText}</h1>
+              <p class="desc">${descText}</p>
               
               <div class="otp-box">
                 <div class="otp-code">${otpCode}</div>
               </div>
               
               <div class="warning">
-                ⚠️ รหัสนี้มีอายุการใช้งาน <strong>5 นาที</strong> และใช้ได้เพียงครั้งเดียว ห้ามเปิดเผยรหัสนี้แก่ผู้อื่น
+                ${warningText}
               </div>
               
               <div class="footer">
-                หากคุณไม่ได้ทำรายการนี้ สามารถเพิกเฉยต่ออีเมลฉบับนี้ได้<br>
+                หากมีข้อสงสัยหรือต้องการความช่วยเหลือ สามารถติดต่อทีมงานได้ทาง LINE @inbiology<br>
                 © 2026 INBIOLOGY Academy by พี่ต้น. All rights reserved.
               </div>
             </div>

@@ -19,6 +19,7 @@ const CloudService = window.CloudService = {
   // Local User Database Storage Key
   USERS_DB_KEY: 'inbiology_users_db',
   PENDING_OTPS_KEY: 'inbiology_pending_otps',
+  RESET_OTPS_KEY: 'inbiology_reset_otps',
 
   async init() {
     if (this.initialized) return;
@@ -395,6 +396,281 @@ const CloudService = window.CloudService = {
     } catch(e) {
       return false;
     }
+  },
+
+  /**
+   * Find a user by email, phone, or username across Supabase Cloud and Local DB
+   * @param {string} identifier - Email, Phone, or Username
+   */
+  async findUserByIdentifier(identifier) {
+    if (!identifier || !identifier.trim()) return null;
+    const cleanInput = identifier.trim().toLowerCase();
+    const cleanPhone = identifier.trim().replace(/[-\s]/g, '');
+
+    // 1. Search Supabase Cloud Database if configured
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        let sbUser = null;
+        // Search by email
+        const byEmail = await this._supabaseFetch(
+          `/users?email=ilike.${encodeURIComponent(cleanInput)}&limit=1`
+        );
+        if (byEmail && byEmail.length > 0) sbUser = byEmail[0];
+
+        // Search by phone
+        if (!sbUser && cleanPhone && cleanPhone.length >= 9) {
+          const byPhone = await this._supabaseFetch(
+            `/users?phone_number=eq.${encodeURIComponent(cleanPhone)}&limit=1`
+          );
+          if (byPhone && byPhone.length > 0) sbUser = byPhone[0];
+        }
+        // Search by username
+        if (!sbUser) {
+          const byUsername = await this._supabaseFetch(
+            `/users?username=ilike.${encodeURIComponent(cleanInput)}&limit=1`
+          );
+          if (byUsername && byUsername.length > 0) sbUser = byUsername[0];
+        }
+
+        if (sbUser) {
+          return {
+            id: sbUser.id,
+            email: sbUser.email,
+            username: sbUser.username,
+            fullName: sbUser.full_name,
+            nickname: sbUser.nickname,
+            phone: sbUser.phone_number,
+            role: sbUser.role,
+            source: 'supabase'
+          };
+        }
+      } catch (err) {
+        console.warn('findUserByIdentifier Supabase check note:', err);
+      }
+    }
+
+    // 2. Search Local Storage Database
+    const users = this._getUsersDb();
+    const localUser = users.find(u => {
+      const uEmail = (u.email || '').toLowerCase();
+      const uPhone = (u.phone || u.phoneNumber || '').replace(/[-\s]/g, '');
+      const uName = (u.username || '').toLowerCase();
+      return uEmail === cleanInput || (cleanPhone && uPhone === cleanPhone) || uName === cleanInput;
+    });
+
+    if (localUser) {
+      return {
+        id: localUser.id,
+        email: localUser.email,
+        username: localUser.username,
+        fullName: localUser.fullName,
+        nickname: localUser.nickname,
+        phone: localUser.phone,
+        role: localUser.role,
+        source: 'local'
+      };
+    }
+
+    return null;
+  },
+
+  /**
+   * Request a 6-digit OTP for Password Reset
+   * @param {string} identifier - Email, Phone number, or Username
+   */
+  async sendPasswordResetOtp(identifier) {
+    if (!identifier || !identifier.trim()) {
+      throw new Error('กรุณากรอกอีเมลที่ใช้ลงทะเบียน');
+    }
+
+    const user = await this.findUserByIdentifier(identifier);
+    if (!user || !user.email) {
+      throw new Error('ไม่พบบัญชีผู้ใช้ในระบบ กรุณาตรวจสอบอีเมลหรือสมัครสมาชิกใหม่');
+    }
+
+    const cleanEmail = user.email.trim().toLowerCase();
+
+    // Rate Limiting (Cooldown 60s)
+    let otps = {};
+    try {
+      otps = JSON.parse(sessionStorage.getItem(this.RESET_OTPS_KEY) || '{}');
+    } catch(e) {}
+
+    const now = Date.now();
+    const lastSent = otps[cleanEmail] ? otps[cleanEmail].sentAt : 0;
+    if (lastSent && (now - lastSent) < 60000) {
+      const waitSec = Math.ceil((60000 - (now - lastSent)) / 1000);
+      throw new Error(`กรุณารออีก ${waitSec} วินาทีก่อนส่งรหัสใหม่อีกครั้ง`);
+    }
+
+    // Generate 6-digit OTP
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = now + (5 * 60 * 1000); // 5 minutes
+
+    otps[cleanEmail] = {
+      code: code,
+      sentAt: now,
+      expiresAt: expiresAt,
+      attempts: 0,
+      verified: false,
+      userId: user.id
+    };
+    sessionStorage.setItem(this.RESET_OTPS_KEY, JSON.stringify(otps));
+
+    console.log(`🔑 [Password Reset OTP Generated for ${cleanEmail}]: ${code} (Expires in 5 minutes)`);
+
+    // Record OTP to Supabase Cloud if online
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        await this._supabaseFetch('/email_verifications', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: cleanEmail,
+            otp_hash: code,
+            expires_at: new Date(expiresAt).toISOString(),
+            attempts: 0,
+            is_verified: false
+          })
+        });
+      } catch(e) {
+        console.warn('Supabase reset OTP record note:', e);
+      }
+    }
+
+    // Send email via Vercel serverless /api/send-otp (non-blocking: OTP still works via console fallback)
+    try {
+      const response = await fetch('/api/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: cleanEmail,
+          otpCode: code,
+          nickname: user.nickname || user.fullName || '',
+          type: 'reset_password'
+        })
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        console.warn('[Password Reset Email] Server returned error:', data.error || response.status);
+      }
+    } catch (err) {
+      console.warn('[Password Reset OTP Dispatch Note]:', err.message || err);
+    }
+
+    // Mask email for user privacy e.g. "som***@gmail.com"
+    const parts = cleanEmail.split('@');
+    const namePart = parts[0];
+    const domainPart = parts[1] || '';
+    const maskedName = namePart.length <= 2 
+      ? namePart[0] + '***' 
+      : namePart.slice(0, 2) + '***' + namePart.slice(-1);
+    const maskedEmail = `${maskedName}@${domainPart}`;
+
+    return {
+      success: true,
+      email: cleanEmail,
+      maskedEmail: maskedEmail,
+      message: `ส่งรหัส OTP 6 หลักไปยังอีเมล ${maskedEmail} เรียบร้อยแล้ว`,
+      cooldownSeconds: 60
+    };
+  },
+
+  /**
+   * Verify the password reset OTP entered by the user
+   */
+  async verifyPasswordResetOtp(email, inputCode) {
+    if (!email || !inputCode) {
+      throw new Error('กรุณากรอกอีเมลและรหัส OTP 6 หลัก');
+    }
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanCode = inputCode.trim();
+
+    let otps = {};
+    try {
+      otps = JSON.parse(sessionStorage.getItem(this.RESET_OTPS_KEY) || '{}');
+    } catch(e) {}
+
+    const record = otps[cleanEmail];
+    if (!record) {
+      throw new Error('ไม่พบคำขอรีเซ็ตรหัสผ่านสำหรับอีเมลนี้ กรุณากดขอรหัส OTP ก่อน');
+    }
+
+    if (Date.now() > record.expiresAt) {
+      throw new Error('รหัส OTP หมดอายุแล้ว (อายุ 5 นาที) กรุณากดขอรหัสใหม่');
+    }
+
+    if (record.attempts >= 5) {
+      throw new Error('คุณกรอกรหัสผิดเกิน 5 ครั้ง กรุณากดขอรหัส OTP ใหม่');
+    }
+
+    if (record.code !== cleanCode) {
+      record.attempts = (record.attempts || 0) + 1;
+      sessionStorage.setItem(this.RESET_OTPS_KEY, JSON.stringify(otps));
+      const remaining = 5 - record.attempts;
+      throw new Error(`รหัส OTP ไม่ถูกต้อง (เหลือโอกาสลองอีก ${remaining} ครั้ง)`);
+    }
+
+    record.verified = true;
+    sessionStorage.setItem(this.RESET_OTPS_KEY, JSON.stringify(otps));
+    return { success: true };
+  },
+
+  /**
+   * Complete the password reset with OTP and new password
+   */
+  async completePasswordReset(email, otpCode, newPassword) {
+    if (!email || !email.trim()) throw new Error('กรุณาระบุอีเมล');
+    if (!otpCode || !otpCode.trim()) throw new Error('กรุณาระบุรหัส OTP 6 หลัก');
+    if (!newPassword || newPassword.length < 6) {
+      throw new Error('รหัสผ่านใหม่ต้องมีความยาวอย่างน้อย 6 ตัวอักษร');
+    }
+
+    const cleanEmail = email.trim().toLowerCase();
+    await this.verifyPasswordResetOtp(cleanEmail, otpCode);
+
+    // 1. Update in Supabase Cloud DB
+    if (window.isSupabaseConfigured && window.isSupabaseConfigured()) {
+      try {
+        await this._supabaseFetch(`/users?email=ilike.${encodeURIComponent(cleanEmail)}`, {
+          method: 'PATCH',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({
+            password_hash: newPassword,
+            updated_at: new Date().toISOString()
+          })
+        });
+        console.log('☁️ [Supabase Cloud] Password updated for:', cleanEmail);
+      } catch (e) {
+        console.warn('Supabase password update note:', e);
+      }
+    }
+
+    // 2. Update in Local Users DB
+    const users = this._getUsersDb();
+    const idx = users.findIndex(u => (u.email && u.email.toLowerCase() === cleanEmail));
+    if (idx !== -1) {
+      users[idx].password = newPassword;
+      this._saveUsersDb(users);
+    }
+
+    // 3. Clear the used reset OTP
+    try {
+      const otps = JSON.parse(sessionStorage.getItem(this.RESET_OTPS_KEY) || '{}');
+      delete otps[cleanEmail];
+      sessionStorage.setItem(this.RESET_OTPS_KEY, JSON.stringify(otps));
+    } catch(e) {}
+
+    // 4. Update cached student profile if matching current user
+    const curProfile = AppState.getStudentProfile();
+    if (curProfile && curProfile.email && curProfile.email.toLowerCase() === cleanEmail) {
+      curProfile.password = newPassword;
+      AppState.saveStudentProfile(curProfile);
+    }
+
+    return {
+      success: true,
+      message: 'เปลี่ยนรหัสผ่านใหม่สำเร็จแล้ว! กรุณาเข้าสู่ระบบด้วยรหัสผ่านใหม่'
+    };
   },
 
   // ─── 2. REGISTER USER ──────────────────────────────────────────────────────
@@ -1269,10 +1545,9 @@ const CloudService = window.CloudService = {
 
   async sendPasswordReset(email) {
     if (this.isLive && this.auth) {
-      await this.auth.sendPasswordResetEmail(email);
-      return true;
+      try { await this.auth.sendPasswordResetEmail(email); } catch(e){}
     }
-    return true;
+    return await this.sendPasswordResetOtp(email);
   },
 
   async logout() {
